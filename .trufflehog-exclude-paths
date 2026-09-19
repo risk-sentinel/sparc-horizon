@@ -1,0 +1,10 @@
+# Paths excluded from the VERIFIED-secrets gate in .github/workflows/secret-scan.yml.
+#
+# Scoped deliberately narrowly: this hides the deliberately-planted detection
+# fixture from the gate, and nothing else. The fixture is scanned by its own job
+# in the same workflow, WITHOUT this exclude file and without --only-verified, and
+# that job FAILS if the plant is not detected.
+#
+# Widening this file is a suppression and needs owner approval
+# (docs/dev/issue_rules.md, "Suppressing scanner findings").
+tests/trufflehog-fixture/

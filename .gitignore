@@ -30,3 +30,7 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# Repo snapshot archives — a committed copy of the tree goes stale on every commit
+horizon.zip
+*.zip

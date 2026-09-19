@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPARC Horizon prototype: implementation plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F5F8;--surface:#FFFFFF;--surface-2:#E9EDF3;--ink:#15213A;--ink-2:#4A5873;--ink-3:#6E7B92;--line:#D5DCE6;
+  --violet:#5B4BC4;--violet-bg:#ECEAFB;--teal:#0E7C86;--teal-bg:#DDF2F3;--pink:#B43C78;--pink-bg:#F8E3EE;
+  --amber:#8A5A0F;--amber-bg:#FDF1D6;--amber-fill:#F4C152;--coral:#E8875F;--red:#B42A33;--red-bg:#FCE4E4;--red-fill:#E5484D;
+  --green:#2F7D4F;--green-bg:#DCF0E3;--gray-fill:#9AA5B6;--focus:#2563EB;--on-fill:#FFFFFF;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1522;--surface:#152033;--surface-2:#1C2A40;--ink:#E7EDF5;--ink-2:#AAB6C8;--ink-3:#8491A7;--line:#2A3A55;
+    --violet:#B3A8F7;--violet-bg:#2A2656;--teal:#5BCFD6;--teal-bg:#123A40;--pink:#F29AC6;--pink-bg:#40182D;
+    --amber:#F4C152;--amber-bg:#3D2E10;--red:#FF8A90;--red-bg:#471A1F;--green:#7ADBA3;--green-bg:#17392B;--gray-fill:#56647A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1522;--surface:#152033;--surface-2:#1C2A40;--ink:#E7EDF5;--ink-2:#AAB6C8;--ink-3:#8491A7;--line:#2A3A55;
+  --violet:#B3A8F7;--violet-bg:#2A2656;--teal:#5BCFD6;--teal-bg:#123A40;--pink:#F29AC6;--pink-bg:#40182D;
+  --amber:#F4C152;--amber-bg:#3D2E10;--red:#FF8A90;--red-bg:#471A1F;--green:#7ADBA3;--green-bg:#17392B;--gray-fill:#56647A;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6}
+a{color:var(--teal)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+header.hero{padding:48px 0 24px;border-bottom:1px solid var(--line);background:var(--surface)}
+h1{font-size:clamp(34px,6vw,54px);line-height:1.05;letter-spacing:-0.02em;margin:0 0 12px;font-weight:600}
+h2{font-size:26px;letter-spacing:-0.01em;margin:0 0 6px;font-weight:600}
+h3{font-size:18px;margin:24px 0 6px;font-weight:600}
+p{max-width:70ch;margin:0 0 12px}
+.lede{font-size:19px;color:var(--ink-2);max-width:62ch}
+#headline{font-size:20px;max-width:64ch;margin-top:18px;padding-left:14px;border-left:4px solid var(--teal)}
+#headline b{font-weight:600}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px;margin-top:22px}
+nav.toc a{font-size:14px;text-decoration:none;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--bg)}
+nav.toc a:hover{color:var(--ink);border-color:var(--ink-3)}
+section{padding:40px 0;border-bottom:1px solid var(--line)}
+.sub{color:var(--ink-2);margin-bottom:18px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px 20px;margin-bottom:16px}
+.controls label,.lbl{display:block;font-size:13px;color:var(--ink-2);margin-bottom:4px}
+.controls .val{font-weight:600;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--teal)}
+input[type=date],select{font:inherit;font-size:14px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.checks{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px}
+.checks label{display:flex;gap:6px;align-items:center;color:var(--ink);font-size:14px;margin:0}
+button{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--ink-3);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{background:var(--surface-2)}
+button.quiet{border-color:var(--line)}
+.facts{display:flex;flex-wrap:wrap;gap:8px 28px;margin:4px 0 16px;font-size:14px;color:var(--ink-2)}
+.facts b{color:var(--ink);font-weight:600}
+.gantt{position:relative}
+.grow{display:grid;grid-template-columns:170px 1fr;align-items:center;min-height:36px;border-top:1px solid var(--line)}
+.grow .nm{font-size:13px;padding-right:10px;line-height:1.3}
+.grow .nm small{display:block;color:var(--ink-3);font-size:12px}
+.track{position:relative;height:36px}
+.bar{position:absolute;top:7px;height:22px;border-radius:6px;border:2px solid transparent;padding:0 6px;font-size:12px;font-weight:600;color:var(--on-fill);text-align:left;overflow:hidden;white-space:nowrap}
+.bar.crit{border-color:var(--ink)}
+.bar.sel{outline:3px solid var(--focus);outline-offset:1px}
+.ticks{display:grid;grid-template-columns:170px 1fr}
+.tickrow{position:relative;height:22px;font-size:11px;color:var(--ink-3)}
+.tickrow span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.gline{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed var(--line);pointer-events:none}
+.mile{position:absolute;top:0;bottom:0;width:0;border-left:2px solid var(--teal);pointer-events:none}
+.mile span{position:absolute;top:-2px;left:4px;font-size:11px;color:var(--teal);font-weight:600;white-space:nowrap;background:var(--surface);padding:0 3px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--ink-2);margin-top:12px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:5px;border:2px solid transparent}
+#drill{margin-top:16px}
+.drill{border:1px solid var(--line);border-left:5px solid var(--teal);border-radius:0;padding:14px 16px;background:var(--bg)}
+.drill h3{margin-top:0}
+.drill ul{margin:4px 0 10px;padding-left:20px}
+.drill li{margin:2px 0;font-size:15px}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:4px 24px}
+.effort{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 10px;font-size:14px}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;font-weight:500}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-top:1px solid var(--line)}
+th{font-weight:600;color:var(--ink-2);font-size:13px}
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+code{font-family:var(--mono);font-size:0.86em;background:var(--surface-2);padding:1px 5px;border-radius:4px}
+pre{font-family:var(--mono);font-size:13px;line-height:1.55;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto;margin:8px 0 16px}
+pre code{background:none;padding:0;font-size:inherit}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:10px 0}
+details>summary{cursor:pointer;padding:12px 16px;font-weight:600}
+details[open]>summary{border-bottom:1px solid var(--line)}
+details>div{padding:4px 16px 12px}
+.arch{display:grid;gap:10px}
+.lane{display:grid;grid-template-columns:130px 1fr;gap:12px;align-items:stretch}
+.lane>b{font-size:14px;padding-top:10px}
+.boxes{display:flex;flex-wrap:wrap;gap:8px}
+.box{flex:1 1 150px;border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.35;border:1px solid}
+.box small{display:block;font-size:12px;opacity:.85;margin-top:2px}
+.b-pipe{background:var(--surface-2);border-color:var(--line);color:var(--ink)}
+.b-sparc{background:var(--teal-bg);border-color:var(--teal);color:var(--ink)}
+.b-hz{background:var(--violet-bg);border-color:var(--violet);color:var(--ink)}
+.b-lens{background:var(--pink-bg);border-color:var(--pink);color:var(--ink)}
+.flow{font-size:13px;color:var(--ink-3);padding-left:142px}
+ol.steps{padding-left:22px}
+ol.steps li{margin:6px 0;max-width:70ch}
+/* prototype */
+.pv-top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:end;margin-bottom:12px}
+.pv-top>div{flex:1 1 180px}
+#crumb{font-size:14px;margin-bottom:2px;min-height:22px}
+#crumb button{border:none;background:none;padding:0;color:var(--teal);text-decoration:underline;font-size:14px}
+#tierlbl{font-size:13px;color:var(--ink-3)}
+#ptitle{font-size:22px;font-weight:600;margin:0}
+#hud{margin:10px 0;padding:10px 14px;border-radius:10px;font-size:15px}
+#hud button{border:none;background:none;padding:0;color:inherit;text-decoration:underline;font:inherit;font-weight:600}
+#sim{display:none;margin:0 0 10px;padding:8px 12px;border-radius:10px;background:var(--violet-bg);color:var(--ink);font-size:14px}
+.hm{display:grid;gap:4px;margin-top:8px}
+.hm .hd{font-size:12px;color:var(--ink-2);text-align:center;font-weight:600}
+.hm .rl{font-size:14px;text-align:left;border:none;background:none;padding:0 6px 0 0;color:var(--teal);text-decoration:underline;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cell{height:32px;border-radius:6px;border:2px solid transparent;padding:0;font-weight:700;font-size:15px;color:var(--on-fill)}
+.cell.nom{background:var(--green-bg)}.cell.watch{background:var(--amber-fill)}.cell.deg{background:var(--coral)}.cell.blk{background:var(--red-fill)}
+.cell.worse{border-color:var(--ink)}
+.frow{display:grid;grid-template-columns:52px 1fr;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
+.frow>b{font-size:14px;padding-top:6px}
+.chip{display:inline-flex;gap:4px;align-items:center;font-size:13px;padding:4px 8px;border-radius:7px;margin:2px;border:2px solid transparent}
+.chip.ok{background:var(--green-bg);color:var(--green)}
+.chip.warn{background:var(--amber-bg);color:var(--amber)}
+.chip.bad{background:var(--red-bg);color:var(--red)}
+.chip.worse{border-color:var(--ink)}
+.chip.simd{background:var(--violet-bg);color:var(--violet)}
+#pdet{margin-top:14px}
+.chain{display:grid;grid-template-columns:130px 1fr;gap:4px 12px;font-size:14px;margin:8px 0}
+.chain dt{color:var(--ink-2)}
+.chain dd{margin:0}
+footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
+@media (max-width:640px){
+  .grow,.ticks{grid-template-columns:104px 1fr}
+  .grow .nm small{display:none}
+  .lane{grid-template-columns:1fr}.lane>b{padding-top:0}.flow{padding-left:0}
+  .chain{grid-template-columns:1fr}.chain dt{margin-top:6px}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+ <div class="wrap">
+  <h1>SPARC Horizon</h1>
+  <p class="lede">Implementation plan for a heads-up display that shows authorizing officials, system owners, and information security officers what's ahead of each boundary, and lets them act on the controls automation can't cover.</p>
+  <p id="headline" aria-live="polite"></p>
+  <nav class="toc" aria-label="Sections">
+   <a href="#plan">Timeline</a><a href="#proto">Prototype</a><a href="#scope">Scope</a><a href="#arch">Architecture</a><a href="#data">Data model</a><a href="#api">API</a><a href="#engine">Engine</a><a href="#attest">Attestations</a><a href="#sec">Security</a><a href="#deploy">Deploy</a><a href="#accept">Acceptance</a><a href="#risks">Risks</a>
+  </nav>
+ </div>
+</header>
+<main class="wrap">
+
+<section id="plan" aria-labelledby="plan-h">
+ <h2 id="plan-h">Timeline planner</h2>
+ <p class="sub">Change the team, start date, buffer, or scope and the schedule re-plans itself. Select any bar to see its tasks, exit criteria, and risks, and to adjust its effort.</p>
+ <div class="panel">
+  <div class="controls">
+   <div><label for="eng">Engineers <span class="val" id="engv"></span></label><input type="range" id="eng" min="1" max="4" step="1" value="2"></div>
+   <div><label for="start">Start date</label><input type="date" id="start" value="2026-10-05"></div>
+   <div><label for="buf">Schedule buffer <span class="val" id="bufv"></span></label><input type="range" id="buf" min="0" max="40" step="5" value="20"></div>
+   <div><span class="lbl">Delivery options</span><div class="checks"><label><input type="checkbox" id="ai" checked> AI-assisted coding</label></div></div>
+  </div>
+  <div style="margin-bottom:14px"><span class="lbl">Optional scope</span>
+   <div class="checks" id="optchecks"></div>
+  </div>
+  <div class="facts" id="facts" aria-live="polite"></div>
+  <div class="gantt" id="gantt" role="group" aria-label="Phase schedule"></div>
+  <div class="legend">
+   <span><span class="sw" style="background:#5B4BC4"></span>Data contracts</span>
+   <span><span class="sw" style="background:#0E7C86"></span>Engine and federation</span>
+   <span><span class="sw" style="background:#B43C78"></span>Interface</span>
+   <span><span class="sw" style="background:#9A6412"></span>Workflow</span>
+   <span><span class="sw" style="background:#5F6B7E"></span>Hardening</span>
+   <span><span class="sw" style="border-color:var(--ink)"></span>Critical path</span>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+   <button class="quiet" id="resetplan" type="button">Reset plan</button>
+  </div>
+  <div id="drill" aria-live="polite"></div>
+ </div>
+ <details>
+  <summary>How the planner computes dates</summary>
+  <div>
+   <p>Each phase has a base effort in engineer-weeks and a maximum number of people who can usefully work on it at once. When several phases become ready at the same moment, free engineers are split between them, and each extra person on a phase adds 10% coordination overhead. AI-assisted coding reduces effort by 20%. The buffer is applied to every phase, not tacked on at the end, so slips show up where they would really happen.</p>
+   <p>Bars outlined in dark ink are on the critical path: moving any of them moves the pilot date. The <b>MVP</b> marker is the end of the attestation workflow, which is the first point where an ISO can close a manual control end to end. The <b>Pilot</b> marker is the end of hardening. Your settings are saved in this browser.</p>
+  </div>
+ </details>
+</section>
+
+<section id="proto" aria-labelledby="proto-h">
+ <h2 id="proto-h">Working prototype</h2>
+ <p class="sub">This is the target interaction running on synthetic fixtures. Move the look-ahead to project posture forward, select row names to drill from federation to organization to boundary to system, and select any cell or control to see what drives it, down to the OSCAL evidence chain. On a failing manual control, simulate an attestation to see what it would change at every tier.</p>
+ <div class="panel">
+  <div class="pv-top">
+   <div><label class="lbl" for="viewas">View as</label>
+    <select id="viewas"><option value="fed">Federation steward</option><option value="ao" selected>Authorizing official (Enterprise IT)</option><option value="so">System owner (Portal)</option><option value="iso">Security officer (Portal API)</option></select></div>
+   <div><label class="lbl" for="axis">Column axis</label>
+    <select id="axis"><option value="800-53">800-53 families</option><option value="ksi">FedRAMP 20x KSI themes (illustrative)</option></select></div>
+   <div style="flex:2 1 260px"><label class="lbl" for="look">Look ahead <span class="val" id="lookv" style="color:var(--ink);font-weight:600"></span></label>
+    <input type="range" id="look" min="0" max="90" step="1" value="23"></div>
+   <div style="flex:0 0 auto"><button type="button" id="snap">Snap to decision date</button></div>
+  </div>
+  <div id="crumb"></div>
+  <div id="tierlbl"></div>
+  <p id="ptitle"></p>
+  <div id="hud" aria-live="polite"></div>
+  <div id="sim" aria-live="polite"></div>
+  <div id="pgrid"></div>
+  <div class="legend">
+   <span><span class="sw" style="background:var(--green-bg)"></span>Nominal</span>
+   <span><span class="sw" style="background:var(--amber-fill)"></span>Watch</span>
+   <span><span class="sw" style="background:var(--coral)"></span>Degraded</span>
+   <span><span class="sw" style="background:var(--red-fill)"></span>Blocks ATO (marked !)</span>
+   <span><span class="sw" style="border-color:var(--ink)"></span>Worsens before the horizon</span>
+  </div>
+  <div id="pdet" aria-live="polite"></div>
+ </div>
+</section>
+
+<section id="scope" aria-labelledby="scope-h">
+ <h2 id="scope-h">Prototype scope</h2>
+ <p>The prototype proves one claim: a person at the lowest level can see what will block an authorization before it does, and close it, while the AO watches the effect roll up. SPARC stays authoritative for translation, control mapping, and federation trust. Horizon sits on SPARC's Delivery layer and owns the human side: attestations, decisions, projections, and the HUD.</p>
+ <div class="cols2">
+  <div>
+   <h3>In scope</h3>
+   <ul>
+    <li>A four-tier hierarchy (federation, organization, boundary, system) built from OSCAL party and SSP metadata</li>
+    <li>Projected posture at any look-ahead date, with nominal families collapsed</li>
+    <li>The M&amp;O attestation lifecycle with signed, hashed evidence in back-matter</li>
+    <li>AO risk acceptance with conditions that reopen on breach</li>
+    <li>Round-trip to the pipeline through <code>saf attest</code> files</li>
+    <li>Axis swap between 800-53 and KSI themes through SPARC mapping documents</li>
+   </ul>
+  </div>
+  <div>
+   <h3>Out of scope for the prototype</h3>
+   <ul>
+    <li>Authoring catalogs, profiles, or mappings (that stays in SPARC)</li>
+    <li>Scanner conversions (the reusable GitLab include and HDF CLI handle them)</li>
+    <li>Replacing the GRC tool; Horizon exports OSCAL that any GRC can render</li>
+    <li>Multi-region HA and production-scale Postgres tuning</li>
+    <li>Briefing mode slides (planned after the pilot)</li>
+   </ul>
+  </div>
+ </div>
+</section>
+
+<section id="arch" aria-labelledby="arch-h">
+ <h2 id="arch-h">Architecture</h2>
+ <p class="sub">One Go binary with an embedded TypeScript UI, shipped as a distroless container. Results and mappings flow up; attestations and decisions flow down.</p>
+ <div class="arch" role="img" aria-label="Layered architecture: pipelines feed SPARC, SPARC feeds Horizon, Horizon serves role lenses.">
+  <div class="lane"><b>Role lenses</b><div class="boxes">
+   <div class="box b-lens">AO lens<small>Portfolio, decisions, conditions</small></div>
+   <div class="box b-lens">SO lens<small>Boundary fix list, POA&amp;M</small></div>
+   <div class="box b-lens">ISO lens<small>Attest, review evidence</small></div></div></div>
+  <div class="flow">HTTPS, OIDC session, node-scoped roles</div>
+  <div class="lane"><b>Horizon (Go)</b><div class="boxes">
+   <div class="box b-hz">Tree builder<small>Parties, SSPs, components</small></div>
+   <div class="box b-hz">Ledger<small>Append-only, hash-chained</small></div>
+   <div class="box b-hz">Projection engine<small>State at any date, rollups</small></div>
+   <div class="box b-hz">Attest and decide<small>Evidence, signing, POA&amp;M</small></div></div></div>
+  <div class="flow">mTLS: pull SSP, AR, POA&amp;M, mappings; push attestations and decisions</div>
+  <div class="lane"><b>SPARC</b><div class="boxes">
+   <div class="box b-sparc">Authoritative<small>Catalogs, baselines, profiles</small></div>
+   <div class="box b-sparc">Validation<small>sparc-validate, namespace rules</small></div>
+   <div class="box b-sparc">Delivery<small>Crosswalks, federation trust</small></div></div></div>
+  <div class="flow">HDF v3 through the HDF CLI; AWS Config and InSpec results</div>
+  <div class="lane"><b>Pipelines</b><div class="boxes">
+   <div class="box b-pipe">Reusable GitLab include<small>SAST, SCA, IaC, container</small></div>
+   <div class="box b-pipe">Runtime scans<small>AWS Config, InSpec profiles</small></div></div></div>
+ </div>
+ <h3>Repository layout</h3>
+<pre><code>horizon/
+  cmd/horizon/          serve | ingest | rebuild | verify
+  internal/sparc/       mTLS client, ETag cache, doc fetch
+  internal/oscal/       go-oscal adapters, control-id normalization
+  internal/tree/        federation, org, boundary, system builder
+  internal/authz/       responsible-parties to node-scoped roles, OIDC
+  internal/ledger/      append-only, hash-chained events
+  internal/project/     StateAt, rollups, horizon buckets, ranking
+  internal/attest/      lifecycle, evidence, signing, saf attest emit
+  internal/decide/      risk acceptance, conditions, POA&amp;M emit
+  internal/federate/    peer bundles, reverse-inheritance index
+  internal/api/         chi router, OpenAPI v0 handlers
+  web/                  TypeScript + Vite SPA, embedded via go:embed
+  fixtures/             deterministic OSCAL federation
+  deploy/helm/  deploy/terraform/</code></pre>
+ <details><summary>Dependency choices</summary><div>
+  <table>
+   <tr><th>Need</th><th>Choice</th><th>Why</th></tr>
+   <tr><td>OSCAL types</td><td><code>defenseunicorns/go-oscal</code></td><td>Maintained Go structs. Confirm 1.2.x coverage in phase 0; fall back to types generated from the NIST JSON schemas.</td></tr>
+   <tr><td>HDF types</td><td>Generated from the HDF v3 JSON schema</td><td>Only needed to read raw HDF from back-matter for provenance views.</td></tr>
+   <tr><td>Storage</td><td><code>modernc.org/sqlite</code>, Postgres optional</td><td>Pure Go, so <code>CGO_ENABLED=0</code> and a static binary.</td></tr>
+   <tr><td>HTTP</td><td><code>go-chi/chi</code></td><td>Standard <code>net/http</code> handlers, small surface.</td></tr>
+   <tr><td>Identity</td><td><code>coreos/go-oidc</code></td><td>Works with agency IdPs; groups map to node roles.</td></tr>
+   <tr><td>UUIDs</td><td><code>google/uuid</code> (<code>NewSHA1</code>)</td><td>UUIDv5 over natural keys for idempotent reruns.</td></tr>
+   <tr><td>UI</td><td>TypeScript, Vite, CSS grid heatmap</td><td>No chart library needed for the HUD; add ECharts later for trends only.</td></tr>
+  </table>
+ </div></details>
+</section>
+
+<section id="data" aria-labelledby="data-h">
+ <h2 id="data-h">Data model</h2>
+ <p class="sub">Each tier has exactly one OSCAL home. Anything OSCAL doesn't model goes in a single namespace. UUIDs are derived from natural keys, and evidence always lives in back-matter with a hash.</p>
+ <div class="tbl"><table>
+  <tr><th>Tier</th><th>OSCAL home</th><th>Join key</th><th>Roles from</th></tr>
+  <tr><td>Federation</td><td><code>party</code> (organization) plus SPARC's signed federation manifest</td><td>Federation party UUID</td><td>Manifest signers</td></tr>
+  <tr><td>Organization</td><td><code>party</code> with <code>member-of-organizations</code>; common controls in a common-control-provider SSP</td><td>Org party UUID, reused in every boundary SSP</td><td>AO in <code>responsible-parties</code></td></tr>
+  <tr><td>Boundary</td><td>One SSP per authorization boundary, with AR and POA&amp;M chained to it</td><td><code>system-id</code> plus SSP UUID</td><td>SO, ISO in <code>responsible-parties</code></td></tr>
+  <tr><td>System</td><td>SSP <code>components</code> and <code>inventory-items</code></td><td>Inventory <code>asset-id</code> matched to the HDF target</td><td>Component <code>responsible-roles</code></td></tr>
+ </table></div>
+ <h3>Namespace contract</h3>
+ <p>Published as a JSON Schema in the SPARC repo and enforced by <code>sparc-validate</code>. Changes are additive only within <code>v1</code>.</p>
+ <div class="tbl"><table>
+  <tr><th>Prop</th><th>On</th><th>Example</th><th>Drives</th></tr>
+  <tr><td><code>node-type</code></td><td>Party, SSP metadata</td><td><code>boundary</code></td><td>Tree builder</td></tr>
+  <tr><td><code>parent-uuid</code></td><td>SSP metadata</td><td>Org party UUID</td><td>Tree builder, rollups</td></tr>
+  <tr><td><code>next-decision-date</code></td><td>SSP metadata</td><td><code>2026-10-11</code></td><td>Snap-to-decision, AO horizon</td></tr>
+  <tr><td><code>fips-199</code></td><td>SSP metadata</td><td><code>high</code></td><td>Rollup weight</td></tr>
+  <tr><td><code>blocks-ato</code></td><td>Risk</td><td><code>true</code></td><td>Red cells, ranking</td></tr>
+  <tr><td><code>evidence-kind</code></td><td>Back-matter resource</td><td><code>manual-attestation</code></td><td>Chain view, decay rules</td></tr>
+  <tr><td><code>signed-by</code></td><td>Back-matter resource</td><td>ISO party UUID</td><td>Signature verification</td></tr>
+  <tr><td><code>condition-expires</code>, <code>trigger</code></td><td>Risk</td><td><code>2026-11-01</code>, <code>score&lt;0.85</code></td><td>AO decision reopen</td></tr>
+ </table></div>
+ <details><summary>Boundary SSP metadata example</summary><div>
+<pre><code>"metadata": {
+  "props": [
+    {"name": "node-type", "ns": "https://risk-sentinel.org/ns/sparc", "value": "boundary"},
+    {"name": "parent-uuid", "ns": "https://risk-sentinel.org/ns/sparc", "value": "&lt;org-party-uuid&gt;"},
+    {"name": "next-decision-date", "ns": "https://risk-sentinel.org/ns/sparc", "value": "2026-10-11"},
+    {"name": "fips-199", "ns": "https://risk-sentinel.org/ns/sparc", "value": "moderate"}
+  ],
+  "responsible-parties": [
+    {"role-id": "authorizing-official", "party-uuids": ["&lt;ao-uuid&gt;"]},
+    {"role-id": "system-owner", "party-uuids": ["&lt;so-uuid&gt;"]},
+    {"role-id": "information-system-security-officer", "party-uuids": ["&lt;iso-uuid&gt;"]}
+  ]
+}</code></pre>
+ </div></details>
+ <details><summary>Evidence chain example (CP-4)</summary><div>
+  <p>Back-matter resource, then observation, then finding, then risk, then POA&amp;M item. The observation's native <code>expires</code> field drives decay and countdowns.</p>
+<pre><code>// back-matter resource
+{"uuid": "&lt;uuid5&gt;", "title": "CP-4 tabletop report FY26",
+ "props": [{"name": "evidence-kind", "ns": "…/sparc", "value": "manual-attestation"},
+           {"name": "signed-by", "ns": "…/sparc", "value": "&lt;iso-uuid&gt;"}],
+ "rlinks": [
+   {"href": "s3://evidence/portal/cp-4/2026-09.pdf", "media-type": "application/pdf",
+    "hashes": [{"algorithm": "SHA-256", "value": "…"}]},
+   {"href": "s3://evidence/portal/cp-4/2026-09.pdf.sig", "media-type": "application/pkcs7-signature"}]}
+
+// observation in the boundary's assessment results
+{"uuid": "&lt;uuid5&gt;", "methods": ["EXAMINE"], "types": ["control-objective"],
+ "collected": "2026-09-12T00:00:00Z", "expires": "2027-09-12T00:00:00Z",
+ "relevant-evidence": [{"href": "#&lt;resource-uuid&gt;"}]}</code></pre>
+ </div></details>
+ <details><summary>Deterministic UUIDs</summary><div>
+<pre><code>var NS = uuid.MustParse("&lt;federation namespace uuid&gt;") // registered once
+
+func Key(parts ...string) uuid.UUID {
+    return uuid.NewSHA1(NS, []byte(strings.Join(parts, "|")))
+}
+
+// Key(boundarySystemID, "cp-4", componentUUID, "attestation", "2026-Q3")</code></pre>
+  <p>Object UUIDs are stable across reruns and instances, so federated peers deduplicate without coordinating. Only document-level UUIDs change per revision, as the OSCAL spec intends.</p>
+ </div></details>
+ <details><summary>Inheritance and hybrid controls</summary><div>
+  <p>A provider's <code>export</code> declares <code>provided</code> statements and <code>responsibilities</code>. Consumers answer with <code>inherited</code> and <code>satisfied</code>. A hybrid control carries two responsibility UUIDs and is green only when both halves have unexpired observations. <code>leveraged-authorizations</code> points to a back-matter resource whose link is the provider's federated SPARC endpoint plus a hash; that link feeds the reverse-inheritance index behind blast radius.</p>
+ </div></details>
+</section>
+
+<section id="api" aria-labelledby="api-h">
+ <h2 id="api-h">API v0</h2>
+ <p class="sub">Frozen as OpenAPI at the end of phase 0 so interface work can start on mocks.</p>
+ <div class="tbl"><table>
+  <tr><th>Method and path</th><th>Purpose</th></tr>
+  <tr><td><code>GET /v1/tree</code></td><td>Nodes visible to the caller, with role bindings</td></tr>
+  <tr><td><code>GET /v1/nodes/{id}/heat?horizon=23d&amp;axis=800-53</code></td><td>Rows, ordered columns, collapsed families, cell states</td></tr>
+  <tr><td><code>GET /v1/nodes/{id}/cell?col=CP&amp;horizon=23d</code></td><td>Controls down in a cell, ranked, with reasons</td></tr>
+  <tr><td><code>GET /v1/controls/{uuid}/chain</code></td><td>Evidence, observation, finding, risk, POA&amp;M</td></tr>
+  <tr><td><code>GET /v1/nodes/{id}/next-action</code></td><td>Top-ranked action for this lens</td></tr>
+  <tr><td><code>POST /v1/attestations</code>, <code>POST /v1/attestations/{id}/sign</code></td><td>Submit and sign an M&amp;O attestation</td></tr>
+  <tr><td><code>POST /v1/decisions</code></td><td>AO risk acceptance with conditions</td></tr>
+  <tr><td><code>POST /v1/whatif</code></td><td>Create a copy-on-write overlay; returns an overlay ID for heat calls</td></tr>
+  <tr><td><code>GET /v1/nodes/{id}/blast-radius</code></td><td>Leveraging boundaries affected by a provider cell</td></tr>
+  <tr><td><code>GET /v1/export/oscal/{boundary}</code></td><td>AR and POA&amp;M for any GRC to render</td></tr>
+ </table></div>
+ <details><summary>Heat response shape</summary><div>
+<pre><code>{"node": "enterprise-it", "horizon": "2026-10-11", "axis": "800-53",
+ "columns": ["CP", "RA", "SI", "AC", "CM"], "collapsed": ["AU", "IA", "IR", "PS", "SC"],
+ "rows": [
+   {"id": "portal", "name": "Portal", "cells": [
+     {"col": "CP", "state": "blocks", "blockers": 2, "worsening": true, "inherited": false},
+     {"col": "RA", "state": "watch", "blockers": 0, "worsening": true, "inherited": false}]}]}</code></pre>
+ </div></details>
+</section>
+
+<section id="engine" aria-labelledby="engine-h">
+ <h2 id="engine-h">Projection engine</h2>
+ <p>Everything in a cell comes from OSCAL fields, so any cell can be recomputed from the exported documents. That's the audit test.</p>
+<pre><code>func StateAt(c Control, t time.Time) State {
+    down := c.Failing ||
+        (c.Expires != nil &amp;&amp; !c.Expires.After(t)) ||
+        (c.MilestoneOpen &amp;&amp; c.Milestone != nil &amp;&amp; !c.Milestone.After(t))
+    return State{Down: down, Blocks: down &amp;&amp; c.BlocksATO, Inherited: c.Inherited}
+}
+
+func Roll(kids []Agg) (a Agg) {
+    for _, k := range kids {
+        a.Total += k.Total * k.Weight    // FIPS 199 weight
+        a.Pass += k.Pass * k.Weight
+        a.Blockers += k.Blockers        // any blocker stays visible upward
+        a.Worsening = a.Worsening || k.Worsening
+    }
+    return a
+}</code></pre>
+ <div class="cols2">
+  <div><h3>Cell rules</h3><ul>
+   <li>Fill: projected pass ratio at the horizon</li>
+   <li>Blocks ATO: any open risk with <code>blocks-ato</code></li>
+   <li>Outline: an expiry or milestone falls inside the window</li>
+   <li>Columns sort by blockers, then pass ratio; nominal columns collapse</li>
+  </ul></div>
+  <div><h3>Next-best-action rank</h3><ul>
+   <li>Score = ATO impact × urgency × crosswalk reach ÷ effort</li>
+   <li>Urgency = 1 ÷ days until breach, capped</li>
+   <li>Reach = framework requirements cleared, from SPARC mappings</li>
+   <li>Weights are configuration, and every ranking is logged</li>
+  </ul></div>
+ </div>
+ <p>Projections are materialized per node for horizon buckets (today, +7, +14, +30, and every decision date) and invalidated along the node's ancestry whenever a ledger event lands. Arbitrary slider values are computed on demand from the nearest bucket.</p>
+</section>
+
+<section id="attest" aria-labelledby="attest-h">
+ <h2 id="attest-h">M&amp;O attestation workflow</h2>
+ <ol class="steps">
+  <li><b>Scheduled.</b> A recurrence is created from the control's frequency and the ISO bound to the component.</li>
+  <li><b>Due.</b> The item enters the ISO's HUD as its countdown crosses the lens horizon.</li>
+  <li><b>Submitted.</b> Evidence is uploaded, hashed with SHA-256, and registered as a back-matter resource.</li>
+  <li><b>Reviewed.</b> A second party (SO or assessor) accepts or returns it with a reason.</li>
+  <li><b>Signed.</b> A detached signature is made over JCS-canonical JSON with the SPARC PKI certificate.</li>
+  <li><b>Emitted.</b> An AR observation with <code>expires</code> goes to SPARC, and a <code>saf attest</code> file goes to the pipeline so the next HDF run applies it.</li>
+  <li><b>Expired.</b> Confidence decays toward the expiry date; at expiry the control is down and the cycle restarts.</li>
+ </ol>
+ <p>AO decisions follow the same path. Accepting a risk sets it to <code>deviation-approved</code> with a <code>risk-log</code> entry by the AO party and the <code>condition-expires</code> and <code>trigger</code> props. A breached trigger reopens the risk and puts it back on the AO's HUD.</p>
+</section>
+
+<section id="sec" aria-labelledby="sec-h">
+ <h2 id="sec-h">Security</h2>
+ <ul>
+  <li><b>Identity:</b> OIDC with the agency IdP. Party UUIDs map to subjects, so roles come from <code>responsible-parties</code> in the documents, not from an admin screen.</li>
+  <li><b>Authorization:</b> Roles bind to a node and inherit downward. Every API handler checks the node, not the endpoint.</li>
+  <li><b>Integrity:</b> The ledger is hash-chained; evidence is hashed and signed; exports carry the chain head for verification.</li>
+  <li><b>Federation:</b> mTLS to SPARC peers using the existing trust fabric; bundles are verified before ingestion.</li>
+  <li><b>What-if isolation:</b> Overlays are copy-on-write, never persisted, and cannot emit OSCAL or <code>saf attest</code> files.</li>
+  <li><b>Dogfooding:</b> Horizon runs through the same reusable pipeline and gets its own HDF and OSCAL package.</li>
+ </ul>
+</section>
+
+<section id="deploy" aria-labelledby="deploy-h">
+ <h2 id="deploy-h">Build and deploy</h2>
+<pre><code>FROM node:22 AS web
+WORKDIR /web
+COPY web/ .
+RUN npm ci &amp;&amp; npm run build
+
+FROM golang:1.25 AS build
+WORKDIR /src
+COPY . .
+COPY --from=web /web/dist ./web/dist
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /horizon ./cmd/horizon
+
+FROM gcr.io/distroless/static-debian12:nonroot
+COPY --from=build /horizon /horizon
+ENTRYPOINT ["/horizon", "serve"]</code></pre>
+ <details><summary>Configuration</summary><div>
+  <table>
+   <tr><th>Variable</th><th>Default</th><th>Purpose</th></tr>
+   <tr><td><code>HORIZON_SPARC_URL</code></td><td>none</td><td>SPARC Delivery API</td></tr>
+   <tr><td><code>HORIZON_SPARC_CA</code></td><td>none</td><td>CA bundle for mTLS</td></tr>
+   <tr><td><code>HORIZON_OIDC_ISSUER</code></td><td>none</td><td>Agency IdP issuer URL</td></tr>
+   <tr><td><code>HORIZON_DB_DSN</code></td><td><code>sqlite:///data/horizon.db</code></td><td>Ledger and projections</td></tr>
+   <tr><td><code>HORIZON_EVIDENCE_URI</code></td><td>none</td><td>Object store for evidence</td></tr>
+   <tr><td><code>HORIZON_SIGNING_CERT</code></td><td>none</td><td>PKI cert and key reference</td></tr>
+   <tr><td><code>HORIZON_BUCKETS</code></td><td><code>0,7,14,30</code></td><td>Projection horizons in days</td></tr>
+   <tr><td><code>HORIZON_NAMESPACE</code></td><td>SPARC namespace URL</td><td>Namespace contract version</td></tr>
+  </table>
+ </div></details>
+ <details><summary>Terraform module call</summary><div>
+<pre><code>module "horizon" {
+  source          = "./deploy/terraform/horizon"
+  image           = "registry.example.gov/horizon:0.1.0"
+  sparc_url       = var.sparc_url
+  oidc_issuer     = var.oidc_issuer
+  evidence_bucket = aws_s3_bucket.evidence.id
+}</code></pre>
+ </div></details>
+</section>
+
+<section id="accept" aria-labelledby="accept-h">
+ <h2 id="accept-h">Acceptance criteria</h2>
+ <ul>
+  <li>Fixtures for one federation, four organizations, seven boundaries, and about twenty systems pass <code>sparc-validate</code>, and UUIDs are identical across two regenerations.</li>
+  <li>Every heatmap cell at every tier recomputes identically from exported OSCAL alone.</li>
+  <li>The heat endpoint answers in under 300 ms at p95 with 10,000 controls.</li>
+  <li>An ISO finds the top ATO blocker for their boundary in under 30 seconds in a moderated session.</li>
+  <li>An attestation made in the UI reaches SPARC, is applied to the next HDF run through <code>saf attest</code>, and turns the cell green at every tier.</li>
+  <li>An AO condition breach reopens the decision within one projection cycle.</li>
+  <li>WCAG 2.2 AA: keyboard reachable, blockers carry a glyph as well as color, and both themes pass contrast checks.</li>
+ </ul>
+ <h3>Pilot demo script</h3>
+ <ol class="steps">
+  <li>The AO opens Enterprise IT and snaps to the Portal decision date; two boundaries carry blockers.</li>
+  <li>They drill to Portal, then the contingency planning cell, then the API system, and read the CP-4 evidence chain.</li>
+  <li>The ISO simulates the CP-4 attestation to show the effect, then performs it for real with evidence.</li>
+  <li>The AO watches Portal clear at the organization tier and accepts the residual RA-5 risk with a 14-day condition.</li>
+  <li>Moving the look-ahead past that condition reopens it on the AO's HUD.</li>
+ </ol>
+</section>
+
+<section id="risks" aria-labelledby="risks-h">
+ <h2 id="risks-h">Risks and open decisions</h2>
+ <div class="tbl"><table>
+  <tr><th>Risk</th><th>Mitigation</th></tr>
+  <tr><td>Party UUIDs drift between documents and break the tree</td><td>A validate rule plus a tree builder that reports orphans instead of silently dropping them</td></tr>
+  <tr><td>go-oscal lags OSCAL 1.2.x</td><td>Decide in phase 0; generated types are the fallback</td></tr>
+  <tr><td>Crosswalk quality skews the KSI axis and ranking reach</td><td>Show the mapping source on every swapped cell; flag low-confidence mappings</td></tr>
+  <tr><td>The HUD ranks the wrong thing first and loses trust</td><td>Configurable weights, logged rankings, and a user session every two weeks</td></tr>
+  <tr><td>PKI is not available in the prototype environment</td><td>A dev CA behind the same signing interface</td></tr>
+  <tr><td>The peer federation API isn't ready</td><td>Exchange signed bundles as files first</td></tr>
+ </table></div>
+ <h3>Decisions to make in phase 0</h3>
+ <ul>
+  <li>Signature format: CMS detached, a Sigstore bundle, or JWS over canonical JSON</li>
+  <li>Who owns the ranking weights: each AO, or the organization</li>
+  <li>When the ledger moves from SQLite to Postgres</li>
+  <li>Whether decision dates live only in SSP metadata or also come from the GRC calendar</li>
+ </ul>
+</section>
+</main>
+<footer class="wrap">SPARC Horizon is a working name. Prototype data on this page is synthetic, and the KSI theme mapping is illustrative; real mappings come from SPARC.</footer>
+<script>
+(function(){
+"use strict";
+/* ---------- Timeline planner ---------- */
+const TRACK={data:'#5B4BC4',engine:'#0E7C86',ui:'#B43C78',flow:'#9A6412',hard:'#5F6B7E'};
+const PH=[
+{id:'P0',name:'Contracts and fixtures',track:'data',effort:3,par:2,deps:[],
+ goal:'Lock the data contracts that every later phase joins on, so interface and engine work can run in parallel.',
+ tasks:['Publish the SPARC namespace JSON Schema (node-type, parent-uuid, next-decision-date, fips-199, blocks-ato, evidence-kind, signed-by, condition-expires, trigger)','Define the UUIDv5 key grammar per object type, with reference functions in Go, Ruby, and Python','Add sparc-validate rules that reject SSP, AR, and POA&M documents missing required props','Generate a deterministic fixture federation: 4 organizations, 7 boundaries, about 20 systems, OSCAL 1.2.x','Freeze API v0 as OpenAPI and stand up a mock server from it','Decide go-oscal versus generated types after a 1.2.x coverage spike'],
+ deliver:['Namespace schema v1','openapi.yaml and mock server','fixtures/ repository','New sparc-validate rules'],
+ exit:['Fixtures pass sparc-validate','UUIDs identical across two regenerations','OpenAPI reviewed by both the engine and interface owners'],
+ risks:['Namespace churn after interface work starts: version it and allow additive changes only']},
+{id:'P1',name:'SPARC client and tree builder',track:'data',effort:4,par:2,deps:['P0'],
+ goal:'Turn SPARC documents into the federation, organization, boundary, and system tree, with roles attached.',
+ tasks:['Go SPARC client over mTLS with ETag caching for SSP, AR, POA&M, and mapping documents','Parse OSCAL and normalize control IDs (ac-2.1 and AC-2(1)) using SPARC mappings','Join party UUIDs and member-of-organizations into the tree; components and inventory-items become systems','Map responsible-parties to node-scoped roles and OIDC subjects','Report orphaned or inconsistent parties instead of dropping them'],
+ deliver:['internal/sparc','internal/oscal','internal/tree','internal/authz'],
+ exit:['Fixture tree matches the golden JSON','Role tests pass for AO at organization and SO and ISO at boundary'],
+ risks:['Party UUID drift between documents: caught by validate rules and orphan reports']},
+{id:'P3',name:'HUD heatmap interface',track:'ui',effort:6,par:2,deps:['P0'],
+ goal:'Build the tiered HUD against the mock API so it is ready when the engine lands.',
+ tasks:['TypeScript and Vite SPA embedded in the binary with go:embed','Tiered heatmap with breadcrumb, row drill, and cell drill panel','Look-ahead slider that snaps to decision dates; nominal column collapse','Projection banner and next-best-action card per lens','Control detail with the OSCAL evidence chain','Accessibility: cells as buttons, blocker glyphs, keyboard paths, reduced motion, both themes'],
+ deliver:['web/ application','Component and accessibility test suites'],
+ exit:['Moderated session with 3 ISOs and 1 AO: top blocker found in under 30 seconds','axe checks clean for WCAG 2.2 AA'],
+ risks:['Ranking puts the wrong item first: weights are configurable and every ranking is logged']},
+{id:'P2',name:'Ledger, rollup, and projection engine',track:'engine',effort:4,par:2,deps:['P1'],
+ goal:'Compute the state of any control, cell, or node at any future date, cheaply and reproducibly.',
+ tasks:['Append-only, hash-chained ledger on pure-Go SQLite, with a Postgres option','StateAt from finding status, observation expires, POA&M milestones, and risk status','Rollups: blockers propagate as any, scores weighted by FIPS 199, inheritance through inherited and satisfied statements','Materialized projections per node and horizon bucket, invalidated along node ancestry','Heat endpoint with column ordering, collapse, and axis swap through mapping documents'],
+ deliver:['internal/ledger','internal/project','Heat and cell endpoints'],
+ exit:['Golden table tests pass','p95 under 300 ms at 10,000 controls','Recompute-from-OSCAL audit test passes'],
+ risks:['Stale projection cache: ancestry invalidation plus a full rebuild command']},
+{id:'P4',name:'M&O attestation workflow',track:'flow',effort:4,par:2,deps:['P2'],
+ goal:'Let an ISO close a manual control end to end, with evidence that holds up in an audit.',
+ tasks:['Lifecycle: scheduled, due, submitted, reviewed, signed, expired','Evidence upload to the object store, SHA-256 hashing, back-matter resource creation','Detached signatures over JCS-canonical JSON with the SPARC PKI certificate','Emit AR observations with expires, plus saf attest files for pipeline re-apply','Hybrid splits: a cell turns green only when both responsibility halves are current'],
+ deliver:['internal/attest','ISO lens workflows'],
+ exit:['Round trip: attest in the UI, reach SPARC, re-apply through HDF, and see the cell turn green at every tier'],
+ risks:['PKI not reachable in the prototype environment: a dev CA behind the same interface']},
+{id:'P7',name:'What-if mode',track:'ui',effort:2,par:1,deps:['P2','P3'],opt:true,def:true,
+ goal:'Show the payoff of an action at every tier before anyone takes it.',
+ tasks:['Copy-on-write ledger overlay keyed by an overlay ID','Simulate attestations and remediations','Tier-by-tier deltas in the HUD banner','Guarantee overlays never persist or emit OSCAL'],
+ deliver:['POST /v1/whatif','Simulation banner and reset'],
+ exit:['Simulated actions show deltas at every tier and clear on reset','A test proves no ledger writes happen from an overlay'],
+ risks:['Users mistake a simulation for a real change: persistent banner, distinct color']},
+{id:'P6',name:'Federation sync and blast radius',track:'engine',effort:4,par:2,deps:['P2'],opt:true,def:false,
+ goal:'Make a provider lapse visible to every leveraging boundary across the federation.',
+ tasks:['Pull signed attestation bundles from peer SPARC instances over mTLS','Verify signatures and provenance before ingestion','Resolve leveraged-authorizations into a reverse-inheritance index','Blast-radius query and highlighting in the heatmap'],
+ deliver:['internal/federate','GET /v1/nodes/{id}/blast-radius'],
+ exit:['A lapse at a peer instance lights up leveraging boundaries within one sync interval'],
+ risks:['Peer API contract not ready: exchange signed bundles as files first']},
+{id:'P5',name:'AO decisions and POA&M',track:'flow',effort:3,par:1,deps:['P4'],opt:true,def:true,
+ goal:'Give the AO a decision surface whose conditions enforce themselves.',
+ tasks:['Risk acceptance with conditions, expiry, and triggers','deviation-approved status with risk-log entries by the AO party','POA&M emission back through SPARC','Reopen on trigger breach and surface it on the AO lens'],
+ deliver:['internal/decide','AO lens landing view'],
+ exit:['A fixture condition breach reopens the decision within one projection cycle'],
+ risks:['AOs want different condition types: start with date and score thresholds only']},
+{id:'P8',name:'Hardening, packaging, and pilot',track:'hard',effort:3,par:3,deps:[],
+ goal:'Ship a container that passes your own pipeline and run the pilot demo on a real boundary.',
+ tasks:['Distroless, non-root, static image with an SBOM and signature','Helm chart and Terraform module','Run Horizon through the reusable SAF pipeline and produce its own OSCAL package','Audit export of the ledger chain head','Pilot demo with one real boundary and its AO'],
+ deliver:['Signed image','deploy/helm and deploy/terraform','Pilot demo recording'],
+ exit:['Image passes the reusable pipeline gates','AO completes the demo script unassisted'],
+ risks:['Real boundary data exposes missing namespace props: run sparc-validate on it in week one']}
+];
+const byId=Object.fromEntries(PH.map(p=>[p.id,p]));
+const DEF={eng:2,start:'2026-10-05',buf:20,ai:true,opt:Object.fromEntries(PH.filter(p=>p.opt).map(p=>[p.id,p.def])),adj:{},sel:'P2'};
+let S;
+try{S=Object.assign(JSON.parse(JSON.stringify(DEF)),JSON.parse(localStorage.getItem('horizon-plan-v1')||'{}'))}catch(e){S=JSON.parse(JSON.stringify(DEF))}
+function save(){try{localStorage.setItem('horizon-plan-v1',JSON.stringify(S))}catch(e){}}
+const $=id=>document.getElementById(id);
+const eng=$('eng'),start=$('start'),buf=$('buf'),ai=$('ai');
+function fmt(d,y){return d.toLocaleDateString('en-US',y===false?{month:'short',day:'numeric'}:{month:'short',day:'numeric',year:'numeric'})}
+function addW(w){const d=new Date(S.start+'T12:00:00');if(isNaN(d))return new Date();d.setDate(d.getDate()+Math.round(w*7));return d}
+function plan(){
+ const N=S.eng,f=S.ai?0.8:1,b=1+S.buf/100;
+ const inc=PH.filter(p=>!p.opt||S.opt[p.id]);const ids=new Set(inc.map(p=>p.id));
+ const depsOf=p=>p.id==='P8'?inc.filter(q=>q.id!=='P8').map(q=>q.id):p.deps.filter(d=>ids.has(d));
+ const free=new Array(N).fill(0),out={};let rem=inc.slice();
+ while(rem.length){
+  const ready=rem.filter(p=>depsOf(p).every(d=>out[d]));
+  const minFree=Math.min.apply(null,free);
+  const cand=ready.map(p=>({p,t:Math.max(minFree,0,...depsOf(p).map(d=>out[d].end))}));
+  cand.sort((x,y)=>x.t-y.t||PH.indexOf(x.p)-PH.indexOf(y.p));
+  const p=cand[0].p,t=cand[0].t;
+  const same=cand.filter(c=>Math.abs(c.t-t)<1e-6).length;
+  const avail=free.map((v,i)=>({v,i})).filter(o=>o.v<=t+1e-6);
+  const k=Math.max(1,Math.min(p.par,avail.length,Math.floor(avail.length/same)||1));
+  const eff=Math.max(1,p.effort+(S.adj[p.id]||0))*f*b;
+  const dur=eff/k*(1+0.1*(k-1)),end=t+dur;
+  avail.slice(0,k).forEach(o=>free[o.i]=end);
+  out[p.id]={start:t,end,dur,k,eff,deps:depsOf(p)};
+  rem=rem.filter(q=>q!==p);
+ }
+ let last=inc.reduce((a,p)=>!a||out[p.id].end>out[a.id].end?p:a,null);const crit=new Set();let cur=last;
+ while(cur){crit.add(cur.id);const s=out[cur.id].start;if(s<1e-6)break;
+  let pr=out[cur.id].deps.filter(d=>out[d].end>=s-1e-6).sort((a,b)=>out[b].end-out[a].end)[0];
+  if(!pr)pr=inc.filter(q=>q.id!==cur.id&&Math.abs(out[q.id].end-s)<1e-6).map(q=>q.id)[0];
+  cur=pr?byId[pr]:null;if(cur&&crit.has(cur.id))break}
+ return{inc,out,crit,total:out[last.id].end};
+}
+function renderPlan(){
+ $('engv').textContent=S.eng;$('bufv').textContent=S.buf+'%';
+ const P=plan(),T=P.total;const mvp=P.out.P4.end;
+ const ew=P.inc.reduce((a,p)=>a+P.out[p.id].eff,0);
+ $('headline').innerHTML=(S.eng===1?'One engineer':['','','Two','Three','Four'][S.eng]+' engineers')+(S.ai?' with AI-assisted coding':'')+', starting '+fmt(addW(0))+', reach a demo-ready MVP on <b>'+fmt(addW(mvp))+'</b> and a pilot-ready prototype on <b>'+fmt(addW(T))+'</b>.';
+ $('facts').innerHTML='<span>Calendar <b>'+T.toFixed(1)+' weeks</b></span><span>Effort <b>'+ew.toFixed(1)+' engineer-weeks</b></span><span>Phases <b>'+P.inc.length+'</b></span><span>Critical path <b>'+PH.filter(p=>P.crit.has(p.id)).map(p=>p.id).join(', ')+'</b></span>';
+ const step=T>30?4:T>14?2:1;let ticks='',lines='';
+ for(let w=0;w<=T+1e-6;w+=step){const x=w/T*100;ticks+='<span style="left:'+x+'%">'+fmt(addW(w),false)+'</span>';lines+='<div class="gline" style="left:'+x+'%"></div>'}
+ const miles='<div class="mile" style="left:'+(mvp/T*100)+'%"><span>MVP</span></div><div class="mile" style="left:100%"><span style="left:auto;right:4px">Pilot</span></div>';
+ let h='<div class="ticks"><span></span><div class="tickrow">'+ticks+'</div></div>';
+ PH.filter(p=>P.out[p.id]).forEach((p,i)=>{const o=P.out[p.id];const l=o.start/T*100,w=Math.max(1.5,(o.end-o.start)/T*100);
+  h+='<div class="grow"><div class="nm">'+p.id+' '+p.name+'<small>'+o.k+(o.k>1?' people':' person')+', '+o.eff.toFixed(1)+' eng-wks</small></div><div class="track">'+lines+(i===0?miles:'')+
+  '<button type="button" class="bar'+(P.crit.has(p.id)?' crit':'')+(S.sel===p.id?' sel':'')+'" data-id="'+p.id+'" style="left:'+l+'%;width:'+w+'%;background:'+TRACK[p.track]+'" aria-label="'+p.id+' '+p.name+', '+fmt(addW(o.start))+' to '+fmt(addW(o.end))+'">'+p.id+'</button></div></div>'});
+ $('gantt').innerHTML=h;
+ $('gantt').querySelectorAll('.bar').forEach(b=>b.addEventListener('click',()=>{S.sel=b.dataset.id;save();renderPlan()}));
+ renderDrill(P);
+}
+function li(a){return'<ul>'+a.map(x=>'<li>'+x.replace(/&(?!amp;)/g,'&amp;')+'</li>').join('')+'</ul>'}
+function renderDrill(P){
+ const p=byId[S.sel];if(!p){$('drill').innerHTML='';return}
+ const o=P.out[p.id];const adj=S.adj[p.id]||0;
+ let h='<div class="drill" style="border-left-color:'+TRACK[p.track]+'"><h3>'+p.id+' '+p.name.replace('&','&amp;')+'</h3>';
+ if(o)h+='<p style="margin:0 0 6px;color:var(--ink-2)">'+fmt(addW(o.start))+' to '+fmt(addW(o.end))+', '+o.k+(o.k>1?' people':' person')+(P.crit.has(p.id)?', on the critical path':'')+'</p>';
+ else h+='<p style="margin:0 0 6px;color:var(--ink-2)">Not in the current scope.</p>';
+ h+='<p>'+p.goal.replace('&','&amp;')+'</p>';
+ h+='<div class="effort"><span>Base effort <b>'+Math.max(1,p.effort+adj).toFixed(1)+' eng-wks</b>'+(adj?' (planned '+p.effort+')':'')+'</span><button type="button" id="effm" aria-label="Decrease effort by half a week">−0.5</button><button type="button" id="effp" aria-label="Increase effort by half a week">+0.5</button>'+(adj?'<button type="button" class="quiet" id="effr">Reset</button>':'')+(p.opt?'<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="effin"'+(S.opt[p.id]?' checked':'')+'> Include in scope</label>':'')+'</div>';
+ const dn=(o?o.deps:p.deps).map(d=>d+' '+byId[d].name);
+ h+='<div class="cols2"><div><b>Tasks</b>'+li(p.tasks)+'</div><div><b>Deliverables</b>'+li(p.deliver)+'<b>Exit criteria</b>'+li(p.exit)+'</div></div>';
+ h+='<div class="cols2"><div><b>Depends on</b>'+(dn.length?li(dn):'<p>Nothing; starts first.</p>')+'</div><div><b>Risks</b>'+li(p.risks)+'</div></div></div>';
+ $('drill').innerHTML=h;
+ $('effm').onclick=()=>{S.adj[p.id]=Math.max(1-p.effort,adj-0.5);save();renderPlan()};
+ $('effp').onclick=()=>{S.adj[p.id]=adj+0.5;save();renderPlan()};
+ if($('effr'))$('effr').onclick=()=>{delete S.adj[p.id];save();renderPlan()};
+ if($('effin'))$('effin').onchange=e=>{S.opt[p.id]=e.target.checked;save();syncControls();renderPlan()};
+}
+function syncControls(){
+ eng.value=S.eng;start.value=S.start;buf.value=S.buf;ai.checked=S.ai;
+ $('optchecks').innerHTML=PH.filter(p=>p.opt).map(p=>'<label><input type="checkbox" data-opt="'+p.id+'"'+(S.opt[p.id]?' checked':'')+'> '+p.id+' '+p.name.replace('&','&amp;')+'</label>').join('');
+ $('optchecks').querySelectorAll('input').forEach(c=>c.onchange=()=>{S.opt[c.dataset.opt]=c.checked;save();renderPlan()});
+}
+eng.oninput=()=>{S.eng=+eng.value;save();renderPlan()};
+buf.oninput=()=>{S.buf=+buf.value;save();renderPlan()};
+start.onchange=()=>{if(start.value){S.start=start.value;save();renderPlan()}};
+ai.onchange=()=>{S.ai=ai.checked;save();renderPlan()};
+$('resetplan').onclick=()=>{S=JSON.parse(JSON.stringify(DEF));save();syncControls();renderPlan()};
+syncControls();renderPlan();
+
+/* ---------- Prototype HUD ---------- */
+function R(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const rnd=R(11);
+const F=['AC','AU','CM','CP','IA','IR','PS','RA','SC','SI'];
+const FN={AC:'Access control',AU:'Audit and accountability',CM:'Configuration management',CP:'Contingency planning',IA:'Identification and authentication',IR:'Incident response',PS:'Personnel security',RA:'Risk assessment',SC:'System and communications protection',SI:'System and information integrity'};
+const NUM={AC:[2,3,6,17],AU:[2,6,12],CM:[2,6,7,8],CP:[2,4,9,10],IA:[2,5,8],IR:[4,6,8],PS:[3,4,7],RA:[3,5],SC:[7,8,13,28],SI:[2,3,4]};
+const MAN={CP:.75,IR:.6,PS:.85,RA:.3,AC:.25};
+const HB=['AC','CP','IA','RA','SI','SC'];
+const KSI={AC:'IAM',IA:'IAM',AU:'MLA',RA:'MLA',SI:'SVC',SC:'CNA',CM:'CMT',CP:'RPL',IR:'INR',PS:'PIY'};
+const KN={IAM:'Identity and access management',MLA:'Monitoring, logging, and auditing',SVC:'Service configuration',CNA:'Cloud native architecture',CMT:'Change management',RPL:'Recovery planning',INR:'Incident reporting',PIY:'Policy and inventory'};
+const KCOLS=['IAM','MLA','SVC','CNA','CMT','RPL','INR','PIY'];
+const SYSN=['Web tier','API','Database','CI/CD','Batch'];
+function hex(n){let s='';for(let i=0;i<8;i++)s+=Math.floor(rnd()*16).toString(16);return s}
+function mkSys(name,q){const f={};F.forEach(k=>{f[k]=NUM[k].map(n=>{const m=rnd()<(MAN[k]||.1);let d=null,f0=false;
+ if(m){d=Math.round(rnd()*150*q-6)}else if(rnd()<.15/q){d=Math.round(rnd()*45)}
+ if(!m&&rnd()<.04/q)f0=true;if(d!==null&&d<=0)f0=true;
+ return{id:k+'-'+n,fam:k,m,d,f0,b:HB.includes(k)&&rnd()<.22,inh:(k==='SC'||k==='CP')&&rnd()<.25,sha:hex(),sim:false}})});return{name,sys:true,f}}
+function mkB(name,k,q,dec,fips,so,iso){const s=[];for(let i=0;i<k;i++)s.push(mkSys(SYSN[i],q));return{name,dec,fips,so,iso,children:s}}
+const ROOT={name:'Agency federation',children:[
+ {name:'Enterprise IT',ao:'R. Okafor',children:[mkB('Portal',4,1,23,'Moderate','D. Lindqvist','M. Chen'),mkB('Data lake',3,1,41,'High','S. Patel','J. Ruiz'),mkB('Identity',3,1.4,12,'High','A. Novak','T. Brooks')]},
+ {name:'Mission apps',ao:'L. Haddad',children:[mkB('Case mgmt',3,.8,58,'Moderate','K. Wu','E. Grant'),mkB('Analytics',2,1,33,'Low','P. Mensah','H. Ito')]},
+ {name:'Gov cloud CSP',tag:'leveraged',ao:'Provider AO',children:[mkB('IaaS platform',3,1.8,90,'High','Provider SO','Provider ISO')]},
+ {name:'Shared SOC',tag:'partner',ao:'B. Castillo',children:[mkB('SOC platform',2,1.2,27,'Moderate','N. Adeyemi','G. Schultz')]}]};
+(function link(n,p){n.parent=p;if(n.children)n.children.forEach(c=>link(c,n));if(n.sys)F.forEach(k=>n.f[k].forEach(c=>c.node=n))})(ROOT,null);
+function decOf(n){if(n.sys)return n.parent.dec;if(n.dec!=null)return n.dec;return Math.min.apply(null,n.children.map(decOf))}
+const TODAY=new Date();TODAY.setHours(12,0,0,0);
+function dAt(days){const d=new Date(TODAY);d.setDate(d.getDate()+days);return d}
+const look=$('look'),axisSel=$('axis'),pdet=$('pdet');
+let path=[ROOT,ROOT.children[0]];
+const TL=['Federation','Organization','Boundary','System'];
+function down(c,v,base){if(!base&&c.sim)return false;return c.f0||(c.d!==null&&c.d<=v)}
+function cols(){return axisSel.value==='ksi'?KCOLS:F}
+function colOf(fam){return axisSel.value==='ksi'?KSI[fam]:fam}
+function colName(k){return axisSel.value==='ksi'?KN[k]:FN[k]}
+function ctrls(n,acc){if(n.sys){F.forEach(k=>n.f[k].forEach(c=>acc.push(c)));return acc}n.children.forEach(c=>ctrls(c,acc));return acc}
+function ag(n,v,base){const o={};cols().forEach(k=>o[k]={t:0,p:0,p0:0,bl:0,bl0:0});
+ ctrls(n,[]).forEach(c=>{const a=o[colOf(c.fam)],x=down(c,v,base),x0=down(c,0,base);a.t++;if(!x)a.p++;if(!x0)a.p0++;if(x&&c.b)a.bl++;if(x0&&c.b)a.bl0++});return o}
+function blk(a){return Object.values(a).some(x=>x.bl>0)}
+function cls(a){if(a.bl>0)return'blk';const s=a.p/a.t;if(s>=.95)return'nom';if(s>=.85)return'watch';return'deg'}
+function setHud(kind,html){const m={r:['--red-bg','--red'],a:['--amber-bg','--amber'],g:['--green-bg','--green']}[kind];const h=$('hud');h.style.background='var('+m[0]+')';h.style.color='var('+m[1]+')';h.innerHTML=html}
+function why(c,v){if(c.sim)return'simulated attestation (not saved)';if(c.f0)return c.d!==null&&c.d<=0?(c.m?'attestation expired ':'automated check stale ')+(-c.d)+' days ago':'failing now';if(c.d!==null&&c.d<=v)return(c.m?'attestation expires in ':'scan goes stale in ')+c.d+' days';return c.d!==null?(c.m?'attestation current, expires in ':'scan current, stale in ')+c.d+' days':'passing, no expiry in view'}
+function sysPath(c){const a=[];let n=c.node;while(n){a.unshift(n);n=n.parent}return a}
+function simCount(){return ctrls(ROOT,[]).filter(c=>c.sim).length}
+function render(){
+ const v=+look.value;$('lookv').textContent='+'+v+' days ('+fmt(dAt(v))+')';
+ const n=path[path.length-1],dep=path.length-1;
+ const cr=$('crumb');cr.innerHTML='';path.slice(0,-1).forEach((p,j)=>{const b=document.createElement('button');b.type='button';b.textContent=p.name;b.onclick=()=>{path=path.slice(0,j+1);pdet.innerHTML='';render()};cr.appendChild(b);cr.appendChild(document.createTextNode(' › '))});
+ $('tierlbl').textContent=TL[dep]+' view'+(n.tag?', '+n.tag:'')+(dep===2?', FIPS 199 '+n.fips+', decision in '+n.dec+' days':'');
+ $('ptitle').textContent=n.name;
+ const sc=simCount(),sim=$('sim');
+ if(sc){sim.style.display='block';sim.innerHTML='What-if: '+sc+' simulated attestation'+(sc>1?'s':'')+'. Nothing is saved or emitted. <button type="button" id="clrsim" class="quiet" style="margin-left:8px">Clear simulation</button>';$('clrsim').onclick=()=>{ctrls(ROOT,[]).forEach(c=>c.sim=false);pdet.innerHTML='';render()}}else{sim.style.display='none'}
+ const g=$('pgrid');
+ if(n.sys){
+  const all=ctrls(n,[]);const dn=all.filter(c=>down(c,v)),bl=dn.filter(c=>c.b),due=all.filter(c=>c.m&&!c.f0&&c.d!==null&&c.d<=v&&!c.sim);
+  const blBase=all.filter(c=>down(c,v,true)&&c.b).length;
+  setHud(bl.length?'r':dn.length?'a':'g',dn.length+' controls down by +'+v+' days, '+bl.length+' blocking ATO'+(sc&&blBase!==bl.length?' (without simulation: '+blBase+')':'')+'. '+due.length+' manual attestation'+(due.length===1?'':'s')+' come due in this window.');
+  const a=ag(n,v);const order=cols().filter(k=>a[k].t>0).sort((x,y)=>a[y].bl-a[x].bl||a[x].p/a[x].t-a[y].p/a[y].t);
+  g.innerHTML=order.map(k=>'<div class="frow"><b title="">'+k+'</b><div>'+all.filter(c=>colOf(c.fam)===k).map(c=>{const x=down(c,v);let cl=c.sim?'simd':x&&c.b?'bad':x?'warn':'ok';const w=x&&!c.f0;let t=c.sim?'sim':c.f0?(c.d!==null&&c.d<=0?c.d+'d':'fail'):(c.d!==null&&c.d<=Math.max(v,45)?c.d+'d':'');
+   return'<button type="button" class="chip '+cl+(w?' worse':'')+'" data-id="'+c.id+'" aria-label="'+c.id+', '+why(c,v)+(x&&c.b?', blocks ATO':'')+'">'+c.id+(c.m?' ✎':'')+(c.inh?' ⇡':'')+(t?' '+t:'')+(x&&c.b?' !':'')+'</button>'}).join('')+'</div></div>').join('')+
+   '<p style="font-size:13px;color:var(--ink-3);margin-top:8px">✎ manual control, ⇡ inherited, ! blocks ATO. Select a control to see its evidence chain.</p>';
+  g.querySelectorAll('.chip').forEach(b=>b.onclick=()=>showCtrl(all.find(c=>c.id===b.dataset.id)));
+  return;
+ }
+ const rows=n.children.map(c=>({c,a:ag(c,v),a0:ag(c,0),ab:ag(c,v,true)}));
+ const tot=ag(n,v);const nb=rows.filter(r=>blk(r.a)).length,nb0=rows.filter(r=>blk(r.a0)).length,nbb=rows.filter(r=>blk(r.ab)).length;
+ const kids=['organizations','boundaries','systems'][dep];
+ let hot=null;rows.forEach((r,i)=>cols().forEach(k=>{const a=r.a[k];if(!a.t)return;const s=a.p/a.t;if(!hot||a.bl>hot.bl||(a.bl===hot.bl&&s<hot.s))hot={i,k,bl:a.bl,s,n:r.c.name}}));
+ setHud(nb?'r':hot&&hot.s<.95?'a':'g',nb+' of '+rows.length+' '+kids+' carry ATO blockers at +'+v+' days (today: '+nb0+(sc&&nbb!==nb?', without simulation: '+nbb:'')+'). '+(hot?'<button type="button" id="hotb">Hottest: '+hot.n+', '+hot.k+(hot.bl?', '+hot.bl+' blocker'+(hot.bl>1?'s':''):'')+'</button>':''));
+ if(hot)$('hotb').onclick=()=>showCell(hot.i,hot.k);
+ const fr=cols().map(k=>({k,bl:tot[k].bl,s:tot[k].t?tot[k].p/tot[k].t:1,hot:rows.some(r=>r.a[k].t&&(r.a[k].bl>0||r.a[k].p/r.a[k].t<.95))})).sort((x,y)=>y.bl-x.bl||x.s-y.s);
+ const show=fr.filter(x=>x.hot).map(x=>x.k),hid=fr.filter(x=>!x.hot).map(x=>x.k);
+ const tpl='minmax(90px,150px) repeat('+Math.max(show.length,1)+',minmax(0,1fr))'+(hid.length?' 44px':'');
+ let h='<div class="hm" style="grid-template-columns:'+tpl+'"><span></span>'+(show.length?show.map(k=>'<span class="hd">'+k+'</span>').join(''):'<span class="hd">All nominal</span>')+(hid.length?'<span class="hd">+'+hid.length+'</span>':'');
+ rows.forEach((r,i)=>{h+='<button type="button" class="rl" data-row="'+i+'">'+r.c.name+(r.c.tag?' ('+r.c.tag+')':'')+'</button>'+
+  (show.length?show.map(k=>{const a=r.a[k];if(!a.t)return'<span></span>';const c=cls(a);const w=a.p<a.p0||a.bl>a.bl0;return'<button type="button" class="cell '+c+(w?' worse':'')+'" data-row="'+i+'" data-col="'+k+'" aria-label="'+r.c.name+', '+colName(k)+', '+Math.round(a.p/a.t*100)+' percent passing'+(a.bl?', '+a.bl+' blocking ATO':'')+(w?', worsening':'')+'">'+(a.bl?'!':'')+'</button>'}).join(''):'<span class="cell nom" style="display:block"></span>')+
+  (hid.length?'<span class="cell nom" style="display:block" aria-hidden="true"></span>':'')});
+ h+='</div>';if(hid.length)h+='<p style="font-size:13px;color:var(--ink-3);margin:6px 0 0">Collapsed as nominal: '+hid.join(', ')+'. Select a name to drill in, or a cell to see what drives it.</p>';
+ g.innerHTML=h;
+ g.querySelectorAll('.rl').forEach(b=>b.onclick=()=>{path.push(n.children[+b.dataset.row]);pdet.innerHTML='';render()});
+ g.querySelectorAll('.cell[data-col]').forEach(b=>b.onclick=()=>showCell(+b.dataset.row,b.dataset.col));
+}
+function showCell(i,k){
+ const v=+look.value,n=path[path.length-1],r=n.children[i];const all=ctrls(r,[]).filter(c=>colOf(c.fam)===k);
+ const fl=all.filter(c=>down(c,v)).sort((a,b)=>(b.b-a.b)||((a.d==null?-99:a.d)-(b.d==null?-99:b.d)));
+ let h='<div class="drill"><h3>'+r.name+': '+colName(k)+'</h3><p style="margin:0 0 8px;color:var(--ink-2)">'+fl.length+' of '+all.length+' controls down by +'+v+' days.</p>';
+ h+=fl.length?'<ul>'+fl.slice(0,6).map((c,j)=>'<li><button type="button" class="quiet" data-j="'+j+'" style="padding:2px 8px;margin-right:6px">'+c.id+'</button>'+sysPath(c).slice(path.length).map(x=>x.name).join(' › ')+': '+why(c,v)+(c.b?', <b style="color:var(--red)">blocks ATO</b>':'')+'</li>').join('')+'</ul>':'<p>Nothing down in this window.</p>';
+ h+='<button type="button" id="drillrow">Drill into '+r.name+'</button></div>';
+ pdet.innerHTML=h;
+ pdet.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{const c=fl[+b.dataset.j];path=sysPath(c);render();showCtrl(c)});
+ $('drillrow').onclick=()=>{path.push(r);pdet.innerHTML='';render()};
+ pdet.scrollIntoView({block:'nearest'});
+}
+function showCtrl(c){
+ const v=+look.value,x=down(c,v),bnd=c.node.parent,org=bnd.parent;
+ const exp=c.d!==null?fmt(dAt(c.d)):'none';
+ let h='<div class="drill" style="border-left-color:'+(x&&c.b?'var(--red-fill)':x?'var(--amber-fill)':'var(--green)')+'"><h3>'+c.id+' on '+c.node.name+'</h3>';
+ h+='<p style="margin:0 0 6px;color:var(--ink-2)">'+(c.m?'Manual (M&amp;O) control':'Automated control')+(c.inh?', inherited from a provider':'')+'. At +'+v+' days: '+(x?'<b>down</b>, '+why(c,v):'<b>up</b>, '+why(c,v))+(x&&c.b?'. This blocks the ATO.':'.')+'</p>';
+ h+='<dl class="chain">';
+ h+='<dt>Back-matter resource</dt><dd>'+(c.m?c.id+' evidence, signed by '+bnd.iso:'HDF v3 results from the reusable pipeline')+'<br><code>sha256:'+c.sha+'…</code></dd>';
+ h+='<dt>Observation</dt><dd>Method '+(c.m?'EXAMINE':'TEST')+', expires '+exp+'</dd>';
+ h+='<dt>Finding</dt><dd>Target status at horizon: <b>'+(x?'not-satisfied':'satisfied')+'</b></dd>';
+ h+='<dt>Risk</dt><dd>'+(x?'open'+(c.b?', blocks-ato true':', blocks-ato false'):'none open')+'</dd>';
+ h+='<dt>Responsible</dt><dd>ISO '+bnd.iso+', SO '+bnd.so+', AO '+org.ao+'</dd>';
+ h+='<dt>Frameworks</dt><dd>800-53 '+c.id+', KSI theme '+KSI[c.fam]+' (via SPARC mapping)</dd></dl>';
+ if(c.m&&x&&!c.sim)h+='<button type="button" id="dosim">Simulate attestation</button> <span style="font-size:13px;color:var(--ink-3)">See the effect at every tier before attesting for real.</span>';
+ if(c.sim)h+='<button type="button" id="undosim">Undo simulation</button>';
+ h+='</div>';pdet.innerHTML=h;
+ if($('dosim'))$('dosim').onclick=()=>{c.sim=true;render();showCtrl(c)};
+ if($('undosim'))$('undosim').onclick=()=>{c.sim=false;render();showCtrl(c)};
+ pdet.scrollIntoView({block:'nearest'});
+}
+const VIEWS={fed:()=>[ROOT],ao:()=>[ROOT,ROOT.children[0]],so:()=>[ROOT,ROOT.children[0],ROOT.children[0].children[0]],iso:()=>[ROOT,ROOT.children[0],ROOT.children[0].children[0],ROOT.children[0].children[0].children[1]]};
+$('viewas').onchange=e=>{path=VIEWS[e.target.value]();pdet.innerHTML='';look.value=Math.min(90,decOf(path[path.length-1]));render()};
+axisSel.onchange=()=>{pdet.innerHTML='';render()};
+look.oninput=()=>{pdet.innerHTML='';render()};
+$('snap').onclick=()=>{look.value=Math.min(90,decOf(path[path.length-1]));pdet.innerHTML='';render()};
+look.value=decOf(path[path.length-1]);render();
+})();
+</script>
+</body>
+</html>

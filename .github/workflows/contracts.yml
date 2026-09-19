@@ -1,0 +1,190 @@
+name: Contracts and consistency
+
+# The checks that are meaningful on a repository with no application code yet:
+# the two machine-readable contracts, the workflow files themselves, and the
+# duplication this repository carries that nothing else would notice.
+#
+# Every job here answers the pipeline-hardening question — if the thing it checks
+# were absent, would it still report success? — by asserting a COUNT, not just an
+# exit status.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  openapi:
+    name: OpenAPI lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Lint api/openapi.yaml
+        run: |
+          set -euo pipefail
+          # Pinned exactly: an unpinned install inside a gating check is an
+          # unreviewed dependency deciding whether the gate passes.
+          npx --yes @redocly/cli@2.53.3 lint api/openapi.yaml
+
+      - name: Assert the spec actually describes paths
+        run: |
+          set -euo pipefail
+          # A spec that parses but declares nothing lints clean. Count the paths.
+          N=$(npx --yes js-yaml@4.1.0 api/openapi.yaml | jq '.paths | length')
+          echo "Paths declared: $N"
+          if [ "${N:-0}" -lt 1 ]; then
+            echo "::error::api/openapi.yaml declares zero paths. A spec with no paths lints clean and asserts nothing."
+            exit 1
+          fi
+
+  namespace-schema:
+    name: Namespace schema
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Compile the schema
+        run: |
+          set -euo pipefail
+          npx --yes -p ajv-cli@5.0.0 -p ajv@8.20.0 \
+            ajv compile -s schemas/sparc-namespace-props.v1.schema.json --spec=draft2020
+
+      - name: Validate the prop examples from the design docs
+        run: |
+          set -euo pipefail
+          # docs/03-data-model.md documents each prop with an example value. Those
+          # examples are the contract as a human reads it; this asserts they agree
+          # with the contract as a machine reads it.
+          mkdir -p /tmp/props
+          cat > /tmp/props/valid.json <<'JSON'
+          [
+            {"name":"node-type","ns":"https://risk-sentinel.org/ns/sparc","value":"boundary"},
+            {"name":"parent-uuid","ns":"https://risk-sentinel.org/ns/sparc","value":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},
+            {"name":"next-decision-date","ns":"https://risk-sentinel.org/ns/sparc","value":"2026-10-11"},
+            {"name":"fips-199","ns":"https://risk-sentinel.org/ns/sparc","value":"high"},
+            {"name":"blocks-ato","ns":"https://risk-sentinel.org/ns/sparc","value":"true"},
+            {"name":"evidence-kind","ns":"https://risk-sentinel.org/ns/sparc","value":"manual-attestation"},
+            {"name":"signed-by","ns":"https://risk-sentinel.org/ns/sparc","value":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},
+            {"name":"condition-expires","ns":"https://risk-sentinel.org/ns/sparc","value":"2026-11-01"},
+            {"name":"trigger","ns":"https://risk-sentinel.org/ns/sparc","value":"score<0.85"}
+          ]
+          JSON
+          # Must REJECT these — a schema that accepts everything validates nothing.
+          cat > /tmp/props/invalid.json <<'JSON'
+          [
+            {"name":"node-type","ns":"https://risk-sentinel.org/ns/sparc","value":"agency"},
+            {"name":"fips-199","ns":"https://risk-sentinel.org/ns/sparc","value":"critical"},
+            {"name":"blocks-ato","ns":"https://risk-sentinel.org/ns/sparc","value":"yes"},
+            {"name":"next-decision-date","ns":"https://risk-sentinel.org/ns/sparc","value":"11-10-2026"},
+            {"name":"parent-uuid","ns":"https://risk-sentinel.org/ns/sparc","value":"not-a-uuid"},
+            {"name":"trigger","ns":"https://risk-sentinel.org/ns/sparc","value":"score is low"},
+            {"name":"unknown-prop","ns":"https://risk-sentinel.org/ns/sparc","value":"x"},
+            {"name":"node-type","ns":"https://example.com/ns/other","value":"boundary"}
+          ]
+          JSON
+
+          S=schemas/sparc-namespace-props.v1.schema.json
+          PASS=0; FAIL=0
+          for i in $(seq 0 8); do
+            jq ".[$i]" /tmp/props/valid.json > /tmp/one.json
+            if npx --yes -p ajv-cli@5.0.0 -p ajv@8.20.0 ajv validate -s "$S" -d /tmp/one.json --spec=draft2020 >/dev/null 2>&1; then
+              PASS=$((PASS+1))
+            else
+              echo "::error::Documented example $i was REJECTED by the schema: $(cat /tmp/one.json)"
+              FAIL=$((FAIL+1))
+            fi
+          done
+          for i in $(seq 0 7); do
+            jq ".[$i]" /tmp/props/invalid.json > /tmp/one.json
+            if npx --yes -p ajv-cli@5.0.0 -p ajv@8.20.0 ajv validate -s "$S" -d /tmp/one.json --spec=draft2020 >/dev/null 2>&1; then
+              echo "::error::Invalid prop $i was ACCEPTED by the schema: $(cat /tmp/one.json)"
+              FAIL=$((FAIL+1))
+            else
+              PASS=$((PASS+1))
+            fi
+          done
+          echo "Schema assertions: $PASS passed, $FAIL failed (expected 17 passed, 0 failed)"
+          [ "$PASS" -eq 17 ] && [ "$FAIL" -eq 0 ]
+
+  actionlint:
+    name: Workflow lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install actionlint
+        run: |
+          set -euo pipefail
+          # Installed via the Go module proxy at a pinned version, so the download
+          # is checksum-verified against sum.golang.org rather than trusting a
+          # release tarball. A workflow schema error otherwise yields a 0-second
+          # run with no jobs and no logs, which is why this is a gate.
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Lint every workflow
+        run: |
+          set -euo pipefail
+          # find, not ls: shellcheck SC2012, and it is the correct tool here
+          # regardless — this count is the assertion that the job linted something.
+          N=$(find .github/workflows -maxdepth 1 -type f -name '*.yml' | wc -l | tr -d ' ')
+          echo "Workflows found: $N"
+          if [ "$N" -lt 1 ]; then
+            echo "::error::No workflow files found — this job would otherwise pass by linting nothing."
+            exit 1
+          fi
+          actionlint -color
+
+  duplication:
+    name: Duplicated copies agree
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: docs/hud.html matches demo/hud.html
+        run: |
+          set -euo pipefail
+          # Two copies of the same file, no generator. Scheduled for removal in
+          # Implementation_plan.md S0-14; until then they must not drift.
+          if ! diff -q docs/hud.html demo/hud.html; then
+            echo "::error::docs/hud.html and demo/hud.html have diverged. They are byte-identical copies (see docs/dev/Developer_Collision_Avoidance_Plan.md 2.2). Update both, or land S0-14 and delete one."
+            exit 1
+          fi
+          echo "PASS — the two hud.html copies are identical."
+
+      - name: full-plan.html carries the demo scripts
+        run: |
+          set -euo pipefail
+          # demo/full-plan.html contains verbatim copies of both demo scripts. A
+          # change to either demo that is not mirrored there is silently
+          # incomplete, and the file is 66 KB so review will not catch it.
+          fail=0
+          # Anchor on a handful of distinctive symbols from each source script.
+          for sym in "decOf" "simCount" "showCtrl" "renderDrill" "syncControls"; do
+            in_src=0
+            grep -q "$sym" demo/hud.html && in_src=1
+            grep -q "$sym" demo/planner.html && in_src=1
+            if [ "$in_src" -eq 1 ] && ! grep -q "$sym" demo/full-plan.html; then
+              echo "::error::Symbol '$sym' exists in a demo script but not in demo/full-plan.html — the verbatim copy has drifted (see docs/dev/Developer_Collision_Avoidance_Plan.md 2.1)."
+              fail=1
+            fi
+          done
+          [ "$fail" -eq 0 ] && echo "PASS — full-plan.html carries the demo script symbols."
+          exit "$fail"
+
+      - name: Roadmap phase IDs appear in both planners
+        run: |
+          set -euo pipefail
+          fail=0
+          for ph in P0 P1 P2 P3 P4 P5 P6 P7 P8; do
+            for f in demo/planner.html demo/full-plan.html; do
+              grep -q "'${ph}'" "$f" || { echo "::error::Phase ${ph} from docs/roadmap.md is missing from ${f} (three copies of the phase data — see Developer_Collision_Avoidance_Plan.md 2.3)."; fail=1; }
+            done
+          done
+          [ "$fail" -eq 0 ] && echo "PASS — all nine phases present in both planner copies."
+          exit "$fail"

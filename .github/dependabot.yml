@@ -1,0 +1,63 @@
+# Dependabot config for sparc-horizon.
+#
+#   Source: risk-sentinel/container-build-sign/docs/templates/dependabot.yml
+#
+# Ecosystem selection for THIS repo, as it stands today:
+#   - github-actions — ACTIVE. The workflows pin third-party actions by SHA, and
+#                      Dependabot bumps SHA->SHA. It has nothing to say about a
+#                      BRANCH ref, which is the pin that is actually dangerous, so
+#                      Dependabot is not a substitute for reviewing pins.
+#   - gomod          — declared ahead of the manifest. No go.mod exists until
+#                      Phase S1/P1; Dependabot no-ops here until then rather than
+#                      needing a second PR at exactly the moment code lands.
+#   - npm            — same, for web/ (Phase P3).
+#
+# NOT a substitute for govulncheck. Dependabot raises alerts against DECLARED
+# dependencies; a transitive advisory with no go.mod line of its own gets no PR at
+# all. An empty or routine-looking dependency queue is not evidence of a clean
+# module graph. See docs/dev/issue_rules.md, "Dependency".
+#
+# CI note: Dependabot-triggered runs do not receive repo secrets, so any
+# secret-dependent job must be scoped off Dependabot PRs with
+# `if: github.actor != 'dependabot[bot]'` and covered by the push-to-main run.
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 10
+    groups:
+      actions-minor-and-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  - package-ecosystem: gomod
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 10
+    groups:
+      gomod-minor-and-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: "/web"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 10
+    groups:
+      npm-minor-and-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]

@@ -1,0 +1,22 @@
+# Every path needs an owner so a security-relevant change cannot merge unreviewed.
+# `dev-sec-ops-baseline`'s deploy-stage expectation is that CODEOWNERS covers the
+# security-relevant paths (SA-15(7)), not merely that the file exists.
+* @sm00thindian @clem-field
+
+# Contracts every later phase joins on. A change here is a product change.
+/api/                @sm00thindian @clem-field
+/schemas/            @sm00thindian @clem-field
+
+# Process and the design of record.
+/docs/dev/           @sm00thindian @clem-field
+/docs/0*.md          @sm00thindian @clem-field
+
+# Pipeline, gates, and suppression inventories.
+/.github/            @sm00thindian @clem-field
+/.security/          @sm00thindian @clem-field
+/.trufflehog-exclude-paths  @sm00thindian @clem-field
+/container-baseline.yml     @sm00thindian @clem-field
+
+# The fixture the secret-scanning gate proves itself with. If this stops being
+# detected, the gate above it means nothing.
+/tests/trufflehog-fixture/  @sm00thindian @clem-field

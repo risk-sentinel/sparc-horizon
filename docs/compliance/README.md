@@ -8,7 +8,7 @@ asks every system it projects: *show me the evidence*.
 | [`nist-sp800-53-rev5-mapping.md`](nist-sp800-53-rev5-mapping.md) | The control table — status, implementation, evidence, code location |
 | [`oscal/cdefs/`](oscal/cdefs/) | OSCAL component definitions, the machine-readable form of the same claims |
 | [`threat-model.md`](threat-model.md) | The threat model and security architecture review |
-| [`attestations/`](attestations/) | Dated, signed attestation records, each carrying a native `expires` |
+| [`attestations/`](attestations/) | Dated, signed attestation records, each carrying a native `expires`. One per revision; superseded records are kept unmodified — see [`attestations/README.md`](attestations/README.md) |
 
 ## The rule this directory exists to enforce
 

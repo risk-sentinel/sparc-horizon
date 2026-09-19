@@ -136,7 +136,7 @@ ordering rule.
   #10, resolved on this branch, for why the emit would otherwise have started failing
   again.
 
-**Phase S0 is complete.** The last two items closed on 2026-09-19: the compliance directory (#11) and the threat model attestation (#12). The threat model produced eight findings, none marked mitigated — which is the right result for a repository with no application code — and they are carried as named requirements on P1, P2, P4, P6, P7 and S1 rather than as a document nobody reads again. TM-4 goes to `docs/10-risks-decisions.md` as an open phase-0 decision; TM-6 is filed as `sparc#1159`.
+**Phase S0 is complete.** The last two items closed on 2026-09-19: the compliance directory (#11) and the threat model attestation (#12). The threat model produced eight findings, none marked mitigated — which is the right result for a repository with no application code — and they are carried as named requirements on P1, P2, P4, P6, P7 and S1 rather than as a document nobody reads again. TM-4 goes to `docs/10-risks-decisions.md` as an open phase-0 decision; TM-6 is filed as `sparc#1159`. The attestation was then **re-issued the same day** (#28): #27 fixed what a signature is computed over, which tripped the attestation's own early-staleness trigger for a change to the canonicalisation rule, and produced TM-9. That is the freshness mechanism working on the first occasion it fired, and the reason to prefer a dated attestation over a page that ages quietly.
 
 **S0-12 branch protection is active** as of 2026-09-19. Ruleset `main`, enforcement
 `active`, copied from `sparc-validate`'s shape with two deliberate departures:

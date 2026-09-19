@@ -22,6 +22,7 @@ code location is a defect in this table.
 |---|---|---|---|---|
 | IA-5(7) | No embedded unencrypted static authenticators | TruffleHog in verified-only mode gates every push and PR. A planted synthetic credential under `tests/trufflehog-fixture/` must still be detected, so a regressed scanner is distinguishable from a clean repository — without it the two produce identical artifacts | `risk-sentinel/<date>/sparc-horizon/trufflehog/trufflehog-hdf.json`, and the `fixture-detection` job | `.github/workflows/secret-scan.yml`, `tests/trufflehog-fixture/` |
 | SA-11 | Developer testing and evaluation | Scanning runs in the pipeline and its results are normalised to HDF and filed as evidence, rather than read off a green check | The emitted HDF, read back from the bucket | `.github/workflows/secret-scan-hdf-emit.yml` |
+| SA-11(2) | Threat modeling and vulnerability analyses | A threat model and security architecture review of the design of record, recorded as a dated attestation with a 180-day expiry and six early-staleness triggers. Nine findings, none marked mitigated — the correct result for a repository with no application code — each carried as a named requirement on the phase that builds the affected component | [`threat-model.md`](threat-model.md) and its current attestation record, which carries a native `expires` so the review is countable rather than merely filed | `docs/compliance/threat-model.md`, `docs/compliance/attestations/` |
 | SA-11(7) | Verify scope of testing and evaluation | Two canaries assert the assessors are still assessing. The secret-scanning fixture proves detection is live; `tests/actionlint-fixture/` plants an `SC2012` defect that workflow lint must report, because `actionlint` exits 0 when `shellcheck` is absent — it skips the integration rather than reporting it | Both canary jobs fail the build when the plant stops being found | `tests/trufflehog-fixture/`, `tests/actionlint-fixture/`, `.github/workflows/contracts.yml` |
 | CM-3 | Configuration change control | Every change goes through an issue, a branch, a plan approved before code, the verification gate, and a five-section PR. `pr-checklist.yml` fails on an unchecked box outside the test plan | The PR record; the failing check when the template is not satisfied | `docs/dev/issue_rules.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/workflows/pr-checklist.yml` |
 | CM-5 | Access restrictions for change | Branch protection ruleset on `main`, enforcement `active`: required reviews, required status checks with strict policy, and bypass limited to `pull_request` rather than `always`, so an administrator cannot push directly to the protected branch | Verified by attempting a direct push to `main` and reading the refusal — not by reading the ruleset back | Ruleset `main`; `.github/CODEOWNERS` |
@@ -107,9 +108,16 @@ an owner, which is what it is — not as a claim, and not as a missing capabilit
 
 | Layer | implemented | partial | planned | inherited |
 |---|---|---|---|---|
-| Repository and pipeline | 15 | 1 | 0 | — |
+| Repository and pipeline | 16 | 1 | 0 | — |
 | Application | 0 | 0 | 15 | — |
 | Platform | — | — | — | 9 |
 
 Counts are maintained by hand and checked at review. The application row moving off zero
 is the measure that matters.
+
+**A defect class worth naming.** SA-11(2) was missing from this table until #28, even though
+the attestation's `reviewed-controls` selected `sa-11.2` from the day it was written — the
+OSCAL record claimed a control the Markdown did not carry. Nothing reconciles control ids
+between this file and `oscal/cdefs/` or `attestations/`, so the two can disagree silently in
+either direction. Worth automating when OSCAL validation is wired into CI; `go-oscal` ships a
+`validate` command, and the reconciliation is a short script on top of it.

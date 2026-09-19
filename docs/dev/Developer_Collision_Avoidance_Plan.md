@@ -168,6 +168,7 @@ registered namespace URI.
 | A demo or doc change lands in one of two or three copies | **High** — it is the default outcome without a check | One copy is gone (#4). `Duplicated copies agree` guards the rest as a smoke test; the Test-plan question in 2.1 covers what it cannot see |
 | Two workflow PRs open at once, neither observed reporting alone | Medium | One workflow PR at a time |
 | A required check added before it reports, blocking every PR | Medium, and **unrecoverable without owner bypass** | S0/S1 split; read the reported name from the forge, never the workflow file |
+| A gate keeps passing after its tool stops assessing anything | **High, and invisible** — it is the failure the whole baseline is built against | Canaries, not presence checks: `tests/trufflehog-fixture/` for secret scanning, `tests/actionlint-fixture/` for actionlint's shellcheck path (#8). A planted defect the tool must catch, asserted every run |
 | `internal/api` route registration conflicts | Medium, once code lands | Stable alphabetical one-line-per-route block |
 | `Implementation_plan.md` / this file conflict | Certain | Keep both entries, newest first |
 | Namespace schema edited non-additively | Low, high cost | v1 is additive only; a breaking change is v2 and a `sparc` issue first |

@@ -127,6 +127,40 @@ jobs:
           go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
 
+      # ---- Prove the shellcheck integration is live (#8) --------------------
+      # actionlint exits 0 when the shellcheck binary is absent: it SKIPS the
+      # integration rather than reporting it. So a runner image that stopped
+      # shipping shellcheck would remove a whole class of coverage while this
+      # job stayed green. Measured on actionlint v1.7.12:
+      #   shellcheck 0.10.0 on PATH -> rc=1 on the canary, reports SC2012
+      #   shellcheck absent         -> rc=0 on the canary
+      - name: Assert shellcheck is present
+        run: |
+          set -euo pipefail
+          if ! command -v shellcheck >/dev/null 2>&1; then
+            echo "::error::shellcheck is not on PATH. actionlint silently skips its shellcheck integration without it, so this job would pass having checked no shell at all. The runner image used to ship it — add a pinned shellcheck install to this job rather than removing this assertion."
+            exit 1
+          fi
+          shellcheck --version | sed -n 's/^version: /shellcheck /p'
+
+      - name: Canary — actionlint must report the planted shell defect
+        run: |
+          set -euo pipefail
+          FIXTURE=tests/actionlint-fixture/shellcheck-canary.yml
+          test -f "$FIXTURE" || { echo "::error::Canary fixture $FIXTURE is missing. Without it, a silently-skipped shellcheck integration is undetectable."; exit 1; }
+          # Capture rc immediately: a trailing grep would report on grep, not actionlint.
+          out=$(actionlint "$FIXTURE" 2>&1) && rc=0 || rc=$?
+          echo "$out"
+          if [ "$rc" -eq 0 ]; then
+            echo "::error::actionlint did NOT flag the planted defect in $FIXTURE. Either shellcheck is no longer wired into actionlint, or the plant was 'fixed'. The workflow lint below cannot be trusted until this is resolved — see tests/actionlint-fixture/README.md and #8."
+            exit 1
+          fi
+          if ! printf '%s' "$out" | grep -q 'SC2012'; then
+            echo "::error::actionlint failed on $FIXTURE but not with SC2012. The canary is meant to pin the shellcheck path specifically; investigate before trusting the lint below."
+            exit 1
+          fi
+          echo "PASS — canary reported SC2012, so actionlint's shellcheck integration is live."
+
       - name: Lint every workflow
         run: |
           set -euo pipefail
@@ -138,6 +172,8 @@ jobs:
             echo "::error::No workflow files found — this job would otherwise pass by linting nothing."
             exit 1
           fi
+          # No arguments: actionlint lints .github/workflows/ only, so the canary
+          # fixture under tests/ is deliberately out of scope here.
           actionlint -color
 
   duplication:

@@ -324,15 +324,18 @@ carry real effort numbers.
 
 Filed, not done here. Update this table as issues are opened and closed.
 
+**All cross-repo dependencies are now filed.** Nothing in Horizon's roadmap is waiting on
+an unfiled ask.
+
 | # | Repository | Ask | Blocks | Issue | Status |
 |---|---|---|---|---|---|
-| X-1 | `dev-sec-ops-baseline` | Declare `sparc-horizon` in the org inventory and add its coverage declaration under `inputs/` | S0 exit | | Not filed |
-| X-2 | `container-build-sign` | ECR repo `sparc-horizon`; add Horizon as a consumer so pin-bump issues are filed against it; confirm the Go/UI image shape fits `build-sign-publish.yml` | S1-9 | | Not filed |
-| X-3 | `sparc-iac` | Emit role `SPARC_HORIZON_EMIT_ARN` scoped `risk-sentinel/*/sparc-horizon/*`; ECS Fargate service, task definition, ALB, secrets | S0-11, S2 | [#715](https://github.com/risk-sentinel/sparc-iac/issues/715) (boundary + role) | **Filed** 2026-09-19 |
-| X-4 | `sparc` | `sparc-validate` rules rejecting SSP/AR/POA&M documents missing the required namespace props; publish the KSI and 800-53 mapping documents Horizon's axis swap reads; confirm the Delivery API surface Horizon consumes | P0, P1 | | Not filed |
+| X-1 | `dev-sec-ops-baseline` | Declare `sparc-horizon` in the org inventory and add its coverage declaration under `inputs/`. **Currently an undeclared repository, so `devsecops-inventory-reconciliation` is failing on it today** | S0 exit | [#71](https://github.com/risk-sentinel/dev-sec-ops-baseline/issues/71) | **Filed** 2026-09-19 |
+| X-2 | `container-build-sign` | ECR repo `sparc-horizon`; add Horizon as a consumer so pin-bump issues are filed against it; confirm the Go/UI image shape fits `build-sign-publish.yml` — Horizon is the framework's **first application image** | S1-9 | [#326](https://github.com/risk-sentinel/container-build-sign/issues/326) | **Filed** 2026-09-19 |
+| X-3 | `sparc-iac` | Emit role `SPARC_HORIZON_EMIT_ARN` scoped `risk-sentinel/*/sparc-horizon/*`; ECS Fargate service, task definition, ALB, secrets | S0-11, S2 | [#715](https://github.com/risk-sentinel/sparc-iac/issues/715) (boundary + role) | **Filed** 2026-09-19 — `sparc-iac` has the expansion and the move to `risk-sentinel` **in flight** |
+| X-4 | `sparc` | `sparc-validate` rules rejecting SSP/AR/POA&M documents missing the required namespace props; publish the KSI and 800-53 mapping documents Horizon's axis swap reads; confirm the Delivery API surface Horizon consumes | P0, P1 | [#1154](https://github.com/risk-sentinel/sparc/issues/1154) | **Filed** 2026-09-19 |
 | X-7 | estate-wide | **Evidence boundary pivot to `risk-sentinel`**, filed in unison: [sparc-iac#715](https://github.com/risk-sentinel/sparc-iac/issues/715) (hub — IAM + bucket policy + org variable), [sparc#1153](https://github.com/risk-sentinel/sparc/issues/1153), [sparc-validate#400](https://github.com/risk-sentinel/sparc-validate/issues/400) (+ its 20-repo fleet), [container-build-sign#325](https://github.com/risk-sentinel/container-build-sign/issues/325), [sparc-horizon#1](https://github.com/risk-sentinel/sparc-horizon/issues/1) | S0-11 | see left | **Filed** 2026-09-19 |
-| X-5 | `sparc-validate` | Execute the ECS Fargate and secrets baselines against the deployed Horizon service and emit HDF | S2-6 | | Not filed |
-| X-6 | `sparc` | Replace the illustrative namespace URI `https://risk-sentinel.org/ns/sparc` with the registered one, and register the federation namespace UUID the UUIDv5 grammar derives from | P0 | | Not filed |
+| X-5 | `sparc-validate` | Execute the ECS Fargate and secrets baselines against the deployed Horizon service and emit HDF | S2-6 | [#401](https://github.com/risk-sentinel/sparc-validate/issues/401) | **Filed** 2026-09-19 |
+| X-6 | `sparc` | Replace the illustrative namespace URI `https://risk-sentinel.org/ns/sparc` with the registered one, and register the federation namespace UUID the UUIDv5 grammar derives from. **Settle before P0 generates fixtures** — every derived UUID changes otherwise, breaking the regeneration-stability criterion and federated dedup | P0 | [#1155](https://github.com/risk-sentinel/sparc/issues/1155) | **Filed** 2026-09-19 |
 
 ---
 

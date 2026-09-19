@@ -1,0 +1,120 @@
+openapi: 3.1.0
+info:
+  title: SPARC Horizon API
+  version: 0.1.0
+  description: API v0 skeleton. Every node-scoped call is authorized against the caller's role on that node.
+servers:
+  - url: http://localhost:8080
+security:
+  - oidc: []
+paths:
+  /v1/tree:
+    get:
+      summary: Nodes visible to the caller, with role bindings
+      responses:
+        "200": { description: Tree, content: { application/json: { schema: { $ref: "#/components/schemas/Node" } } } }
+  /v1/nodes/{id}/heat:
+    get:
+      summary: Heatmap rows, ordered columns, collapsed families, and cell states
+      parameters:
+        - $ref: "#/components/parameters/NodeId"
+        - { name: horizon, in: query, schema: { type: string, example: 23d } }
+        - { name: axis, in: query, schema: { type: string, enum: ["800-53", ksi], default: "800-53" } }
+        - { name: overlay, in: query, description: What-if overlay ID, schema: { type: string } }
+      responses:
+        "200": { description: Heat, content: { application/json: { schema: { $ref: "#/components/schemas/Heat" } } } }
+  /v1/nodes/{id}/cell:
+    get:
+      summary: Controls down in one cell, ranked, with reasons
+      parameters:
+        - $ref: "#/components/parameters/NodeId"
+        - { name: col, in: query, required: true, schema: { type: string } }
+        - { name: horizon, in: query, schema: { type: string } }
+      responses:
+        "200": { description: Ranked controls }
+  /v1/controls/{uuid}/chain:
+    get:
+      summary: Evidence, observation, finding, risk, and POA&M for a control
+      parameters:
+        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: Evidence chain }
+  /v1/nodes/{id}/next-action:
+    get:
+      summary: Top-ranked action for the caller's lens
+      parameters: [ { $ref: "#/components/parameters/NodeId" } ]
+      responses:
+        "200": { description: Next best action }
+  /v1/attestations:
+    post:
+      summary: Submit an M&O attestation with evidence references
+      responses:
+        "201": { description: Created }
+  /v1/attestations/{id}/sign:
+    post:
+      summary: Sign a reviewed attestation
+      parameters: [ { name: id, in: path, required: true, schema: { type: string } } ]
+      responses:
+        "200": { description: Signed }
+  /v1/decisions:
+    post:
+      summary: AO risk acceptance with conditions
+      responses:
+        "201": { description: Created }
+  /v1/whatif:
+    post:
+      summary: Create a copy-on-write overlay for simulation
+      responses:
+        "201": { description: Overlay ID }
+  /v1/nodes/{id}/blast-radius:
+    get:
+      summary: Leveraging boundaries affected by a provider cell
+      parameters: [ { $ref: "#/components/parameters/NodeId" } ]
+      responses:
+        "200": { description: Affected nodes }
+  /v1/export/oscal/{boundary}:
+    get:
+      summary: Assessment results and POA&M for a boundary
+      parameters: [ { name: boundary, in: path, required: true, schema: { type: string } } ]
+      responses:
+        "200": { description: OSCAL documents }
+components:
+  securitySchemes:
+    oidc:
+      type: openIdConnect
+      openIdConnectUrl: https://idp.example.gov/.well-known/openid-configuration
+  parameters:
+    NodeId: { name: id, in: path, required: true, schema: { type: string } }
+  schemas:
+    Node:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        nodeType: { type: string, enum: [federation, organization, boundary, system] }
+        roles: { type: array, items: { type: string, enum: [authorizing-official, system-owner, information-system-security-officer] } }
+        children: { type: array, items: { $ref: "#/components/schemas/Node" } }
+    Cell:
+      type: object
+      properties:
+        col: { type: string }
+        state: { type: string, enum: [nominal, watch, degraded, blocks] }
+        blockers: { type: integer }
+        worsening: { type: boolean }
+        inherited: { type: boolean }
+    Heat:
+      type: object
+      properties:
+        node: { type: string }
+        horizon: { type: string, format: date }
+        axis: { type: string }
+        columns: { type: array, items: { type: string } }
+        collapsed: { type: array, items: { type: string } }
+        rows:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              name: { type: string }
+              cells: { type: array, items: { $ref: "#/components/schemas/Cell" } }

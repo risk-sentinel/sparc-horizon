@@ -130,7 +130,9 @@ jobs:
       - name: Lint every workflow
         run: |
           set -euo pipefail
-          N=$(ls -1 .github/workflows/*.yml 2>/dev/null | wc -l | tr -d ' ')
+          # find, not ls: shellcheck SC2012, and it is the correct tool here
+          # regardless — this count is the assertion that the job linted something.
+          N=$(find .github/workflows -maxdepth 1 -type f -name '*.yml' | wc -l | tr -d ' ')
           echo "Workflows found: $N"
           if [ "$N" -lt 1 ]; then
             echo "::error::No workflow files found — this job would otherwise pass by linting nothing."

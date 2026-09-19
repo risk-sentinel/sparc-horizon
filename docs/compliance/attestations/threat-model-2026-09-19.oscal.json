@@ -1,0 +1,157 @@
+{
+  "assessment-results": {
+    "uuid": "238d6c86-650c-4dcc-993b-994043a24eb0",
+    "metadata": {
+      "title": "SPARC Horizon threat model and security architecture review \u2014 attestation",
+      "last-modified": "2026-09-19T00:00:00Z",
+      "version": "1.0.0",
+      "oscal-version": "1.2.1",
+      "roles": [
+        {
+          "id": "reviewer",
+          "title": "Security architecture reviewer"
+        },
+        {
+          "id": "attestor",
+          "title": "Attesting party"
+        }
+      ],
+      "parties": [
+        {
+          "uuid": "1bcb34a4-c5c8-554c-a533-446300840153",
+          "type": "organization",
+          "name": "Risk-Sentinel",
+          "remarks": "The reviewing individual is identified by the verified signature on the commit that introduces this record, not by a name asserted inside it."
+        }
+      ],
+      "responsible-parties": [
+        {
+          "role-id": "reviewer",
+          "party-uuids": [
+            "1bcb34a4-c5c8-554c-a533-446300840153"
+          ]
+        },
+        {
+          "role-id": "attestor",
+          "party-uuids": [
+            "1bcb34a4-c5c8-554c-a533-446300840153"
+          ]
+        }
+      ],
+      "remarks": "Horizon's own review, recorded through the evidence chain Horizon builds for everyone else: a hashed back-matter resource, then an observation carrying a native expires. The expiry is what makes this countable by the projection engine rather than a page that quietly ages."
+    },
+    "import-ap": {
+      "href": "#129ebcc4-7ab4-5b88-94b2-f8a9b101733f",
+      "remarks": "There is no separate assessment plan. The requirement, its scope and its evidencing method are set by docs/dev/issue_rules.md and phase item S0-17 in docs/dev/Implementation_plan.md, which is what this href names. Recorded plainly rather than inventing a plan document to satisfy the field."
+    },
+    "results": [
+      {
+        "uuid": "fe676852-fd33-5cc3-9a08-28240273b235",
+        "title": "Threat model and security architecture review of the design of record",
+        "description": "Review of docs/01 through docs/10 as of 2026-09-19, before application code exists. Eight findings, recorded in docs/compliance/threat-model.md as TM-1 through TM-8. None is marked mitigated: the design is sound on paper and none of it is enforced yet, which is the correct result for a repository with no application source.",
+        "start": "2026-09-19T00:00:00Z",
+        "end": "2026-09-19T00:00:00Z",
+        "reviewed-controls": {
+          "description": "The control this activity evidences.",
+          "control-selections": [
+            {
+              "description": "Developer testing and evaluation \u2014 threat modeling and vulnerability analyses.",
+              "include-controls": [
+                {
+                  "control-id": "sa-11.2"
+                }
+              ]
+            }
+          ]
+        },
+        "observations": [
+          {
+            "uuid": "f1c5d909-daeb-5904-96a3-f0098d618ada",
+            "title": "Threat model reviewed and attested",
+            "description": "The threat model and security architecture review was performed against the design of record and recorded as a dated document. It produced eight findings: one deferred as an open decision (TM-4, the chain head has no anchor outside the writer's control), one accepted and inherited (TM-8, deployment), one accepted risk within TM-5, and the rest carried as requirements on the phases that build the affected component.",
+            "methods": [
+              "EXAMINE"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "props": [
+              {
+                "name": "evidence-kind",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "manual-attestation"
+              },
+              {
+                "name": "signed-by",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "1bcb34a4-c5c8-554c-a533-446300840153"
+              }
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "type": "party",
+                    "actor-uuid": "1bcb34a4-c5c8-554c-a533-446300840153",
+                    "role-id": "reviewer"
+                  }
+                ]
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "0186c70e-efa5-510a-a2c4-924d64cf62b5",
+                "type": "component"
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "href": "#63bf9d6a-04cc-5820-abbd-c7c86231be44",
+                "description": "The threat model itself, hashed in back-matter."
+              }
+            ],
+            "collected": "2026-09-19T00:00:00Z",
+            "expires": "2027-03-18T00:00:00Z",
+            "remarks": "Expiry is 180 days. This observation also goes stale early, before that date, on a change to the trust boundary, the evidence chain order, the signing or canonicalisation scheme, how roles are derived from documents, the isolation of what-if overlays, the federation's peer verification or UUID key grammar, or on the first release serving real projections to an Authorizing Official. Completing a phase is not a trigger: building what the model requires does not invalidate it, changing what it assumed does. The full list is in the Freshness section of the threat model."
+          }
+        ]
+      }
+    ],
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "63bf9d6a-04cc-5820-abbd-c7c86231be44",
+          "title": "SPARC Horizon threat model, 2026-09-19",
+          "description": "The reviewed document. Its hash binds this attestation to that exact text.",
+          "rlinks": [
+            {
+              "href": "../threat-model.md",
+              "media-type": "text/markdown",
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "e99b1dc168370017894d5452ff50013e40c0f73d6e9e0d4eb97b5a47a2812147"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "uuid": "129ebcc4-7ab4-5b88-94b2-f8a9b101733f",
+          "title": "Process of record \u2014 issue_rules.md and phase item S0-17",
+          "description": "What requires this review, defines its scope, and requires it to be evidenced through the attestation path with freshness asserted.",
+          "rlinks": [
+            {
+              "href": "../../dev/issue_rules.md",
+              "media-type": "text/markdown"
+            },
+            {
+              "href": "../../dev/Implementation_plan.md",
+              "media-type": "text/markdown"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

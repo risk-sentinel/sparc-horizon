@@ -235,8 +235,9 @@ jobs:
       # MISNAMED role skips silently too. If you wire an emit role, check the
       # first run actually says "Emitted to s3://".
       #
-      # Horizon's role does not exist yet (sparc-iac#715), so the expected first
-      # result on main is a green job carrying the skip notice.
+      # Horizon's role is wired and proven (sparc-iac#715, first verified emit
+      # 2026-09-19), so a skip notice on main is now a BUG rather than the
+      # expected state. Read the log line, not the job's colour.
       - name: Configure AWS credentials (OIDC)
         id: aws
         if: env.HAS_EMIT_ROLE == 'true'
@@ -256,9 +257,18 @@ jobs:
           fi
           DATE="$(date -u +%Y-%m-%d)"
           # Canonical layout: <boundary>/<date|latest>/<repo>/sonarqube/sonarqube-hdf.json
+          #
+          # --sse aws:kms is sent on the REQUEST, not left to the bucket's default
+          # encryption. The bucket policy denies a PutObject under the evidence
+          # prefixes whose request omits the header, and default encryption does not
+          # populate the condition key it tests — so an object can land correctly
+          # encrypted and still be refused. The emit role holds kms:GenerateDataKey
+          # and kms:Decrypt for the bucket's default key, scoped by kms:ViaService,
+          # so the header costs nothing here. sparc-iac#721.
           for slot in "${DATE}" latest; do
             aws s3 cp "$HDF_FILE" \
               "s3://${BUCKET}/${BOUNDARY}/${slot}/${REPO_SLUG}/sonarqube/sonarqube-hdf.json" \
+              --sse aws:kms \
               --no-progress
           done
           echo "Emitted to s3://${BUCKET}/${BOUNDARY}/{${DATE},latest}/${REPO_SLUG}/sonarqube/sonarqube-hdf.json"
@@ -266,4 +276,4 @@ jobs:
       - name: Note when the S3 emit was skipped
         if: env.HAS_EMIT_ROLE != 'true' || steps.aws.outcome != 'success'
         run: |
-          echo "::notice::OHDF converted, labelled and validated; S3 emit skipped (aws=${{ steps.aws.outcome }}). Either no emit role is wired — expected until sparc-iac#715 provisions SPARC_HORIZON_EMIT_ARN, and the artifact is the deliverable meanwhile — or the configured role could not be assumed. If you expect this repo to emit, that is a bug: check the secret name matches a role that exists."
+          echo "::notice::OHDF converted, labelled and validated; S3 emit skipped (aws=${{ steps.aws.outcome }}). SPARC_HORIZON_EMIT_ARN is wired and has emitted successfully, so in this repository a skip is a bug rather than the expected state: check that the secret still names a role that exists and that its OIDC trust policy matches the subject GitHub issues for this repository."

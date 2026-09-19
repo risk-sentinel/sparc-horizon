@@ -43,11 +43,13 @@ Fonts load from Google Fonts when online and fall back to system fonts offline. 
 | [09 Acceptance](docs/09-acceptance.md) | Acceptance criteria and pilot demo script |
 | [10 Risks and decisions](docs/10-risks-decisions.md) | Risks, mitigations, and phase 0 decisions |
 | [Roadmap](docs/roadmap.md) | Phase plan with tasks, exit criteria, and a default schedule |
+| [Compliance](docs/compliance/README.md) | Horizon's own control story: the 800-53 mapping, its OSCAL component definitions, and the threat model attestation |
 
 Machine-readable contracts:
 
 - [`schemas/sparc-namespace-props.v1.schema.json`](schemas/sparc-namespace-props.v1.schema.json): the namespace props Horizon depends on
 - [`api/openapi.yaml`](api/openapi.yaml): API v0 skeleton
+- [`docs/compliance/oscal/cdefs/`](docs/compliance/oscal/cdefs/): OSCAL 1.2.x component definitions for Horizon itself
 
 ## Placeholders to replace
 

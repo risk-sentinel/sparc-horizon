@@ -67,7 +67,7 @@ ordering rule.
 | Machine-readable contracts | **2** — `api/openapi.yaml` (v0 skeleton), `schemas/sparc-namespace-props.v1.schema.json` (v1, 9 props) |
 | Demos | **4** static HTML files, synthetic data, seeded PRNG, no build step |
 | CI workflows | **4** — `secret-scan.yml` (gate + fixture canary), `secret-scan-hdf-emit.yml` (emitter, fails closed), `pr-checklist.yml`, `contracts.yml` (OpenAPI, namespace schema, actionlint, duplication drift) |
-| Branch protection | **None yet** — correct at this point: the four workflows have not run on `main`, so no context has been observed reporting. See S0-12 |
+| Branch protection | **None yet, ready to set.** All seven check contexts observed reporting green on PR #2; the exact names are recorded under S0-12 |
 | Secret scanning | **Gate + canary landed.** TruffleHog verified-only, `tests/trufflehog-fixture/` planted and asserted, exclude file scoped to the fixture alone |
 | SAST / code scanning | **None** — no CodeQL, no SonarCloud project, no `golangci-lint` config |
 | Dependency / SBOM / SCA | **None** — no `go.mod` yet, no Dependabot config, no `.security/sca-allowlist.yaml` |
@@ -174,12 +174,32 @@ Make the repository a first-class estate member before any code lands.
 | S0-9 | `sonarqube-hdf-emit.yml` copied in self-contained (a public repo cannot call a private reusable), CONFIGURATION block set to `REPO_SLUG: sparc-horizon`. It verifies the project **resolves** before fetching, so it fails rather than reporting a clean empty result | | |
 | S0-10 | `.github/dependabot.yml` for `github-actions` now; `gomod` and `npm` ecosystems added in S1 when the manifests exist | | 2026-09-19 |
 | S0-11 | Evidence path proven end to end with the secrets HDF: prefix `risk-sentinel/<date\|latest>/sparc-horizon/secrets/`, provenance stamped, and the **landed object read back and verified** rather than trusting a green upload. No `\|\| 'sparc'` fallback — fail closed on an unset boundary | [#1](https://github.com/risk-sentinel/sparc-horizon/issues/1) | |
-| S0-12 | Branch protection: ruleset copied from `sparc-validate`, `strict_required_status_checks_policy: true`, signed commits, reviews required, bypass **pull request only**, enforcement **active** not evaluate. Required contexts limited to the checks observed reporting: secret scan, fixture detection, PR checklist, contract lint, actionlint | | |
+| S0-12 | Branch protection: ruleset copied from `sparc-validate`, `strict_required_status_checks_policy: true`, signed commits, reviews required, bypass **pull request only**, enforcement **active** not evaluate. Required contexts are the seven names below, all now observed reporting | | |
 | S0-13 | Delete `horizon.zip` from history-going-forward and gitignore it; it is a snapshot of the repo that goes stale on every commit *(already dropped from the working tree 2026-09-19 — confirm the ignore rule)* | | 2026-09-19 |
 | S0-14 | De-duplicate `docs/hud.html` (byte-identical to `demo/hud.html`) — one copy, or a generated one with the generator in CI | | |
 | S0-15 | `docs/compliance/` skeleton: `README.md`, `nist-sp800-53-rev5-mapping.md`, `oscal/cdefs/`, and the inline-control-comment format. Horizon's own control story starts empty and grows per issue, per `issue_rules.md` step 9 | | |
 | S0-16 | `docs/dev/Developer_Collision_Avoidance_Plan.md` — domain ownership and hot files | | 2026-09-19 |
 | S0-17 | Threat model and security architecture review recorded as a dated, signed attestation document. This is the one stage `dev-sec-ops-baseline` deliberately does not automate: it produces a document and a conversation, and is evidenced through the attestation path where freshness is asserted | | |
+
+### Required check contexts, as the forge reports them
+
+Observed reporting on PR #2, 2026-09-19 — all seven green. These are the strings to
+put in the ruleset. They are **read from the forge, not from the workflow files**,
+because the reported name is the job's `name:` rather than the workflow's, and a
+mismatch produces a required check that never arrives:
+
+```text
+Duplicated copies agree
+Fixture detection (proves scanner works)
+Namespace schema
+OpenAPI lint
+Test plan checklist
+Verified secrets gate
+Workflow lint
+```
+
+`Secret scan HDF emit (TruffleHog)` is deliberately **not** in that list: it does not
+run on `pull_request`, so requiring it would block every PR permanently.
 
 ### Exit criteria
 

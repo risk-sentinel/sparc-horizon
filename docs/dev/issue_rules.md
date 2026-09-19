@@ -217,7 +217,7 @@ needs an answer that is not "a scanner was quiet that day".
      **additive only**
    - `demo/` when a design doc it mirrors changes — `demo/full-plan.html`
      contains verbatim copies of both demo scripts and the prose of `docs/01`–
-     `docs/10`, and `docs/hud.html` is a copy of `demo/hud.html`
+     `docs/10`. The demos live in `demo/` only; do not copy one into `docs/`
    - **Carry deferred mandatory updates forward.** If a required update cannot
      land in the current PR, it MUST be added to the scope of the next related
      PR and tracked; never silently dropped. The next PR's description calls out

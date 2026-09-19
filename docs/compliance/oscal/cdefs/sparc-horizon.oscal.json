@@ -1,0 +1,802 @@
+{
+  "component-definition": {
+    "uuid": "49430871-72bc-4da7-841c-6f2a4ff0adf1",
+    "metadata": {
+      "title": "SPARC Horizon",
+      "last-modified": "2026-09-19T00:00:00Z",
+      "version": "0.1.0",
+      "oscal-version": "1.2.1",
+      "roles": [
+        {
+          "id": "provider",
+          "title": "Component provider"
+        },
+        {
+          "id": "reviewer",
+          "title": "Control reviewer"
+        }
+      ],
+      "parties": [
+        {
+          "uuid": "1bcb34a4-c5c8-554c-a533-446300840153",
+          "type": "organization",
+          "name": "Risk-Sentinel"
+        }
+      ],
+      "responsible-parties": [
+        {
+          "role-id": "provider",
+          "party-uuids": [
+            "1bcb34a4-c5c8-554c-a533-446300840153"
+          ]
+        }
+      ],
+      "remarks": "Component and resource UUIDs are deterministic UUIDv5 over a natural key, under the namespace uuidv5(URL, https://risk-sentinel.org/ns/sparc). The document UUID changes per revision. See docs/compliance/README.md."
+    },
+    "import-component-definitions": [
+      {
+        "href": "#da211a84-8280-5281-9f06-65c7eddadf4e"
+      }
+    ],
+    "components": [
+      {
+        "uuid": "dca1b306-4217-52ac-aac7-64f330c2f923",
+        "type": "process-procedure",
+        "title": "SPARC Horizon change-control and scanning pipeline",
+        "description": "The controls that operate on the repository itself: secret scanning and its canary, workflow lint and its canary, branch protection, pinned supply-chain inputs, dependency updates, and the emission of normalised scanner output to the evidence bucket under the risk-sentinel boundary. These are the only Horizon controls that operate today.",
+        "purpose": "Produce auditable evidence that the repository was assessed, rather than a green check that it was.",
+        "props": [
+          {
+            "name": "evidence-kind",
+            "value": "hdf-results",
+            "ns": "https://risk-sentinel.org/ns/sparc"
+          }
+        ],
+        "links": [
+          {
+            "href": "https://github.com/risk-sentinel/sparc-horizon/tree/main/.github/workflows",
+            "rel": "implemented-by"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "3dc280be-26ec-5252-a1fd-6df928b2ccb6",
+            "source": "#2b7c64e7-3d37-5130-b08e-86871b228631",
+            "description": "Repository and pipeline controls, operating today.",
+            "implemented-requirements": [
+              {
+                "uuid": "88ca029a-92d5-5872-8154-bdfb80d0411c",
+                "control-id": "ia-5.7",
+                "description": "TruffleHog runs in verified-only mode on every push and pull request. A synthetic credential planted under tests/trufflehog-fixture/ must still be detected on each run, so a regressed scanner and a clean repository stop producing identical artifacts.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/secret-scan.yml",
+                    "rel": "implemented-by"
+                  }
+                ],
+                "remarks": "Depends on .trufflehog-exclude-paths scoping the exclusion to the fixture path only. Widening the exclusion, or lowering the scan mode, disables the control while leaving the job green."
+              },
+              {
+                "uuid": "79e7c18a-2f7d-50e8-ab90-4ef49d7750a6",
+                "control-id": "sa-11",
+                "description": "Scanner output is normalised to OASIS Heimdall Data Format and filed to the evidence bucket, so the assessment leaves an artifact rather than a check result. A clean scan emits a one-control execution record rather than emitting nothing.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/secret-scan-hdf-emit.yml",
+                    "rel": "implemented-by"
+                  }
+                ],
+                "remarks": "Requires the repository variable EVIDENCE_BOUNDARY to be set; the workflow fails closed when it is not, rather than defaulting to another boundary. Requires the emit role, the bucket name and the region as secrets."
+              },
+              {
+                "uuid": "6852958e-afd0-56d6-a3c2-266583ce4017",
+                "control-id": "sa-11.7",
+                "description": "Two canaries assert that the assessors are still assessing: the secret-scanning fixture proves detection is live, and tests/actionlint-fixture/ plants an SC2012 defect that workflow lint must report. actionlint exits 0 when shellcheck is absent, skipping the integration rather than reporting it, so without the canary a runner-image change would remove a class of coverage silently.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/contracts.yml",
+                    "rel": "implemented-by"
+                  }
+                ],
+                "remarks": "The workflow-lint job asserts shellcheck is on PATH before linting. Removing that assertion, or the fixture, re-opens the silent-skip path."
+              },
+              {
+                "uuid": "53cc1268-9909-5388-9628-6e276e282d0d",
+                "control-id": "cm-3",
+                "description": "Changes reach main only through an issue, a branch, a plan approved before code, the verification gate and a five-section pull request. pr-checklist.yml fails the build on an unchecked box outside the test plan.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/dev/issue_rules.md",
+                    "rel": "implemented-by"
+                  }
+                ]
+              },
+              {
+                "uuid": "40cf5a8e-4cfa-5dc3-9263-2bb136f08c90",
+                "control-id": "cm-5",
+                "description": "Branch protection on main with enforcement active: required reviews, required status checks under a strict policy, and bypass limited to pull_request rather than always, so an administrator cannot push directly to the protected branch.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ],
+                "remarks": "Verified by attempting a direct push to main and reading the refusal, rather than by reading the ruleset back. A ruleset that reads correctly and does not enforce is the failure this check exists to catch."
+              },
+              {
+                "uuid": "08c1d39b-c4dd-5eb2-94f6-5bad504a8324",
+                "control-id": "sa-10",
+                "description": "Third-party actions are pinned by commit SHA rather than by tag, and tools are pinned by version and installed through checksum-verified paths: actionlint through the Go module proxy against sum.golang.org, hdf-cli by pinned release with a checksum.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ]
+              },
+              {
+                "uuid": "4780bfbf-4a2d-5770-a37b-ff16ccffa44d",
+                "control-id": "sr-3",
+                "description": "npm tooling is installed with --ignore-scripts and invoked as a binary, rather than through npx, which resolves and executes a package and its install lifecycle scripts on demand before the tool does anything.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/sonarqube-hdf-emit.yml",
+                    "rel": "implemented-by"
+                  }
+                ]
+              },
+              {
+                "uuid": "a5e37c9e-3ceb-58f9-9e1b-ca82afe3e392",
+                "control-id": "sr-11",
+                "description": "Commits on main must carry a verified signature; the ruleset requires signed commits.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ]
+              },
+              {
+                "uuid": "8cbb4fb2-890e-548d-aee4-da43fec9769b",
+                "control-id": "au-10",
+                "description": "Signed commits establish authorship for every change to what is read as the change-control record for an authorization boundary. Detached signatures over evidence are the application-layer half and are planned.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "partial"
+                  }
+                ]
+              },
+              {
+                "uuid": "7809aed5-2e39-5430-92fd-0daa90a61b77",
+                "control-id": "si-2",
+                "description": "Dependabot opens pull requests for the github-actions ecosystem. The gomod and npm ecosystems are added in phase S1 when those manifests exist; declaring them before then would assert coverage of nothing.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "partial"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/dependabot.yml",
+                    "rel": "implemented-by"
+                  }
+                ]
+              },
+              {
+                "uuid": "e44978de-3151-56d7-8580-e1280911cdc6",
+                "control-id": "ra-5",
+                "description": "Secret scanning is live and emits evidence. Static analysis is wired but has never run: SonarCloud has no analysis of this repository because it contains no analysable source yet. SCA, SBOM and govulncheck arrive with the first code in phase S1.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "partial"
+                  }
+                ],
+                "remarks": "The gap is tracked rather than hidden. The static-analysis converter refuses to convert an unanalysed project instead of filing a clean report, which is the correct direction of failure."
+              },
+              {
+                "uuid": "331882d6-d3b4-5eea-8c1a-0c8ae5364af2",
+                "control-id": "ca-7",
+                "description": "Scans run on push to main and on a weekly schedule so evidence does not go stale between merges. Each run files a dated object and a latest alias.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ]
+              },
+              {
+                "uuid": "87dea4c4-6d24-5804-9f03-0ad3fec24dd6",
+                "control-id": "sr-4",
+                "description": "Emitted evidence carries the scanner and its version, the repository, the commit, the ref, the run id, the scan mode and the finding count, so an artifact in the bucket ties back to the run that produced it.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ]
+              },
+              {
+                "uuid": "0de2d14e-639b-5b51-ad08-b724d0a2f480",
+                "control-id": "ac-6",
+                "description": "The emit role is scoped to this repository's prefix under the risk-sentinel boundary and deliberately not granted the sparc prefix that in-boundary producers hold, because Horizon sits above the SPARC authorization boundary.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ],
+                "remarks": "The scope is enforced in the role's policy, owned by sparc-iac. Horizon's side is the boundary preflight that refuses to emit when EVIDENCE_BOUNDARY is unset."
+              },
+              {
+                "uuid": "ca8f4d7c-854d-5c24-bd93-7620f8c35e91",
+                "control-id": "ia-5",
+                "description": "CI authenticates to AWS through OIDC federation and receives short-lived credentials. No static access key exists to rotate, leak, or scan for.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ]
+              },
+              {
+                "uuid": "349effa0-0644-516b-a257-ebf548259a1b",
+                "control-id": "sc-28",
+                "description": "Evidence uploads send the server-side encryption header on the request rather than relying on the bucket's default encryption. The bucket policy tests the request header, and default encryption does not populate the condition key it tests, so an object can land correctly encrypted and still be refused.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ],
+                "remarks": "Depends on the emit role holding kms:GenerateDataKey and kms:Decrypt for the bucket's default key. A role without that grant begins failing the moment the header is sent."
+              }
+            ]
+          }
+        ],
+        "remarks": "Every emit path in the estate carries continue-on-error on the credential step, so a refused write leaves the workflow green and the API reports that step's conclusion as success. Evidence for any requirement here is the object in the bucket, not the state of the check."
+      },
+      {
+        "uuid": "0186c70e-efa5-510a-a2c4-924d64cf62b5",
+        "type": "software",
+        "title": "SPARC Horizon service",
+        "description": "The Go service that serves the HUD and the API. Not yet built: horizon/ is a placeholder for the design in docs/02-architecture.md.",
+        "purpose": "Project the forward posture of an authorization boundary and carry attestations and AO decisions.",
+        "links": [
+          {
+            "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/02-architecture.md",
+            "rel": "reference"
+          }
+        ],
+        "remarks": "Configuration contract in docs/08-build-deploy.md. Deployment target is ECS Fargate in AWS commercial; the service definition is owned by sparc-iac."
+      },
+      {
+        "uuid": "fcb74c5f-a32d-5c5e-9a8d-b68b54bbad2d",
+        "type": "software",
+        "title": "Node authorization",
+        "description": "Authorization evaluated against the node a request names rather than the endpoint it reached, with roles derived from responsible-parties in the OSCAL documents.",
+        "purpose": "Make authority a consequence of document content, so that authorization follows document edits and can be recomputed from an export.",
+        "control-implementations": [
+          {
+            "uuid": "4d5b94ac-482e-5b71-b420-b66682281686",
+            "source": "#2b7c64e7-3d37-5130-b08e-86871b228631",
+            "description": "Application authorization and identity. Designed, not built.",
+            "implemented-requirements": [
+              {
+                "uuid": "c44551ea-6d01-5503-a763-60c49bce3fe2",
+                "control-id": "ac-3",
+                "description": "Every API handler authorises against the node named in the request, not the endpoint it reached. A handler that checks the endpoint passes for a node the caller may not read.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/07-security.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "af233298-3359-55d5-9588-a91df7c72dbc",
+                "control-id": "ac-6",
+                "description": "Role bindings are per node and inherit downward; a role at one node confers nothing above it.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/07-security.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "be5ca911-2e51-59e4-bc28-09d071d13fea",
+                "control-id": "ac-2",
+                "description": "There are no Horizon accounts to manage. Identity comes from the agency identity provider and roles come from responsible-parties in the OSCAL documents, so account state is a consequence of document edits rather than of an administration screen.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/03-data-model.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "934db082-af7e-5d62-95d2-0f533716637e",
+                "control-id": "ia-2",
+                "description": "OIDC with the agency identity provider; party UUIDs map to subjects.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/07-security.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "68fa1c81-714f-552c-94e2-b1e3ce9807ac",
+                "control-id": "ia-8",
+                "description": "Non-organisational users are authenticated through the same federated identity path.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/07-security.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "050f4a00-be41-5e39-8f1a-500b68be1308",
+                "control-id": "si-10",
+                "description": "Anything OSCAL cannot model is constrained by the namespace props schema, and documents are validated on ingestion.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/03-data-model.md",
+                    "rel": "reference"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "uuid": "a256c288-52fd-59f3-8fbc-b484cf053225",
+        "type": "software",
+        "title": "Append-only hash-chained ledger",
+        "description": "The record every projection is materialised from and rebuildable against.",
+        "purpose": "Make the audit test recomputation: every cell at every tier must recompute identically from exported OSCAL alone.",
+        "control-implementations": [
+          {
+            "uuid": "cb2fc46a-5b3a-5515-8168-f000b1f5ff8a",
+            "source": "#2b7c64e7-3d37-5130-b08e-86871b228631",
+            "description": "Audit, integrity and continuous monitoring. Designed, not built.",
+            "implemented-requirements": [
+              {
+                "uuid": "06417ec3-ac8e-59ce-9aa9-87f9b711b185",
+                "control-id": "au-2",
+                "description": "The ledger is append-only and records each decision, its inputs and its actor. Materialised projections are rebuildable from it.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/05-projection-engine.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "fc5206ef-7b8b-5aa3-9975-ea075f739ebc",
+                "control-id": "au-3",
+                "description": "Ledger entries carry the content required to reconstruct what happened, which is the same content the projection reads.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/05-projection-engine.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "77e65e78-ace4-5bca-9b7d-a9696dad7883",
+                "control-id": "au-9",
+                "description": "The ledger is hash-chained and exports carry the chain head, so a truncated or edited export is detectable by recomputation rather than by trust.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/05-projection-engine.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "c0c0f06b-4c26-5aeb-b5e4-ba3056377a15",
+                "control-id": "ca-5",
+                "description": "POA&M items are first-class in the evidence chain; an open milestone before the projection date is one of the three ways a control reads as down.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/05-projection-engine.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "6ea02ac9-2a2e-57d0-979e-1798682d856b",
+                "control-id": "ca-7",
+                "description": "The projection engine answers the state of a control, cell or node on a given date, with expiry driven by the observation's native expires field.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/05-projection-engine.md",
+                    "rel": "reference"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "uuid": "ced049c3-d634-568c-bb1e-bb49995f8b02",
+        "type": "software",
+        "title": "Attestation and evidence signing",
+        "description": "The fixed evidence chain \u2014 back-matter resource, observation, finding, risk, POA&M item \u2014 with detached signatures over JCS-canonical JSON.",
+        "purpose": "Carry human attestations into the same evidence stream as machine scan results, without either being mistakable for the other.",
+        "props": [
+          {
+            "name": "evidence-kind",
+            "value": "manual-attestation",
+            "ns": "https://risk-sentinel.org/ns/sparc"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "1a4b3b09-dd9a-5b26-9bc7-548c8647665b",
+            "source": "#2b7c64e7-3d37-5130-b08e-86871b228631",
+            "description": "Non-repudiation, integrity and key management. Designed, not built.",
+            "implemented-requirements": [
+              {
+                "uuid": "317add47-725f-525e-8a4f-721e3ddac7b6",
+                "control-id": "au-10",
+                "description": "Detached signatures over JCS-canonical (RFC 8785) JSON, with the signer recorded in the signed-by namespace prop.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/06-attestation-workflow.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "da0cf178-927e-510f-b0ba-f9096ce21f0e",
+                "control-id": "si-7",
+                "description": "Evidence resources are hashed in back-matter, and the chain from resource to observation to finding to risk to POA&M item is fixed and verifiable.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/06-attestation-workflow.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "8a8b2f8b-d13d-56d3-ac43-56d43d45deff",
+                "control-id": "sc-12",
+                "description": "The signing certificate and key are referenced by configuration and held in the platform secret store; the store itself is inherited.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/08-build-deploy.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "652b5b1f-6d39-567f-ae67-38e8c7ff7421",
+                "control-id": "sc-13",
+                "description": "Cryptographic protection of evidence at rest and in transit uses platform-provided key management.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/08-build-deploy.md",
+                    "rel": "reference"
+                  }
+                ]
+              },
+              {
+                "uuid": "4eaa3508-b4c0-54f5-ac95-784efc7958fb",
+                "control-id": "sc-8",
+                "description": "mTLS to SPARC peers over the existing federation trust fabric; bundles are verified before ingestion.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/07-security.md",
+                    "rel": "reference"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "uuid": "907aeec7-c6a4-5914-9caa-0e6d5ad221af",
+        "type": "software",
+        "title": "What-if overlay",
+        "description": "A copy-on-write view of the ledger that reuses the same projection functions and can neither persist nor emit.",
+        "purpose": "Let an AO ask what would happen without that question becoming a record of what did.",
+        "control-implementations": [
+          {
+            "uuid": "6a249cd8-4d55-5635-a93c-403ac5b43a07",
+            "source": "#2b7c64e7-3d37-5130-b08e-86871b228631",
+            "description": "Isolation of speculative state. Designed, not built.",
+            "implemented-requirements": [
+              {
+                "uuid": "783d20b0-b9b3-59fc-acb9-2a65dc551db2",
+                "control-id": "ac-3",
+                "description": "What-if overlays are copy-on-write over a view of the ledger. They cannot write to the ledger, and cannot produce OSCAL or saf attest files. This is stated as a security property, so the threat model must show what enforces it rather than what intends it.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "planned"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/06-attestation-workflow.md",
+                    "rel": "reference"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "remarks": "Isolation is asserted in the design as a security property. Until the threat model shows the enforcing mechanism, this component's claim is an intention."
+      }
+    ],
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "2b7c64e7-3d37-5130-b08e-86871b228631",
+          "title": "NIST SP 800-53 rev 5 catalog",
+          "rlinks": [
+            {
+              "href": "https://raw.githubusercontent.com/usnistgov/oscal-content/main/nist.gov/SP800-53/rev5/json/NIST_SP-800-53_rev5_catalog.json",
+              "media-type": "application/json"
+            }
+          ]
+        },
+        {
+          "uuid": "da211a84-8280-5281-9f06-65c7eddadf4e",
+          "title": "AWS service component definitions",
+          "description": "Published by AWS Labs under Apache-2.0. Imported for component identity and description of the inherited platform layer. Its control implementations are keyed to AWS Security Hub control ids rather than to 800-53, so it carries no control attribution into this definition directly. SPARC owns that crosswalk and already ships a Security Hub to NIST 800-53 rev 5 converter; resolving the attribution is blocked on sparc#1103, where these definitions import as a document with zero controls and the converter has nothing to map.",
+          "rlinks": [
+            {
+              "href": "https://github.com/awslabs/oscal-content-for-aws-services",
+              "media-type": "text/html"
+            }
+          ]
+        },
+        {
+          "uuid": "04ba3111-3a29-5e08-a48f-7bb56d80ca7f",
+          "title": "SPARC Horizon design documents",
+          "rlinks": [
+            {
+              "href": "https://github.com/risk-sentinel/sparc-horizon/tree/main/docs",
+              "media-type": "text/html"
+            }
+          ]
+        },
+        {
+          "uuid": "4facb824-6fa7-572f-976b-f17c5ef26bee",
+          "title": "Amazon EC2 Container Service \u2014 AWS component definition",
+          "description": "The ECS Fargate service, task definition and task role that run the Horizon container. AWS Labs component UUID ae216b2c-3e56-4578-8336-6443786a09a4.",
+          "rlinks": [
+            {
+              "href": "https://raw.githubusercontent.com/awslabs/oscal-content-for-aws-services/main/component-definitions/ecs.oscal.json",
+              "media-type": "application/json"
+            }
+          ]
+        },
+        {
+          "uuid": "40f03995-160c-52da-9977-97924ae1d20f",
+          "title": "Amazon Simple Storage Service \u2014 AWS component definition",
+          "description": "The evidence bucket, its policy and its default encryption. AWS Labs component UUID 1ff9b0f8-6142-441f-978b-7eadee006247.",
+          "rlinks": [
+            {
+              "href": "https://raw.githubusercontent.com/awslabs/oscal-content-for-aws-services/main/component-definitions/s3.oscal.json",
+              "media-type": "application/json"
+            }
+          ]
+        },
+        {
+          "uuid": "3923d15e-871b-52da-b02e-bcc64d23c38e",
+          "title": "AWS Key Management Service \u2014 AWS component definition",
+          "description": "The key protecting evidence at rest. Horizon's emit role holds GenerateDataKey and Decrypt scoped by ViaService. AWS Labs component UUID 4f340dda-968e-43f7-ad15-f02fc369e344.",
+          "rlinks": [
+            {
+              "href": "https://raw.githubusercontent.com/awslabs/oscal-content-for-aws-services/main/component-definitions/kms.oscal.json",
+              "media-type": "application/json"
+            }
+          ]
+        },
+        {
+          "uuid": "13e6d173-7317-5091-98ee-c73640a4b724",
+          "title": "AWS Identity and Access Management \u2014 AWS component definition",
+          "description": "The emit role and its policy scope. AWS Labs component UUID e356a687-3174-47cf-ad6f-8adf7565aecb.",
+          "rlinks": [
+            {
+              "href": "https://raw.githubusercontent.com/awslabs/oscal-content-for-aws-services/main/component-definitions/iam.oscal.json",
+              "media-type": "application/json"
+            }
+          ]
+        },
+        {
+          "uuid": "1329151e-a993-5e8f-a90e-c7164cda4ecc",
+          "title": "AWS Security Token Service \u2014 AWS component definition",
+          "description": "OIDC federation: CI assumes the emit role with a web identity and receives short-lived credentials. AWS Labs component UUID dcefa392-a0ea-48c4-b86a-8c0f72a60e5c.",
+          "rlinks": [
+            {
+              "href": "https://raw.githubusercontent.com/awslabs/oscal-content-for-aws-services/main/component-definitions/sts.oscal.json",
+              "media-type": "application/json"
+            }
+          ]
+        },
+        {
+          "uuid": "a5d7093f-1160-562e-9c38-76ab3a227837",
+          "title": "AWS Secrets Manager \u2014 AWS component definition",
+          "description": "The signing certificate reference and the OIDC client secret. AWS Labs component UUID 2e24a9e4-8843-4811-9db9-589d06b3916f.",
+          "rlinks": [
+            {
+              "href": "https://raw.githubusercontent.com/awslabs/oscal-content-for-aws-services/main/component-definitions/secretsmanager.oscal.json",
+              "media-type": "application/json"
+            }
+          ]
+        },
+        {
+          "uuid": "81870460-c78d-5817-aff5-96d29ab147ed",
+          "title": "Elastic Load Balancing v2 \u2014 AWS component definition",
+          "description": "TLS termination in front of the service. AWS Labs component UUID fdfb3f74-81de-42b7-8dcf-cd649a858e7a.",
+          "rlinks": [
+            {
+              "href": "https://raw.githubusercontent.com/awslabs/oscal-content-for-aws-services/main/component-definitions/elb.oscal.json",
+              "media-type": "application/json"
+            }
+          ]
+        },
+        {
+          "uuid": "70e06181-3511-5a14-9d09-f2f56a693103",
+          "title": "Amazon CloudWatch Logs \u2014 AWS component definition",
+          "description": "Service logs. AWS Labs component UUID 07ae6d73-9efd-4725-b6aa-5e3512445e99.",
+          "rlinks": [
+            {
+              "href": "https://raw.githubusercontent.com/awslabs/oscal-content-for-aws-services/main/component-definitions/logs.oscal.json",
+              "media-type": "application/json"
+            }
+          ]
+        },
+        {
+          "uuid": "3bad8312-d19d-56fe-ad67-2edb24cfebb3",
+          "title": "Amazon Elastic Container Registry \u2014 AWS component definition",
+          "description": "The image registry. Build, scan, SBOM and signature are owned by container-build-sign. AWS Labs component UUID 40308594-b177-4dd2-bfd2-57348b65b860.",
+          "rlinks": [
+            {
+              "href": "https://raw.githubusercontent.com/awslabs/oscal-content-for-aws-services/main/component-definitions/ecr.oscal.json",
+              "media-type": "application/json"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

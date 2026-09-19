@@ -297,7 +297,7 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
  <details><summary>Dependency choices</summary><div>
   <table>
    <tr><th>Need</th><th>Choice</th><th>Why</th></tr>
-   <tr><td>OSCAL types</td><td><code>defenseunicorns/go-oscal</code></td><td>Maintained Go structs. Confirm 1.2.x coverage in phase 0; fall back to types generated from the NIST JSON schemas.</td></tr>
+   <tr><td>OSCAL types</td><td><code>defenseunicorns/go-oscal</code>, pinned</td><td><b>Decided in P0.</b> v0.7.1 ships <code>oscal-1-2-1</code> and <code>oscal-1-2-2</code>; all seven models Horizon reads are present. Five real documents round-trip losslessly apart from timestamp normalisation, and none contained a field the types do not model. The &ldquo;generate from the NIST schemas&rdquo; fallback is the same generator self-hosted, so it buys no fidelity. <b>Parse for reading, never to reproduce a signed document:</b> hash and verify the received bytes</td></tr>
    <tr><td>HDF types</td><td>Generated from the HDF v3 JSON schema</td><td>Only needed to read raw HDF from back-matter for provenance views.</td></tr>
    <tr><td>Storage</td><td><code>modernc.org/sqlite</code>, Postgres optional</td><td>Pure Go, so <code>CGO_ENABLED=0</code> and a static binary.</td></tr>
    <tr><td>HTTP</td><td><code>go-chi/chi</code></td><td>Standard <code>net/http</code> handlers, small surface.</td></tr>
@@ -451,6 +451,16 @@ func Roll(kids []Agg) (a Agg) {
   <li><b>Expired.</b> Confidence decays toward the expiry date; at expiry the control is down and the cycle restarts.</li>
  </ol>
  <p>AO decisions follow the same path. Accepting a risk sets it to <code>deviation-approved</code> with a <code>risk-log</code> entry by the AO party and the <code>condition-expires</code> and <code>trigger</code> props. A breached trigger reopens the risk and puts it back on the AO's HUD.</p>
+ <h3>Signing operates on bytes, not on objects</h3>
+ <p>A detached signature covers the JCS-canonical form of the JSON <b>as received</b>. It is never computed over a document that has been parsed into typed structs and serialised again.</p>
+ <p>The reason is measurable rather than theoretical. Typed OSCAL carries timestamps as <code>time.Time</code>, so <code>2026-03-31T19:45:48.195797+00:00</code> re-serialises as <code>2026-03-31T19:45:48.195797Z</code> &mdash; the same instant, different bytes. RFC 8785 canonicalises object member order and number formatting; it does <b>not</b> normalise string values, and a timestamp is a JSON string. The two forms have different digests, so a signature verified against the re-serialised form fails on a document nobody altered.</p>
+ <ul>
+  <li><b>Verify</b> against the bytes as they arrived. Keep them; do not reconstruct them.</li>
+  <li><b>Hash</b> back-matter resources over the stored bytes, which is what the resource's hash claims about.</li>
+  <li><b>Emit</b> through one canonical serialiser, so a document Horizon authors has one byte form and its signature is reproducible by anyone who re-exports it.</li>
+  <li>Parse into types to <b>read and compute</b>. That is what the type layer is for.</li>
+ </ul>
+ <p>This is the same property the recompute audit test depends on: if re-export cannot reproduce the bytes, a peer cannot verify what Horizon signed.</p>
 </section>
 
 <section id="sec" aria-labelledby="sec-h">
@@ -531,7 +541,8 @@ ENTRYPOINT ["/horizon", "serve"]</code></pre>
  <div class="tbl"><table>
   <tr><th>Risk</th><th>Mitigation</th></tr>
   <tr><td>Party UUIDs drift between documents and break the tree</td><td>A validate rule plus a tree builder that reports orphans instead of silently dropping them</td></tr>
-  <tr><td>go-oscal lags OSCAL 1.2.x</td><td>Decide in phase 0; generated types are the fallback</td></tr>
+  <tr><td><s>go-oscal lags OSCAL 1.2.x</s> &mdash; <b>not true as of v0.7.1</b></td><td>Retired. Decided in P0: adopt <code>go-oscal</code>, pinned. It ships the 1.2.x type packages and all five documents tested round-trip with no unknown fields</td></tr>
+  <tr><td>A signature fails on a document nobody tampered with</td><td>Typed OSCAL normalises timestamps (<code>+00:00</code> becomes <code>Z</code>) &mdash; same instant, different bytes. JCS canonicalises member order and numbers, <b>not</b> string values, so parse-then-re-serialise changes the digest. Verify and hash over the <b>received bytes</b>, never a re-serialisation</td></tr>
   <tr><td>Crosswalk quality skews the KSI axis and ranking reach</td><td>Show the mapping source on every swapped cell; flag low-confidence mappings</td></tr>
   <tr><td>The HUD ranks the wrong thing first and loses trust</td><td>Configurable weights, logged rankings, and a user session every two weeks</td></tr>
   <tr><td>PKI is not available in the prototype environment</td><td>A dev CA behind the same signing interface</td></tr>
@@ -542,7 +553,8 @@ ENTRYPOINT ["/horizon", "serve"]</code></pre>
  </table></div>
  <h3>Decisions to make in phase 0</h3>
  <ul>
-  <li>Signature format: CMS detached, a Sigstore bundle, or JWS over canonical JSON</li>
+  <li>Signature format: CMS detached, a Sigstore bundle, or JWS over canonical JSON. Whichever is chosen, it signs the bytes as received</li>
+  <li><s>go-oscal versus types generated from the NIST JSON schemas</s> &mdash; <b>decided: <code>go-oscal</code>, pinned.</b> Re-test against the P0 fixture federation before P1 builds <code>internal/oscal</code>: SSP, profile and POA&amp;M have no fixtures yet and so were not exercised</li>
   <li>Who owns the ranking weights: each AO, or the organization</li>
   <li>When the ledger moves from SQLite to Postgres</li>
   <li>Whether decision dates live only in SSP metadata or also come from the GRC calendar</li>

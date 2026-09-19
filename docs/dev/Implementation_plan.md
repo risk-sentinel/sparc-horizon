@@ -392,8 +392,8 @@ ones this plan surfaces. All are owner decisions.
 | Decision | Bearing | Needed by |
 |---|---|---|
 | ~~Evidence boundary~~ — **decided 2026-09-19: `risk-sentinel`.** Horizon is the first producer to use it; the estate pivots under `sparc-iac#715`. Remaining sub-decision there: whether `sparc` is subsumed by `risk-sentinel` or coexists beneath it | Which SAR the evidence joins; the prefix and the emit role scope, which must move together | Resolved |
-| Signature format: CMS detached, Sigstore bundle, or JWS over canonical JSON | `internal/attest` interface | P4 |
-| `go-oscal` versus types generated from the NIST JSON schemas | Whether OSCAL 1.2.x is fully covered | P0 |
+| Signature format: CMS detached, Sigstore bundle, or JWS over canonical JSON | `internal/attest` interface. Whichever is chosen, it signs the received bytes — see #26 | P4 |
+| ~~`go-oscal` versus types generated from the NIST JSON schemas~~ — **decided 2026-09-19: `go-oscal`, pinned** (#26). 1.2.x coverage is real; the round trip is lossless apart from timestamp normalisation; the fallback was the same generator self-hosted | Settled. It surfaced a new rule instead: signatures cover the bytes as received, never a re-serialisation | Resolved |
 | Who owns the ranking weights — each AO, or the organization | Config surface and the AO lens | P2 |
 | When the ledger moves from SQLite to Postgres | S2 task definition and backup posture | P2 / S2 |
 | Whether decision dates live only in SSP metadata or also come from the GRC calendar | Projection buckets | P0 |

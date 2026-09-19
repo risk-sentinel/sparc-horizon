@@ -116,9 +116,28 @@ ordering rule.
   deleted in #4, with the diff replaced by a guard against the copy returning.
 - **`horizon.zip` dropped** (S0-13) and `*.zip` ignored.
 
-**Remaining in S0:** S0-11 (the evidence emit itself, blocked on the role from
-`sparc-iac#715`), S0-15 compliance skeleton, and S0-17 threat model attestation.
-Everything else has landed.
+- **Evidence emit proven end to end** (S0-11) on 2026-09-19. The object was read back
+  from the bucket rather than inferred from a green job, which matters more here than
+  usual: every emit path in the estate carries `continue-on-error: true` on the
+  credential step, so a refused write leaves the workflow green *and* reports the step's
+  conclusion as `success` through the API. The check that means anything is the
+  `upload: … to s3://` line in the log, then the object itself.
+
+  Landed at `risk-sentinel/2026-09-19/sparc-horizon/trufflehog/trufflehog-hdf.json` and
+  its `latest/` alias, 3689 bytes each, server-side encrypted with KMS. The payload is
+  the one-control execution record — `trufflehog 3.96.0`, the commit, the ref, the run
+  id, `findings 0`, tagged `IA-5(7)` and `SA-11` — so a clean scan is recorded as a scan
+  that ran, not as an absence.
+
+  Two upstream fixes unblocked it, both in `sparc-iac#719`: the OIDC trust policy was
+  corrected (this repository is new enough that GitHub issues it an **immutable
+  subject**, `repo:<org>@<id>/<repo>@<id>:…`, which the original pattern did not match),
+  and the encryption deny was reverted. That deny returns under `sparc-iac#721` — see
+  #10, resolved on this branch, for why the emit would otherwise have started failing
+  again.
+
+**Remaining in S0:** S0-15 compliance skeleton (#11) and S0-17 threat model attestation
+(#12). Everything else has landed.
 
 **S0-12 branch protection is active** as of 2026-09-19. Ruleset `main`, enforcement
 `active`, copied from `sparc-validate`'s shape with two deliberate departures:
@@ -195,15 +214,15 @@ Make the repository a first-class estate member before any code lands.
 | S0-6 | `CONTRIBUTING.md` documenting the PR convention and pointing at `issue_rules.md` | | 2026-09-19 |
 | S0-7 | Contract CI: Redocly lint on `api/openapi.yaml`, ajv compile on the namespace schema, and a check that every `props[]` example in the design docs validates against it | | 2026-09-19 |
 | S0-8 | Workflow linting (`actionlint`) in CI — a schema error yields a 0-second run with no jobs and no logs, so it must be caught in the change that introduces it | | 2026-09-19 |
-| S0-9 | `sonarqube-hdf-emit.yml` copied in self-contained (a public repo cannot call a private reusable), CONFIGURATION block set to `REPO_SLUG: sparc-horizon`. It verifies the project **resolves** before fetching, so it fails rather than reporting a clean empty result | [#6](https://github.com/risk-sentinel/sparc-horizon/issues/6) | 2026-09-19 |
+| S0-9 | `sonarqube-hdf-emit.yml` copied in self-contained (a public repo cannot call a private reusable), CONFIGURATION block set to `REPO_SLUG: sparc-horizon`. It verifies the project **resolves** before fetching, so it fails rather than reporting a clean empty result | [#6](https://github.com/risk-sentinel/sparc-horizon/issues/6), [#13](https://github.com/risk-sentinel/sparc-horizon/issues/13) | 2026-09-19 |
 | S0-10 | `.github/dependabot.yml` for `github-actions` now; `gomod` and `npm` ecosystems added in S1 when the manifests exist | | 2026-09-19 |
-| S0-11 | Evidence path proven end to end with the secrets HDF: prefix `risk-sentinel/<date\|latest>/sparc-horizon/secrets/`, provenance stamped, and the **landed object read back and verified** rather than trusting a green upload. No `\|\| 'sparc'` fallback — fail closed on an unset boundary | [#1](https://github.com/risk-sentinel/sparc-horizon/issues/1) | |
-| S0-12 | Branch protection: ruleset copied from `sparc-validate`, `strict_required_status_checks_policy: true`, signed commits, reviews required, bypass **pull request only**, enforcement **active** not evaluate. Required contexts are the seven names below, all now observed reporting | | |
+| S0-11 | Evidence path proven end to end with the secrets HDF: prefix `risk-sentinel/<date\|latest>/sparc-horizon/trufflehog/`, provenance stamped, and the **landed object read back and verified** rather than trusting a green upload. No `\|\| 'sparc'` fallback — fail closed on an unset boundary | [#1](https://github.com/risk-sentinel/sparc-horizon/issues/1), [#10](https://github.com/risk-sentinel/sparc-horizon/issues/10) | 2026-09-19 |
+| S0-12 | Branch protection: ruleset copied from `sparc-validate`, `strict_required_status_checks_policy: true`, signed commits, reviews required, bypass **pull request only**, enforcement **active** not evaluate. Required contexts are the seven names below, all now observed reporting | | 2026-09-19 |
 | S0-13 | Delete `horizon.zip` from history-going-forward and gitignore it; it is a snapshot of the repo that goes stale on every commit *(already dropped from the working tree 2026-09-19 — confirm the ignore rule)* | | 2026-09-19 |
 | S0-14 | De-duplicate `docs/hud.html` (byte-identical to `demo/hud.html`) — removed, with a CI guard against it returning | [#4](https://github.com/risk-sentinel/sparc-horizon/issues/4) | 2026-09-19 |
-| S0-15 | `docs/compliance/` skeleton: `README.md`, `nist-sp800-53-rev5-mapping.md`, `oscal/cdefs/`, and the inline-control-comment format. Horizon's own control story starts empty and grows per issue, per `issue_rules.md` step 9 | | |
+| S0-15 | `docs/compliance/` skeleton: `README.md`, `nist-sp800-53-rev5-mapping.md`, `oscal/cdefs/`, and the inline-control-comment format. Horizon's own control story starts empty and grows per issue, per `issue_rules.md` step 9 | [#11](https://github.com/risk-sentinel/sparc-horizon/issues/11) | |
 | S0-16 | `docs/dev/Developer_Collision_Avoidance_Plan.md` — domain ownership and hot files | | 2026-09-19 |
-| S0-17 | Threat model and security architecture review recorded as a dated, signed attestation document. This is the one stage `dev-sec-ops-baseline` deliberately does not automate: it produces a document and a conversation, and is evidenced through the attestation path where freshness is asserted | | |
+| S0-17 | Threat model and security architecture review recorded as a dated, signed attestation document. This is the one stage `dev-sec-ops-baseline` deliberately does not automate: it produces a document and a conversation, and is evidenced through the attestation path where freshness is asserted | [#12](https://github.com/risk-sentinel/sparc-horizon/issues/12) | |
 | S0-18 | **Canary for actionlint's shellcheck integration.** `actionlint` exits 0 when the `shellcheck` binary is absent — it skips the integration rather than reporting it, so a runner-image change would remove a class of coverage while the job stayed green. `tests/actionlint-fixture/` carries a planted `SC2012` defect the lint job must report | [#8](https://github.com/risk-sentinel/sparc-horizon/issues/8) | 2026-09-19 |
 
 ### Required check contexts, as the forge reports them
@@ -356,9 +375,9 @@ an unfiled ask.
 |---|---|---|---|---|---|
 | X-1 | `dev-sec-ops-baseline` | Declare `sparc-horizon` in the org inventory and add its coverage declaration under `inputs/`. **Currently an undeclared repository, so `devsecops-inventory-reconciliation` is failing on it today** | S0 exit | [#71](https://github.com/risk-sentinel/dev-sec-ops-baseline/issues/71) | **Filed** 2026-09-19 |
 | X-2 | `container-build-sign` | ECR repo `sparc-horizon`; add Horizon as a consumer so pin-bump issues are filed against it; confirm the Go/UI image shape fits `build-sign-publish.yml` — Horizon is the framework's **first application image** | S1-9 | [#326](https://github.com/risk-sentinel/container-build-sign/issues/326) | **Filed** 2026-09-19 |
-| X-3 | `sparc-iac` | Emit role `SPARC_HORIZON_EMIT_ARN` scoped `risk-sentinel/*/sparc-horizon/*`; ECS Fargate service, task definition, ALB, secrets | S0-11, S2 | [#715](https://github.com/risk-sentinel/sparc-iac/issues/715) (boundary + role) | **Filed** 2026-09-19 — `sparc-iac` has the expansion and the move to `risk-sentinel` **in flight** |
+| X-3 | `sparc-iac` | Emit role `SPARC_HORIZON_EMIT_ARN` scoped `risk-sentinel/*/sparc-horizon/*`; ECS Fargate service, task definition, ALB, secrets | S0-11, S2 | [#715](https://github.com/risk-sentinel/sparc-iac/issues/715) (boundary + role) | **Emit role delivered and proven** 2026-09-19 — the first object was read back from the bucket. Required a trust-policy correction for GitHub's immutable subject form (`sparc-iac#719`). The ECS Fargate half of this row is still S2 work |
 | X-4 | `sparc` | `sparc-validate` rules rejecting SSP/AR/POA&M documents missing the required namespace props; publish the KSI and 800-53 mapping documents Horizon's axis swap reads; confirm the Delivery API surface Horizon consumes | P0, P1 | [#1154](https://github.com/risk-sentinel/sparc/issues/1154) | **Filed** 2026-09-19 |
-| X-7 | estate-wide | **Evidence boundary pivot to `risk-sentinel`**, filed in unison: [sparc-iac#715](https://github.com/risk-sentinel/sparc-iac/issues/715) (hub — IAM + bucket policy + org variable), [sparc#1153](https://github.com/risk-sentinel/sparc/issues/1153), [sparc-validate#400](https://github.com/risk-sentinel/sparc-validate/issues/400) (+ its 20-repo fleet), [container-build-sign#325](https://github.com/risk-sentinel/container-build-sign/issues/325), [sparc-horizon#1](https://github.com/risk-sentinel/sparc-horizon/issues/1) | S0-11 | see left | **Filed** 2026-09-19 |
+| X-7 | estate-wide | **Evidence boundary pivot to `risk-sentinel`**, filed in unison: [sparc-iac#715](https://github.com/risk-sentinel/sparc-iac/issues/715) (hub — IAM + bucket policy + org variable), [sparc#1153](https://github.com/risk-sentinel/sparc/issues/1153), [sparc-validate#400](https://github.com/risk-sentinel/sparc-validate/issues/400) (+ its 20-repo fleet), [container-build-sign#325](https://github.com/risk-sentinel/container-build-sign/issues/325), [sparc-horizon#1](https://github.com/risk-sentinel/sparc-horizon/issues/1) | S0-11 | see left | **Horizon's leg complete** 2026-09-19 — first producer in the estate writing under `risk-sentinel`, verified from the bucket. The flip was applied before the bucket policy accepted the new prefix, which denied every producer estate-wide while their workflows stayed green (`sparc-iac#719`); the encryption deny returns under `sparc-iac#721`, which #10 prepares for. The rest of the estate's legs are not Horizon's to close |
 | X-5 | `sparc-validate` | Execute the ECS Fargate and secrets baselines against the deployed Horizon service and emit HDF | S2-6 | [#401](https://github.com/risk-sentinel/sparc-validate/issues/401) | **Filed** 2026-09-19 |
 | X-6 | `sparc` | Replace the illustrative namespace URI `https://risk-sentinel.org/ns/sparc` with the registered one, and register the federation namespace UUID the UUIDv5 grammar derives from. **Settle before P0 generates fixtures** — every derived UUID changes otherwise, breaking the regeneration-stability criterion and federated dedup | P0 | [#1155](https://github.com/risk-sentinel/sparc/issues/1155) | **Filed** 2026-09-19 |
 

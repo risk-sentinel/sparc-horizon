@@ -66,10 +66,10 @@ ordering rule.
 | Design docs | **11** (`docs/01`–`docs/10` + `roadmap.md`) — the design of record |
 | Machine-readable contracts | **2** — `api/openapi.yaml` (v0 skeleton), `schemas/sparc-namespace-props.v1.schema.json` (v1, 9 props) |
 | Demos | **4** static HTML files, synthetic data, seeded PRNG, no build step |
-| CI workflows | **4** — `secret-scan.yml` (gate + fixture canary), `secret-scan-hdf-emit.yml` (emitter, fails closed), `pr-checklist.yml`, `contracts.yml` (OpenAPI, namespace schema, actionlint, duplication drift) |
-| Branch protection | **None yet, ready to set.** All seven check contexts observed reporting green on PR #2; the exact names are recorded under S0-12 |
+| CI workflows | **5** — `secret-scan.yml` (gate + fixture canary), `secret-scan-hdf-emit.yml` and `sonarqube-hdf-emit.yml` (emitters, both fail closed on an unset boundary), `pr-checklist.yml`, `contracts.yml` (OpenAPI, namespace schema, actionlint, duplication drift) |
+| Branch protection | **Active.** Ruleset on `main`: 7 required contexts, PR required with CODEOWNERS review, signed commits, no force-push, no deletion, bypass **pull request only**. Verified by a direct push being refused, not just by reading the config back |
 | Secret scanning | **Gate + canary landed.** TruffleHog verified-only, `tests/trufflehog-fixture/` planted and asserted, exclude file scoped to the fixture alone |
-| SAST / code scanning | **None** — no CodeQL, no SonarCloud project, no `golangci-lint` config |
+| SAST / code scanning | **Sonar wired.** Project `risk-sentinel_sparc-horizon` live (private), `SONAR_TOKEN` an org secret, emitter converts to HDF and verifies the project resolves before fetching. CodeQL and `golangci-lint` still pending — Phase S1, when Go lands |
 | Dependency / SBOM / SCA | **None** — no `go.mod` yet, no Dependabot config, no `.security/sca-allowlist.yaml` |
 | Container | **None** — the Dockerfile in [`docs/08-build-deploy.md`](../08-build-deploy.md) is a sketch, unpinned, never built |
 | HDF evidence emitted | **0 artifacts.** Emitter written and fails closed on an unset boundary or absent role; blocked on the `risk-sentinel/*/sparc-horizon/*` role (`sparc-iac#715`) |
@@ -116,11 +116,33 @@ ordering rule.
   deleted in #4, with the diff replaced by a guard against the copy returning.
 - **`horizon.zip` dropped** (S0-13) and `*.zip` ignored.
 
-**Remaining in S0:** S0-12 branch protection — the seven context names are now
-recorded, so this is ready to set. S0-9 SonarCloud analysis, which could not run
-until Go and TypeScript existed on the default branch and is expected to pick up
-automatically now that PR #2 has merged. S0-15 compliance skeleton and S0-17 threat
-model attestation.
+**Remaining in S0:** S0-11 (the evidence emit itself, blocked on the role from
+`sparc-iac#715`), S0-15 compliance skeleton, and S0-17 threat model attestation.
+Everything else has landed.
+
+**S0-12 branch protection is active** as of 2026-09-19. Ruleset `main`, enforcement
+`active`, copied from `sparc-validate`'s shape with two deliberate departures:
+
+- **bypass `pull_request`, not `always`.** `sparc-validate` grants repository admins
+  `always`, which permits a direct push to the protected branch. `pull_request` refuses
+  that while still letting the owner merge their own PR — which matters where one person
+  authors most changes and self-approval is impossible. Some web UIs will not render the
+  bypass-merge button under this mode; the CLI honours it.
+- **`required_signatures` added.** Not present on `sparc-validate`. Safe here because
+  every commit on `main` already verifies server-side, checked before enabling — turning
+  it on against unsigned history would have blocked all work.
+
+Verified by attempting a direct push to `main` and reading the refusal
+(`GH013 ... Changes must be made through a pull request`, `7 of 7 required status checks
+are expected`), not by reading the configuration back. A protection rule nobody has
+tested is a claim.
+
+`delete_branch_on_merge` is now on, matching `sparc-validate`, and the merged
+`feature/1` and `feature/4` branches were removed.
+
+**Neither HDF emitter is a required context, deliberately.** Both run on push-to-main
+and schedule but never on `pull_request`, so requiring either would leave every PR
+waiting on a check that cannot arrive.
 
 ---
 
@@ -173,7 +195,7 @@ Make the repository a first-class estate member before any code lands.
 | S0-6 | `CONTRIBUTING.md` documenting the PR convention and pointing at `issue_rules.md` | | 2026-09-19 |
 | S0-7 | Contract CI: Redocly lint on `api/openapi.yaml`, ajv compile on the namespace schema, and a check that every `props[]` example in the design docs validates against it | | 2026-09-19 |
 | S0-8 | Workflow linting (`actionlint`) in CI — a schema error yields a 0-second run with no jobs and no logs, so it must be caught in the change that introduces it | | 2026-09-19 |
-| S0-9 | `sonarqube-hdf-emit.yml` copied in self-contained (a public repo cannot call a private reusable), CONFIGURATION block set to `REPO_SLUG: sparc-horizon`. It verifies the project **resolves** before fetching, so it fails rather than reporting a clean empty result | | |
+| S0-9 | `sonarqube-hdf-emit.yml` copied in self-contained (a public repo cannot call a private reusable), CONFIGURATION block set to `REPO_SLUG: sparc-horizon`. It verifies the project **resolves** before fetching, so it fails rather than reporting a clean empty result | [#6](https://github.com/risk-sentinel/sparc-horizon/issues/6) | 2026-09-19 |
 | S0-10 | `.github/dependabot.yml` for `github-actions` now; `gomod` and `npm` ecosystems added in S1 when the manifests exist | | 2026-09-19 |
 | S0-11 | Evidence path proven end to end with the secrets HDF: prefix `risk-sentinel/<date\|latest>/sparc-horizon/secrets/`, provenance stamped, and the **landed object read back and verified** rather than trusting a green upload. No `\|\| 'sparc'` fallback — fail closed on an unset boundary | [#1](https://github.com/risk-sentinel/sparc-horizon/issues/1) | |
 | S0-12 | Branch protection: ruleset copied from `sparc-validate`, `strict_required_status_checks_policy: true`, signed commits, reviews required, bypass **pull request only**, enforcement **active** not evaluate. Required contexts are the seven names below, all now observed reporting | | |

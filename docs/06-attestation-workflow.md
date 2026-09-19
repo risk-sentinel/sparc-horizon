@@ -23,6 +23,30 @@ stateDiagram-v2
   Expired --> Due
 ```
 
+## Signing operates on bytes, not on objects
+
+A detached signature covers the JCS-canonical form of the JSON **as received**. It is never
+computed over a document that has been parsed into typed structs and serialised again.
+
+The reason is measurable rather than theoretical (#26). Typed OSCAL carries timestamps as
+`time.Time`, so `2026-03-31T19:45:48.195797+00:00` re-serialises as
+`2026-03-31T19:45:48.195797Z` — the same instant, different bytes. RFC 8785 canonicalises
+object member order and number formatting; it does **not** normalise string values, and a
+timestamp is a JSON string. The two forms therefore have different digests, and a signature
+verified against the re-serialised form fails on a document nobody altered.
+
+So:
+
+- **Verify** against the bytes as they arrived. Keep them; do not reconstruct them.
+- **Hash** back-matter resources over the stored bytes, which is what the resource's hash
+  claims about.
+- **Emit** through one canonical serialiser, so a document Horizon authors has one byte form
+  and its signature is reproducible by anyone who re-exports it.
+- Parse into types to **read and compute**. That is what the type layer is for.
+
+This is the same property the recompute audit test depends on: if re-export cannot reproduce
+the bytes, a peer cannot verify what Horizon signed.
+
 ## Hybrid controls
 
 A hybrid control is green only when both the provider's and consumer's responsibility halves have current observations. Each half is attested separately by its own ISO.

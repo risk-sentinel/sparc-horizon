@@ -64,7 +64,7 @@ horizon/
 
 | Need | Choice | Why |
 |---|---|---|
-| OSCAL types | `github.com/defenseunicorns/go-oscal` | Maintained Go structs. Confirm 1.2.x coverage in phase 0; fall back to types generated from the NIST JSON schemas |
+| OSCAL types | `github.com/defenseunicorns/go-oscal`, pinned | **Decided in P0 (#26).** v0.7.1 ships `oscal-1-2-1` and `oscal-1-2-2`; all seven models Horizon reads are present. Five real documents round-trip losslessly apart from timestamp normalisation, and none contained a field the types do not model. The "generate from the NIST schemas" fallback is the same generator self-hosted — `go-oscal` *is* a schema-to-types generator — so it buys no fidelity. **Parse for reading, never to reproduce a signed document:** hash and verify the received bytes |
 | HDF types | Generated from the HDF v3 JSON schema | Only needed to read raw HDF from back-matter for provenance views |
 | Storage | `modernc.org/sqlite`, Postgres optional | Pure Go, so `CGO_ENABLED=0` and a static binary |
 | HTTP | `github.com/go-chi/chi/v5` | Standard `net/http` handlers, small surface |

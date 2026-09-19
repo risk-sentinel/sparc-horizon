@@ -1,8 +1,18 @@
 # Threat model and security architecture review
 
-**Reviewed revision:** the design of record at `docs/01`–`docs/10` as of 2026-09-19.
-**Attestation:** [`attestations/threat-model-2026-09-19.oscal.json`](attestations/threat-model-2026-09-19.oscal.json).
+**Revision:** r2, 2026-09-19.
+**Reviewed revision:** the design of record at `docs/01`–`docs/10` as of 2026-09-19, including
+the signing rule added by #27.
+**Attestation:** [`attestations/threat-model-2026-09-19-r2.oscal.json`](attestations/threat-model-2026-09-19-r2.oscal.json),
+which supersedes [`threat-model-2026-09-19.oscal.json`](attestations/threat-model-2026-09-19.oscal.json).
 **Expires:** 2027-03-18. Early-staleness triggers are at the bottom of this document.
+
+> **Why there is already a second revision.** r1 was attested on 2026-09-19 and went stale the
+> same day, when #27 added *Signing operates on bytes, not on objects* to
+> `docs/06-attestation-workflow.md` — which trips the early-staleness trigger for a change to
+> the canonicalisation rule. That produced **TM-9** below. The superseded record is kept
+> unmodified rather than edited, because an attestation that is quietly revised in place is not
+> evidence of anything. See [`attestations/README.md`](attestations/README.md).
 
 This is the one SDLC stage `dev-sec-ops-baseline` deliberately does not automate, because
 its output is a document and a conversation. A generated threat model asserts that a
@@ -203,6 +213,34 @@ obligations are the container and configuration contract in `docs/08-build-deplo
 `sparc-validate` executing the ECS Fargate and secrets baselines against the deployed
 service (X-5).
 
+### TM-9 — A signature fails on a document nobody tampered with
+
+TM-5 is about an attacker producing signatures that verify. This is the opposite failure, and
+it is the one that actually happens: a signature that **fails on a document nobody altered**,
+because something in the pipeline rewrote bytes without changing meaning.
+
+Measured in #26 rather than supposed. Typed OSCAL carries timestamps as `time.Time`, so
+`2026-03-31T19:45:48.195797+00:00` re-serialises as `2026-03-31T19:45:48.195797Z` — the same
+instant, different bytes. RFC 8785 canonicalises object member order and number formatting; it
+does **not** normalise string values, and a timestamp is a JSON string. So parsing a signed
+document into types and serialising it again changes its digest.
+
+The consequence is worse than an error message. On the ingestion path a verification failure
+is indistinguishable from tampering and will be treated as an attack, so this defect presents
+as a security incident against an honest peer. Under time pressure the tempting fix is to relax
+verification, which is precisely the wrong direction.
+
+**Decision: requirement (P4 `internal/attest`, P6 `internal/federate`).**
+
+- Verify and hash over the **bytes as received**. Retain them; do not reconstruct them.
+- Parse into types to read and compute. That is what the type layer is for.
+- Emit through one canonical serialiser, so a document Horizon authors has one byte form and
+  its signature is reproducible by anyone who re-exports it.
+- The recompute audit test depends on the same property: if re-export cannot reproduce the
+  bytes, a peer cannot verify what Horizon signed.
+
+`docs/06-attestation-workflow.md` carries the rule; this finding is why it is there.
+
 ---
 
 ## Decisions summary
@@ -217,9 +255,14 @@ service (X-5).
 | TM-6 | Predictable UUIDs used as addressing | Requirement + `sparc` ask | P6, cross-repo |
 | TM-7 | Silent evidence stall | Requirement | S1 |
 | TM-8 | Deployment | Accepted, inherited | `sparc-iac`, `container-build-sign` |
+| TM-9 | A signature fails on an untampered document | Requirement | P4, P6 |
 
 Nothing here is marked mitigated. That is the correct result for a repository with no
 application code: the design is sound on paper, and none of it is enforced yet.
+
+TM-9 arrived after r1 was signed, from measurement rather than review. That is the expected
+way for this document to grow: a spike measures something, the measurement contradicts an
+assumption, and the model is re-issued rather than amended in silence.
 
 ---
 
@@ -241,9 +284,9 @@ not invalidate it; changing what it assumed does.
 
 ## How this is attested
 
-The machine-readable record is an OSCAL assessment result with a single observation
-carrying a native `expires`, so Horizon's own review is countable by the same engine that
-counts everyone else's — the evidence chain in `docs/06-attestation-workflow.md`, applied
+Each revision of this document gets its own OSCAL assessment result, with a single
+observation carrying a native `expires`, so Horizon's own review is countable by the same
+engine that counts everyone else's — the evidence chain in `docs/06-attestation-workflow.md`, applied
 to this repository.
 
 The signature is the **signed commit** that introduces the attestation. `main` requires
@@ -252,3 +295,8 @@ content by the same mechanism that protects every other change to this repositor
 verifiable with `git log --show-signature`. When P4 builds the attestation path, this
 record is re-issued through it and the commit signature becomes the corroborating
 evidence rather than the primary one.
+
+A superseded record's hash identifies a revision of this file that no longer sits at this
+path. That revision is not lost: `main` requires verified signatures, so git history is the
+immutable store, and the superseded hash resolves against it. This is why a superseded record
+is never edited — editing it would break the one link back to what was actually reviewed.

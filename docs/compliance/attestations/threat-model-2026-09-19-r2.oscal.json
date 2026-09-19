@@ -1,0 +1,172 @@
+{
+  "assessment-results": {
+    "uuid": "1f1e64d4-4c2e-4165-9a9e-1e41b6d25dbd",
+    "metadata": {
+      "title": "SPARC Horizon threat model and security architecture review \u2014 attestation, revision 2",
+      "last-modified": "2026-09-19T00:00:00Z",
+      "version": "2.0.0",
+      "oscal-version": "1.2.1",
+      "roles": [
+        {
+          "id": "reviewer",
+          "title": "Security architecture reviewer"
+        },
+        {
+          "id": "attestor",
+          "title": "Attesting party"
+        }
+      ],
+      "parties": [
+        {
+          "uuid": "1bcb34a4-c5c8-554c-a533-446300840153",
+          "type": "organization",
+          "name": "Risk-Sentinel",
+          "remarks": "The reviewing individual is identified by the verified signature on the commit that introduces this record, not by a name asserted inside it."
+        }
+      ],
+      "responsible-parties": [
+        {
+          "role-id": "reviewer",
+          "party-uuids": [
+            "1bcb34a4-c5c8-554c-a533-446300840153"
+          ]
+        },
+        {
+          "role-id": "attestor",
+          "party-uuids": [
+            "1bcb34a4-c5c8-554c-a533-446300840153"
+          ]
+        }
+      ],
+      "remarks": "Supersedes assessment result 238d6c86-650c-4dcc-993b-994043a24eb0, which was attested earlier the same day and went stale within hours: #27 added a rule fixing what a signature is computed over, which trips this attestation's early-staleness trigger for a change to the canonicalisation rule. The superseded record is kept unmodified. Its recorded hash e99b1dc168370017894d5452ff50013e40c0f73d6e9e0d4eb97b5a47a2812147 identifies the revision of threat-model.md it actually reviewed; that revision lives in git history, which is an immutable store here because main requires verified signatures. Editing a superseded record would break the only link back to what was reviewed, so it is never edited."
+    },
+    "import-ap": {
+      "href": "#129ebcc4-7ab4-5b88-94b2-f8a9b101733f",
+      "remarks": "There is no separate assessment plan. The requirement, its scope and its evidencing method are set by docs/dev/issue_rules.md and phase item S0-17 in docs/dev/Implementation_plan.md, which is what this href names. Recorded plainly rather than inventing a plan document to satisfy the field."
+    },
+    "results": [
+      {
+        "uuid": "de89ba45-86c1-5c3e-95d2-14ea055c2778",
+        "title": "Threat model and security architecture review of the design of record, revision 2",
+        "description": "Re-review of docs/01 through docs/10 as of 2026-09-19, after the signing rule added by #27. Nine findings, TM-1 through TM-9, recorded in docs/compliance/threat-model.md. TM-9 is new in this revision and is the reason for it: a signature that fails on a document nobody tampered with, because typed OSCAL rewrites timestamps and JCS does not normalise string values. None of the nine is marked mitigated, which remains the correct result for a repository with no application code.",
+        "start": "2026-09-19T00:00:00Z",
+        "end": "2026-09-19T00:00:00Z",
+        "reviewed-controls": {
+          "description": "The control this activity evidences.",
+          "control-selections": [
+            {
+              "description": "Developer testing and evaluation \u2014 threat modeling and vulnerability analyses.",
+              "include-controls": [
+                {
+                  "control-id": "sa-11.2"
+                }
+              ]
+            }
+          ]
+        },
+        "observations": [
+          {
+            "uuid": "acae328c-75cb-5f9e-9cb8-a191aa54c6a2",
+            "title": "Threat model re-reviewed and attested after the canonicalisation rule changed",
+            "description": "The threat model was re-reviewed against the design of record following #27, which fixed what a detached signature is computed over. The review added TM-9 and left the other eight findings standing. Decisions across the nine: one deferred as an open phase-0 decision (TM-4, the chain head has no anchor outside the writer's control), one accepted and inherited (TM-8, deployment), one accepted risk within TM-5, and the rest carried as requirements on the phases that build the affected component.",
+            "methods": [
+              "EXAMINE"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "props": [
+              {
+                "name": "evidence-kind",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "manual-attestation"
+              },
+              {
+                "name": "signed-by",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "1bcb34a4-c5c8-554c-a533-446300840153"
+              }
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "type": "party",
+                    "actor-uuid": "1bcb34a4-c5c8-554c-a533-446300840153",
+                    "role-id": "reviewer"
+                  }
+                ]
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "0186c70e-efa5-510a-a2c4-924d64cf62b5",
+                "type": "component"
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "href": "#26e883d0-e8d2-5004-a0d9-af00af364a85",
+                "description": "The threat model at revision 2, hashed in back-matter."
+              },
+              {
+                "href": "#997c5bca-a4bc-587c-836b-a6c3720317d1",
+                "description": "The attestation this supersedes, and the hash of the revision it reviewed."
+              }
+            ],
+            "collected": "2026-09-19T00:00:00Z",
+            "expires": "2027-03-18T00:00:00Z",
+            "remarks": "Expiry is 180 days from the review. It also goes stale early, before that date, on a change to the trust boundary, the evidence chain order, the signing or canonicalisation scheme, how roles are derived from documents, the isolation of what-if overlays, the federation's peer verification or UUID key grammar, or on the first release serving real projections to an Authorizing Official. That list is not decorative: the trigger for a canonicalisation change is what produced this revision, hours after the previous one was signed. Completing a phase is not a trigger \u2014 building what the model requires does not invalidate it, changing what it assumed does."
+          }
+        ]
+      }
+    ],
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "26e883d0-e8d2-5004-a0d9-af00af364a85",
+          "title": "SPARC Horizon threat model, 2026-09-19 revision 2",
+          "description": "The reviewed document. Its hash binds this attestation to that exact text.",
+          "rlinks": [
+            {
+              "href": "../threat-model.md",
+              "media-type": "text/markdown",
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "5285d3d660acd900337ade9a90d609fc91704215910f75cabc89abc35707638d"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "uuid": "997c5bca-a4bc-587c-836b-a6c3720317d1",
+          "title": "Superseded attestation \u2014 threat model, 2026-09-19 revision 1",
+          "description": "Assessment result 238d6c86-650c-4dcc-993b-994043a24eb0, observation f1c5d909-daeb-5904-96a3-f0098d618ada. It reviewed the revision of threat-model.md whose SHA-256 is e99b1dc168370017894d5452ff50013e40c0f73d6e9e0d4eb97b5a47a2812147, which no longer sits at that path and is recoverable from git history. Kept unmodified.",
+          "rlinks": [
+            {
+              "href": "./threat-model-2026-09-19.oscal.json",
+              "media-type": "application/json"
+            }
+          ]
+        },
+        {
+          "uuid": "129ebcc4-7ab4-5b88-94b2-f8a9b101733f",
+          "title": "Process of record \u2014 issue_rules.md and phase item S0-17",
+          "description": "What requires this review, defines its scope, and requires it to be evidenced through the attestation path with freshness asserted.",
+          "rlinks": [
+            {
+              "href": "../../dev/issue_rules.md",
+              "media-type": "text/markdown"
+            },
+            {
+              "href": "../../dev/Implementation_plan.md",
+              "media-type": "text/markdown"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

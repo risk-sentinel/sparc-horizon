@@ -204,6 +204,7 @@ Make the repository a first-class estate member before any code lands.
 | S0-15 | `docs/compliance/` skeleton: `README.md`, `nist-sp800-53-rev5-mapping.md`, `oscal/cdefs/`, and the inline-control-comment format. Horizon's own control story starts empty and grows per issue, per `issue_rules.md` step 9 | | |
 | S0-16 | `docs/dev/Developer_Collision_Avoidance_Plan.md` — domain ownership and hot files | | 2026-09-19 |
 | S0-17 | Threat model and security architecture review recorded as a dated, signed attestation document. This is the one stage `dev-sec-ops-baseline` deliberately does not automate: it produces a document and a conversation, and is evidenced through the attestation path where freshness is asserted | | |
+| S0-18 | **Canary for actionlint's shellcheck integration.** `actionlint` exits 0 when the `shellcheck` binary is absent — it skips the integration rather than reporting it, so a runner-image change would remove a class of coverage while the job stayed green. `tests/actionlint-fixture/` carries a planted `SC2012` defect the lint job must report | [#8](https://github.com/risk-sentinel/sparc-horizon/issues/8) | 2026-09-19 |
 
 ### Required check contexts, as the forge reports them
 

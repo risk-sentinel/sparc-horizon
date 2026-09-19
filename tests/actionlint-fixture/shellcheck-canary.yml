@@ -1,0 +1,31 @@
+# CANARY FIXTURE — not a real workflow. Never runs.
+#
+# It carries a deliberate shell defect that ONLY shellcheck can see, so that
+# `contracts.yml`'s "Workflow lint" job can prove actionlint's shellcheck
+# integration is actually wired rather than silently skipped.
+#
+# Why this exists: actionlint exits 0 when the shellcheck binary is absent. It
+# does not warn. So a runner image that stopped shipping shellcheck would remove
+# a whole class of coverage while the job stayed green. Measured on
+# actionlint v1.7.12:
+#
+#   shellcheck 0.10.0 on PATH -> rc=1, reports SC2012
+#   shellcheck absent         -> rc=0
+#
+# The lint job runs actionlint against this file and FAILS if SC2012 is not
+# reported. See tests/actionlint-fixture/README.md and issue #8.
+#
+# It lives outside .github/workflows/ so the real lint pass does not see it —
+# actionlint with no arguments lints .github/workflows/ only.
+#
+# Do not "fix" the ls below. It is the plant.
+name: shellcheck canary fixture
+on: workflow_dispatch
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Contains a shell issue only shellcheck can see (SC2012)
+        run: |
+          N=$(ls -1 /tmp/*.txt | wc -l)
+          echo "$N"

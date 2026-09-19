@@ -136,8 +136,7 @@ ordering rule.
   #10, resolved on this branch, for why the emit would otherwise have started failing
   again.
 
-**Remaining in S0:** S0-15 compliance skeleton (#11) and S0-17 threat model attestation
-(#12). Everything else has landed.
+**Phase S0 is complete.** The last two items closed on 2026-09-19: the compliance directory (#11) and the threat model attestation (#12). The threat model produced eight findings, none marked mitigated — which is the right result for a repository with no application code — and they are carried as named requirements on P1, P2, P4, P6, P7 and S1 rather than as a document nobody reads again. TM-4 goes to `docs/10-risks-decisions.md` as an open phase-0 decision; TM-6 is filed as `sparc#1159`.
 
 **S0-12 branch protection is active** as of 2026-09-19. Ruleset `main`, enforcement
 `active`, copied from `sparc-validate`'s shape with two deliberate departures:
@@ -220,9 +219,9 @@ Make the repository a first-class estate member before any code lands.
 | S0-12 | Branch protection: ruleset copied from `sparc-validate`, `strict_required_status_checks_policy: true`, signed commits, reviews required, bypass **pull request only**, enforcement **active** not evaluate. Required contexts are the seven names below, all now observed reporting | | 2026-09-19 |
 | S0-13 | Delete `horizon.zip` from history-going-forward and gitignore it; it is a snapshot of the repo that goes stale on every commit *(already dropped from the working tree 2026-09-19 — confirm the ignore rule)* | | 2026-09-19 |
 | S0-14 | De-duplicate `docs/hud.html` (byte-identical to `demo/hud.html`) — removed, with a CI guard against it returning | [#4](https://github.com/risk-sentinel/sparc-horizon/issues/4) | 2026-09-19 |
-| S0-15 | `docs/compliance/` skeleton: `README.md`, `nist-sp800-53-rev5-mapping.md`, `oscal/cdefs/`, and the inline-control-comment format. Horizon's own control story starts empty and grows per issue, per `issue_rules.md` step 9 | [#11](https://github.com/risk-sentinel/sparc-horizon/issues/11) | |
+| S0-15 | `docs/compliance/` skeleton: `README.md`, `nist-sp800-53-rev5-mapping.md`, `oscal/cdefs/`, and the inline-control-comment format. Horizon's own control story starts empty and grows per issue, per `issue_rules.md` step 9 | [#11](https://github.com/risk-sentinel/sparc-horizon/issues/11) | 2026-09-19 |
 | S0-16 | `docs/dev/Developer_Collision_Avoidance_Plan.md` — domain ownership and hot files | | 2026-09-19 |
-| S0-17 | Threat model and security architecture review recorded as a dated, signed attestation document. This is the one stage `dev-sec-ops-baseline` deliberately does not automate: it produces a document and a conversation, and is evidenced through the attestation path where freshness is asserted | [#12](https://github.com/risk-sentinel/sparc-horizon/issues/12) | |
+| S0-17 | Threat model and security architecture review recorded as a dated, signed attestation document. This is the one stage `dev-sec-ops-baseline` deliberately does not automate: it produces a document and a conversation, and is evidenced through the attestation path where freshness is asserted | [#12](https://github.com/risk-sentinel/sparc-horizon/issues/12) | 2026-09-19 |
 | S0-18 | **Canary for actionlint's shellcheck integration.** `actionlint` exits 0 when the `shellcheck` binary is absent — it skips the integration rather than reporting it, so a runner-image change would remove a class of coverage while the job stayed green. `tests/actionlint-fixture/` carries a planted `SC2012` defect the lint job must report | [#8](https://github.com/risk-sentinel/sparc-horizon/issues/8) | 2026-09-19 |
 
 ### Required check contexts, as the forge reports them
@@ -381,6 +380,7 @@ an unfiled ask.
 | X-5 | `sparc-validate` | Execute the ECS Fargate and secrets baselines against the deployed Horizon service and emit HDF | S2-6 | [#401](https://github.com/risk-sentinel/sparc-validate/issues/401) | **Filed** 2026-09-19 |
 | X-6 | `sparc` | Replace the illustrative namespace URI `https://risk-sentinel.org/ns/sparc` with the registered one, and register the federation namespace UUID the UUIDv5 grammar derives from. **Settle before P0 generates fixtures** — every derived UUID changes otherwise, breaking the regeneration-stability criterion and federated dedup | P0 | [#1155](https://github.com/risk-sentinel/sparc/issues/1155) | **Filed** 2026-09-19 |
 | X-8 | `sparc` | **Unblock the 800-53 attribution for the inherited AWS platform layer.** Horizon's component definition imports the AWS Labs service definitions for component identity; their control implementations are keyed to AWS Security Hub control ids, and SPARC already owns the Security Hub to NIST 800-53 rev 5 converter. The blocker is that those definitions import as a document with **zero controls**, so the converter has nothing to map | S0-15 | [#1103](https://github.com/risk-sentinel/sparc/issues/1103) | **Open upstream**, filed 2026-09-03 before Horizon needed it. Recorded here 2026-09-19 because the inherited rows in `docs/compliance/nist-sp800-53-rev5-mapping.md` now depend on it. Horizon must not work around it by authoring the crosswalk locally |
+| X-9 | `sparc` | **Deduplication must be scoped by originating party, not by object UUID alone.** UUIDv5 over natural keys is deterministic and its grammar is published, so any peer can compute any boundary's identifiers and claim them. `sparc` owns the federation trust fabric and therefore the dedup semantics | P6, threat model TM-6 | [#1159](https://github.com/risk-sentinel/sparc/issues/1159) | **Filed** 2026-09-19. Horizon scopes its own ingestion on (UUID, originating party) regardless, but cannot fix the fabric's semantics from here |
 
 ---
 

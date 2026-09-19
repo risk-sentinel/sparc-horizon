@@ -151,6 +151,7 @@ Horizon writes to no sibling repository. Filed work, owned elsewhere:
 | [sparc-iac#715](https://github.com/risk-sentinel/sparc-iac/issues/715) | `sparc-iac` | S0-11 emit role **delivered and proven 2026-09-19**; S2 deployment still open. Hub for the boundary pivot |
 | [sparc-iac#721](https://github.com/risk-sentinel/sparc-iac/issues/721) | `sparc-iac` | Re-establishes the evidence encryption deny. Horizon already sends the header (#10), so this lands without action here |
 | [sparc#1103](https://github.com/risk-sentinel/sparc/issues/1103) | `sparc` | S0-15 — the 800-53 attribution for the inherited AWS platform rows. Do not work around it by writing the crosswalk here |
+| [sparc#1159](https://github.com/risk-sentinel/sparc/issues/1159) | `sparc` | P6 — federated deduplication must be scoped by originating party. Horizon scopes its own ingestion regardless; the fabric's semantics are not ours to change |
 | [sparc#1153](https://github.com/risk-sentinel/sparc/issues/1153) | `sparc` | Nothing here — coordination only |
 | [sparc-validate#400](https://github.com/risk-sentinel/sparc-validate/issues/400) | `sparc-validate` | Nothing here — coordination only |
 | [container-build-sign#325](https://github.com/risk-sentinel/container-build-sign/issues/325) | `container-build-sign` | Nothing here — coordination only |

@@ -7,7 +7,8 @@ asks every system it projects: *show me the evidence*.
 |---|---|
 | [`nist-sp800-53-rev5-mapping.md`](nist-sp800-53-rev5-mapping.md) | The control table — status, implementation, evidence, code location |
 | [`oscal/cdefs/`](oscal/cdefs/) | OSCAL component definitions, the machine-readable form of the same claims |
-| [`threat-model.md`](threat-model.md) | The threat model and its attestation (#12) |
+| [`threat-model.md`](threat-model.md) | The threat model and security architecture review |
+| [`attestations/`](attestations/) | Dated, signed attestation records, each carrying a native `expires` |
 
 ## The rule this directory exists to enforce
 
@@ -59,6 +60,21 @@ with **zero controls**, which leaves the converter nothing to map. So inherited 
 below carry `pending sparc#1103` rather than a control id: the capability exists, the
 data path into it does not work today, and that is a different statement from either a
 claim or a gap.
+
+## Attestations
+
+A review by a human is evidenced the same way any other claim is: a hashed back-matter
+resource, then an OSCAL observation carrying a native `expires` — the chain in
+`docs/06-attestation-workflow.md`, applied to this repository. The expiry is what makes
+Horizon's own review countable by the engine that counts everyone else's, so an expired
+review reads as expired rather than as absent.
+
+Until phase P4 builds the attestation path, the signature is the **signed commit** that
+introduces the record. `main` requires verified signatures, so the assertion is
+cryptographically bound to the content by the same mechanism that protects every other
+change here, and is verifiable with `git log --show-signature`. That has a consequence
+worth stating plainly: **signing the commit is the act of attesting.** Whoever signs is
+asserting they performed the review, so the content is read before it lands, not after.
 
 ## Inline control comments
 

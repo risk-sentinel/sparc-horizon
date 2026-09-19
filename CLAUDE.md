@@ -87,7 +87,7 @@ commercial**.
 
 - Each demo is a single self-contained HTML file: inline CSS and JS, no bundler, no CDN except Google Fonts (which degrade to system fonts offline).
 - `demo/full-plan.html` contains **verbatim copies** of the scripts from `demo/hud.html` and `demo/planner.html`, plus HTML renderings of the prose in `docs/01`–`docs/10`. Any demo logic or design-doc edit has to be mirrored there.
-- `docs/hud.html` is a byte-identical copy of `demo/hud.html`. (`horizon.zip`, a committed snapshot of the same tree, was dropped on 2026-09-19; keep it out.)
+- The demos live in `demo/` only. A `docs/hud.html` copy and a `horizon.zip` snapshot of the tree were both removed on 2026-09-19; CI fails if either returns. Link to `../demo/hud.html` from docs rather than copying it.
 - Synthetic data comes from a seeded PRNG (`R(11)`), so the fixture federation is stable across reloads; `TODAY` is the runtime date, so all relative countdowns shift day to day.
 - Planner state persists under `localStorage` key `horizon-plan-v1`, shared between `planner.html` and `full-plan.html`.
 - The existing style is deliberately terse (single-letter helpers, packed one-liners). Match it in these files rather than reformatting.

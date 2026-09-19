@@ -22,7 +22,7 @@ they will cause every avoidable conflict until they are removed.)
 | Process | `docs/dev/*.md` | all | `issue_rules.md` is binding; this file and `Implementation_plan.md` update on every issue |
 | API contract | `api/openapi.yaml` | P0, P2–P5 | Frozen at end of P0; changes after that are versioned, not edited in place |
 | Namespace contract | `schemas/sparc-namespace-props.v1.schema.json` | P0 | **Additive only within v1.** A new prop touches the `enum` and a matching `allOf` branch |
-| Demos | `demo/*.html`, `docs/hud.html` | S0, P3 | Synthetic data, no build step. **Duplicated** — see hot files |
+| Demos | `demo/*.html` | S0, P3 | Synthetic data, no build step. `full-plan.html` **duplicates** the other two — see hot files |
 | Pipeline | `.github/workflows/`, `.github/actions/`, `.security/`, `container-baseline.yml` | S0, S1 | One workflow PR at a time (rule below) |
 | Compliance artefacts | `docs/compliance/` | S0-15, then every security-touching issue | CDEFs, the NIST mapping, inline control comments |
 | Go service | `cmd/horizon/`, `internal/*` | P1–P7 | Does not exist yet; ownership splits by package, per `docs/02-architecture.md` |
@@ -72,10 +72,13 @@ on any of those sources conflicts here.
 states in its Test plan whether `full-plan.html` needed the same change, and why
 if not.
 
-### 2.2 `docs/hud.html` — byte-identical copy of `demo/hud.html`
+### 2.2 ~~`docs/hud.html`~~ — removed (#4)
 
-Two copies of the same 26 KB file, no generator, nothing asserting they match.
-Scheduled for removal in **S0-14**; until then, both change together.
+Was a byte-identical 26 KB copy of `demo/hud.html` with no generator. Deleted, and
+CI now fails if it is re-added. The demos live in `demo/` only; link to
+`../demo/hud.html` from docs rather than copying it.
+
+This axis is closed. The two below are not.
 
 ### 2.3 Roadmap phase data — three copies
 
@@ -162,7 +165,7 @@ registered namespace URI.
 
 | Risk | Likelihood | Mitigation |
 |---|---|---|
-| A demo or doc change lands in one of two or three copies | **High** — it is the default outcome without a check | S0-14 removes one copy; the Test-plan question in 2.1 catches the rest; a CI diff check is the real fix |
+| A demo or doc change lands in one of two or three copies | **High** — it is the default outcome without a check | One copy is gone (#4). `Duplicated copies agree` guards the rest as a smoke test; the Test-plan question in 2.1 covers what it cannot see |
 | Two workflow PRs open at once, neither observed reporting alone | Medium | One workflow PR at a time |
 | A required check added before it reports, blocking every PR | Medium, and **unrecoverable without owner bypass** | S0/S1 split; read the reported name from the forge, never the workflow file |
 | `internal/api` route registration conflicts | Medium, once code lands | Stable alphabetical one-line-per-route block |
@@ -174,8 +177,13 @@ registered namespace URI.
 ## Summary
 
 Today the only real collision surface is **duplication that nothing checks**:
-`full-plan.html` against two demos and ten docs, `docs/hud.html` against
-`demo/hud.html`, and roadmap phase data across three files. None of it is load-
-bearing for the product, and all of it is load-bearing for whether a change is
-correct. S0-14 removes one axis; the other two want a CI check that diffs the
-copies, which is worth filing once the `.github/` tree exists.
+`full-plan.html` against two demos and ten docs, and roadmap phase data across
+three files. None of it is load-bearing for the product, and all of it is
+load-bearing for whether a change is correct.
+
+One axis is closed: the `docs/hud.html` copy is gone (#4). The remaining two are
+guarded by `contracts.yml`'s `Duplicated copies agree` job, which anchors on
+distinctive symbols from each demo script and on all nine roadmap phase IDs. That
+is a smoke test, not a diff — it catches a copy that was never updated, not one
+edited subtly. Collapsing `full-plan.html` into a generated page is the real fix
+and wants its own issue.

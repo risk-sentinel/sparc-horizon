@@ -146,16 +146,18 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: docs/hud.html matches demo/hud.html
+      - name: docs/hud.html has not come back
         run: |
           set -euo pipefail
-          # Two copies of the same file, no generator. Scheduled for removal in
-          # Implementation_plan.md S0-14; until then they must not drift.
-          if ! diff -q docs/hud.html demo/hud.html; then
-            echo "::error::docs/hud.html and demo/hud.html have diverged. They are byte-identical copies (see docs/dev/Developer_Collision_Avoidance_Plan.md 2.2). Update both, or land S0-14 and delete one."
+          # docs/hud.html was a byte-identical copy of demo/hud.html, removed in #4.
+          # This guard replaces the diff that used to keep the two in step: without
+          # it nothing stops the copy being re-added, and the copy is only a problem
+          # because it is invisible once it exists.
+          if [ -e docs/hud.html ]; then
+            echo "::error::docs/hud.html is back. It was removed in #4 as a duplicate of demo/hud.html. The demos live in demo/ only; link to ../demo/hud.html from docs rather than copying it."
             exit 1
           fi
-          echo "PASS — the two hud.html copies are identical."
+          echo "PASS — no duplicate hud.html under docs/."
 
       - name: full-plan.html carries the demo scripts
         run: |

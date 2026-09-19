@@ -95,6 +95,6 @@ Deleting or narrowing a test so it stops failing is a suppression too.
 | `Test plan checklist` red | An unchecked `- [ ]` outside a skip block |
 | `Verified secrets gate` red | A verified credential in the tree |
 | `Fixture detection` red | The secret scanner regressed — the gate above it cannot be trusted |
-| `Duplicated copies agree` red | `docs/hud.html` drifted from `demo/hud.html`, or `demo/full-plan.html` no longer carries a demo script or a roadmap phase |
+| `Duplicated copies agree` red | `demo/full-plan.html` no longer carries a demo script or a roadmap phase, or a `docs/hud.html` copy has been re-added |
 | `Workflow lint` red | A workflow schema error. Left unlinted these produce a 0-second run with no jobs and no logs |
 | `Namespace schema` red | A documented prop example no longer validates, or the schema started accepting something it should reject |

@@ -112,13 +112,15 @@ ordering rule.
 - **Duplication drift guard** — the three copies this repository carries
   (`docs/hud.html` vs `demo/hud.html`, `demo/full-plan.html`'s verbatim demo scripts,
   roadmap phase data in three files) now fail CI when they diverge. All three pass
-  against the current tree.
+  against the current tree. **The first axis was then closed outright** — `docs/hud.html`
+  deleted in #4, with the diff replaced by a guard against the copy returning.
 - **`horizon.zip` dropped** (S0-13) and `*.zip` ignored.
 
-**Not started, and deliberately so:** S0-12 branch protection, because no check has
-been observed reporting on `main` yet — requiring one before that is the trap that
-blocks every PR permanently. S0-9 SonarCloud, S0-14 copy removal, S0-15 compliance
-skeleton, S0-17 threat model remain.
+**Remaining in S0:** S0-12 branch protection — the seven context names are now
+recorded, so this is ready to set. S0-9 SonarCloud analysis, which could not run
+until Go and TypeScript existed on the default branch and is expected to pick up
+automatically now that PR #2 has merged. S0-15 compliance skeleton and S0-17 threat
+model attestation.
 
 ---
 
@@ -176,7 +178,7 @@ Make the repository a first-class estate member before any code lands.
 | S0-11 | Evidence path proven end to end with the secrets HDF: prefix `risk-sentinel/<date\|latest>/sparc-horizon/secrets/`, provenance stamped, and the **landed object read back and verified** rather than trusting a green upload. No `\|\| 'sparc'` fallback — fail closed on an unset boundary | [#1](https://github.com/risk-sentinel/sparc-horizon/issues/1) | |
 | S0-12 | Branch protection: ruleset copied from `sparc-validate`, `strict_required_status_checks_policy: true`, signed commits, reviews required, bypass **pull request only**, enforcement **active** not evaluate. Required contexts are the seven names below, all now observed reporting | | |
 | S0-13 | Delete `horizon.zip` from history-going-forward and gitignore it; it is a snapshot of the repo that goes stale on every commit *(already dropped from the working tree 2026-09-19 — confirm the ignore rule)* | | 2026-09-19 |
-| S0-14 | De-duplicate `docs/hud.html` (byte-identical to `demo/hud.html`) — one copy, or a generated one with the generator in CI | | |
+| S0-14 | De-duplicate `docs/hud.html` (byte-identical to `demo/hud.html`) — removed, with a CI guard against it returning | [#4](https://github.com/risk-sentinel/sparc-horizon/issues/4) | 2026-09-19 |
 | S0-15 | `docs/compliance/` skeleton: `README.md`, `nist-sp800-53-rev5-mapping.md`, `oscal/cdefs/`, and the inline-control-comment format. Horizon's own control story starts empty and grows per issue, per `issue_rules.md` step 9 | | |
 | S0-16 | `docs/dev/Developer_Collision_Avoidance_Plan.md` — domain ownership and hot files | | 2026-09-19 |
 | S0-17 | Threat model and security architecture review recorded as a dated, signed attestation document. This is the one stage `dev-sec-ops-baseline` deliberately does not automate: it produces a document and a conversation, and is evidenced through the attestation path where freshness is asserted | | |

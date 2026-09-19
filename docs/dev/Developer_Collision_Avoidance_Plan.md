@@ -22,6 +22,7 @@ they will cause every avoidable conflict until they are removed.)
 | Process | `docs/dev/*.md` | all | `issue_rules.md` is binding; this file and `Implementation_plan.md` update on every issue |
 | API contract | `api/openapi.yaml` | P0, P2–P5 | Frozen at end of P0; changes after that are versioned, not edited in place |
 | Namespace contract | `schemas/sparc-namespace-props.v1.schema.json` | P0 | **Additive only within v1.** A new prop touches the `enum` and a matching `allOf` branch |
+| UUIDv5 key grammar | `docs/03-data-model.md` § Deterministic UUIDs | P0 | **Normative, and a change is a v2 not an edit** — the grammar version is part of the hashed input, so touching a field list changes every identifier in the estate. Ports live in `sparc` (X-10) |
 | Demos | `demo/*.html` | S0, P3 | Synthetic data, no build step. `full-plan.html` **duplicates** the other two — see hot files |
 | Pipeline | `.github/workflows/`, `.github/actions/`, `.security/`, `container-baseline.yml` | S0, S1 | One workflow PR at a time (rule below) |
 | Compliance artefacts | `docs/compliance/` | S0-15, then every security-touching issue | CDEFs, the NIST mapping, inline control comments. **Exists as of #11.** `oscal/cdefs/*.json` must stay OSCAL 1.2.x valid; UUIDs there are deterministic UUIDv5, so do not regenerate them casually |
@@ -152,6 +153,7 @@ Horizon writes to no sibling repository. Filed work, owned elsewhere:
 | [sparc-iac#721](https://github.com/risk-sentinel/sparc-iac/issues/721) | `sparc-iac` | Re-establishes the evidence encryption deny. Horizon already sends the header (#10), so this lands without action here |
 | [sparc#1103](https://github.com/risk-sentinel/sparc/issues/1103) | `sparc` | S0-15 — the 800-53 attribution for the inherited AWS platform rows. Do not work around it by writing the crosswalk here |
 | [sparc#1159](https://github.com/risk-sentinel/sparc/issues/1159) | `sparc` | P6 — federated deduplication must be scoped by originating party. Horizon scopes its own ingestion regardless; the fabric's semantics are not ours to change |
+| [sparc#1161](https://github.com/risk-sentinel/sparc/issues/1161) | `sparc` | P0 — Ruby and Python ports of the key grammar plus shared test vectors. Horizon owns the grammar and the Go reference only |
 | [sparc#1153](https://github.com/risk-sentinel/sparc/issues/1153) | `sparc` | Nothing here — coordination only |
 | [sparc-validate#400](https://github.com/risk-sentinel/sparc-validate/issues/400) | `sparc-validate` | Nothing here — coordination only |
 | [container-build-sign#325](https://github.com/risk-sentinel/container-build-sign/issues/325) | `container-build-sign` | Nothing here — coordination only |

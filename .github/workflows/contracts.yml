@@ -134,14 +134,43 @@ jobs:
       # job stayed green. Measured on actionlint v1.7.12:
       #   shellcheck 0.10.0 on PATH -> rc=1 on the canary, reports SC2012
       #   shellcheck absent         -> rc=0 on the canary
-      - name: Assert shellcheck is present
+      - name: Install shellcheck at the pinned version
+        env:
+          SHELLCHECK_VERSION: v0.10.0
+          SHELLCHECK_SHA256: 6c881ab0698e4e6ea235245f22832860544f17ba386442fe7e9d629f8cbedf87
+        run: |
+          set -euo pipefail
+          # Pinned rather than taken from the runner image. An unpinned linter
+          # silently changes what the gate measures when the image is bumped,
+          # and neither guard below catches it: the presence check passes
+          # because some shellcheck is still there, and the canary passes
+          # because SC2012 is stable. The lint's meaning would change between
+          # two runs of identical code with every signal green.
+          url="https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz"
+          curl -fsSL --retry 3 -o /tmp/shellcheck.tar.xz "$url"
+          # Verified against a recorded digest, not trusted because it came
+          # from a release URL over TLS.
+          echo "${SHELLCHECK_SHA256}  /tmp/shellcheck.tar.xz" | sha256sum -c -
+          tar -xJf /tmp/shellcheck.tar.xz -C /tmp
+          install -m 0755 "/tmp/shellcheck-${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin/shellcheck
+
+      - name: Assert shellcheck is present, and is the version we pinned
+        env:
+          SHELLCHECK_VERSION: v0.10.0
         run: |
           set -euo pipefail
           if ! command -v shellcheck >/dev/null 2>&1; then
-            echo "::error::shellcheck is not on PATH. actionlint silently skips its shellcheck integration without it, so this job would pass having checked no shell at all. The runner image used to ship it — add a pinned shellcheck install to this job rather than removing this assertion."
+            echo "::error::shellcheck is not on PATH. actionlint silently skips its shellcheck integration without it, so this job would pass having checked no shell at all. The install step above should have placed it; do not remove this assertion."
             exit 1
           fi
-          shellcheck --version | sed -n 's/^version: /shellcheck /p'
+          have="$(shellcheck --version | sed -n 's/^version: //p')"
+          want="${SHELLCHECK_VERSION#v}"
+          echo "shellcheck ${have} (pinned ${want})"
+          if [ "${have}" != "${want}" ]; then
+            echo "::error::shellcheck is ${have} but the pin is ${want}. The version on PATH is not the one this job installed — resolve before trusting the lint below."
+            exit 1
+          fi
+          echo "PASS — shellcheck ${have} matches the pin."
 
       - name: Canary — actionlint must report the planted shell defect
         run: |

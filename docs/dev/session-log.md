@@ -44,6 +44,31 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-20 — #13 follow-up — `fix/13_commit_time_without_checkout`
+
+**In flight:** nothing.
+
+**I broke the emit on `main` with #44 and this fixes it.** The wait step read the commit
+timestamp with `git show -s`, and the `SonarQube -> HDF` job **has no checkout** — it talks to
+SonarCloud and S3 and never needs the source. Every run failed with
+`fatal: not a git repository`, exit 128, before reaching the wait logic at all.
+
+**Why the PR could not catch it:** this workflow never runs on `pull_request` by design, so #44's
+only real exercise was post-merge. That was stated in its own post-merge section, and the check
+found the defect immediately — the process worked, the change was wrong.
+
+**What I should have checked:** the job's own steps. The comment directly above them says the
+project key is derived from `GITHUB_REPOSITORY` "rather than `github.event.repository.name`,
+which is not populated on `schedule` runs" — a job that careful about context availability was
+signalling a minimal footprint, and I assumed a checkout into it anyway.
+
+**Fix:** read the commit timestamp from the GitHub API rather than git. Not from
+`github.event.head_commit.timestamp` either, which is unpopulated on `schedule` runs — the same
+trap the existing comment warns about. Verified by dispatch:
+`committed 2026-09-20T14:34:42Z` resolves and the poll loop runs.
+
+---
+
 ## 2026-09-20 — #13 — `fix/13_sonar_emit_race`
 
 **In flight:** nothing. The emit workflow waits for the analysis of the current commit before

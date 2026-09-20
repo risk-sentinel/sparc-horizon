@@ -134,6 +134,7 @@ jobs:
       - name: Wait for the analysis of THIS commit
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           # SonarCloud analyses asynchronously, triggered by the same push that
@@ -156,7 +157,20 @@ jobs:
           # So the condition is not "is the queue empty" but "does an analysis of
           # THIS commit exist yet", polled until it does or the deadline passes.
           BRANCH="${GITHUB_REF_NAME}"
-          COMMITTED="$(git show -s --format=%cI "${GITHUB_SHA}")"
+          # From the API, not from git: this job has no checkout, because it
+          # talks to SonarCloud and S3 and never needs the source. And not from
+          # github.event.head_commit either, which is unpopulated on `schedule`
+          # runs — the same reason the project key is derived from
+          # GITHUB_REPOSITORY above.
+          COMMITTED="$(curl -sS --proto '=https' --proto-redir '=https' --tlsv1.2 \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}" \
+            | jq -r '.commit.committer.date // empty')"
+          if [ -z "${COMMITTED}" ]; then
+            echo "::error::Could not read the commit timestamp for ${GITHUB_SHA} from the API. Refusing to continue: without it a stale analysis cannot be distinguished from a current one."
+            exit 1
+          fi
           c_epoch="$(date -u -d "${COMMITTED}" +%s)"
           deadline=$(( SECONDS + 600 ))
           api() { curl -sS --proto '=https' --proto-redir '=https' --tlsv1.2 -u "${SONAR_TOKEN}:" "$@"; }

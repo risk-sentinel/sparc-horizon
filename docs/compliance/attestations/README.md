@@ -5,7 +5,8 @@ after it is signed** — a new revision supersedes it, and both files stay.
 
 | Record | Attests | State |
 |---|---|---|
-| [`threat-model-2026-09-19-r2.oscal.json`](threat-model-2026-09-19-r2.oscal.json) | `../threat-model.md` r2 | **Current.** Expires 2027-03-18 |
+| [`threat-model-2026-09-20.oscal.json`](threat-model-2026-09-20.oscal.json) | `../threat-model.md` r3 | **Current.** Expires 2027-03-18 |
+| [`threat-model-2026-09-19-r2.oscal.json`](threat-model-2026-09-19-r2.oscal.json) | `../threat-model.md` r2 | **Superseded** by r3 |
 | [`threat-model-2026-09-19.oscal.json`](threat-model-2026-09-19.oscal.json) | `../threat-model.md` r1 | **Superseded** by r2, same day |
 
 ## Why a superseded record is kept, and kept unmodified
@@ -43,6 +44,25 @@ for a change to the canonicalisation rule. The re-review added **TM-9** and prod
 This is the freshness mechanism working on the first occasion it fired. An attestation that
 goes stale and is quietly left in place is worse than no attestation, because it reads as
 current.
+
+## Why r3 is dated a day later, and carries no suffix
+
+The date in a filename is the date of the **review**, not of the file, and a `-r<n>` suffix
+marks a further revision *of the same review*. r1 and r2 were two revisions of the 2026-09-19
+review, so r2 took the suffix. r3 is a new review, performed on 2026-09-20, so it is the first
+record of that date and takes none. The document it attests is still called revision 3, because
+that counts revisions of the threat model rather than records of a review.
+
+r3 exists for two reasons at once. #30 made the UUIDv5 key grammar normative on 2026-09-19,
+tripping the trigger for a federation change affecting the key grammar; that firing was logged
+rather than re-attested, so **r2 read as stale in that area for a day**. And the fix for that
+pattern — re-issuing at phase exit rather than per merge, in #31 — is itself written in the
+attested document, so recording it changes the document's hash and requires a new record. The
+rule that reduces re-attestation could not be adopted without one more re-attestation.
+
+Note what r3 is **not**: a reset of the expiry. It keeps 2027-03-18, which is 180 days from the
+substantive review on 2026-09-19. Resetting the clock on every revision would turn a bounded
+interval into a perpetual one.
 
 ## Signing, for now
 

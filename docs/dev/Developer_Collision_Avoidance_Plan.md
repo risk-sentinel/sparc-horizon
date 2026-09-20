@@ -101,6 +101,18 @@ GitHub cannot express, and restating task status there is the failure mode to wa
 for in review, not a merge conflict to resolve. The rolling-window trim means the
 file does not grow without bound; git history is the archive.
 
+### 2.4a `docs/compliance/threat-model.md` and its attestation records
+
+Editing `threat-model.md` **changes its SHA-256**, and the current attestation's back-matter
+binds to that hash. An edit therefore requires a new attestation record — the superseded one is
+never edited, so there is no way to "fix" the hash after the fact. Two branches editing the
+threat model concurrently will both be right and both be stale: whichever lands second reviewed
+a file that no longer exists at that path.
+
+Treat the threat model as **single-writer**. If a change needs it, say so on the issue before
+starting, and expect to issue a revision rather than an edit. Nothing in CI enforces the hash
+binding today, so the check is a reviewer reading the record against `shasum -a 256`.
+
 ### 2.5 `.github/workflows/` during S0 and S1
 
 Workflows are added one at a time by design (`pipeline-hardening`: add a scanner,

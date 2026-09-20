@@ -44,6 +44,39 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-20 — #31 — `feature/31_attestation_cadence`
+
+**In flight:** nothing. Working tree clean at the point this entry was written; the bundle is
+the cadence rule, r3, and the step 8 updates.
+
+**Decided:** the cadence is **checkpoint at phase exit** while a contract-defining phase is
+open — triggers unchanged, interim firings logged, a firing that contradicts a finding
+re-issues at once. Options 2 and 3 from #31 were rejected: narrowing the triggers swaps a
+bright line for a judgement call made by whoever would rather not re-attest, and re-issuing
+per change erodes review quality within a week.
+
+**Found while doing it, and worth not rediscovering:** resolving #31 *forced* an r3 whichever
+option was chosen. The cadence rule is written in the Freshness section of the attested
+document, and the current record's back-matter binds to that file's SHA-256, so recording any
+cadence changes the hash and requires a new record. The rule that reduces re-attestation could
+not be adopted without one more re-attestation. The expiry deliberately does **not** reset:
+2027-03-18 is 180 days from the 2026-09-19 substantive review, and resetting on each revision
+would make a bounded interval perpetual.
+
+Also recovered by brute force, because it was written down nowhere: attestation UUIDs derive as
+`uuidv5(uuidv5(URL, "https://risk-sentinel.org/ns/sparc"), "<kind>:threat-model-<review-date>")`,
+with `resource:superseded-attestation-threat-model-<date>` for the supersession link. The
+subject and process-of-record resource UUIDs are stable across revisions and were reused
+verbatim; their keys are still unknown and were not needed.
+
+**Upstream checked (2026-09-20):** unchanged from the entry below — `sparc#1155` and
+`sparc#1161` both open.
+
+**Next:** #31 stays **open** until the P0-exit checkpoint folds in anything further. The next
+P0 slice is the fixture federation generator, which gates the #26 round-trip probe.
+
+---
+
 ## 2026-09-20 — #33 — `feature/33_session_log`
 
 **In flight:** this file, plus the step 8 bullet, the `CLAUDE.md` pointer, and the

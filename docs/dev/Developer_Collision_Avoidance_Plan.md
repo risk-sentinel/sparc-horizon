@@ -87,12 +87,19 @@ This axis is closed. The two below are not.
 in `demo/full-plan.html` all carry each phase's effort, dependencies, tasks,
 deliverables, exit criteria and risks. A phase edit is three edits.
 
-### 2.4 `docs/dev/Implementation_plan.md` and this file
+### 2.4 `docs/dev/Implementation_plan.md`, `docs/dev/session-log.md`, and this file
 
-Every issue updates both, per `issue_rules.md` step 8. Two concurrent branches
+Every issue updates all three, per `issue_rules.md` step 8. Two concurrent branches
 will conflict here, always, in the status snapshot and the **Last updated** line.
 This is expected and cheap — resolve by keeping both entries, newest first. It is
 not a reason to skip the update.
+
+`session-log.md` conflicts in one place only — the top of the entry list — because
+entries are append-at-top and never edited once written. Resolve by keeping both
+entries in date order. It is **not** a fourth duplication axis: it holds only what
+GitHub cannot express, and restating task status there is the failure mode to watch
+for in review, not a merge conflict to resolve. The rolling-window trim means the
+file does not grow without bound; git history is the archive.
 
 ### 2.5 `.github/workflows/` during S0 and S1
 

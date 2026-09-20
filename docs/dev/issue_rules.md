@@ -208,6 +208,13 @@ needs an answer that is not "a scanner was quiet that day".
      status, include Started/Completed dates, and update the cross-repo issue
      table if anything was filed
    - `docs/dev/Developer_Collision_Avoidance_Plan.md` — file lists and status
+   - `docs/dev/session-log.md` — a new entry at the top: where unpushed work
+     stopped, alternatives rejected that reached no PR body or issue, upstream
+     blocker checks with the date checked, and the next slice. Only what GitHub
+     cannot express — not task status, not gate measurements. The file's own
+     header states the rule. It updates **in this PR**, not out of band: a
+     continuity record maintained separately goes stale unnoticed, which is the
+     failure it exists to prevent
    - The design docs (`docs/01`–`docs/10`, `docs/roadmap.md`) when the issue
      changes a contract they describe. These docs are the design of record for
      the prototype; code that contradicts them is a docs bug or a code bug, never

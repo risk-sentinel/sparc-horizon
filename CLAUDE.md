@@ -31,6 +31,10 @@ The process of record lives in `docs/dev/`:
   security-pipeline requirements, branch-protection ordering
 - `docs/dev/Implementation_plan.md` — live roadmap: the security baseline, the
   product phases, the cross-repo issue table, open decisions
+- `docs/dev/session-log.md` — continuity: where unpushed work stopped, and what
+  the next session should pick up. **Read the top entry first.** It holds only
+  what GitHub cannot express, so it never restates task status — the phase
+  epics are authoritative for that
 
 ## What this repository is
 

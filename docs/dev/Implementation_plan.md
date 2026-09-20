@@ -53,6 +53,11 @@ hard guardrails, the suppression-approval bar, the verification gate and its
 measurement rules, the security pipeline requirements, and the branch-protection
 ordering rule.
 
+**[`session-log.md`](session-log.md)** carries continuity between sessions: where
+unpushed work stopped, and what the next session should pick up. It holds only what
+GitHub cannot express, so it restates no status this file or the phase epics already
+carry. Step 8 updates it in the same PR as the work.
+
 ---
 
 ## Status snapshot

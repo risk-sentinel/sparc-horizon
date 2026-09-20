@@ -44,6 +44,36 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-20 — #42 — `feature/42_sonar_exclusions`
+
+**In flight:** nothing. `sonar-project.properties` added; #42 stays open for the analysis-method
+decision and the post-limit re-test.
+
+**Root cause of the Sonar failures, found from the console rather than the repo:** the
+organization exceeds its SonarCloud line-of-code limit, so **every** internal project's analysis
+fails regardless of size. Horizon is ~1,800 tracked lines, about **0.1%** of the counted total.
+Filed upstream as `sparc-validate#410`: 89.5% of that repository's tracked lines are
+`benchmarks/` XCCDF data (714K) and `.oscal-cache/` NIST catalogs (255K), neither of which is
+source.
+
+**Correction worth not repeating:** a first pass at those numbers counted the **working tree**
+and blamed `overlays/` (215M) and `profiles/` (116M). Both are almost entirely **untracked**, so
+they never reach a CI checkout. Count with `git ls-files` when the question is what CI analyses.
+
+**Why this landed before analysis works:** the exclusions protect against findings nothing is
+currently producing, which makes them look premature. They are not. The moment the org limit
+clears, the first successful run reports the planted canaries in `tests/` and the CI-enforced
+duplication in `demo/` as real findings, and someone resolves one.
+
+**Deliberately not set:** `sonar.go.coverage.reportPaths`. Correct setting, but Automatic
+Analysis does not run in the pipeline and can never read `coverage.out`. Setting it would imply
+coverage is reported when it is not. Recorded as a comment in the file so the absence reads as a
+decision rather than an oversight.
+
+**Next:** #37's qualifier shape still gates #36. The API v0 freeze remains unblocked.
+
+---
+
 ## 2026-09-20 — #40 — `feature/40_pin_shellcheck`
 
 **In flight:** nothing. `contracts.yml` pins shellcheck; the collision plan's pin table replaces

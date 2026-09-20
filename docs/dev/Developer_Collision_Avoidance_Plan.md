@@ -132,6 +132,18 @@ one fetched as a release tarball rather than through a checksum-verified module
 proxy. Bumping it means changing both the version and the digest; changing only
 the version fails the download, which is the intended behaviour.
 
+### 2.4c `sonar-project.properties` — paths that must track reality
+
+Its exclusions name directories by path, and **a path that stops matching excludes
+nothing, silently.** There is no error for an exclusion that matches no file, so
+moving or renaming `tests/` or `demo/` would quietly re-expose the two planted
+defects and the enforced demo duplication to analysis — and the first finding
+someone acts on removes a canary.
+
+Any change to those directory names is also a change to this file. The paths were
+verified against `git ls-files` when written; verify them again rather than
+assuming, because the failure is invisible.
+
 ### 2.5 `.github/workflows/` during S0 and S1
 
 Workflows are added one at a time by design (`pipeline-hardening`: add a scanner,

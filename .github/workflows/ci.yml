@@ -1,0 +1,147 @@
+name: Go
+
+# The Go gate, landing with the repository's first package (#38).
+#
+# Every job answers the pipeline-hardening question — if the thing it checks
+# were absent, would it still report success? For a Go module the answer is
+# usually yes, in two specific ways this workflow is built to defeat:
+#
+#   1. `gofmt -l` EXITS 0 while listing unformatted files. Piping it to a
+#      success message reports green over a failing check. The list is asserted
+#      empty, not the exit status.
+#   2. `go test ./...` over a module with no test files exits 0 and prints
+#      "no test files". A module that tests nothing passes. The count of
+#      packages that actually ran tests, and the coverage number, are both
+#      asserted.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Pinned. Bump here and in .golangci.yml together — an unpinned linter
+  # silently changes what the gate measures.
+  GOLANGCI_LINT_VERSION: v2.6.2
+  # Minimum packages that must run tests. Raise it as packages gain tests;
+  # it exists so deleting a test file is a build failure rather than a
+  # quieter green run.
+  MIN_TESTED_PACKAGES: "1"
+  MIN_COVERAGE: "80"
+
+jobs:
+  go:
+    name: Go build, vet, lint, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.0.0
+        with:
+          go-version-file: go.mod
+          check-latest: false
+
+      - name: Assert the toolchain matches the pinned image
+        run: |
+          set -euo pipefail
+          # docs/08-build-deploy.md builds on golang:1.25. A runner that
+          # silently used a different minor would lint and test something the
+          # shipped image never compiles.
+          want="$(awk '/^go /{print $2}' go.mod)"
+          have="$(go env GOVERSION)"
+          echo "go.mod wants ${want}; runner has ${have}"
+          case "${have}" in
+            go${want}*) echo "PASS — toolchain matches go.mod." ;;
+            *) echo "::error::Runner is ${have} but go.mod pins ${want}."; exit 1 ;;
+          esac
+
+      - name: gofmt
+        run: |
+          set -euo pipefail
+          # gofmt -l exits 0 even when it lists files, so assert the list is
+          # empty rather than trusting the exit status.
+          unformatted="$(gofmt -l .)"
+          if [ -n "${unformatted}" ]; then
+            echo "::error::gofmt reports unformatted files:"
+            echo "${unformatted}"
+            exit 1
+          fi
+          echo "PASS — gofmt reported no unformatted files."
+
+      - name: go vet
+        run: |
+          set -euo pipefail
+          go vet ./...
+          echo "PASS — go vet clean."
+
+      - name: Install golangci-lint at the pinned version
+        run: |
+          set -euo pipefail
+          # Via the Go module proxy, so the download is checksum-verified
+          # against sum.golang.org rather than trusting a release tarball.
+          go install "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Assert the linter config is valid before trusting the run
+        run: |
+          set -euo pipefail
+          # An invalid config makes golangci-lint fail loudly, but a config that
+          # parses while enabling nothing reports 0 issues and proves nothing.
+          golangci-lint config verify
+          enabled="$(golangci-lint linters 2>/dev/null | sed -n '/^Enabled/,/^Disabled/p' | grep -cE '^[a-z]' || true)"
+          echo "Enabled linters: ${enabled}"
+          if [ "${enabled}" -lt 5 ]; then
+            echo "::error::Only ${enabled} linters enabled; the config is not doing its job."
+            exit 1
+          fi
+          golangci-lint linters | sed -n '/^Enabled/,/^Disabled/p' | grep -qE '(^|[ ,])gosec' \
+            || { echo "::error::gosec is not enabled."; exit 1; }
+          echo "PASS — config valid, ${enabled} linters enabled, gosec present."
+
+      - name: golangci-lint
+        run: |
+          set -euo pipefail
+          golangci-lint run ./...
+          echo "PASS — golangci-lint clean."
+
+      - name: Test with race detector and coverage
+        run: |
+          set -euo pipefail
+          go test ./... -race -coverprofile=coverage.out -covermode=atomic | tee test.log
+          echo "PASS — test suite completed."
+
+      - name: Assert the suite measured something
+        run: |
+          set -euo pipefail
+          # This is the load-bearing assertion. `go test ./...` over a module
+          # with no tests exits 0 and prints "no test files" for each package,
+          # so a suite that asserts nothing passes.
+          total="$(go list ./... | wc -l | tr -d ' ')"
+          tested="$(grep -cE '^ok[[:space:]]' test.log || true)"
+          untested="$(grep -cE 'no test files' test.log || true)"
+          echo "Packages: ${total} total, ${tested} ran tests, ${untested} have no test files."
+
+          if [ "${tested}" -lt "${MIN_TESTED_PACKAGES}" ]; then
+            echo "::error::${tested} packages ran tests; at least ${MIN_TESTED_PACKAGES} required."
+            exit 1
+          fi
+
+          if [ ! -s coverage.out ]; then
+            echo "::error::coverage.out is empty — nothing was measured."
+            exit 1
+          fi
+
+          pct="$(go tool cover -func=coverage.out | awk '/^total:/{gsub(/%/,"",$3); print $3}')"
+          if [ -z "${pct}" ]; then
+            echo "::error::Could not read a total coverage figure."
+            exit 1
+          fi
+          echo "Total coverage: ${pct}%"
+          awk -v p="${pct}" -v m="${MIN_COVERAGE}" 'BEGIN{ if (p+0 < m+0) exit 1 }' \
+            || { echo "::error::Coverage ${pct}% is below the ${MIN_COVERAGE}% floor."; exit 1; }
+
+          echo "PASS — ${tested} package(s) tested, coverage ${pct}% at or above the ${MIN_COVERAGE}% floor."

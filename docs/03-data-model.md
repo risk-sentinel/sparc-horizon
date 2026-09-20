@@ -19,6 +19,13 @@ Because the same organization party UUID appears in every SSP beneath it, the tr
 
 Defined in [`schemas/sparc-namespace-props.v1.schema.json`](../schemas/sparc-namespace-props.v1.schema.json) and enforced by `sparc-validate`. Changes within `v1` are additive only.
 
+**The schema is a selective validator, not a whole-document one.** It applies to props whose
+`ns` is `https://risk-sentinel.org/ns/sparc`, and to every one of them. Applying it to every
+prop regardless of `ns` rejects valid OSCAL, because `ns` is **optional** in OSCAL and an absent
+one means the default NIST namespace rather than this one. `ns` stays required *within* the
+schema for exactly that reason: it is what stops a prop claiming one of these nine names from
+outside the namespace.
+
 | Prop | On | Example | Drives |
 |---|---|---|---|
 | `node-type` | Party, SSP metadata | `boundary` | Tree builder |
@@ -30,6 +37,36 @@ Defined in [`schemas/sparc-namespace-props.v1.schema.json`](../schemas/sparc-nam
 | `signed-by` | Back-matter resource | ISO party UUID | Signature verification |
 | `condition-expires` | Risk | `2026-11-01` | AO decision reopen |
 | `trigger` | Risk | `score<0.85` | AO decision reopen |
+
+### Horizon owns one namespace and reads several
+
+A real document carries props from more than one authority. These are the namespaces observed
+in content this prototype is built against, recorded so the rule below is written from evidence
+rather than assumption:
+
+| Namespace | Seen in | Note |
+|---|---|---|
+| `https://risk-sentinel.org/ns/sparc` | This estate | The nine props above. Closed enum, additive only |
+| `http://aws.amazon.com/ns/oscal` | AWS Labs' catalog and its 231 service component definitions | 1809 props across five names. **CamelCase** — `SeverityLabel`, `TriggerType`, `EvaluatedServices`, `TechnicalControlId` |
+| *absent* | The same component definitions | OSCAL makes `ns` **optional**; an absent one means the default NIST namespace |
+| `http://fedramp.gov/ns/oscal` | FedRAMP extensions | |
+| `http://csrc.nist.gov/ns/oscal` | The OSCAL default | |
+
+DISA and CIS publish XCCDF **XML** namespaces. Which prop `ns` their content lands on after
+conversion is decided by the converter, which is `sparc-validate`'s, not settled here.
+
+**Pass-through preservation is a correctness requirement, not a courtesy.** A prop in a
+namespace Horizon does not own is **preserved as issued** — name, namespace and value, with no
+normalisation of any of them, including the CamelCase — and re-emitted unchanged. The recompute
+audit requires a cell to recompute from exported OSCAL alone, so a foreign prop dropped on
+ingest breaks that audit for everyone downstream, not just here.
+
+Horizon validates only its own namespace and interprets only its own props. It never rejects a
+document for carrying someone else's.
+
+Organization-defined parameters do **not** need a namespace at all: OSCAL models them natively
+as `parameters` with `set-parameters`, and roles come from `responsible-parties`. Where OSCAL
+has somewhere to put something, it goes there.
 
 ## Boundary SSP metadata
 
@@ -135,6 +172,18 @@ identifier derived under it, which is as breaking as changing the namespace. Bum
 makes that visible and keeps old and new identifiers from being mistaken for each other. A
 grammar change is a v2 of this document, never an edit to v1.
 
+> **`source-uuid` was added to v1 rather than producing a v2** (#37). That rule exists so old
+> and new identifiers cannot be mistaken for one another, and it was checked rather than waived:
+> **no identifier anywhere derives from v1's field lists.** The derivation requires the
+> federation namespace UUID, which `sparc#1155` has not registered — the placeholder is still a
+> literal in this document — so nothing could have been derived under it. The 70 deterministic
+> UUIDs in this repository come from the separate repo-level scheme in
+> `docs/compliance/README.md`, and `sparc` has no implementation of these field lists. With no
+> v1-derived identifiers in existence there is nothing for a v2 to distinguish itself from.
+>
+> This is a one-time exception justified by a verifiable fact, not a precedent. Once fixtures
+> exist, any further change is a v2.
+
 ### Canonical forms
 
 Two implementations must produce identical bytes for the same logical key, so every field is
@@ -142,11 +191,22 @@ normalised before it is joined.
 
 | Field kind | Canonical form |
 |---|---|
-| Control id | OSCAL's lowercase dotted form: `ac-2.1`, never `AC-2(1)`. Enhancements use `.`, not parentheses. Resolve through SPARC's mapping documents before deriving |
+| Control id | **Within the NIST SP 800-53 vocabulary only:** OSCAL's lowercase dotted form, `ac-2.1`, never `AC-2(1)`. Enhancements use `.`, not parentheses. Resolve through SPARC's mapping documents before deriving. A control identifier from **any other catalog is carried exactly as that catalog issues it** — see below |
 | UUID | Lowercase hex with hyphens, RFC 9562 §4 |
 | Period | `YYYY` \| `YYYY-Qn` \| `YYYY-MM` \| `YYYY-MM-DD`, zero-padded. Quarters are `2026-Q3`, never `2026Q3` or `Q3-2026` |
 | Object-kind token | Fixed lowercase ASCII from the table below. Not free text |
 | Any other string | Unicode **NFC**, no trimming, no case folding — if a field needs case folding to match, it is the wrong field |
+
+**Canonicalisation is valid only within a vocabulary.** Lowercasing the AWS Security Hub
+identifier `ACM.1` yields `acm.1`, which looks like a NIST control and is not one. Normalising
+another authority's identifier into a form it never issued produces a value that still
+validates, still derives a UUID, and names nothing — worse than rejecting it, because nothing
+downstream can tell.
+
+So the NIST rules above apply when `source-uuid` resolves to an 800-53 catalog, or to a profile
+over one. Everywhere else the identifier is NFC-normalised as an ordinary string and otherwise
+left alone. **`source-uuid` is what makes that decidable:** without it there is no way to know
+which vocabulary an identifier came from.
 
 ### What may appear in a natural key
 
@@ -163,18 +223,50 @@ correcting a typo mints a new object and orphans the old one.
 
 | Object | Fields, in order |
 |---|---|
-| Attestation | `parent-ssp-uuid`, `"attestation"`, `control-id`, `component-uuid`, `period` |
-| Observation | `parent-ssp-uuid`, `"observation"`, `control-id`, `component-uuid`, `period` |
-| Finding | `parent-ssp-uuid`, `"finding"`, `control-id`, `component-uuid`, `period` |
-| Risk | `parent-ssp-uuid`, `"risk"`, `control-id`, `component-uuid`, `period` |
-| POA&M item | `parent-ssp-uuid`, `"poam-item"`, `control-id`, `component-uuid`, `period` |
+| Attestation | `parent-ssp-uuid`, `"attestation"`, `source-uuid`, `control-id`, `component-uuid`, `period` |
+| Observation | `parent-ssp-uuid`, `"observation"`, `source-uuid`, `control-id`, `component-uuid`, `period` |
+| Finding | `parent-ssp-uuid`, `"finding"`, `source-uuid`, `control-id`, `component-uuid`, `period` |
+| Risk | `parent-ssp-uuid`, `"risk"`, `source-uuid`, `control-id`, `component-uuid`, `period` |
+| POA&M item | `parent-ssp-uuid`, `"poam-item"`, `source-uuid`, `control-id`, `component-uuid`, `period` |
 | Evidence resource | `parent-ssp-uuid`, `"resource"`, `sha256-of-content` |
 | AO decision | `parent-ssp-uuid`, `"decision"`, `risk-uuid`, `period` |
-| Responsibility half | `parent-ssp-uuid`, `"responsibility"`, `control-id`, `component-uuid`, `"provider"` \| `"consumer"` |
-| Projection cell | `node-uuid`, `"cell"`, `control-id` \| `family-id`, `horizon-bucket` |
+| Responsibility half | `parent-ssp-uuid`, `"responsibility"`, `source-uuid`, `control-id`, `component-uuid`, `"provider"` \| `"consumer"` |
+| Projection cell | `node-uuid`, `"cell"`, `source-uuid`, `control-id` \| `family-id`, `horizon-bucket` |
 
 An evidence resource is keyed by the **hash of its content**, not by a period: the same bytes
-submitted twice are the same resource, and that is what a back-matter hash already claims.
+submitted twice are the same resource, and that is what a back-matter hash already claims. It
+takes no `source-uuid`, because bytes are not scoped to a catalog. Neither does an AO decision,
+which is keyed on the risk it decides.
+
+### `source-uuid` — the catalog a control identifier belongs to
+
+**A control identifier is unique only within the catalog that defines it.** `ac-2.1` is a NIST
+SP 800-53 control; `ACM.1` is an AWS Security Hub control; a CIS benchmark numbers its own from
+`1.1.1`. One SSP can carry several of these at once — Security Hub identifiers arrive through
+inherited AWS service components — and `parent-ssp-uuid` does not separate them, because they
+are in the same SSP.
+
+Without a qualifier the key space does not partition by authority. That is the same defect as
+an ambiguous delimiter, in a different field: not that a collision is likely, but that nothing
+makes it **impossible**.
+
+**`source-uuid` is the UUID of the catalog or profile that defines the control**, resolved as:
+
+1. The `source` on the `control-implementation` that declares the requirement. It is a
+   document-local `#fragment`, so it is **resolved to the back-matter resource it names, and the
+   resource's UUID is used** — a fragment is local to one document and would not federate.
+2. **Where `source` is absent, the SSP's `import-profile`**, resolved the same way. Component
+   definitions carry `source` per control-implementation because they are component-scoped; the
+   profile is what holds the resolved control set and the organization-defined parameters and
+   statements for the system.
+
+An implementation **must reject** a control-carrying object it cannot resolve a `source-uuid`
+for, rather than deriving without one. A key missing a field is not a key with an empty field —
+it is a different key, and two implementations disagreeing about that is the silent divergence
+this grammar exists to prevent.
+
+A UUID is used rather than the catalog's own identifier string because it is already unique,
+already stable for the life of the document, and already how everything else here joins.
 
 Projection cells are materialised, not exchanged, so their identifiers are local. They use the
 same grammar anyway, because an identifier scheme with an exception is an identifier scheme
@@ -184,11 +276,28 @@ someone will use inconsistently.
 
 ```
 namespace = <federation namespace uuid>
-fields    = ["3fa85f64-5717-4562-b3fc-2c963f66afa6", "attestation",
-             "cp-4", "9f1c…", "2026-Q3"]
-input     = "v1\x1f3fa85f64-…\x1fattestation\x1fcp-4\x1f9f1c…\x1f2026-Q3"
+fields    = ["3fa85f64-5717-4562-b3fc-2c963f66afa6",   // parent ssp
+             "attestation",
+             "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",   // source-uuid: the
+                                                       // 800-53 catalog, from
+                                                       // back-matter
+             "cp-4",                                   // canonical: NIST vocab
+             "9f1c…",                                  // component
+             "2026-Q3"]
+input     = "v1\x1f3fa85f64-…\x1fattestation\x1fb7e21d90-…\x1fcp-4\x1f9f1c…\x1f2026-Q3"
 uuid      = uuidv5(namespace, input)
 ```
+
+**Why the qualifier is load-bearing.** The same component, period and SSP, assessed against two
+different catalogs, must not collide:
+
+```
+800-53:       … \x1fb7e21d90-…\x1fcp-4\x1f9f1c…\x1f2026-Q3     -> one uuid
+Security Hub: … \x1f5d40a72c-…\x1fACM.1\x1f9f1c…\x1f2026-Q3    -> a different uuid
+```
+
+Note the second control identifier is **not** lowercased. It is not a NIST control, and `acm.1`
+would name nothing in any catalog.
 
 Regenerating from the same source documents yields the same UUID, which is the property the
 P0 exit criterion measures: identical UUIDs across two independent regenerations.

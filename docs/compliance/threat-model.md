@@ -1,18 +1,28 @@
 # Threat model and security architecture review
 
-**Revision:** r2, 2026-09-19.
-**Reviewed revision:** the design of record at `docs/01`–`docs/10` as of 2026-09-19, including
-the signing rule added by #27.
-**Attestation:** [`attestations/threat-model-2026-09-19-r2.oscal.json`](attestations/threat-model-2026-09-19-r2.oscal.json),
-which supersedes [`threat-model-2026-09-19.oscal.json`](attestations/threat-model-2026-09-19.oscal.json).
-**Expires:** 2027-03-18. Early-staleness triggers are at the bottom of this document.
+**Revision:** r3, 2026-09-20.
+**Reviewed revision:** the design of record at `docs/01`–`docs/10` as of 2026-09-20, including
+the signing rule added by #27 and the normative UUIDv5 key grammar added by #30.
+**Attestation:** [`attestations/threat-model-2026-09-20.oscal.json`](attestations/threat-model-2026-09-20.oscal.json),
+which supersedes [`threat-model-2026-09-19-r2.oscal.json`](attestations/threat-model-2026-09-19-r2.oscal.json).
+**Expires:** 2027-03-18 — **unchanged from r2.** The 180-day clock runs from the substantive
+review on 2026-09-19, not from this re-issue: resetting it on each revision would turn a
+180-day interval into a perpetual one. Early-staleness triggers are at the bottom of this
+document.
 
-> **Why there is already a second revision.** r1 was attested on 2026-09-19 and went stale the
+> **Why there is already a third revision.** r1 was attested on 2026-09-19 and went stale the
 > same day, when #27 added *Signing operates on bytes, not on objects* to
 > `docs/06-attestation-workflow.md` — which trips the early-staleness trigger for a change to
-> the canonicalisation rule. That produced **TM-9** below. The superseded record is kept
-> unmodified rather than edited, because an attestation that is quietly revised in place is not
-> evidence of anything. See [`attestations/README.md`](attestations/README.md).
+> the canonicalisation rule. That produced **TM-9** below and r2. Hours later #30 made the
+> UUIDv5 key grammar normative, tripping a second trigger; that firing was recorded rather than
+> re-attested, and **r2 was stale from that point**.
+>
+> r3 closes that gap and writes down the rule that stops it recurring per-merge — see
+> [Freshness](#freshness). Two firings on the first day is the mechanism working, not failing,
+> but it is also a signal about cadence during a phase whose entire purpose is to define the
+> contracts this document reasons about. The superseded records are kept unmodified rather than
+> edited, because an attestation that is quietly revised in place is not evidence of anything.
+> See [`attestations/README.md`](attestations/README.md).
 
 This is the one SDLC stage `dev-sec-ops-baseline` deliberately does not automate, because
 its output is a document and a conversation. A generated threat model asserts that a
@@ -161,8 +171,14 @@ by every check Horizon performs.
 ### TM-6 — Deterministic UUIDs are predictable, and dedup is by UUID
 
 Object UUIDs are UUIDv5 over natural keys under a single registered federation namespace,
-so federated peers deduplicate without coordinating. The key grammar is documented and
-the roadmap commits to publishing reference implementations in three languages.
+so federated peers deduplicate without coordinating. Since #30 the key grammar is
+**normative** rather than illustrative, in `docs/03-data-model.md`, and the roadmap commits
+to reference implementations in three languages — Go here in P1, Ruby and Python filed as
+`sparc#1161` with a shared test-vector file.
+
+That change strengthened this finding rather than contradicting it: both of the requirements
+below are now stated normatively in the data model rather than only here. The finding stands,
+because writing a rule down is not enforcing it, and nothing enforces either one yet.
 
 Every peer can therefore compute the UUID of any object in **any** boundary, including
 boundaries it does not own. If deduplication is keyed on the UUID alone, a hostile or
@@ -281,6 +297,44 @@ It goes stale **early**, regardless of the date, on any of:
 
 A phase completing is not by itself a trigger. Building what this document requires does
 not invalidate it; changing what it assumed does.
+
+### Cadence during a contract-defining phase
+
+**While a phase whose deliverables are the contracts this document reasons about is open, a
+trigger firing is logged in the ledger below and the attestation is re-issued at phase exit,
+not per merge.** Phase P0 is such a phase by construction: its deliverable list is the
+namespace schema, the UUIDv5 key grammar, the fixture federation and the frozen API, so the
+trigger for "a federation change affecting peer verification, deduplication, or the UUID key
+grammar" fires for most of the phase.
+
+The triggers themselves are **not narrowed**. Narrowing them to "a change that contradicts a
+finding" would replace a bright line with a judgement call, and the person making it is the
+one who would rather not re-attest. The line stays where it is; what changes is when the
+re-review happens, and the interim is recorded rather than silent.
+
+Two limits keep this from becoming an excuse:
+
+- **It applies only while such a phase is open.** Outside one, a trigger means a re-issue.
+- **A firing that contradicts a finding or invalidates a stated assumption re-issues
+  immediately, phase or not.** The ledger is for firings that touch an area without changing
+  what was concluded. #27 would not have qualified — it produced TM-9.
+
+Between checkpoints this document reads as **stale in the logged areas**, and the ledger says
+which. That is the cost, and it is stated here so a reader is not misled into treating the
+record as continuously current.
+
+### Interim staleness ledger
+
+Every trigger firing and what became of it. A firing is **logged** until a checkpoint folds it
+in, at which point it is marked with the revision that absorbed it. Nothing is removed — the
+record of a gap is the point of the ledger, and a reader needs to see that the gap existed and
+how long it lasted.
+
+| Date | Change | Trigger | Contradicted a finding? | Disposition |
+|---|---|---|---|---|
+| 2026-09-19 | #30 — the UUIDv5 key grammar made normative | Federation change affecting peer verification, deduplication, or the UUID key grammar | **No.** It strengthens TM-6: the party-not-in-key rule and consumer-side deduplication are now normative in `docs/03-data-model.md` | **Folded into r3** (#31). r2 read as stale in this area from 2026-09-19 until 2026-09-20 |
+
+No firing is currently outstanding. The next checkpoint is **P0 exit** (#15).
 
 ## How this is attested
 

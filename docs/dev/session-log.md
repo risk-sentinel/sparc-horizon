@@ -44,6 +44,40 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-20 — #37 — `feature/37_catalog_qualifier`
+
+**In flight:** nothing.
+
+**The grammar now partitions by catalog authority.** `source-uuid` — the UUID of the resolving
+catalog or profile — is added to seven of the nine field lists, before `control-id`. Owner's
+decision, provisional until a use case breaks it. Resolution is `control-implementation.source`
+→ back-matter resource → **its UUID**, never the document-local `#fragment`, which would not
+federate. Fallback when `source` is absent is the SSP's `import-profile`: component definitions
+are component-scoped, while the profile holds the resolved control set and the ODP and org
+statements.
+
+**Amended v1 rather than bumping to v2**, against the document's own rule, on a verified fact:
+nothing anywhere derives from v1's field lists, because the derivation needs the federation
+namespace UUID and `sparc#1155` has not registered it. Recorded in the document as a one-time
+exception, not a precedent.
+
+**Corrected a claim I had made twice.** #37 item 3 and #42 both said the namespace schema
+"rejects a spec-legal prop" because `ns` is required while OSCAL makes it optional. **That was
+wrong**, and acting on it would have introduced a real weakness: the schema is a *selective*
+validator applied only to props already in the sparc namespace, so relaxing `required: ns` would
+let `{"name":"node-type","value":"boundary"}` validate as a sparc prop when an absent `ns` means
+the NIST default. That is the spoofing the CI fixture guards against, in another form. The
+constraint stays; the application rule is now stated in the schema description and in `docs/03`
+so nobody applies it indiscriminately. 17/0 assertions unchanged.
+
+**Canonicalisation is now scoped to a vocabulary.** `ACM.1` must not become `acm.1` — it would
+still validate, still derive a UUID, and name nothing. `source-uuid` is what makes the vocabulary
+decidable.
+
+**Next:** #36's generator is unblocked. `sparc#1155` still blocks *freezing* the fixtures.
+
+---
+
 ## 2026-09-20 — #13 follow-up — `fix/13_commit_time_without_checkout`
 
 **In flight:** nothing.

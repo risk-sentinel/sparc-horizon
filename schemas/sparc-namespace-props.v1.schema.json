@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://risk-sentinel.org/ns/sparc/v1/props.schema.json",
   "title": "SPARC namespace props v1",
-  "description": "Validates a single OSCAL prop in the SPARC namespace. Apply to every props[] entry whose ns equals the namespace URI. Changes within v1 are additive only.",
+  "description": "Validates a single OSCAL prop in the SPARC namespace. Apply it ONLY to props[] entries whose ns equals https://risk-sentinel.org/ns/sparc, and to every one of them. It is a selective validator, not a whole-document one: applying it to every prop regardless of ns will reject valid OSCAL, because ns is OPTIONAL in OSCAL and an absent ns means the default NIST namespace, not this one. Props in namespaces this estate does not own are preserved as issued and never validated here. ns stays required precisely so a prop cannot claim one of these nine names from outside the namespace. Changes within v1 are additive only.",
   "type": "object",
   "required": ["name", "ns", "value"],
   "properties": {

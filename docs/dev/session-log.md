@@ -44,6 +44,43 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-20 — #13 — `fix/13_sonar_emit_race`
+
+**In flight:** nothing. The emit workflow waits for the analysis of the current commit before
+fetching.
+
+**#13 was a race, not a shape mismatch.** That question had been open all day and is now settled
+by experiment: the emit fails on push and **succeeds unchanged when re-run minutes later**. On
+the #43 merge the analysis ran 14:19:54–14:20:10 while the job fetched at 14:20:00 and failed at
+14:20:09 — one second early. `hdf-cli` was never wrong about the API shape; it was rejecting an
+empty response.
+
+**The evidence path is proven end to end.** A dispatched re-run emitted OHDF with **12 rule
+types and 103 failed results** — 95 in `demo/`, 8 in `.github/workflows/` — schema-valid, with
+commit and run provenance stamped on, to both the dated and `latest` bucket paths.
+
+**Two flaws found while fixing it, both in my own work:**
+
+- Waiting for the Sonar queue to drain is **not sufficient**. An empty queue can mean *not queued
+  yet* rather than *finished*, if the push webhook has not been processed — so the first version
+  of the fix would have read the previous commit's analysis and failed on a false negative. The
+  condition is "does an analysis of THIS commit exist", polled, not "is the queue empty".
+- A stale analysis is worse than no analysis. The Label step stamps the **current** commit onto
+  whatever was fetched, so an older analysis produces evidence that is well-formed, schema-valid
+  and attributed to code it was not derived from.
+
+**The old guard could not have caught either.** `Resolve and verify` calls `api/components/show`,
+which proves the project **exists** — a project that has never been analysed passes it. Confirmed
+by dispatching against this branch: the new assertion fired with exactly that case.
+
+**shellcheck earned itself immediately.** It caught a stray quote that a Python `.rstrip()` had
+eaten out of the new step — a genuine syntax error, on the first bundle where shellcheck was
+available locally.
+
+**Next:** #37's qualifier shape still gates #36. The API v0 freeze remains unblocked.
+
+---
+
 ## 2026-09-20 — #42 — `feature/42_sonar_exclusions`
 
 **In flight:** nothing. `sonar-project.properties` added; #42 stays open for the analysis-method

@@ -131,6 +131,76 @@ jobs:
           echo "SONAR_PROJECT_KEY=${KEY}" >> "$GITHUB_ENV"
           echo "Verified SonarCloud project: ${KEY}"
 
+      - name: Wait for the analysis of THIS commit
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          set -euo pipefail
+          # SonarCloud analyses asynchronously, triggered by the same push that
+          # starts this job. Without waiting, this fetched results that did not
+          # exist yet, and hdf-cli rejected the empty response with "missing or
+          # invalid issues field" on every merge (#13). Measured on the #43
+          # merge: the analysis ran 14:19:54-14:20:10 while this job fetched at
+          # 14:20:00 and failed at 14:20:09 -- one second before it finished.
+          #
+          # Waiting for the queue to drain is NOT sufficient, in both directions:
+          #
+          #   * An empty queue can mean "not queued yet" rather than "finished",
+          #     if the push webhook has not been processed. Treating that as done
+          #     reads the PREVIOUS commit's analysis.
+          #   * A stale analysis returns results happily, and the Label step
+          #     stamps the CURRENT commit onto them. That files findings
+          #     attributed to code they were not derived from -- well-formed,
+          #     schema-valid and wrong, which is worse than failing.
+          #
+          # So the condition is not "is the queue empty" but "does an analysis of
+          # THIS commit exist yet", polled until it does or the deadline passes.
+          BRANCH="${GITHUB_REF_NAME}"
+          COMMITTED="$(git show -s --format=%cI "${GITHUB_SHA}")"
+          c_epoch="$(date -u -d "${COMMITTED}" +%s)"
+          deadline=$(( SECONDS + 600 ))
+          api() { curl -sS --proto '=https' --proto-redir '=https' --tlsv1.2 -u "${SONAR_TOKEN}:" "$@"; }
+
+          echo "Waiting for an analysis of ${GITHUB_SHA} on ${BRANCH} (committed ${COMMITTED})..."
+          while :; do
+            ce="$(api "${SONAR_HOST_URL}/api/ce/component?component=${SONAR_PROJECT_KEY}")"
+            queued="$(printf '%s' "$ce" | jq '(.queue // []) | length')"
+            current="$(printf '%s' "$ce" | jq -r '.current.status // "NONE"')"
+
+            an="$(api "${SONAR_HOST_URL}/api/project_analyses/search?project=${SONAR_PROJECT_KEY}&branch=${BRANCH}&ps=1")"
+            a_date="$(printf '%s' "$an" | jq -r '.analyses[0].date // empty')"
+            a_rev="$(printf '%s' "$an" | jq -r '.analyses[0].revision // empty')"
+
+            echo "  queue=${queued} current=${current} newest_analysis=${a_date:-none} revision=${a_rev:-<not reported>} (${SECONDS}s)"
+
+            # Exact when SonarCloud reports the revision.
+            if [ -n "${a_rev}" ] && [ "${a_rev}" = "${GITHUB_SHA}" ]; then
+              echo "PASS — analysis revision matches this commit."
+              break
+            fi
+
+            # Otherwise the analysis must be at or after the commit. That cannot
+            # distinguish this commit from a later one, but it does exclude every
+            # EARLIER one, which is the misattribution that matters.
+            if [ -z "${a_rev}" ] && [ -n "${a_date}" ]; then
+              a_epoch="$(date -u -d "${a_date}" +%s 2>/dev/null || echo 0)"
+              if [ "${a_epoch}" -ge "${c_epoch}" ]; then
+                echo "PASS — analysis (${a_date}) is at or after this commit; revision not reported by the API."
+                break
+              fi
+            fi
+
+            if [ "${SECONDS}" -ge "${deadline}" ]; then
+              if [ -z "${a_date}" ]; then
+                echo "::error::No analysis exists for ${SONAR_PROJECT_KEY} on ${BRANCH} after 10 minutes. The project resolves but has not been analysed, so there is nothing to fetch and an empty result would convert into a valid, clean-looking report."
+              else
+                echo "::error::No analysis of ${GITHUB_SHA} appeared within 10 minutes. Newest is ${a_date} (revision ${a_rev:-<not reported>}), which predates this commit. Refusing to fetch: stamping this commit onto earlier findings would misattribute them."
+              fi
+              exit 1
+            fi
+            sleep 15
+          done
+
       - name: Select producer
         id: prod
         env:

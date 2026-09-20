@@ -114,13 +114,23 @@ Treat the threat model as **single-writer**. If a change needs it, say so on the
 starting, and expect to issue a revision rather than an edit. Nothing in CI enforces the hash
 binding today, so the check is a reviewer reading the record against `shasum -a 256`.
 
-### 2.4b `go.mod`, `.golangci.yml` and `.github/workflows/ci.yml`
+### 2.4b Pinned tool versions across the workflows
 
-The three move together. The `golangci-lint` version is pinned in **two** places —
-`GOLANGCI_LINT_VERSION` in `ci.yml` and the config it reads — and bumping one
-without the other means the gate measures something nobody chose. The Go version
-is pinned in a third, `docs/08-build-deploy.md`, and `ci.yml` asserts the runner
-matches `go.mod` so a drift is a failure rather than a surprise.
+Every linter in this repository is pinned, and each pin appears in more than one
+place. Bumping one occurrence without the others means the gate measures
+something nobody chose.
+
+| Tool | Pinned in | Asserted by |
+|---|---|---|
+| Go | `go.mod`, and `docs/08-build-deploy.md`'s image | `ci.yml` compares the runner against `go.mod` |
+| `golangci-lint` | `GOLANGCI_LINT_VERSION` in `ci.yml`, and `.golangci.yml` | `golangci-lint config verify`, plus an enabled-linter count |
+| `shellcheck` | `SHELLCHECK_VERSION` + `SHELLCHECK_SHA256` in `contracts.yml` | The job compares the reported version against the pin (#40) |
+| `actionlint` | The `go install` line in `contracts.yml` | The canary fixture |
+
+**`shellcheck` carries a digest as well as a version**, because it is the only
+one fetched as a release tarball rather than through a checksum-verified module
+proxy. Bumping it means changing both the version and the digest; changing only
+the version fails the download, which is the intended behaviour.
 
 ### 2.5 `.github/workflows/` during S0 and S1
 

@@ -44,6 +44,36 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-20 — #40 — `feature/40_pin_shellcheck`
+
+**In flight:** nothing. `contracts.yml` pins shellcheck; the collision plan's pin table replaces
+the narrower §2.4b.
+
+**Environment change worth not rediscovering: `shellcheck` is now installed on this machine.**
+Every bundle before this one recorded workflow lint as "schema and expressions only — CI measures
+the shellcheck half". **That is no longer true.** The canary fires locally and all workflows lint
+with the integration active.
+
+Two versions, because **v0.9.0 has no `darwin.aarch64` build**: 0.10.0 native at
+`~/.local/bin/shellcheck`, and 0.9.0 (`darwin.x86_64`, Rosetta) at `~/.local/bin/shellcheck-0.9.0`
+for parity with CI. Installed from release tarballs, not `brew`.
+
+**Found while installing it:** CI's shellcheck was **unpinned** — whatever `ubuntu-latest`
+shipped. Neither existing guard caught that: the presence check passes because some shellcheck is
+there, and the canary passes because `SC2012` is stable. The lint's meaning could change between
+two runs of identical code with every signal green. The job's own error text had anticipated it
+("add a pinned shellcheck install to this job") without acting on it.
+
+**Decided:** pin to **0.10.0** rather than to 0.9.0, the version CI happened to be running.
+Pinning to an older release we would immediately want to leave is ceremony. Verified first that
+the bump is behaviour-neutral here — both versions lint all six workflows at exit 0 and both fire
+the canary — so this is a pin, not a silent upgrade.
+
+**Next:** #37's qualifier shape is still with the owner, and gates #36. Unblocked: freezing API
+v0 and the mock server, and #37 item 3.
+
+---
+
 ## 2026-09-20 — #38 — `feature/38_go_toolchain_ci`
 
 **In flight:** nothing. The Go toolchain, `ci.yml`, and `internal/canonical` are complete and

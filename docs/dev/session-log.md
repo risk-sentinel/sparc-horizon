@@ -44,6 +44,37 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-20 — #38 — `feature/38_go_toolchain_ci`
+
+**In flight:** nothing. The Go toolchain, `ci.yml`, and `internal/canonical` are complete and
+the gate passes locally.
+
+**Found the hard way, and now encoded in the workflow:** `gofmt -l` **exits 0 while listing
+unformatted files**. A `gofmt -l . && echo clean` reported success over a file gofmt was
+actively rejecting — the exact failure the fixture and canary guards exist to prevent, committed
+by the check itself. `ci.yml` asserts the list is empty rather than trusting the exit status, and
+says why in a comment.
+
+**Tooling installed outside the repo:** `golangci-lint` v2.6.2 and `actionlint` v1.7.12 via
+`go install` — not `brew`, which is a hard guardrail. `golangci-lint` v2 uses a different config
+schema from v1: `version: "2"`, `linters.default`, `linters.settings`, `formatters`, and
+`excludes` must be `[]` rather than an empty key. `config verify` catches it.
+
+**Still no shellcheck on this machine**, so actionlint's shellcheck integration is inactive
+locally and CI measures that half. Unchanged from previous bundles.
+
+**Decided:** the seed package is `internal/canonical` rather than a placeholder. CI asserting a
+coverage floor over zero packages would be theatre, and the module needs a real package for the
+assertion to mean anything. It carries only what #37 cannot change — separator rejection, period
+and UUID forms, NFC — and deliberately **excludes control-id canonicalisation**, because that
+rule is valid only within a vocabulary and #37 has not scoped it yet.
+
+**Next:** #37's qualifier shape is with the owner. #36's derivation and generator wait on it.
+Unblocked meanwhile: freezing API v0 and the mock server, and #37's item 3 (the schema
+accepting an absent `ns`).
+
+---
+
 ## 2026-09-20 — #31 — `feature/31_attestation_cadence`
 
 **In flight:** nothing. Working tree clean at the point this entry was written; the bundle is

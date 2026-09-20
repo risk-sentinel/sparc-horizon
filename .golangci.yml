@@ -1,0 +1,47 @@
+# golangci-lint configuration.
+#
+# The version is pinned in .github/workflows/ci.yml and must be bumped there and
+# here together: an unpinned linter silently changes what the gate measures, and
+# a gate whose meaning drifts is worse than one that is absent, because it still
+# reports green.
+#
+# gosec is enabled from the first package rather than added later. Horizon
+# handles signing keys and an OIDC client secret, so the security linter having
+# been present since the first commit is a claim worth being able to make.
+
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: standard
+  enable:
+    - gosec
+    - errorlint
+    - bodyclose
+    - noctx
+    - misspell
+    - revive
+
+  settings:
+    # No gosec exclusions. An empty exclusion set is the intended steady state,
+    # and every future entry needs a rationale in the PR that adds it — the same
+    # bar docs/dev/issue_rules.md sets for suppressing any scanner finding.
+    gosec:
+      excludes: []
+
+  exclusions:
+    presets:
+      - comments
+      - std-error-handling
+    rules:
+      # Table-driven tests read better without the errcheck noise on helpers
+      # whose failure the assertion itself reports.
+      - path: _test\.go$
+        linters:
+          - errcheck
+
+formatters:
+  enable:
+    - gofmt

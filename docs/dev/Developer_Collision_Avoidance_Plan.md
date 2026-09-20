@@ -36,6 +36,7 @@ which makes most product phases collision-free against each other:
 
 | Package | Phase | Collides with |
 |---|---|---|
+| `internal/canonical` | **P0 (#38)** | Nothing yet. **Read by every phase that derives an identifier**, so treat its signatures as a contract rather than an implementation detail. It deliberately excludes control-id canonicalisation until #37 scopes it to a vocabulary |
 | `internal/sparc`, `internal/oscal`, `internal/tree`, `internal/authz` | P1 | Each other only |
 | `internal/ledger`, `internal/project` | P2 | P7 reads `project`; do not refactor its signatures while P7 is open |
 | `internal/attest` | P4 | `internal/ledger` writers |
@@ -112,6 +113,14 @@ a file that no longer exists at that path.
 Treat the threat model as **single-writer**. If a change needs it, say so on the issue before
 starting, and expect to issue a revision rather than an edit. Nothing in CI enforces the hash
 binding today, so the check is a reviewer reading the record against `shasum -a 256`.
+
+### 2.4b `go.mod`, `.golangci.yml` and `.github/workflows/ci.yml`
+
+The three move together. The `golangci-lint` version is pinned in **two** places —
+`GOLANGCI_LINT_VERSION` in `ci.yml` and the config it reads — and bumping one
+without the other means the gate measures something nobody chose. The Go version
+is pinned in a third, `docs/08-build-deploy.md`, and `ci.yml` asserts the runner
+matches `go.mod` so a drift is a failure rather than a surprise.
 
 ### 2.5 `.github/workflows/` during S0 and S1
 

@@ -278,13 +278,16 @@ Add the language-dependent scanners one at a time, each observed reporting befor
 it is required.
 
 - **Base effort:** 2 engineer-weeks, up to 2 people
-- **Depends on:** S0, and the first Go package from P1
+- **Depends on:** S0. **S1-1 and S1-2 landed early, in P0** (#38) — the fixture
+  generator cannot derive a UUID without implementing the key grammar, so the
+  first Go package arrived in P0 and its obligations came with it rather than
+  being deferred. The remaining twelve tasks still depend on P1's packages
 - **Interleaves with:** P1
 
 | ID | Task | Issue | Done |
 |---|---|---|---|
-| S1-1 | `go.mod` at the Go version pinned in [`docs/08-build-deploy.md`](../08-build-deploy.md), `.golangci.yml` with a pinned `golangci-lint`, `gosec` enabled | | |
-| S1-2 | `ci.yml`: `gofmt -l`, `go vet`, `golangci-lint`, `go test ./... -race` with coverage. Assert the package count and coverage number — a package with no tests exits 0 and prints `no test files` | | |
+| S1-1 | `go.mod` at the Go version pinned in [`docs/08-build-deploy.md`](../08-build-deploy.md), `.golangci.yml` with a pinned `golangci-lint`, `gosec` enabled | [#38](https://github.com/risk-sentinel/sparc-horizon/issues/38) | 2026-09-20 |
+| S1-2 | `ci.yml`: `gofmt -l`, `go vet`, `golangci-lint`, `go test ./... -race` with coverage. Assert the package count and coverage number — a package with no tests exits 0 and prints `no test files` | [#38](https://github.com/risk-sentinel/sparc-horizon/issues/38) | 2026-09-20 |
 | S1-3 | CodeQL for `go` and `javascript-typescript`; assert the detected language list is non-empty | | |
 | S1-4 | SonarCloud project onboarded (`risk-sentinel_sparc-horizon`); compare analysed lines against the tree — indexed is not analysed | | |
 | S1-5 | `govulncheck` on every PR that touches `go.mod`/`go.sum`, not only at release. A transitive advisory gets no Dependabot PR, so the queue being empty is not evidence | | |

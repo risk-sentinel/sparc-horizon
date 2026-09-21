@@ -1,0 +1,1252 @@
+{
+  "assessment-results": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
+          "props": [
+            {
+              "name": "evidence-kind",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "hdf-results"
+            },
+            {
+              "name": "signed-by",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "6f8d0179-9906-5125-b416-43f858b7633d"
+            }
+          ],
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "34818b699c158ed87d039741705deba30985458dd1687d7acb35788a4ff17992"
+                }
+              ],
+              "href": "../evidence/bgm-payments-scan-2026-Q3.json",
+              "media-type": "application/json"
+            }
+          ],
+          "title": "Payments Gateway normalised scan results 2026-Q3",
+          "uuid": "6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+        },
+        {
+          "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
+          "props": [
+            {
+              "name": "evidence-kind",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "manual-attestation"
+            },
+            {
+              "name": "signed-by",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "6f8d0179-9906-5125-b416-43f858b7633d"
+            }
+          ],
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "354a064e550f676e8aa1b0d3b0eaa8e14ef23bd896f3593800daa27913e230cd"
+                }
+              ],
+              "href": "../evidence/bgm-payments-attestation-2026-Q3.json",
+              "media-type": "application/json"
+            }
+          ],
+          "title": "Payments Gateway manual attestation 2026-Q3",
+          "uuid": "79d493be-4285-59e2-9c63-b93df2c0fe95"
+        },
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "33ec59571f273b1e37a713975d8e7f042446cb7692737476ad4ca9e247f40dfa"
+                }
+              ],
+              "href": "./ssp-bgm-payments.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Payments Gateway system security plan",
+          "uuid": "01605f49-bb0e-5020-a245-b9f01c6ec078"
+        },
+        {
+          "citation": {
+            "text": "Payments Gateway continuous monitoring plan, 2026-Q3"
+          },
+          "description": "Cited rather than modelled: these fixtures carry no assessment-plan document.",
+          "title": "Payments Gateway continuous monitoring plan",
+          "uuid": "dfa589ed-1bb3-5245-8b1c-8bb02f6f11ae"
+        }
+      ]
+    },
+    "import-ap": {
+      "href": "#dfa589ed-1bb3-5245-8b1c-8bb02f6f11ae"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Bureau of Grants Management",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "BGM",
+          "type": "organization",
+          "uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "PAYMENTS Authorizing Official",
+          "type": "person",
+          "uuid": "6ce009f0-9c97-5dd7-9217-d800f0cf2a8a"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "PAYMENTS System Owner",
+          "type": "person",
+          "uuid": "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "PAYMENTS Information System Security Officer",
+          "type": "person",
+          "uuid": "6f8d0179-9906-5125-b416-43f858b7633d"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "6ce009f0-9c97-5dd7-9217-d800f0cf2a8a"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "6f8d0179-9906-5125-b416-43f858b7633d"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Payments Gateway assessment results 2026-Q3",
+      "version": "1.0.0"
+    },
+    "results": [
+      {
+        "attestations": [
+          {
+            "parts": [
+              {
+                "class": "cp-4",
+                "name": "asset",
+                "prose": "The Information System Security Officer attests that cp-4 is implemented for Payments Gateway in 2026-Q3.",
+                "title": "Attestation for cp-4",
+                "uuid": "4980ee46-d032-5d46-b7d2-afae4adaa809"
+              },
+              {
+                "class": "ia-5",
+                "name": "asset",
+                "prose": "The Information System Security Officer attests that ia-5 is implemented for Payments Gateway in 2026-Q3.",
+                "title": "Attestation for ia-5",
+                "uuid": "2166927c-748b-580a-8308-9ad06d8625c2"
+              }
+            ],
+            "responsible-parties": [
+              {
+                "party-uuids": [
+                  "6f8d0179-9906-5125-b416-43f858b7633d"
+                ],
+                "role-id": "information-system-security-officer"
+              }
+            ]
+          }
+        ],
+        "description": "Continuous monitoring results for Payments Gateway.",
+        "end": "2026-09-14T00:00:00Z",
+        "findings": [
+          {
+            "description": "The assessment of ac-2.1 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "b30ac6c6-6a48-5e34-9311-2d47bc861448"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "6d21713c-10f5-5b6a-b5fe-7f80a914f2f0"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "ac-2_1_obj",
+              "title": "Account Management | Automated System Account Management",
+              "type": "objective-id"
+            },
+            "title": "ac-2.1 is not satisfied on PAYMENTS",
+            "uuid": "b959f0a3-81ea-5c44-8314-e87879d034d7"
+          },
+          {
+            "description": "The assessment of si-7 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "db7120be-5b0c-54fb-9eea-dff53d8bc26d"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "f24a6839-f3c8-575a-959f-953f3b41c27f"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "si-7_obj",
+              "title": "Software, Firmware, and Information Integrity",
+              "type": "objective-id"
+            },
+            "title": "si-7 is not satisfied on PAYMENTS",
+            "uuid": "6ef25be1-a51a-5a70-849c-e7d4b42a4b56"
+          },
+          {
+            "description": "The assessment of IAM.4 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "6440c662-e188-505a-bbd8-004b08ea4b38"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "652d5a5d-2f3c-5147-91a3-fe76839d3e1b"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "IAM_4_obj",
+              "title": "IAM root user access key should not exist",
+              "type": "objective-id"
+            },
+            "title": "IAM.4 is not satisfied on PAYMENTS",
+            "uuid": "5c5f953b-6bff-5d78-8602-a5927e268180"
+          },
+          {
+            "description": "The assessment of EC2.2 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "7e409984-b58a-5805-9f69-5b17b15d48d0"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "d73dc9b4-5710-5df3-b141-f1499f719837"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "EC2_2_obj",
+              "title": "VPC default security groups should not allow inbound or outbound traffic",
+              "type": "objective-id"
+            },
+            "title": "EC2.2 is not satisfied on PAYMENTS",
+            "uuid": "de07acfc-50b5-59ff-9a94-c34a7bb13f38"
+          }
+        ],
+        "observations": [
+          {
+            "collected": "2026-08-31T00:00:00Z",
+            "description": "Assessment of ac-2 against Payments Gateway for 2026-Q3.",
+            "expires": "2027-03-29T00:00:00Z",
+            "links": [
+              {
+                "href": "#e3be43d2-129f-52ea-96fc-e17b05755327",
+                "rel": "assessed-control",
+                "resource-fragment": "ac-2",
+                "text": "Implemented requirement for ac-2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+                "type": "component"
+              }
+            ],
+            "title": "ac-2 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "2746e6d4-3795-55b0-81cd-01a79b7e56d0"
+          },
+          {
+            "collected": "2026-09-13T00:00:00Z",
+            "description": "Assessment of ac-2.1 against Payments Gateway for 2026-Q3.",
+            "expires": "2026-10-28T00:00:00Z",
+            "links": [
+              {
+                "href": "#1850f5a1-0952-5059-b084-e82515cde4cb",
+                "rel": "assessed-control",
+                "resource-fragment": "ac-2.1",
+                "text": "Implemented requirement for ac-2.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+                "type": "component"
+              }
+            ],
+            "title": "ac-2.1 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "b30ac6c6-6a48-5e34-9311-2d47bc861448"
+          },
+          {
+            "collected": "2026-08-28T00:00:00Z",
+            "description": "Assessment of au-6 against Payments Gateway for 2026-Q3.",
+            "expires": "2027-05-31T00:00:00Z",
+            "links": [
+              {
+                "href": "#a3403123-2e77-56f7-a115-ec01abc08e1e",
+                "rel": "assessed-control",
+                "resource-fragment": "au-6",
+                "text": "Implemented requirement for au-6"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+                "type": "component"
+              }
+            ],
+            "title": "au-6 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "36057d38-60e7-57dd-b94c-297b2df73171"
+          },
+          {
+            "collected": "2026-09-08T00:00:00Z",
+            "description": "Assessment of au-6.1 against Payments Gateway for 2026-Q3.",
+            "expires": "2027-03-28T00:00:00Z",
+            "links": [
+              {
+                "href": "#c8176efd-d3d7-5c18-9b7b-3183d8719910",
+                "rel": "assessed-control",
+                "resource-fragment": "au-6.1",
+                "text": "Implemented requirement for au-6.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+                "type": "component"
+              }
+            ],
+            "title": "au-6.1 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "9cc35dc5-2b0a-50cb-8f48-1b4fdac19e5b"
+          },
+          {
+            "collected": "2026-09-02T00:00:00Z",
+            "description": "Assessment of cp-4 against Payments Gateway for 2026-Q3.",
+            "expires": "2026-10-09T00:00:00Z",
+            "links": [
+              {
+                "href": "#58c0474f-ed6d-5ee8-83e4-434e0b45954b",
+                "rel": "assessed-control",
+                "resource-fragment": "cp-4",
+                "text": "Implemented requirement for cp-4"
+              }
+            ],
+            "methods": [
+              "EXAMINE"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway manual attestation 2026-Q3",
+                "href": "#79d493be-4285-59e2-9c63-b93df2c0fe95"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+                "type": "component"
+              }
+            ],
+            "title": "cp-4 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "90e41a62-b61e-5f5a-9491-c3dfc10251a1"
+          },
+          {
+            "collected": "2026-09-10T00:00:00Z",
+            "description": "Assessment of cp-9 against Payments Gateway for 2026-Q3.",
+            "expires": "2026-10-08T00:00:00Z",
+            "links": [
+              {
+                "href": "#e226b325-f16f-507d-a5be-b2c6919856fb",
+                "rel": "assessed-control",
+                "resource-fragment": "cp-9",
+                "text": "Implemented requirement for cp-9"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+                "type": "component"
+              }
+            ],
+            "title": "cp-9 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "baa12abe-67a3-53fa-ab5a-1b45c505dcd1"
+          },
+          {
+            "collected": "2026-08-31T00:00:00Z",
+            "description": "Assessment of ia-2 against Payments Gateway for 2026-Q3.",
+            "expires": "2027-01-31T00:00:00Z",
+            "links": [
+              {
+                "href": "#0cbd56b1-aadb-5f4c-9ca2-a19333f6fed9",
+                "rel": "assessed-control",
+                "resource-fragment": "ia-2",
+                "text": "Implemented requirement for ia-2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+                "type": "component"
+              }
+            ],
+            "title": "ia-2 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "fd7b3d78-dc0e-5a99-b2e7-a83b79560418"
+          },
+          {
+            "collected": "2026-08-30T00:00:00Z",
+            "description": "Assessment of ia-5 against Payments Gateway for 2026-Q3.",
+            "expires": "2026-10-02T00:00:00Z",
+            "links": [
+              {
+                "href": "#b9a4eed7-62df-58f7-b693-27b7fc5b66a0",
+                "rel": "assessed-control",
+                "resource-fragment": "ia-5",
+                "text": "Implemented requirement for ia-5"
+              }
+            ],
+            "methods": [
+              "EXAMINE"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway manual attestation 2026-Q3",
+                "href": "#79d493be-4285-59e2-9c63-b93df2c0fe95"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+                "type": "component"
+              }
+            ],
+            "title": "ia-5 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "2284e93f-50f1-5169-aecd-5caecca4892d"
+          },
+          {
+            "collected": "2026-09-13T00:00:00Z",
+            "description": "Assessment of sc-7 against Payments Gateway for 2026-Q3.",
+            "expires": "2026-09-28T00:00:00Z",
+            "links": [
+              {
+                "href": "#8a584c3b-cb0c-5af1-9028-32b76dd583af",
+                "rel": "assessed-control",
+                "resource-fragment": "sc-7",
+                "text": "Implemented requirement for sc-7"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+                "type": "component"
+              }
+            ],
+            "title": "sc-7 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "10513553-88a3-5eba-be74-a4852aac4887"
+          },
+          {
+            "collected": "2026-08-27T00:00:00Z",
+            "description": "Assessment of sc-28 against Payments Gateway for 2026-Q3.",
+            "expires": "2027-04-06T00:00:00Z",
+            "links": [
+              {
+                "href": "#3e57a9e9-5faa-50da-acce-26afdc8a4d47",
+                "rel": "assessed-control",
+                "resource-fragment": "sc-28",
+                "text": "Implemented requirement for sc-28"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+                "type": "component"
+              }
+            ],
+            "title": "sc-28 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "2ca4779d-881b-5256-adfd-fae0cf4f5c13"
+          },
+          {
+            "collected": "2026-09-01T00:00:00Z",
+            "description": "Assessment of si-4 against Payments Gateway for 2026-Q3.",
+            "expires": "2027-05-29T00:00:00Z",
+            "links": [
+              {
+                "href": "#c8d233b9-6a43-5429-84de-8e93b34e06ca",
+                "rel": "assessed-control",
+                "resource-fragment": "si-4",
+                "text": "Implemented requirement for si-4"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+                "type": "component"
+              }
+            ],
+            "title": "si-4 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "ffac766c-2c2c-5cba-b3ed-3879366381bd"
+          },
+          {
+            "collected": "2026-08-29T00:00:00Z",
+            "description": "Assessment of si-7 against Payments Gateway for 2026-Q3.",
+            "expires": "2026-12-06T00:00:00Z",
+            "links": [
+              {
+                "href": "#280a0252-bd64-5081-a5ba-cb3ec68e6862",
+                "rel": "assessed-control",
+                "resource-fragment": "si-7",
+                "text": "Implemented requirement for si-7"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+                "type": "component"
+              }
+            ],
+            "title": "si-7 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "db7120be-5b0c-54fb-9eea-dff53d8bc26d"
+          },
+          {
+            "collected": "2026-09-04T00:00:00Z",
+            "description": "Assessment of ACM.1 against Payments Gateway for 2026-Q3.",
+            "expires": "2027-09-04T00:00:00Z",
+            "links": [
+              {
+                "href": "#17224a91-09fd-5eca-808d-7845a55e996b",
+                "rel": "assessed-control",
+                "resource-fragment": "ACM.1",
+                "text": "Implemented requirement for ACM.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "c92f30cc-d74f-52c5-a0ea-7e7eeefd8f48",
+                "type": "component"
+              }
+            ],
+            "title": "ACM.1 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "05d9393e-5cef-5152-a60f-cd4c88779f3a"
+          },
+          {
+            "collected": "2026-08-30T00:00:00Z",
+            "description": "Assessment of IAM.4 against Payments Gateway for 2026-Q3.",
+            "expires": "2026-12-03T00:00:00Z",
+            "links": [
+              {
+                "href": "#2fba0f32-bab4-58ed-bc68-07775b85656f",
+                "rel": "assessed-control",
+                "resource-fragment": "IAM.4",
+                "text": "Implemented requirement for IAM.4"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "c92f30cc-d74f-52c5-a0ea-7e7eeefd8f48",
+                "type": "component"
+              }
+            ],
+            "title": "IAM.4 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "6440c662-e188-505a-bbd8-004b08ea4b38"
+          },
+          {
+            "collected": "2026-09-12T00:00:00Z",
+            "description": "Assessment of S3.5 against Payments Gateway for 2026-Q3.",
+            "expires": "2026-10-01T00:00:00Z",
+            "links": [
+              {
+                "href": "#1896ca38-921e-5454-82c8-8d53349917d4",
+                "rel": "assessed-control",
+                "resource-fragment": "S3.5",
+                "text": "Implemented requirement for S3.5"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "c92f30cc-d74f-52c5-a0ea-7e7eeefd8f48",
+                "type": "component"
+              }
+            ],
+            "title": "S3.5 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "7a89ccbc-f311-52c6-8f10-25d2e1be4f94"
+          },
+          {
+            "collected": "2026-09-10T00:00:00Z",
+            "description": "Assessment of EC2.2 against Payments Gateway for 2026-Q3.",
+            "expires": "2026-12-07T00:00:00Z",
+            "links": [
+              {
+                "href": "#082e05a6-2099-54b8-9b77-0020bf3dbc7c",
+                "rel": "assessed-control",
+                "resource-fragment": "EC2.2",
+                "text": "Implemented requirement for EC2.2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Payments Gateway normalised scan results 2026-Q3",
+                "href": "#6302848b-7b3f-5ae9-a847-f15f888b2bb2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "c92f30cc-d74f-52c5-a0ea-7e7eeefd8f48",
+                "type": "component"
+              }
+            ],
+            "title": "EC2.2 on PAYMENTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "7e409984-b58a-5805-9f69-5b17b15d48d0"
+          }
+        ],
+        "reviewed-controls": {
+          "control-selections": [
+            {
+              "description": "Controls assessed for Payments Gateway in 2026-Q3.",
+              "include-controls": [
+                {
+                  "control-id": "ac-2"
+                },
+                {
+                  "control-id": "ac-2.1"
+                },
+                {
+                  "control-id": "au-6"
+                },
+                {
+                  "control-id": "au-6.1"
+                },
+                {
+                  "control-id": "cp-4"
+                },
+                {
+                  "control-id": "cp-9"
+                },
+                {
+                  "control-id": "ia-2"
+                },
+                {
+                  "control-id": "ia-5"
+                },
+                {
+                  "control-id": "sc-7"
+                },
+                {
+                  "control-id": "sc-28"
+                },
+                {
+                  "control-id": "si-4"
+                },
+                {
+                  "control-id": "si-7"
+                },
+                {
+                  "control-id": "ACM.1"
+                },
+                {
+                  "control-id": "IAM.4"
+                },
+                {
+                  "control-id": "S3.5"
+                },
+                {
+                  "control-id": "EC2.2"
+                }
+              ]
+            }
+          ]
+        },
+        "risks": [
+          {
+            "description": "Residual risk from the ac-2.1 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "true"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "b30ac6c6-6a48-5e34-9311-2d47bc861448"
+              }
+            ],
+            "statement": "Until ac-2.1 is satisfied, Payments Gateway carries this exposure.",
+            "status": "open",
+            "title": "ac-2.1 shortfall on PAYMENTS",
+            "uuid": "6d21713c-10f5-5b6a-b5fe-7f80a914f2f0"
+          },
+          {
+            "description": "Residual risk from the si-7 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "true"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "db7120be-5b0c-54fb-9eea-dff53d8bc26d"
+              }
+            ],
+            "statement": "Until si-7 is satisfied, Payments Gateway carries this exposure.",
+            "status": "open",
+            "title": "si-7 shortfall on PAYMENTS",
+            "uuid": "f24a6839-f3c8-575a-959f-953f3b41c27f"
+          },
+          {
+            "description": "Residual risk from the IAM.4 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "true"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "6440c662-e188-505a-bbd8-004b08ea4b38"
+              }
+            ],
+            "statement": "Until IAM.4 is satisfied, Payments Gateway carries this exposure.",
+            "status": "open",
+            "title": "IAM.4 shortfall on PAYMENTS",
+            "uuid": "652d5a5d-2f3c-5147-91a3-fe76839d3e1b"
+          },
+          {
+            "description": "Residual risk from the EC2.2 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "true"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "7e409984-b58a-5805-9f69-5b17b15d48d0"
+              }
+            ],
+            "statement": "Until EC2.2 is satisfied, Payments Gateway carries this exposure.",
+            "status": "open",
+            "title": "EC2.2 shortfall on PAYMENTS",
+            "uuid": "d73dc9b4-5710-5df3-b141-f1499f719837"
+          }
+        ],
+        "start": "2026-08-25T00:00:00Z",
+        "title": "Payments Gateway assessment 2026-Q3",
+        "uuid": "07b4fb33-4c4b-5f1d-85ec-93488295bdbe"
+      }
+    ],
+    "uuid": "b52b6fd1-8794-5a0e-871d-e9c39350328d"
+  }
+}

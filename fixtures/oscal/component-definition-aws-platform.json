@@ -1,0 +1,88 @@
+{
+  "component-definition": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "8bae2b922084046e6a4cb238338703289470d12f3323107ab98956316e2a7887"
+                }
+              ],
+              "href": "./catalog-aws-security-hub-subset.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Fixture subset of AWS Security Hub controls",
+          "uuid": "70e7b144-47b0-57f2-ab8c-528e9a8d4f19"
+        }
+      ]
+    },
+    "components": [
+      {
+        "control-implementations": [
+          {
+            "description": "Security Hub controls the platform service is assessed against.",
+            "implemented-requirements": [
+              {
+                "control-id": "ACM.1",
+                "description": "The platform service is assessed against ACM.1 by the provider's continuous monitoring.",
+                "uuid": "17224a91-09fd-5eca-808d-7845a55e996b"
+              },
+              {
+                "control-id": "IAM.4",
+                "description": "The platform service is assessed against IAM.4 by the provider's continuous monitoring.",
+                "uuid": "2fba0f32-bab4-58ed-bc68-07775b85656f"
+              },
+              {
+                "control-id": "S3.5",
+                "description": "The platform service is assessed against S3.5 by the provider's continuous monitoring.",
+                "uuid": "1896ca38-921e-5454-82c8-8d53349917d4"
+              },
+              {
+                "control-id": "EC2.2",
+                "description": "The platform service is assessed against EC2.2 by the provider's continuous monitoring.",
+                "uuid": "082e05a6-2099-54b8-9b77-0020bf3dbc7c"
+              }
+            ],
+            "source": "#70e7b144-47b0-57f2-ab8c-528e9a8d4f19",
+            "uuid": "44393569-9b9e-5882-b78d-988dd1056031"
+          }
+        ],
+        "description": "Inherited platform service. Leveraged by every boundary in the fixture federation.",
+        "props": [
+          {
+            "name": "EvaluatedServices",
+            "ns": "http://aws.amazon.com/ns/oscal",
+            "value": "acm"
+          },
+          {
+            "name": "SeverityLabel",
+            "ns": "http://aws.amazon.com/ns/oscal",
+            "value": "MEDIUM"
+          },
+          {
+            "name": "implementation-point",
+            "value": "external"
+          }
+        ],
+        "purpose": "Issues and renews the certificates the boundaries' public endpoints present.",
+        "title": "AWS Certificate Manager",
+        "type": "service",
+        "uuid": "1a255560-c677-53aa-83d6-4fd5910ba37e"
+      }
+    ],
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "published": "2026-09-15T00:00:00Z",
+      "remarks": "Carries `source` on its control-implementation, so a control identifier reaching a boundary through this document resolves to the Security Hub catalog rather than to the boundary's profile.",
+      "title": "Inherited AWS platform components",
+      "version": "1.0.0"
+    },
+    "uuid": "2ded1436-6892-520c-b4fe-234db3e5772f"
+  }
+}

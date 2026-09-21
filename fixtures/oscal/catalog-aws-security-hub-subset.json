@@ -1,0 +1,63 @@
+{
+  "catalog": {
+    "groups": [
+      {
+        "class": "service",
+        "controls": [
+          {
+            "class": "AWS-SecurityHub",
+            "id": "ACM.1",
+            "title": "Imported and ACM-issued certificates should be renewed after a specified time period"
+          }
+        ],
+        "id": "ACM",
+        "title": "AWS Security Hub controls for ACM"
+      },
+      {
+        "class": "service",
+        "controls": [
+          {
+            "class": "AWS-SecurityHub",
+            "id": "IAM.4",
+            "title": "IAM root user access key should not exist"
+          }
+        ],
+        "id": "IAM",
+        "title": "AWS Security Hub controls for IAM"
+      },
+      {
+        "class": "service",
+        "controls": [
+          {
+            "class": "AWS-SecurityHub",
+            "id": "S3.5",
+            "title": "S3 general purpose buckets should require requests to use SSL"
+          }
+        ],
+        "id": "S3",
+        "title": "AWS Security Hub controls for S3"
+      },
+      {
+        "class": "service",
+        "controls": [
+          {
+            "class": "AWS-SecurityHub",
+            "id": "EC2.2",
+            "title": "VPC default security groups should not allow inbound or outbound traffic"
+          }
+        ],
+        "id": "EC2",
+        "title": "AWS Security Hub controls for EC2"
+      }
+    ],
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "published": "2026-09-15T00:00:00Z",
+      "remarks": "A second catalog authority. Its identifiers are carried exactly as issued: ACM.1 is not acm.1, and normalising it into NIST's form would produce an identifier that validates and names nothing.",
+      "title": "Fixture subset of AWS Security Hub controls",
+      "version": "1.0.0"
+    },
+    "uuid": "70e7b144-47b0-57f2-ab8c-528e9a8d4f19"
+  }
+}

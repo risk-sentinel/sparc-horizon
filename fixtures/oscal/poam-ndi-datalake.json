@@ -1,0 +1,410 @@
+{
+  "plan-of-action-and-milestones": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "678816f95c653d1c5d60d691186498e158f7ab2b0346944e08915c22c55c0d7c"
+                }
+              ],
+              "href": "./ssp-ndi-datalake.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Research Data Lake system security plan",
+          "uuid": "e69b2d2b-2f73-530d-a2ce-460f15fce279"
+        }
+      ]
+    },
+    "import-ssp": {
+      "href": "#e69b2d2b-2f73-530d-a2ce-460f15fce279"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "National Data Institute",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "NDI",
+          "type": "organization",
+          "uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+        },
+        {
+          "member-of-organizations": [
+            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          ],
+          "name": "DATALAKE Authorizing Official",
+          "type": "person",
+          "uuid": "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d"
+        },
+        {
+          "member-of-organizations": [
+            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          ],
+          "name": "DATALAKE System Owner",
+          "type": "person",
+          "uuid": "249617f4-640c-5698-b060-8e48e6bb7737"
+        },
+        {
+          "member-of-organizations": [
+            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          ],
+          "name": "DATALAKE Information System Security Officer",
+          "type": "person",
+          "uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "249617f4-640c-5698-b060-8e48e6bb7737"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Research Data Lake plan of action and milestones 2026-Q3",
+      "version": "1.0.0"
+    },
+    "poam-items": [
+      {
+        "description": "Tracked remediation of the ac-2 finding on Research Data Lake.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "ce709653-1c8a-5695-8c72-493481aa5cff"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "95ee269e-6cba-579b-92a4-4881d276d6e4"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "d5b3842a-a6c5-59d3-a806-efe69fa3e292"
+          }
+        ],
+        "title": "ac-2 remediation",
+        "uuid": "ded2bb30-1aa7-5b82-9fc1-4ba8b6d36f50"
+      },
+      {
+        "description": "Tracked remediation of the cp-9 finding on Research Data Lake.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "921c14a2-5d85-5bfd-8814-a5fe7f35c694"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "eff22b80-c129-5243-b56e-096c94b7f7a0"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "2b7e846c-850c-5b97-8d8f-c2d78dee6ad0"
+          }
+        ],
+        "title": "cp-9 remediation",
+        "uuid": "7675d5f7-1c42-5f70-a8b2-cb10e11e9ae2"
+      },
+      {
+        "description": "Tracked remediation of the ia-5 finding on Research Data Lake.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "a7a03ce4-d3f5-5079-8725-4f31f76d8c28"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "5dd31d14-5f3b-5417-9ebf-873d82631ce7"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "eea2d20e-6a53-5d9e-8402-bcf5086ff88f"
+          }
+        ],
+        "title": "ia-5 remediation",
+        "uuid": "bd01a6e2-3070-5fd1-8961-fcc3fa3fe1bb"
+      }
+    ],
+    "risks": [
+      {
+        "deadline": "2026-11-06T00:00:00Z",
+        "description": "Residual risk from the ac-2 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "false"
+          },
+          {
+            "name": "condition-expires",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "2027-03-26"
+          },
+          {
+            "name": "trigger",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "score<0.85"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "95ee269e-6cba-579b-92a4-4881d276d6e4"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for ac-2 on Research Data Lake.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-11-06T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: ac-2 remediation complete",
+                "type": "milestone",
+                "uuid": "1628cade-ccab-59e8-b888-121592a8dd7b"
+              }
+            ],
+            "title": "Remediate ac-2",
+            "uuid": "e9055f8d-8d84-5b88-a204-3d7c5acbda66"
+          }
+        ],
+        "risk-log": {
+          "entries": [
+            {
+              "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
+              "logged-by": [
+                {
+                  "party-uuid": "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d",
+                  "role-id": "authorizing-official"
+                }
+              ],
+              "start": "2026-09-08T00:00:00Z",
+              "status-change": "deviation-approved",
+              "title": "Risk accepted with conditions",
+              "uuid": "0c95001a-91fd-55ce-b09b-65adf05c1ef8"
+            }
+          ]
+        },
+        "statement": "Until ac-2 is satisfied, Research Data Lake carries this exposure.",
+        "status": "deviation-approved",
+        "title": "ac-2 shortfall on DATALAKE",
+        "uuid": "d5b3842a-a6c5-59d3-a806-efe69fa3e292"
+      },
+      {
+        "deadline": "2027-02-19T00:00:00Z",
+        "description": "Residual risk from the cp-9 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "false"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "eff22b80-c129-5243-b56e-096c94b7f7a0"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for cp-9 on Research Data Lake.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2027-02-19T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: cp-9 remediation complete",
+                "type": "milestone",
+                "uuid": "9d2a4eb6-efc8-53f9-ac4c-a8b1a6bbfa5f"
+              }
+            ],
+            "title": "Remediate cp-9",
+            "uuid": "6a14ffb5-c782-512f-bf75-b4e4f18da5eb"
+          }
+        ],
+        "statement": "Until cp-9 is satisfied, Research Data Lake carries this exposure.",
+        "status": "open",
+        "title": "cp-9 shortfall on DATALAKE",
+        "uuid": "2b7e846c-850c-5b97-8d8f-c2d78dee6ad0"
+      },
+      {
+        "deadline": "2026-11-15T00:00:00Z",
+        "description": "Residual risk from the ia-5 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "5dd31d14-5f3b-5417-9ebf-873d82631ce7"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for ia-5 on Research Data Lake.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-11-15T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: ia-5 remediation complete",
+                "type": "milestone",
+                "uuid": "fb4db8ae-4591-5717-a212-a44a3ed88030"
+              }
+            ],
+            "title": "Remediate ia-5",
+            "uuid": "71c51a0e-530d-5bd0-b694-e5de99fbffd6"
+          }
+        ],
+        "statement": "Until ia-5 is satisfied, Research Data Lake carries this exposure.",
+        "status": "open",
+        "title": "ia-5 shortfall on DATALAKE",
+        "uuid": "eea2d20e-6a53-5d9e-8402-bcf5086ff88f"
+      }
+    ],
+    "system-id": {
+      "id": "ndi-datalake",
+      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+    },
+    "uuid": "d14cab0c-f45a-54a4-907c-832503b80505"
+  }
+}

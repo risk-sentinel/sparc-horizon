@@ -1,0 +1,823 @@
+{
+  "grammar": "v1",
+  "namespace": {
+    "uuid": "d051648c-1ae1-569e-8569-b679a9aaf142",
+    "derivation": "uuidv5(urn:uuid:6ba7b811-9dad-11d1-80b4-00c04fd430c8, \"https://risk-sentinel.org/ns/sparc\")",
+    "provisional": true,
+    "issue": "sparc#1155 — the federation namespace UUID is not registered yet"
+  },
+  "separator": "\u001f",
+  "about": [
+    "Test vectors for the UUIDv5 key grammar specified in docs/03-data-model.md.",
+    "input = grammar-version + separator + fields joined by the separator; uuid = uuidv5(namespace, input).",
+    "canonical-fields is that joined list, already normalised, beginning with the grammar version.",
+    "Every UUID here is provisional until the federation namespace UUID is registered."
+  ],
+  "vectors": [
+    {
+      "name": "attestation-worked-example",
+      "kind": "attestation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "attestation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95"
+    },
+    {
+      "name": "observation-same-arguments",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "observation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "c80e79ed-5097-5dec-b229-dff6bb0af6da"
+    },
+    {
+      "name": "finding-same-arguments",
+      "kind": "finding",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "finding",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "3452be22-7376-5537-9211-ca4e5724533d"
+    },
+    {
+      "name": "risk-same-arguments",
+      "kind": "risk",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "risk",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "8f0c3f6e-da6e-52d3-aa39-b719e4176965"
+    },
+    {
+      "name": "poam-item-same-arguments",
+      "kind": "poam-item",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "poam-item",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "43cfc7da-2f3a-5173-9a24-665a62f2df1a"
+    },
+    {
+      "name": "attestation-nist-spelling-1",
+      "kind": "attestation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "CP-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "attestation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95"
+    },
+    {
+      "name": "attestation-nist-spelling-2",
+      "kind": "attestation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-04",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "attestation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95"
+    },
+    {
+      "name": "attestation-nist-spelling-3",
+      "kind": "attestation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "Cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "attestation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95"
+    },
+    {
+      "name": "observation-enhancement-spelling-1",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "AC-2(1)",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "observation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "ac-2.1",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "ee7ddc0c-d2e9-5e3c-bfa7-93fae3b4c030"
+    },
+    {
+      "name": "observation-enhancement-spelling-2",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "AC-2 (1)",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "observation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "ac-2.1",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "ee7ddc0c-d2e9-5e3c-bfa7-93fae3b4c030"
+    },
+    {
+      "name": "observation-enhancement-spelling-3",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "AC-2.1",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "observation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "ac-2.1",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "ee7ddc0c-d2e9-5e3c-bfa7-93fae3b4c030"
+    },
+    {
+      "name": "observation-enhancement-spelling-4",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "ac-2.1",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "observation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "ac-2.1",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "ee7ddc0c-d2e9-5e3c-bfa7-93fae3b4c030"
+    },
+    {
+      "name": "observation-parent-control",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "ac-2",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "observation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "ac-2",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "046e3bf6-5b3b-581a-ba13-a7973d2de325"
+    },
+    {
+      "name": "observation-security-hub",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "5d40a72c-3e18-4f9b-86d2-0c7a41b5e926",
+        "vocabulary": "opaque",
+        "control-id": "ACM.1",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "observation",
+        "5d40a72c-3e18-4f9b-86d2-0c7a41b5e926",
+        "ACM.1",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "0e6f215e-3bda-58aa-9f00-d4333c9a2f63"
+    },
+    {
+      "name": "observation-security-hub-lowercased",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "5d40a72c-3e18-4f9b-86d2-0c7a41b5e926",
+        "vocabulary": "opaque",
+        "control-id": "acm.1",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "observation",
+        "5d40a72c-3e18-4f9b-86d2-0c7a41b5e926",
+        "acm.1",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "7c9a5114-df7a-58e0-93ec-68fefa9c7806"
+    },
+    {
+      "name": "observation-resolved-through-profile",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "1e7c5a38-0d92-4b64-a7f1-52c8e3901b47",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "observation",
+        "1e7c5a38-0d92-4b64-a7f1-52c8e3901b47",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "9dc6f203-b11b-51bc-b5b7-d69411d4e1fd"
+    },
+    {
+      "name": "observation-next-period",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q4"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "observation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q4"
+      ],
+      "uuid": "e28c605b-dd9d-56dd-bb4b-79ea07816460"
+    },
+    {
+      "name": "observation-peer-boundary",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "8c2d1f07-6a3b-4e15-9d8c-70b4e2a91f63",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "canonical-fields": [
+        "v1",
+        "8c2d1f07-6a3b-4e15-9d8c-70b4e2a91f63",
+        "observation",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "2026-Q3"
+      ],
+      "uuid": "2e894677-852f-540d-aa93-a03fd6e55a79"
+    },
+    {
+      "name": "evidence-resource",
+      "kind": "resource",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "resource",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      "uuid": "e39f9a52-5b52-5235-b5b5-9fa8f89d1be6"
+    },
+    {
+      "name": "evidence-resource-uppercase-hash",
+      "kind": "resource",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "resource",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      "uuid": "e39f9a52-5b52-5235-b5b5-9fa8f89d1be6"
+    },
+    {
+      "name": "ao-decision",
+      "kind": "decision",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "period": "2026-10-11",
+        "risk-uuid": "c1a2b3d4-5e6f-4071-8293-a4b5c6d7e8f9"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "decision",
+        "c1a2b3d4-5e6f-4071-8293-a4b5c6d7e8f9",
+        "2026-10-11"
+      ],
+      "uuid": "2133fa09-3a33-53fd-8606-51418ae2e622"
+    },
+    {
+      "name": "responsibility-provider",
+      "kind": "responsibility",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "ia-2",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "half": "provider"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "responsibility",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "ia-2",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "provider"
+      ],
+      "uuid": "8180d397-cd0b-5058-8f5b-a9b5ceeeb85d"
+    },
+    {
+      "name": "responsibility-consumer",
+      "kind": "responsibility",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "ia-2",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "half": "consumer"
+      },
+      "canonical-fields": [
+        "v1",
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "responsibility",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "ia-2",
+        "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "consumer"
+      ],
+      "uuid": "d722b0c7-3ea7-5d29-a62a-855f2aadc82a"
+    },
+    {
+      "name": "cell-for-control",
+      "kind": "cell",
+      "args": {
+        "node-uuid": "2b0b4a6c-7d31-4e08-95af-6c1e8b204d7a",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "horizon-bucket": "+30"
+      },
+      "canonical-fields": [
+        "v1",
+        "2b0b4a6c-7d31-4e08-95af-6c1e8b204d7a",
+        "cell",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp-4",
+        "+30"
+      ],
+      "uuid": "298dc9d5-3b7e-5f92-96e6-cc9733335bcd"
+    },
+    {
+      "name": "cell-for-family",
+      "kind": "cell",
+      "args": {
+        "node-uuid": "2b0b4a6c-7d31-4e08-95af-6c1e8b204d7a",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "family-id": "CP",
+        "horizon-bucket": "+30"
+      },
+      "canonical-fields": [
+        "v1",
+        "2b0b4a6c-7d31-4e08-95af-6c1e8b204d7a",
+        "cell",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp",
+        "+30"
+      ],
+      "uuid": "0dcdf1b0-1c6b-5d08-9b43-2d94f08805ac"
+    },
+    {
+      "name": "cell-on-decision-date",
+      "kind": "cell",
+      "args": {
+        "node-uuid": "2b0b4a6c-7d31-4e08-95af-6c1e8b204d7a",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "family-id": "cp",
+        "horizon-bucket": "2026-10-11"
+      },
+      "canonical-fields": [
+        "v1",
+        "2b0b4a6c-7d31-4e08-95af-6c1e8b204d7a",
+        "cell",
+        "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "cp",
+        "2026-10-11"
+      ],
+      "uuid": "a78e38fc-b2e7-56a0-ba8a-ee63f9899c0f"
+    }
+  ],
+  "assertions": [
+    {
+      "name": "object-kind-separates-otherwise-identical-keys",
+      "relation": "distinct",
+      "vectors": [
+        "attestation-worked-example",
+        "observation-same-arguments",
+        "finding-same-arguments",
+        "risk-same-arguments",
+        "poam-item-same-arguments"
+      ],
+      "why": "The five kinds share a field list; only the object-kind token distinguishes them."
+    },
+    {
+      "name": "nist-spellings-converge",
+      "relation": "same",
+      "vectors": [
+        "attestation-worked-example",
+        "attestation-nist-spelling-1",
+        "attestation-nist-spelling-2",
+        "attestation-nist-spelling-3"
+      ],
+      "why": "SPARC's API emits control identifiers in more than one casing (sparc#1162); all of them name one control."
+    },
+    {
+      "name": "enhancement-spellings-converge",
+      "relation": "same",
+      "vectors": [
+        "observation-enhancement-spelling-1",
+        "observation-enhancement-spelling-2",
+        "observation-enhancement-spelling-3",
+        "observation-enhancement-spelling-4"
+      ],
+      "why": "Parenthesised, spaced and dotted enhancements are one control; OSCAL's form is the dotted one."
+    },
+    {
+      "name": "enhancement-is-not-its-parent",
+      "relation": "distinct",
+      "vectors": [
+        "observation-enhancement-spelling-4",
+        "observation-parent-control"
+      ],
+      "why": "ac-2.1 is a control in its own right."
+    },
+    {
+      "name": "catalog-authority-partitions-the-key-space",
+      "relation": "distinct",
+      "vectors": [
+        "observation-same-arguments",
+        "observation-security-hub",
+        "observation-resolved-through-profile"
+      ],
+      "why": "The same component, period and SSP assessed against two authorities must not collide; nor must one authority's identifier resolved through two documents."
+    },
+    {
+      "name": "opaque-identifiers-are-case-sensitive",
+      "relation": "distinct",
+      "vectors": [
+        "observation-security-hub",
+        "observation-security-hub-lowercased"
+      ],
+      "why": "ACM.1 is an AWS Security Hub control; acm.1 names nothing. An implementation that lowercases them into one has lost the difference."
+    },
+    {
+      "name": "period-and-boundary-are-key-fields",
+      "relation": "distinct",
+      "vectors": [
+        "observation-same-arguments",
+        "observation-next-period",
+        "observation-peer-boundary"
+      ],
+      "why": "A later period and a peer boundary are different objects, not revisions of one."
+    },
+    {
+      "name": "hash-case-is-normalised",
+      "relation": "same",
+      "vectors": [
+        "evidence-resource",
+        "evidence-resource-uppercase-hash"
+      ],
+      "why": "The same bytes submitted twice are the same resource however the digest was spelled."
+    },
+    {
+      "name": "responsibility-halves-do-not-collide",
+      "relation": "distinct",
+      "vectors": [
+        "responsibility-provider",
+        "responsibility-consumer"
+      ],
+      "why": "A hybrid control is green only when both halves hold; one identifier for both would make that uncheckable."
+    },
+    {
+      "name": "control-and-family-columns-are-distinct-cells",
+      "relation": "distinct",
+      "vectors": [
+        "cell-for-control",
+        "cell-for-family",
+        "cell-on-decision-date"
+      ],
+      "why": "A family rollup is not the control it contains, and a decision-date bucket is not the +30 bucket."
+    }
+  ],
+  "join-cases": [
+    {
+      "name": "join-ambiguity-left",
+      "fields": [
+        "a|b",
+        "c"
+      ],
+      "uuid": "33a54c6f-748c-5604-b775-b3d5df6af254"
+    },
+    {
+      "name": "join-ambiguity-right",
+      "fields": [
+        "a",
+        "b|c"
+      ],
+      "uuid": "1399a429-a9ca-5ab2-b6e6-0bddb4c4c2a2"
+    }
+  ],
+  "rejections": [
+    {
+      "name": "no-source-uuid-resolved",
+      "kind": "attestation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "why": "A key missing a field is a different key, not a key with an empty field. Reject rather than derive."
+    },
+    {
+      "name": "no-vocabulary-resolved",
+      "kind": "attestation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "why": "Without a vocabulary there is no way to know whether the identifier may be canonicalised."
+    },
+    {
+      "name": "statement-fragment-is-not-a-control",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "ac-2_smt.a",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "why": "It names part of a control; keying on it counts one object twice."
+    },
+    {
+      "name": "security-hub-identifier-under-the-nist-vocabulary",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "5d40a72c-3e18-4f9b-86d2-0c7a41b5e926",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "ACM.1",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "why": "Canonicalising it would yield acm.1, which validates and names nothing."
+    },
+    {
+      "name": "period-not-zero-padded",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-1"
+      },
+      "why": "2026-1 is not a spelling of 2026-01; it is a rejection."
+    },
+    {
+      "name": "quarter-without-a-hyphen",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026Q3"
+      },
+      "why": "Quarters are 2026-Q3, never 2026Q3 or Q3-2026."
+    },
+    {
+      "name": "component-is-not-a-uuid",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "component-uuid": "web-01",
+        "period": "2026-Q3"
+      },
+      "why": "Components join by UUID; a local name would not federate."
+    },
+    {
+      "name": "separator-inside-a-field",
+      "kind": "observation",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "5d40a72c-3e18-4f9b-86d2-0c7a41b5e926",
+        "vocabulary": "opaque",
+        "control-id": "ACM\u001f1",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "period": "2026-Q3"
+      },
+      "why": "Rejected rather than escaped: an escape sequence is itself a value a field could contain."
+    },
+    {
+      "name": "hash-that-is-not-sha-256",
+      "kind": "resource",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "sha256": "deadbeef"
+      },
+      "why": "An evidence resource keyed on anything but the digest of its content is not this object."
+    },
+    {
+      "name": "responsibility-half-outside-the-vocabulary",
+      "kind": "responsibility",
+      "args": {
+        "parent-ssp-uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "ia-2",
+        "component-uuid": "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
+        "half": "owner"
+      },
+      "why": "There are two halves, and a third would silently create a third object."
+    },
+    {
+      "name": "horizon-bucket-outside-the-vocabulary",
+      "kind": "cell",
+      "args": {
+        "node-uuid": "2b0b4a6c-7d31-4e08-95af-6c1e8b204d7a",
+        "source-uuid": "b7e21d90-4c1a-4f55-9e33-0a6d2c118f44",
+        "vocabulary": "nist-sp800-53",
+        "control-id": "cp-4",
+        "horizon-bucket": "+45"
+      },
+      "why": "Only today, +7, +14, +30 and decision dates are materialised; a cell keyed elsewhere is never invalidated."
+    }
+  ]
+}

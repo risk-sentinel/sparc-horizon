@@ -1,0 +1,24 @@
+{
+  "$schema-note": "Synthetic stand-in for an HDF v3 results file; shape is illustrative, not the HDF schema.",
+  "tool": "sparc-horizon-fixture-scanner",
+  "boundary": "ndi-analytics",
+  "period": "2026-Q3",
+  "collected": "2026-09-12",
+  "controls": [
+    "ac-2",
+    "ac-2.1",
+    "au-6",
+    "au-6.1",
+    "cp-9",
+    "ia-2",
+    "sc-7",
+    "sc-28",
+    "si-4",
+    "si-7",
+    "ACM.1",
+    "IAM.4",
+    "S3.5",
+    "EC2.2"
+  ],
+  "synthetic": true
+}

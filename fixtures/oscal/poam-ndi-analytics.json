@@ -1,0 +1,217 @@
+{
+  "plan-of-action-and-milestones": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "51b1c268cfb2d030f648a5f02061ea71dd3443636b384b0fe7babe486bdf2e78"
+                }
+              ],
+              "href": "./ssp-ndi-analytics.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Analytics Workbench system security plan",
+          "uuid": "ac72c68e-fa06-5948-9aba-c323c96f6164"
+        }
+      ]
+    },
+    "import-ssp": {
+      "href": "#ac72c68e-fa06-5948-9aba-c323c96f6164"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "National Data Institute",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "NDI",
+          "type": "organization",
+          "uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+        },
+        {
+          "member-of-organizations": [
+            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          ],
+          "name": "WORKBENCH Authorizing Official",
+          "type": "person",
+          "uuid": "d23aa4e7-e2ef-5ff0-a68e-363fd56f02f3"
+        },
+        {
+          "member-of-organizations": [
+            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          ],
+          "name": "WORKBENCH System Owner",
+          "type": "person",
+          "uuid": "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+        },
+        {
+          "member-of-organizations": [
+            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          ],
+          "name": "WORKBENCH Information System Security Officer",
+          "type": "person",
+          "uuid": "06d5e411-42da-5019-9f15-247f194dccae"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "d23aa4e7-e2ef-5ff0-a68e-363fd56f02f3"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "06d5e411-42da-5019-9f15-247f194dccae"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Analytics Workbench plan of action and milestones 2026-Q3",
+      "version": "1.0.0"
+    },
+    "poam-items": [
+      {
+        "description": "Tracked remediation of the S3.5 finding on Analytics Workbench.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "eafc6581-3f10-59ba-9849-62f563d160f6"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "d2a1b51e-029f-56ce-b407-4a58161aa638"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "9324cf70-4e40-5e5a-8f3b-c7a1d0b6f2cc"
+          }
+        ],
+        "title": "S3.5 remediation",
+        "uuid": "ef955788-ae8a-59dc-bc71-9300ea410226"
+      }
+    ],
+    "risks": [
+      {
+        "deadline": "2027-02-03T00:00:00Z",
+        "description": "Residual risk from the S3.5 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "false"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "d2a1b51e-029f-56ce-b407-4a58161aa638"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for S3.5 on Analytics Workbench.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2027-02-03T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: S3.5 remediation complete",
+                "type": "milestone",
+                "uuid": "6d602ccd-732d-52af-b159-b6c3792605e3"
+              }
+            ],
+            "title": "Remediate S3.5",
+            "uuid": "085fd6a5-cd85-537d-baef-22301377fbe8"
+          }
+        ],
+        "statement": "Until S3.5 is satisfied, Analytics Workbench carries this exposure.",
+        "status": "open",
+        "title": "S3.5 shortfall on WORKBENCH",
+        "uuid": "9324cf70-4e40-5e5a-8f3b-c7a1d0b6f2cc"
+      }
+    ],
+    "system-id": {
+      "id": "ndi-analytics",
+      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+    },
+    "uuid": "637dbea4-f692-50e7-a465-46ee4b7bbcbd"
+  }
+}

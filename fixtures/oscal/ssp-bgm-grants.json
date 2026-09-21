@@ -1,0 +1,749 @@
+{
+  "system-security-plan": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "e0a64373ff12749523dffa42589aa35ed03ffcf1cda80c38caa2ef64c0fe7719"
+                }
+              ],
+              "href": "./profile-moderate.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Fixture moderate baseline",
+          "uuid": "02db532b-5963-5617-a8bb-6f883ed54422"
+        },
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "db91ee161b692afcc7fc34d3b61b23b2996a353c33a8b2c45a9571d05267bb8e"
+                }
+              ],
+              "href": "./ssp-ods-identity.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Identity Services system security plan",
+          "uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+        }
+      ]
+    },
+    "control-implementation": {
+      "description": "Controls resolved from the fixture moderate baseline. The control-implementation carries no `source` of its own, so `source-uuid` resolves through import-profile.",
+      "implemented-requirements": [
+        {
+          "by-components": [
+            {
+              "component-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+              "description": "Grants Application implements ac-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "05fed6d6-de7b-57ae-a306-3540cf952fc5"
+            },
+            {
+              "component-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+              "description": "Grants Database implements ac-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "b1020ae1-86b7-506b-8997-44f3bb63855d"
+            }
+          ],
+          "control-id": "ac-2",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "75e6d319-0cad-5551-a4b6-fe687c7fa657"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+              "description": "Grants Database implements ac-2.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "a96be05b-4578-5384-8a64-9a4952d4de94"
+            },
+            {
+              "component-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+              "description": "Grants ETL implements ac-2.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "822413aa-ff8b-535c-a771-c9b4c17b4cf4"
+            }
+          ],
+          "control-id": "ac-2.1",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "3a2bcb62-08a7-51e7-bff4-9bed51e9be67"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+              "description": "Grants ETL implements au-6.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "f5734411-367c-5563-b770-539b9da7cf1a"
+            },
+            {
+              "component-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+              "description": "Grants Application implements au-6.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "4cbcd31c-59e4-54d0-bb89-9a050bc28584"
+            }
+          ],
+          "control-id": "au-6",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "57c47b59-d6c2-59e8-80a4-1c33f4e9b76f"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+              "description": "Grants Application implements au-6.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "55f76a43-4a6a-5330-aeb7-bb10ccef2f0b"
+            },
+            {
+              "component-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+              "description": "Grants Database implements au-6.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "0495a6c9-cf15-5a8e-809b-8308940a30dc"
+            }
+          ],
+          "control-id": "au-6.1",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "e2e293bc-6fc8-53cf-b3f2-4ee2b4b2f563"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+              "description": "Grants Database implements cp-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "99456420-b5d9-500b-b1a1-998a8ef0ee9e"
+            },
+            {
+              "component-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+              "description": "Grants ETL implements cp-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "8fdf8abc-0973-59fa-9a55-4690f6e05057"
+            }
+          ],
+          "control-id": "cp-4",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "8ad2d01d-e004-55ef-8119-44d40f2b571c"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+              "description": "Grants ETL implements cp-9.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "15e4ee8d-b5c3-5fba-891b-89155798f46a"
+            },
+            {
+              "component-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+              "description": "Grants Application implements cp-9.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "0aa02512-7866-5f47-bdb2-6a93682639b3"
+            }
+          ],
+          "control-id": "cp-9",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "e54567d3-ea66-54d0-918a-7e63e5ddf253"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+              "description": "Grants Application implements ia-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "inherited": [
+                {
+                  "description": "Inherited from Identity Services.",
+                  "provided-uuid": "724d525c-fc55-5d8a-828e-f40a65da02b9",
+                  "uuid": "8e37aaeb-da97-53ef-9daf-31a4da3fe64c"
+                }
+              ],
+              "satisfied": [
+                {
+                  "description": "Boundary-side configuration answering the provider's stated responsibility.",
+                  "responsibility-uuid": "8cdb9c79-1168-5433-b17e-0219baac249a",
+                  "uuid": "21179d31-9ed2-5967-8294-0e67af40641d"
+                }
+              ],
+              "uuid": "98d2eab4-5f68-54bb-9dbe-49431b8e185f"
+            },
+            {
+              "component-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+              "description": "Grants Database implements ia-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "389e4f3b-01dc-5c43-b6a5-2bd11833426b"
+            }
+          ],
+          "control-id": "ia-2",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "1eda2738-01f5-54c3-861b-1903322982e6"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+              "description": "Grants Database implements ia-5.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "inherited": [
+                {
+                  "description": "Inherited from Identity Services.",
+                  "provided-uuid": "b5c46ed0-ea2e-54b0-a76e-bbe4f2dd6cac",
+                  "uuid": "9f5b2697-4275-57a4-99d4-aae8a2247995"
+                }
+              ],
+              "satisfied": [
+                {
+                  "description": "Boundary-side configuration answering the provider's stated responsibility.",
+                  "responsibility-uuid": "9abc3f63-4a89-5de3-9dab-a84480338794",
+                  "uuid": "70bb72d8-8ee8-581d-ac9e-22a1ddaea7ec"
+                }
+              ],
+              "uuid": "79724617-94d5-5f9a-8014-ebf0a3a76c20"
+            },
+            {
+              "component-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+              "description": "Grants ETL implements ia-5.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "39075351-228a-57bf-8737-27bb22a182d7"
+            }
+          ],
+          "control-id": "ia-5",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "5896a374-0cb5-58a0-80c7-f90bbe8385da"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+              "description": "Grants ETL implements sc-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "85d0c2a6-8630-541a-9677-7d0788852236"
+            },
+            {
+              "component-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+              "description": "Grants Application implements sc-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "7e360f71-873d-55ad-ac09-852ea4cd5d04"
+            }
+          ],
+          "control-id": "sc-7",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "c550a2a4-3219-5245-85f8-f62eb4f75960"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+              "description": "Grants Application implements sc-28.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "ef409629-cc0a-5092-bbfa-102104ee3e51"
+            },
+            {
+              "component-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+              "description": "Grants Database implements sc-28.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "7fbea932-9848-5d8e-bda6-43fa439ee911"
+            }
+          ],
+          "control-id": "sc-28",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "44940e83-fe67-50ad-8e40-1f5c6460efb8"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+              "description": "Grants Database implements si-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "320f622d-dcfa-5e85-b7fe-91d04d30c4f8"
+            },
+            {
+              "component-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+              "description": "Grants ETL implements si-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "ee5f0178-3c3e-50ac-b253-e9ea81d56fd9"
+            }
+          ],
+          "control-id": "si-4",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "c4d37c1c-9512-513c-bcf8-b8a57fe627fd"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+              "description": "Grants ETL implements si-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "d069fa0b-b634-58a0-8acc-08c2a0e37f49"
+            },
+            {
+              "component-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+              "description": "Grants Application implements si-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "9fe4df8d-88eb-52b0-9aa4-4ab21e7dddb3"
+            }
+          ],
+          "control-id": "si-7",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "d4f4c799-5179-5f0a-8855-5345652b3259"
+        }
+      ]
+    },
+    "import-profile": {
+      "href": "#02db532b-5963-5617-a8bb-6f883ed54422"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Bureau of Grants Management",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "BGM",
+          "type": "organization",
+          "uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "GRANTS Authorizing Official",
+          "type": "person",
+          "uuid": "51cc5630-99e7-5bdb-8736-aae06b692619"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "GRANTS System Owner",
+          "type": "person",
+          "uuid": "846dbdd0-44b5-534e-9af3-8bc400b03534"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "GRANTS Information System Security Officer",
+          "type": "person",
+          "uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+        }
+      ],
+      "props": [
+        {
+          "name": "node-type",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "boundary"
+        },
+        {
+          "name": "parent-uuid",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+        },
+        {
+          "name": "next-decision-date",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "2026-10-24"
+        },
+        {
+          "name": "fips-199",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "high"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "51cc5630-99e7-5bdb-8736-aae06b692619"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "846dbdd0-44b5-534e-9af3-8bc400b03534"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Grants Platform system security plan",
+      "version": "1.0.0"
+    },
+    "system-characteristics": {
+      "authorization-boundary": {
+        "description": "Grant application intake, review and award record."
+      },
+      "date-authorized": "2026-03-02",
+      "description": "Grant application intake, review and award record.",
+      "security-impact-level": {
+        "security-objective-availability": "high",
+        "security-objective-confidentiality": "high",
+        "security-objective-integrity": "high"
+      },
+      "security-sensitivity-level": "high",
+      "status": {
+        "state": "operational"
+      },
+      "system-ids": [
+        {
+          "id": "bgm-grants",
+          "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+        },
+        {
+          "id": "3",
+          "identifier-type": "https://risk-sentinel.org/ns/sparc/id"
+        }
+      ],
+      "system-information": {
+        "information-types": [
+          {
+            "availability-impact": {
+              "base": "fips-199-high"
+            },
+            "confidentiality-impact": {
+              "base": "fips-199-high"
+            },
+            "description": "Synthetic information type for the fixture federation.",
+            "integrity-impact": {
+              "base": "fips-199-high"
+            },
+            "title": "Grants Platform operational records",
+            "uuid": "fdd2e958-121e-5232-b253-4d93dff0f733"
+          }
+        ]
+      },
+      "system-name": "Grants Platform",
+      "system-name-short": "GRANTS"
+    },
+    "system-implementation": {
+      "components": [
+        {
+          "description": "Intake and review workflow.",
+          "purpose": "Intake and review workflow.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "846dbdd0-44b5-534e-9af3-8bc400b03534"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Grants Application",
+          "type": "software",
+          "uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010"
+        },
+        {
+          "description": "System of record for awards.",
+          "purpose": "System of record for awards.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "846dbdd0-44b5-534e-9af3-8bc400b03534"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Grants Database",
+          "type": "software",
+          "uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0"
+        },
+        {
+          "description": "Moves award data to the reporting store.",
+          "purpose": "Moves award data to the reporting store.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "846dbdd0-44b5-534e-9af3-8bc400b03534"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Grants ETL",
+          "type": "software",
+          "uuid": "7456dba1-c177-5750-97c0-7655439f9242"
+        },
+        {
+          "description": "Inherited platform service, assessed by the provider against AWS Security Hub controls.",
+          "props": [
+            {
+              "name": "EvaluatedServices",
+              "ns": "http://aws.amazon.com/ns/oscal",
+              "value": "acm"
+            },
+            {
+              "name": "SeverityLabel",
+              "ns": "http://aws.amazon.com/ns/oscal",
+              "value": "MEDIUM"
+            },
+            {
+              "name": "implementation-point",
+              "value": "external"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "AWS Certificate Manager",
+          "type": "service",
+          "uuid": "91957c8e-276c-55e6-a142-beaf32c46655"
+        }
+      ],
+      "inventory-items": [
+        {
+          "description": "Grants Application inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "bgm-grants/grants-app"
+            }
+          ],
+          "uuid": "e4d72693-e5f8-50fe-a5d0-4df51c5af85f"
+        },
+        {
+          "description": "Grants Database inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "bgm-grants/grants-db"
+            }
+          ],
+          "uuid": "c0173783-05f0-581b-a3d5-a85556547634"
+        },
+        {
+          "description": "Grants ETL inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "7456dba1-c177-5750-97c0-7655439f9242"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "bgm-grants/grants-etl"
+            }
+          ],
+          "uuid": "01afb2b2-053d-5fe6-ae42-1750c6ecc485"
+        }
+      ],
+      "leveraged-authorizations": [
+        {
+          "date-authorized": "2026-03-02",
+          "links": [
+            {
+              "href": "#f20b0311-6cb6-5588-9349-ff24440f6674",
+              "rel": "leveraged-authorization"
+            }
+          ],
+          "party-uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707",
+          "remarks": "The reverse-inheritance index behind blast radius is built from this link.",
+          "title": "Identity Services",
+          "uuid": "4f1552e0-d2f8-5a9a-8051-57b007d56662"
+        }
+      ]
+    },
+    "uuid": "93bb33d1-a2ad-5eee-ac9e-2894f09162f2"
+  }
+}

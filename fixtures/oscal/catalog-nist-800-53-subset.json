@@ -1,0 +1,201 @@
+{
+  "catalog": {
+    "groups": [
+      {
+        "class": "family",
+        "controls": [
+          {
+            "class": "SP800-53",
+            "id": "ac-2",
+            "parts": [
+              {
+                "id": "ac-2_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for ac-2. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "Account Management"
+          },
+          {
+            "class": "SP800-53",
+            "id": "ac-2.1",
+            "parts": [
+              {
+                "id": "ac-2.1_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for ac-2.1. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "Account Management | Automated System Account Management"
+          }
+        ],
+        "id": "ac",
+        "title": "Access Control"
+      },
+      {
+        "class": "family",
+        "controls": [
+          {
+            "class": "SP800-53",
+            "id": "au-6",
+            "parts": [
+              {
+                "id": "au-6_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for au-6. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "Audit Record Review, Analysis, and Reporting"
+          },
+          {
+            "class": "SP800-53",
+            "id": "au-6.1",
+            "parts": [
+              {
+                "id": "au-6.1_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for au-6.1. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "Audit Record Review, Analysis, and Reporting | Automated Process Integration"
+          }
+        ],
+        "id": "au",
+        "title": "Audit and Accountability"
+      },
+      {
+        "class": "family",
+        "controls": [
+          {
+            "class": "SP800-53",
+            "id": "cp-4",
+            "parts": [
+              {
+                "id": "cp-4_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for cp-4. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "Contingency Plan Testing"
+          },
+          {
+            "class": "SP800-53",
+            "id": "cp-9",
+            "parts": [
+              {
+                "id": "cp-9_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for cp-9. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "System Backup"
+          }
+        ],
+        "id": "cp",
+        "title": "Contingency Planning"
+      },
+      {
+        "class": "family",
+        "controls": [
+          {
+            "class": "SP800-53",
+            "id": "ia-2",
+            "parts": [
+              {
+                "id": "ia-2_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for ia-2. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "Identification and Authentication (Organizational Users)"
+          },
+          {
+            "class": "SP800-53",
+            "id": "ia-5",
+            "parts": [
+              {
+                "id": "ia-5_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for ia-5. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "Authenticator Management"
+          }
+        ],
+        "id": "ia",
+        "title": "Identification and Authentication"
+      },
+      {
+        "class": "family",
+        "controls": [
+          {
+            "class": "SP800-53",
+            "id": "sc-7",
+            "parts": [
+              {
+                "id": "sc-7_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for sc-7. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "Boundary Protection"
+          },
+          {
+            "class": "SP800-53",
+            "id": "sc-28",
+            "parts": [
+              {
+                "id": "sc-28_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for sc-28. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "Protection of Information at Rest"
+          }
+        ],
+        "id": "sc",
+        "title": "System and Communications Protection"
+      },
+      {
+        "class": "family",
+        "controls": [
+          {
+            "class": "SP800-53",
+            "id": "si-4",
+            "parts": [
+              {
+                "id": "si-4_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for si-4. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "System Monitoring"
+          },
+          {
+            "class": "SP800-53",
+            "id": "si-7",
+            "parts": [
+              {
+                "id": "si-7_smt",
+                "name": "statement",
+                "prose": "Synthetic statement for si-7. These fixtures carry control identifiers and structure, not NIST's control text."
+              }
+            ],
+            "title": "Software, Firmware, and Information Integrity"
+          }
+        ],
+        "id": "si",
+        "title": "System and Information Integrity"
+      }
+    ],
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "published": "2026-09-15T00:00:00Z",
+      "remarks": "Twelve controls across six families, for the SPARC Horizon fixture federation. Not a substitute for the published catalog.",
+      "title": "Fixture subset of NIST SP 800-53 Revision 5",
+      "version": "1.0.0"
+    },
+    "uuid": "fbe288de-b7bc-5ca2-88ff-4da7560175c8"
+  }
+}

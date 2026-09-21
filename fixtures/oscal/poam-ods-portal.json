@@ -1,0 +1,217 @@
+{
+  "plan-of-action-and-milestones": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "e2f853241a073797091a2270b93116472450b3d053c683b3b214585218b8edbe"
+                }
+              ],
+              "href": "./ssp-ods-portal.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Public Portal system security plan",
+          "uuid": "0db913d7-c382-536f-8c67-b4b52b4e67e6"
+        }
+      ]
+    },
+    "import-ssp": {
+      "href": "#0db913d7-c382-536f-8c67-b4b52b4e67e6"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Office of Digital Services",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "ODS",
+          "type": "organization",
+          "uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "PORTAL Authorizing Official",
+          "type": "person",
+          "uuid": "dbe515c9-1658-5b38-91a7-8c9eebfb6682"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "PORTAL System Owner",
+          "type": "person",
+          "uuid": "420c7493-0d54-5ed9-8edb-3a8b3cf8ed5d"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "PORTAL Information System Security Officer",
+          "type": "person",
+          "uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "dbe515c9-1658-5b38-91a7-8c9eebfb6682"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "420c7493-0d54-5ed9-8edb-3a8b3cf8ed5d"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "5bdb4241-1f40-55d2-9101-3a51722669cc"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Public Portal plan of action and milestones 2026-Q3",
+      "version": "1.0.0"
+    },
+    "poam-items": [
+      {
+        "description": "Tracked remediation of the EC2.2 finding on Public Portal.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "b4183c0a-8e90-5bd6-b663-22f5568b62a5"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "550e4f3b-1f6c-510a-ad08-8622cb75fd34"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "4126be8e-eb72-5349-9338-fc2a20ba4382"
+          }
+        ],
+        "title": "EC2.2 remediation",
+        "uuid": "5d40d72c-d68a-56db-925d-ca9d4152676a"
+      }
+    ],
+    "risks": [
+      {
+        "deadline": "2026-12-21T00:00:00Z",
+        "description": "Residual risk from the EC2.2 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "false"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "550e4f3b-1f6c-510a-ad08-8622cb75fd34"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for EC2.2 on Public Portal.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-12-21T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: EC2.2 remediation complete",
+                "type": "milestone",
+                "uuid": "275c5998-d095-5f12-b0ee-345ceb24795e"
+              }
+            ],
+            "title": "Remediate EC2.2",
+            "uuid": "afcde272-c11f-5f3c-9e36-7afe2161d48a"
+          }
+        ],
+        "statement": "Until EC2.2 is satisfied, Public Portal carries this exposure.",
+        "status": "open",
+        "title": "EC2.2 shortfall on PORTAL",
+        "uuid": "4126be8e-eb72-5349-9338-fc2a20ba4382"
+      }
+    ],
+    "system-id": {
+      "id": "ods-portal",
+      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+    },
+    "uuid": "ebdadc34-0939-57a6-b9a1-6c51731fdba1"
+  }
+}

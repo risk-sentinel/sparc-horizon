@@ -1,0 +1,749 @@
+{
+  "system-security-plan": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "e0a64373ff12749523dffa42589aa35ed03ffcf1cda80c38caa2ef64c0fe7719"
+                }
+              ],
+              "href": "./profile-moderate.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Fixture moderate baseline",
+          "uuid": "02db532b-5963-5617-a8bb-6f883ed54422"
+        },
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "db91ee161b692afcc7fc34d3b61b23b2996a353c33a8b2c45a9571d05267bb8e"
+                }
+              ],
+              "href": "./ssp-ods-identity.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Identity Services system security plan",
+          "uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+        }
+      ]
+    },
+    "control-implementation": {
+      "description": "Controls resolved from the fixture moderate baseline. The control-implementation carries no `source` of its own, so `source-uuid` resolves through import-profile.",
+      "implemented-requirements": [
+        {
+          "by-components": [
+            {
+              "component-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+              "description": "Payment Gateway implements ac-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "f3d7f01c-2fd4-5750-903e-20300b681871"
+            },
+            {
+              "component-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+              "description": "Payment Ledger implements ac-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "32fba7e5-9cb0-5dfc-9782-413380ebd37e"
+            }
+          ],
+          "control-id": "ac-2",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "e3be43d2-129f-52ea-96fc-e17b05755327"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+              "description": "Payment Ledger implements ac-2.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "5357de23-66a0-520e-a693-85e8568aa598"
+            },
+            {
+              "component-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+              "description": "Payment HSM implements ac-2.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "a8d53e20-0ab0-54d4-b10f-6ea4e530f165"
+            }
+          ],
+          "control-id": "ac-2.1",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "1850f5a1-0952-5059-b084-e82515cde4cb"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+              "description": "Payment HSM implements au-6.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "5fa362c7-8f66-554e-9d27-fe6314a2cd3c"
+            },
+            {
+              "component-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+              "description": "Payment Gateway implements au-6.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "9d4ff5b4-a01c-52bd-8866-8bfddeedf57d"
+            }
+          ],
+          "control-id": "au-6",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "a3403123-2e77-56f7-a115-ec01abc08e1e"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+              "description": "Payment Gateway implements au-6.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "f09390e7-4742-5832-8a62-4daadadd8108"
+            },
+            {
+              "component-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+              "description": "Payment Ledger implements au-6.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "89361afb-ed4f-5211-b69b-243e139dd67d"
+            }
+          ],
+          "control-id": "au-6.1",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "c8176efd-d3d7-5c18-9b7b-3183d8719910"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+              "description": "Payment Ledger implements cp-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "2cdcdf3f-ae25-5314-b4fd-4ffc3307f2c3"
+            },
+            {
+              "component-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+              "description": "Payment HSM implements cp-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "3f1e9d13-2379-5e41-905d-64731bd9ecad"
+            }
+          ],
+          "control-id": "cp-4",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "58c0474f-ed6d-5ee8-83e4-434e0b45954b"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+              "description": "Payment HSM implements cp-9.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "412bcffb-ebde-54f2-98ac-858f7c279e5e"
+            },
+            {
+              "component-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+              "description": "Payment Gateway implements cp-9.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "66f2036a-5bd7-5473-bcc4-7a2c5a971b9f"
+            }
+          ],
+          "control-id": "cp-9",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "e226b325-f16f-507d-a5be-b2c6919856fb"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+              "description": "Payment Gateway implements ia-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "inherited": [
+                {
+                  "description": "Inherited from Identity Services.",
+                  "provided-uuid": "724d525c-fc55-5d8a-828e-f40a65da02b9",
+                  "uuid": "4f114b85-68bf-575e-a663-694efe85d44a"
+                }
+              ],
+              "satisfied": [
+                {
+                  "description": "Boundary-side configuration answering the provider's stated responsibility.",
+                  "responsibility-uuid": "8cdb9c79-1168-5433-b17e-0219baac249a",
+                  "uuid": "f3b2e07a-3b0d-577d-9826-7aecb3010fbf"
+                }
+              ],
+              "uuid": "de0819cd-245b-5b52-b0a6-478462c47097"
+            },
+            {
+              "component-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+              "description": "Payment Ledger implements ia-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "863665c6-7d03-52b5-88b9-26ed1b5dae15"
+            }
+          ],
+          "control-id": "ia-2",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "0cbd56b1-aadb-5f4c-9ca2-a19333f6fed9"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+              "description": "Payment Ledger implements ia-5.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "inherited": [
+                {
+                  "description": "Inherited from Identity Services.",
+                  "provided-uuid": "b5c46ed0-ea2e-54b0-a76e-bbe4f2dd6cac",
+                  "uuid": "86f9ab9c-f96b-5ec1-aeaf-b8d573d0a01c"
+                }
+              ],
+              "satisfied": [
+                {
+                  "description": "Boundary-side configuration answering the provider's stated responsibility.",
+                  "responsibility-uuid": "9abc3f63-4a89-5de3-9dab-a84480338794",
+                  "uuid": "3dc0e4bc-bfc5-5705-b54b-25df11ee1f9d"
+                }
+              ],
+              "uuid": "7dd7fbf8-d910-534d-98a5-c0ad7b7d390f"
+            },
+            {
+              "component-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+              "description": "Payment HSM implements ia-5.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "4182275c-f01f-59a1-95dd-c795bbcb9c49"
+            }
+          ],
+          "control-id": "ia-5",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "b9a4eed7-62df-58f7-b693-27b7fc5b66a0"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+              "description": "Payment HSM implements sc-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "73eda50c-0aee-5f50-9020-681d9014e89d"
+            },
+            {
+              "component-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+              "description": "Payment Gateway implements sc-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "c05c62fd-9200-5db6-b378-9d13cb98f524"
+            }
+          ],
+          "control-id": "sc-7",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "8a584c3b-cb0c-5af1-9028-32b76dd583af"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+              "description": "Payment Gateway implements sc-28.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "4be8d94a-00a7-5a52-aa8a-c2df4945bdd3"
+            },
+            {
+              "component-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+              "description": "Payment Ledger implements sc-28.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "ebd5c37c-ca6a-5112-9fae-ce2b3b15fa23"
+            }
+          ],
+          "control-id": "sc-28",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "3e57a9e9-5faa-50da-acce-26afdc8a4d47"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130",
+              "description": "Payment Ledger implements si-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "e113c02e-a4da-5675-80f0-a4bcc907c9d5"
+            },
+            {
+              "component-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+              "description": "Payment HSM implements si-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "ce34f7dc-a5cc-5b20-bc47-8a5699ce6600"
+            }
+          ],
+          "control-id": "si-4",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "c8d233b9-6a43-5429-84de-8e93b34e06ca"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97",
+              "description": "Payment HSM implements si-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "f6856add-0bd4-53e4-87ab-b2309f3c52d5"
+            },
+            {
+              "component-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004",
+              "description": "Payment Gateway implements si-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "1c7fc4e5-af41-5b7c-b5ef-fb93b4508bd5"
+            }
+          ],
+          "control-id": "si-7",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "6f8d0179-9906-5125-b416-43f858b7633d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "280a0252-bd64-5081-a5ba-cb3ec68e6862"
+        }
+      ]
+    },
+    "import-profile": {
+      "href": "#02db532b-5963-5617-a8bb-6f883ed54422"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Bureau of Grants Management",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "BGM",
+          "type": "organization",
+          "uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "PAYMENTS Authorizing Official",
+          "type": "person",
+          "uuid": "6ce009f0-9c97-5dd7-9217-d800f0cf2a8a"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "PAYMENTS System Owner",
+          "type": "person",
+          "uuid": "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "PAYMENTS Information System Security Officer",
+          "type": "person",
+          "uuid": "6f8d0179-9906-5125-b416-43f858b7633d"
+        }
+      ],
+      "props": [
+        {
+          "name": "node-type",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "boundary"
+        },
+        {
+          "name": "parent-uuid",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+        },
+        {
+          "name": "next-decision-date",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "2026-12-01"
+        },
+        {
+          "name": "fips-199",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "high"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "6ce009f0-9c97-5dd7-9217-d800f0cf2a8a"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "6f8d0179-9906-5125-b416-43f858b7633d"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Payments Gateway system security plan",
+      "version": "1.0.0"
+    },
+    "system-characteristics": {
+      "authorization-boundary": {
+        "description": "Disbursement gateway and its ledger."
+      },
+      "date-authorized": "2026-03-02",
+      "description": "Disbursement gateway and its ledger.",
+      "security-impact-level": {
+        "security-objective-availability": "high",
+        "security-objective-confidentiality": "high",
+        "security-objective-integrity": "high"
+      },
+      "security-sensitivity-level": "high",
+      "status": {
+        "state": "operational"
+      },
+      "system-ids": [
+        {
+          "id": "bgm-payments",
+          "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+        },
+        {
+          "id": "4",
+          "identifier-type": "https://risk-sentinel.org/ns/sparc/id"
+        }
+      ],
+      "system-information": {
+        "information-types": [
+          {
+            "availability-impact": {
+              "base": "fips-199-high"
+            },
+            "confidentiality-impact": {
+              "base": "fips-199-high"
+            },
+            "description": "Synthetic information type for the fixture federation.",
+            "integrity-impact": {
+              "base": "fips-199-high"
+            },
+            "title": "Payments Gateway operational records",
+            "uuid": "dd951040-61e8-52e6-bb08-ae250ad306c0"
+          }
+        ]
+      },
+      "system-name": "Payments Gateway",
+      "system-name-short": "PAYMENTS"
+    },
+    "system-implementation": {
+      "components": [
+        {
+          "description": "Submits and reconciles disbursements.",
+          "purpose": "Submits and reconciles disbursements.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Payment Gateway",
+          "type": "software",
+          "uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004"
+        },
+        {
+          "description": "Append-only record of disbursements.",
+          "purpose": "Append-only record of disbursements.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Payment Ledger",
+          "type": "software",
+          "uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130"
+        },
+        {
+          "description": "Holds the signing keys for disbursement files.",
+          "purpose": "Holds the signing keys for disbursement files.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Payment HSM",
+          "type": "hardware",
+          "uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97"
+        },
+        {
+          "description": "Inherited platform service, assessed by the provider against AWS Security Hub controls.",
+          "props": [
+            {
+              "name": "EvaluatedServices",
+              "ns": "http://aws.amazon.com/ns/oscal",
+              "value": "acm"
+            },
+            {
+              "name": "SeverityLabel",
+              "ns": "http://aws.amazon.com/ns/oscal",
+              "value": "MEDIUM"
+            },
+            {
+              "name": "implementation-point",
+              "value": "external"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "AWS Certificate Manager",
+          "type": "service",
+          "uuid": "c92f30cc-d74f-52c5-a0ea-7e7eeefd8f48"
+        }
+      ],
+      "inventory-items": [
+        {
+          "description": "Payment Gateway inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "fda3cb13-b6cc-5dc2-bf57-f21b3c6db004"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "bgm-payments/pay-gateway"
+            }
+          ],
+          "uuid": "af6a7ebe-c63e-5b41-8fba-9f605557715a"
+        },
+        {
+          "description": "Payment Ledger inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "ef60be75-acd2-5e57-a9b6-6d124961e130"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "bgm-payments/pay-ledger"
+            }
+          ],
+          "uuid": "ec96d15a-40df-577d-9caf-82a5bda56109"
+        },
+        {
+          "description": "Payment HSM inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "6ed45ed8-9341-5a54-8c9d-9d0c601cac97"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "bgm-payments/pay-hsm"
+            }
+          ],
+          "uuid": "fefe6c1c-7780-53a1-acde-bf8070c5e12e"
+        }
+      ],
+      "leveraged-authorizations": [
+        {
+          "date-authorized": "2026-03-02",
+          "links": [
+            {
+              "href": "#f20b0311-6cb6-5588-9349-ff24440f6674",
+              "rel": "leveraged-authorization"
+            }
+          ],
+          "party-uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707",
+          "remarks": "The reverse-inheritance index behind blast radius is built from this link.",
+          "title": "Identity Services",
+          "uuid": "8d769415-68d5-5702-843c-7759ea144074"
+        }
+      ]
+    },
+    "uuid": "01605f49-bb0e-5020-a245-b9f01c6ec078"
+  }
+}

@@ -3,14 +3,13 @@
 // the same logical key.
 //
 // The rules here are normative in docs/03-data-model.md. They are separated
-// from the key grammar itself deliberately: the grammar's field lists are
-// under revision (#37, partitioning the key space by catalog authority), while
-// everything in this package is fixed regardless of how that lands.
+// from the key grammar itself deliberately: this package says what a field
+// value looks like, while internal/keys says which fields make up a key.
 //
-// Nothing here canonicalises a control identifier. That rule is valid only
-// within a vocabulary — lowercasing the AWS Security Hub identifier "ACM.1"
-// yields "acm.1", which looks like a NIST control and is not one — and #37
-// scopes it before it can be implemented safely.
+// Control identifiers are canonicalised in controlid.go, and only within a
+// stated vocabulary. #37 settled that scoping — `source-uuid` is what makes
+// the vocabulary decidable — so the rule this package once deferred is now
+// implemented rather than absent.
 package canonical
 
 import (
@@ -45,6 +44,11 @@ var (
 )
 
 // ValidateField reports whether a value may appear in a natural key.
+//
+// NIST SP 800-53 SI-10 (information input validation): every field that
+// reaches a derivation passes through here or through one of the typed
+// canonicalisers below, and a value that does not conform is rejected rather
+// than repaired.
 func ValidateField(v string) error {
 	if strings.Contains(v, Separator) {
 		return fmt.Errorf("%w: %q", ErrSeparatorInField, v)

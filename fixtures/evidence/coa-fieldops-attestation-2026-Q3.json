@@ -1,0 +1,11 @@
+{
+  "statement": "The controls listed were reviewed for Field Operations and are implemented as described in the system security plan.",
+  "boundary": "coa-fieldops",
+  "period": "2026-Q3",
+  "controls": [
+    "cp-4",
+    "ia-5"
+  ],
+  "signed-by-role": "information-system-security-officer",
+  "synthetic": true
+}

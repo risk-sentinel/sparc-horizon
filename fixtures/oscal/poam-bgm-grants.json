@@ -1,0 +1,576 @@
+{
+  "plan-of-action-and-milestones": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "999c52ef2ae46e8ef7e4d8ed9d973f9bf415fcd6be8215bada6681af2a17b744"
+                }
+              ],
+              "href": "./ssp-bgm-grants.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Grants Platform system security plan",
+          "uuid": "93bb33d1-a2ad-5eee-ac9e-2894f09162f2"
+        }
+      ]
+    },
+    "import-ssp": {
+      "href": "#93bb33d1-a2ad-5eee-ac9e-2894f09162f2"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Bureau of Grants Management",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "BGM",
+          "type": "organization",
+          "uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "GRANTS Authorizing Official",
+          "type": "person",
+          "uuid": "51cc5630-99e7-5bdb-8736-aae06b692619"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "GRANTS System Owner",
+          "type": "person",
+          "uuid": "846dbdd0-44b5-534e-9af3-8bc400b03534"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "GRANTS Information System Security Officer",
+          "type": "person",
+          "uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "51cc5630-99e7-5bdb-8736-aae06b692619"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "846dbdd0-44b5-534e-9af3-8bc400b03534"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Grants Platform plan of action and milestones 2026-Q3",
+      "version": "1.0.0"
+    },
+    "poam-items": [
+      {
+        "description": "Tracked remediation of the au-6.1 finding on Grants Platform.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "e003537f-1469-5e98-bbba-e27a258dcd83"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "b3f66165-cfd2-5027-81f1-b595aad6900f"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "7571fd9a-e8cf-5e88-9fe7-ff9e911eb8b3"
+          }
+        ],
+        "title": "au-6.1 remediation",
+        "uuid": "833812d1-4625-5dbb-8bb9-e4b5f86a095a"
+      },
+      {
+        "description": "Tracked remediation of the cp-4 finding on Grants Platform.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "e27eec46-595c-5812-a067-4152e702f9fa"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "1f38f7b4-cc52-56ba-bd66-bb0801c5701a"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "ade1ca31-bf13-56a5-8703-d33163475f18"
+          }
+        ],
+        "title": "cp-4 remediation",
+        "uuid": "903437c8-959d-5587-a487-82d516942e8f"
+      },
+      {
+        "description": "Tracked remediation of the sc-28 finding on Grants Platform.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "48f75f8e-3a94-521f-a491-67c72eb3f9f2"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "316ad834-84ec-5034-ac02-a48844292bbe"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "786d700a-a98f-5143-8bae-e17599c163b4"
+          }
+        ],
+        "title": "sc-28 remediation",
+        "uuid": "b962915f-1a02-5c73-8332-39f1f732604e"
+      },
+      {
+        "description": "Tracked remediation of the IAM.4 finding on Grants Platform.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "089af37f-3218-5a78-9417-1d50a85f3ae9"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "86f50285-8a33-5c6d-b121-14095e0d4d95"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "4671adbc-fd3a-55bb-bb14-8cbb6db53f48"
+          }
+        ],
+        "title": "IAM.4 remediation",
+        "uuid": "4a552586-95b0-552a-aa24-c3818e8f4cf7"
+      },
+      {
+        "description": "Tracked remediation of the EC2.2 finding on Grants Platform.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "1be96308-9a2e-5890-ac55-ccae0788134c"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "5f2ab399-94af-5132-b6f3-950936a9240e"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "28a5aa43-3d06-59fc-a3c7-4e53ec7e0486"
+          }
+        ],
+        "title": "EC2.2 remediation",
+        "uuid": "dc3d6536-1510-59d9-b4da-736c79e16821"
+      }
+    ],
+    "risks": [
+      {
+        "deadline": "2026-11-23T00:00:00Z",
+        "description": "Residual risk from the au-6.1 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "b3f66165-cfd2-5027-81f1-b595aad6900f"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for au-6.1 on Grants Platform.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-11-23T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: au-6.1 remediation complete",
+                "type": "milestone",
+                "uuid": "ce14c980-2f5f-5cc8-a8cc-fee7ca328024"
+              }
+            ],
+            "title": "Remediate au-6.1",
+            "uuid": "1cc79883-f25f-5a1c-84d5-e04cbfe260ef"
+          }
+        ],
+        "statement": "Until au-6.1 is satisfied, Grants Platform carries this exposure.",
+        "status": "open",
+        "title": "au-6.1 shortfall on GRANTS",
+        "uuid": "7571fd9a-e8cf-5e88-9fe7-ff9e911eb8b3"
+      },
+      {
+        "deadline": "2026-11-23T00:00:00Z",
+        "description": "Residual risk from the cp-4 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "1f38f7b4-cc52-56ba-bd66-bb0801c5701a"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for cp-4 on Grants Platform.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-11-23T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: cp-4 remediation complete",
+                "type": "milestone",
+                "uuid": "57ac50dd-8a5a-5e61-bf4e-51659a6f9404"
+              }
+            ],
+            "title": "Remediate cp-4",
+            "uuid": "49d8e7e4-f0fb-5a0e-83e1-6aab0b2b0cb1"
+          }
+        ],
+        "statement": "Until cp-4 is satisfied, Grants Platform carries this exposure.",
+        "status": "open",
+        "title": "cp-4 shortfall on GRANTS",
+        "uuid": "ade1ca31-bf13-56a5-8703-d33163475f18"
+      },
+      {
+        "deadline": "2026-11-23T00:00:00Z",
+        "description": "Residual risk from the sc-28 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "316ad834-84ec-5034-ac02-a48844292bbe"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for sc-28 on Grants Platform.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-11-23T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: sc-28 remediation complete",
+                "type": "milestone",
+                "uuid": "058a7d46-4f7d-5184-aeca-ce714154aaf7"
+              }
+            ],
+            "title": "Remediate sc-28",
+            "uuid": "33af6e30-584b-5024-b486-13251421e29c"
+          }
+        ],
+        "statement": "Until sc-28 is satisfied, Grants Platform carries this exposure.",
+        "status": "open",
+        "title": "sc-28 shortfall on GRANTS",
+        "uuid": "786d700a-a98f-5143-8bae-e17599c163b4"
+      },
+      {
+        "deadline": "2026-12-02T00:00:00Z",
+        "description": "Residual risk from the IAM.4 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "false"
+          },
+          {
+            "name": "condition-expires",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "2027-01-25"
+          },
+          {
+            "name": "trigger",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "score<0.85"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "86f50285-8a33-5c6d-b121-14095e0d4d95"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for IAM.4 on Grants Platform.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-12-02T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: IAM.4 remediation complete",
+                "type": "milestone",
+                "uuid": "b24c30c8-0ffb-57d2-a5fb-c2b8972c8855"
+              }
+            ],
+            "title": "Remediate IAM.4",
+            "uuid": "7b1e73f6-d1bb-51b4-b072-42bbbfabdd29"
+          }
+        ],
+        "risk-log": {
+          "entries": [
+            {
+              "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
+              "logged-by": [
+                {
+                  "party-uuid": "51cc5630-99e7-5bdb-8736-aae06b692619",
+                  "role-id": "authorizing-official"
+                }
+              ],
+              "start": "2026-09-08T00:00:00Z",
+              "status-change": "deviation-approved",
+              "title": "Risk accepted with conditions",
+              "uuid": "81906f37-3b35-5498-8b93-ce0d936b41d8"
+            }
+          ]
+        },
+        "statement": "Until IAM.4 is satisfied, Grants Platform carries this exposure.",
+        "status": "deviation-approved",
+        "title": "IAM.4 shortfall on GRANTS",
+        "uuid": "4671adbc-fd3a-55bb-bb14-8cbb6db53f48"
+      },
+      {
+        "deadline": "2027-02-22T00:00:00Z",
+        "description": "Residual risk from the EC2.2 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "5f2ab399-94af-5132-b6f3-950936a9240e"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for EC2.2 on Grants Platform.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2027-02-22T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: EC2.2 remediation complete",
+                "type": "milestone",
+                "uuid": "2287489b-a387-584c-9d57-f272046e490f"
+              }
+            ],
+            "title": "Remediate EC2.2",
+            "uuid": "79cdbf18-b229-573b-ba54-98685feaa575"
+          }
+        ],
+        "statement": "Until EC2.2 is satisfied, Grants Platform carries this exposure.",
+        "status": "open",
+        "title": "EC2.2 shortfall on GRANTS",
+        "uuid": "28a5aa43-3d06-59fc-a3c7-4e53ec7e0486"
+      }
+    ],
+    "system-id": {
+      "id": "bgm-grants",
+      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+    },
+    "uuid": "76d9a77b-5dd9-5468-92a9-dd27f9757dab"
+  }
+}

@@ -1,0 +1,1336 @@
+{
+  "assessment-results": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
+          "props": [
+            {
+              "name": "evidence-kind",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "hdf-results"
+            },
+            {
+              "name": "signed-by",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+            }
+          ],
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "6311fc50147ad53365b7979b63395165bac50c52a0ebf3097998d32f3d67c14b"
+                }
+              ],
+              "href": "../evidence/bgm-grants-scan-2026-Q3.json",
+              "media-type": "application/json"
+            }
+          ],
+          "title": "Grants Platform normalised scan results 2026-Q3",
+          "uuid": "30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+        },
+        {
+          "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
+          "props": [
+            {
+              "name": "evidence-kind",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "manual-attestation"
+            },
+            {
+              "name": "signed-by",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+            }
+          ],
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "d7b15b00f0a2fccf25977875432159b1b1244d39dea3245805aada6bbec4d18e"
+                }
+              ],
+              "href": "../evidence/bgm-grants-attestation-2026-Q3.json",
+              "media-type": "application/json"
+            }
+          ],
+          "title": "Grants Platform manual attestation 2026-Q3",
+          "uuid": "76a3f2b1-cfec-5964-bae2-09127eb0cbd9"
+        },
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "999c52ef2ae46e8ef7e4d8ed9d973f9bf415fcd6be8215bada6681af2a17b744"
+                }
+              ],
+              "href": "./ssp-bgm-grants.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Grants Platform system security plan",
+          "uuid": "93bb33d1-a2ad-5eee-ac9e-2894f09162f2"
+        },
+        {
+          "citation": {
+            "text": "Grants Platform continuous monitoring plan, 2026-Q3"
+          },
+          "description": "Cited rather than modelled: these fixtures carry no assessment-plan document.",
+          "title": "Grants Platform continuous monitoring plan",
+          "uuid": "2aa32cf8-86c9-5cde-9353-9c403085e294"
+        }
+      ]
+    },
+    "import-ap": {
+      "href": "#2aa32cf8-86c9-5cde-9353-9c403085e294"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Bureau of Grants Management",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "BGM",
+          "type": "organization",
+          "uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "GRANTS Authorizing Official",
+          "type": "person",
+          "uuid": "51cc5630-99e7-5bdb-8736-aae06b692619"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "GRANTS System Owner",
+          "type": "person",
+          "uuid": "846dbdd0-44b5-534e-9af3-8bc400b03534"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "GRANTS Information System Security Officer",
+          "type": "person",
+          "uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "51cc5630-99e7-5bdb-8736-aae06b692619"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "846dbdd0-44b5-534e-9af3-8bc400b03534"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Grants Platform assessment results 2026-Q3",
+      "version": "1.0.0"
+    },
+    "results": [
+      {
+        "attestations": [
+          {
+            "parts": [
+              {
+                "class": "ia-5",
+                "name": "asset",
+                "prose": "The Information System Security Officer attests that ia-5 is implemented for Grants Platform in 2026-Q3.",
+                "title": "Attestation for ia-5",
+                "uuid": "d52d9ba5-fff0-5fa7-b9c3-5b58c16b56b1"
+              }
+            ],
+            "responsible-parties": [
+              {
+                "party-uuids": [
+                  "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+                ],
+                "role-id": "information-system-security-officer"
+              }
+            ]
+          }
+        ],
+        "description": "Continuous monitoring results for Grants Platform.",
+        "end": "2026-09-14T00:00:00Z",
+        "findings": [
+          {
+            "description": "The assessment of au-6.1 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "b3f66165-cfd2-5027-81f1-b595aad6900f"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "7571fd9a-e8cf-5e88-9fe7-ff9e911eb8b3"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "au-6_1_obj",
+              "title": "Audit Record Review, Analysis, and Reporting | Automated Process Integration",
+              "type": "objective-id"
+            },
+            "title": "au-6.1 is not satisfied on GRANTS",
+            "uuid": "e003537f-1469-5e98-bbba-e27a258dcd83"
+          },
+          {
+            "description": "The assessment of cp-4 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "1f38f7b4-cc52-56ba-bd66-bb0801c5701a"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "ade1ca31-bf13-56a5-8703-d33163475f18"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "cp-4_obj",
+              "title": "Contingency Plan Testing",
+              "type": "objective-id"
+            },
+            "title": "cp-4 is not satisfied on GRANTS",
+            "uuid": "e27eec46-595c-5812-a067-4152e702f9fa"
+          },
+          {
+            "description": "The assessment of sc-28 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "316ad834-84ec-5034-ac02-a48844292bbe"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "786d700a-a98f-5143-8bae-e17599c163b4"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "sc-28_obj",
+              "title": "Protection of Information at Rest",
+              "type": "objective-id"
+            },
+            "title": "sc-28 is not satisfied on GRANTS",
+            "uuid": "48f75f8e-3a94-521f-a491-67c72eb3f9f2"
+          },
+          {
+            "description": "The assessment of IAM.4 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "86f50285-8a33-5c6d-b121-14095e0d4d95"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "4671adbc-fd3a-55bb-bb14-8cbb6db53f48"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "IAM_4_obj",
+              "title": "IAM root user access key should not exist",
+              "type": "objective-id"
+            },
+            "title": "IAM.4 is not satisfied on GRANTS",
+            "uuid": "089af37f-3218-5a78-9417-1d50a85f3ae9"
+          },
+          {
+            "description": "The assessment of EC2.2 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "5f2ab399-94af-5132-b6f3-950936a9240e"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "28a5aa43-3d06-59fc-a3c7-4e53ec7e0486"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "EC2_2_obj",
+              "title": "VPC default security groups should not allow inbound or outbound traffic",
+              "type": "objective-id"
+            },
+            "title": "EC2.2 is not satisfied on GRANTS",
+            "uuid": "1be96308-9a2e-5890-ac55-ccae0788134c"
+          }
+        ],
+        "observations": [
+          {
+            "collected": "2026-08-27T00:00:00Z",
+            "description": "Assessment of ac-2 against Grants Platform for 2026-Q3.",
+            "expires": "2027-10-18T00:00:00Z",
+            "links": [
+              {
+                "href": "#75e6d319-0cad-5551-a4b6-fe687c7fa657",
+                "rel": "assessed-control",
+                "resource-fragment": "ac-2",
+                "text": "Implemented requirement for ac-2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+                "type": "component"
+              }
+            ],
+            "title": "ac-2 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "19e1d23c-0d9d-58fe-a0c6-948f46056823"
+          },
+          {
+            "collected": "2026-09-12T00:00:00Z",
+            "description": "Assessment of ac-2.1 against Grants Platform for 2026-Q3.",
+            "expires": "2027-10-19T00:00:00Z",
+            "links": [
+              {
+                "href": "#3a2bcb62-08a7-51e7-bff4-9bed51e9be67",
+                "rel": "assessed-control",
+                "resource-fragment": "ac-2.1",
+                "text": "Implemented requirement for ac-2.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+                "type": "component"
+              }
+            ],
+            "title": "ac-2.1 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "32812d8f-05df-596e-b999-998f1da1fe91"
+          },
+          {
+            "collected": "2026-09-03T00:00:00Z",
+            "description": "Assessment of au-6 against Grants Platform for 2026-Q3.",
+            "expires": "2027-02-24T00:00:00Z",
+            "links": [
+              {
+                "href": "#57c47b59-d6c2-59e8-80a4-1c33f4e9b76f",
+                "rel": "assessed-control",
+                "resource-fragment": "au-6",
+                "text": "Implemented requirement for au-6"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+                "type": "component"
+              }
+            ],
+            "title": "au-6 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "4b4a8201-dd96-5867-88ce-ce690ac6630c"
+          },
+          {
+            "collected": "2026-09-10T00:00:00Z",
+            "description": "Assessment of au-6.1 against Grants Platform for 2026-Q3.",
+            "expires": "2026-12-10T00:00:00Z",
+            "links": [
+              {
+                "href": "#e2e293bc-6fc8-53cf-b3f2-4ee2b4b2f563",
+                "rel": "assessed-control",
+                "resource-fragment": "au-6.1",
+                "text": "Implemented requirement for au-6.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+                "type": "component"
+              }
+            ],
+            "title": "au-6.1 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "b3f66165-cfd2-5027-81f1-b595aad6900f"
+          },
+          {
+            "collected": "2026-08-28T00:00:00Z",
+            "description": "Assessment of cp-4 against Grants Platform for 2026-Q3.",
+            "expires": "2026-12-07T00:00:00Z",
+            "links": [
+              {
+                "href": "#8ad2d01d-e004-55ef-8119-44d40f2b571c",
+                "rel": "assessed-control",
+                "resource-fragment": "cp-4",
+                "text": "Implemented requirement for cp-4"
+              }
+            ],
+            "methods": [
+              "EXAMINE"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform manual attestation 2026-Q3",
+                "href": "#76a3f2b1-cfec-5964-bae2-09127eb0cbd9"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+                "type": "component"
+              }
+            ],
+            "title": "cp-4 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "1f38f7b4-cc52-56ba-bd66-bb0801c5701a"
+          },
+          {
+            "collected": "2026-09-07T00:00:00Z",
+            "description": "Assessment of cp-9 against Grants Platform for 2026-Q3.",
+            "expires": "2027-09-04T00:00:00Z",
+            "links": [
+              {
+                "href": "#e54567d3-ea66-54d0-918a-7e63e5ddf253",
+                "rel": "assessed-control",
+                "resource-fragment": "cp-9",
+                "text": "Implemented requirement for cp-9"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+                "type": "component"
+              }
+            ],
+            "title": "cp-9 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "159c2d73-a5cc-5458-9764-1f45282dc39a"
+          },
+          {
+            "collected": "2026-08-30T00:00:00Z",
+            "description": "Assessment of ia-2 against Grants Platform for 2026-Q3.",
+            "expires": "2026-09-28T00:00:00Z",
+            "links": [
+              {
+                "href": "#1eda2738-01f5-54c3-861b-1903322982e6",
+                "rel": "assessed-control",
+                "resource-fragment": "ia-2",
+                "text": "Implemented requirement for ia-2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+                "type": "component"
+              }
+            ],
+            "title": "ia-2 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "8e4d08b3-11c0-55c4-ad1c-556b52a23c11"
+          },
+          {
+            "collected": "2026-09-13T00:00:00Z",
+            "description": "Assessment of ia-5 against Grants Platform for 2026-Q3.",
+            "expires": "2027-07-22T00:00:00Z",
+            "links": [
+              {
+                "href": "#5896a374-0cb5-58a0-80c7-f90bbe8385da",
+                "rel": "assessed-control",
+                "resource-fragment": "ia-5",
+                "text": "Implemented requirement for ia-5"
+              }
+            ],
+            "methods": [
+              "EXAMINE"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform manual attestation 2026-Q3",
+                "href": "#76a3f2b1-cfec-5964-bae2-09127eb0cbd9"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+                "type": "component"
+              }
+            ],
+            "title": "ia-5 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "db5b8080-2ffd-5190-8b48-a89845745d47"
+          },
+          {
+            "collected": "2026-09-07T00:00:00Z",
+            "description": "Assessment of sc-7 against Grants Platform for 2026-Q3.",
+            "expires": "2027-09-24T00:00:00Z",
+            "links": [
+              {
+                "href": "#c550a2a4-3219-5245-85f8-f62eb4f75960",
+                "rel": "assessed-control",
+                "resource-fragment": "sc-7",
+                "text": "Implemented requirement for sc-7"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+                "type": "component"
+              }
+            ],
+            "title": "sc-7 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "6208dfaf-754c-5cbd-8486-9dc29da85081"
+          },
+          {
+            "collected": "2026-09-14T00:00:00Z",
+            "description": "Assessment of sc-28 against Grants Platform for 2026-Q3.",
+            "expires": "2026-12-04T00:00:00Z",
+            "links": [
+              {
+                "href": "#44940e83-fe67-50ad-8e40-1f5c6460efb8",
+                "rel": "assessed-control",
+                "resource-fragment": "sc-28",
+                "text": "Implemented requirement for sc-28"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+                "type": "component"
+              }
+            ],
+            "title": "sc-28 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "316ad834-84ec-5034-ac02-a48844292bbe"
+          },
+          {
+            "collected": "2026-09-13T00:00:00Z",
+            "description": "Assessment of si-4 against Grants Platform for 2026-Q3.",
+            "expires": "2027-09-23T00:00:00Z",
+            "links": [
+              {
+                "href": "#c4d37c1c-9512-513c-bcf8-b8a57fe627fd",
+                "rel": "assessed-control",
+                "resource-fragment": "si-4",
+                "text": "Implemented requirement for si-4"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+                "type": "component"
+              }
+            ],
+            "title": "si-4 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "f1f786b9-217e-5fc6-b77e-9f17bd86c900"
+          },
+          {
+            "collected": "2026-08-25T00:00:00Z",
+            "description": "Assessment of si-7 against Grants Platform for 2026-Q3.",
+            "expires": "2027-08-12T00:00:00Z",
+            "links": [
+              {
+                "href": "#d4f4c799-5179-5f0a-8855-5345652b3259",
+                "rel": "assessed-control",
+                "resource-fragment": "si-7",
+                "text": "Implemented requirement for si-7"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+                "type": "component"
+              }
+            ],
+            "title": "si-7 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "7e9b720d-0cb9-534c-9a73-4744dfb9c35a"
+          },
+          {
+            "collected": "2026-08-31T00:00:00Z",
+            "description": "Assessment of ACM.1 against Grants Platform for 2026-Q3.",
+            "expires": "2027-01-27T00:00:00Z",
+            "links": [
+              {
+                "href": "#17224a91-09fd-5eca-808d-7845a55e996b",
+                "rel": "assessed-control",
+                "resource-fragment": "ACM.1",
+                "text": "Implemented requirement for ACM.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "91957c8e-276c-55e6-a142-beaf32c46655",
+                "type": "component"
+              }
+            ],
+            "title": "ACM.1 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "9d1f676f-b113-5056-9c98-3afbcf3dc46c"
+          },
+          {
+            "collected": "2026-09-12T00:00:00Z",
+            "description": "Assessment of IAM.4 against Grants Platform for 2026-Q3.",
+            "expires": "2026-11-20T00:00:00Z",
+            "links": [
+              {
+                "href": "#2fba0f32-bab4-58ed-bc68-07775b85656f",
+                "rel": "assessed-control",
+                "resource-fragment": "IAM.4",
+                "text": "Implemented requirement for IAM.4"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "91957c8e-276c-55e6-a142-beaf32c46655",
+                "type": "component"
+              }
+            ],
+            "title": "IAM.4 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "86f50285-8a33-5c6d-b121-14095e0d4d95"
+          },
+          {
+            "collected": "2026-09-13T00:00:00Z",
+            "description": "Assessment of S3.5 against Grants Platform for 2026-Q3.",
+            "expires": "2027-01-17T00:00:00Z",
+            "links": [
+              {
+                "href": "#1896ca38-921e-5454-82c8-8d53349917d4",
+                "rel": "assessed-control",
+                "resource-fragment": "S3.5",
+                "text": "Implemented requirement for S3.5"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "91957c8e-276c-55e6-a142-beaf32c46655",
+                "type": "component"
+              }
+            ],
+            "title": "S3.5 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "52802dc3-104a-58c0-a749-7f8dd9b10b76"
+          },
+          {
+            "collected": "2026-08-29T00:00:00Z",
+            "description": "Assessment of EC2.2 against Grants Platform for 2026-Q3.",
+            "expires": "2026-11-03T00:00:00Z",
+            "links": [
+              {
+                "href": "#082e05a6-2099-54b8-9b77-0020bf3dbc7c",
+                "rel": "assessed-control",
+                "resource-fragment": "EC2.2",
+                "text": "Implemented requirement for EC2.2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Grants Platform normalised scan results 2026-Q3",
+                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "91957c8e-276c-55e6-a142-beaf32c46655",
+                "type": "component"
+              }
+            ],
+            "title": "EC2.2 on GRANTS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "5f2ab399-94af-5132-b6f3-950936a9240e"
+          }
+        ],
+        "reviewed-controls": {
+          "control-selections": [
+            {
+              "description": "Controls assessed for Grants Platform in 2026-Q3.",
+              "include-controls": [
+                {
+                  "control-id": "ac-2"
+                },
+                {
+                  "control-id": "ac-2.1"
+                },
+                {
+                  "control-id": "au-6"
+                },
+                {
+                  "control-id": "au-6.1"
+                },
+                {
+                  "control-id": "cp-4"
+                },
+                {
+                  "control-id": "cp-9"
+                },
+                {
+                  "control-id": "ia-2"
+                },
+                {
+                  "control-id": "ia-5"
+                },
+                {
+                  "control-id": "sc-7"
+                },
+                {
+                  "control-id": "sc-28"
+                },
+                {
+                  "control-id": "si-4"
+                },
+                {
+                  "control-id": "si-7"
+                },
+                {
+                  "control-id": "ACM.1"
+                },
+                {
+                  "control-id": "IAM.4"
+                },
+                {
+                  "control-id": "S3.5"
+                },
+                {
+                  "control-id": "EC2.2"
+                }
+              ]
+            }
+          ]
+        },
+        "risks": [
+          {
+            "description": "Residual risk from the au-6.1 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "true"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "b3f66165-cfd2-5027-81f1-b595aad6900f"
+              }
+            ],
+            "statement": "Until au-6.1 is satisfied, Grants Platform carries this exposure.",
+            "status": "open",
+            "title": "au-6.1 shortfall on GRANTS",
+            "uuid": "7571fd9a-e8cf-5e88-9fe7-ff9e911eb8b3"
+          },
+          {
+            "description": "Residual risk from the cp-4 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "true"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "1f38f7b4-cc52-56ba-bd66-bb0801c5701a"
+              }
+            ],
+            "statement": "Until cp-4 is satisfied, Grants Platform carries this exposure.",
+            "status": "open",
+            "title": "cp-4 shortfall on GRANTS",
+            "uuid": "ade1ca31-bf13-56a5-8703-d33163475f18"
+          },
+          {
+            "description": "Residual risk from the sc-28 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "true"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "316ad834-84ec-5034-ac02-a48844292bbe"
+              }
+            ],
+            "statement": "Until sc-28 is satisfied, Grants Platform carries this exposure.",
+            "status": "open",
+            "title": "sc-28 shortfall on GRANTS",
+            "uuid": "786d700a-a98f-5143-8bae-e17599c163b4"
+          },
+          {
+            "description": "Residual risk from the IAM.4 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "false"
+              },
+              {
+                "name": "condition-expires",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "2027-01-25"
+              },
+              {
+                "name": "trigger",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "score<0.85"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "86f50285-8a33-5c6d-b121-14095e0d4d95"
+              }
+            ],
+            "risk-log": {
+              "entries": [
+                {
+                  "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
+                  "logged-by": [
+                    {
+                      "party-uuid": "51cc5630-99e7-5bdb-8736-aae06b692619",
+                      "role-id": "authorizing-official"
+                    }
+                  ],
+                  "start": "2026-09-08T00:00:00Z",
+                  "status-change": "deviation-approved",
+                  "title": "Risk accepted with conditions",
+                  "uuid": "81906f37-3b35-5498-8b93-ce0d936b41d8"
+                }
+              ]
+            },
+            "statement": "Until IAM.4 is satisfied, Grants Platform carries this exposure.",
+            "status": "deviation-approved",
+            "title": "IAM.4 shortfall on GRANTS",
+            "uuid": "4671adbc-fd3a-55bb-bb14-8cbb6db53f48"
+          },
+          {
+            "description": "Residual risk from the EC2.2 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "true"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "5f2ab399-94af-5132-b6f3-950936a9240e"
+              }
+            ],
+            "statement": "Until EC2.2 is satisfied, Grants Platform carries this exposure.",
+            "status": "open",
+            "title": "EC2.2 shortfall on GRANTS",
+            "uuid": "28a5aa43-3d06-59fc-a3c7-4e53ec7e0486"
+          }
+        ],
+        "start": "2026-08-25T00:00:00Z",
+        "title": "Grants Platform assessment 2026-Q3",
+        "uuid": "0ae4e5b6-e8e3-5b81-9269-6e38ee491962"
+      }
+    ],
+    "uuid": "de7f0206-113c-5857-952a-7592bb870db3"
+  }
+}

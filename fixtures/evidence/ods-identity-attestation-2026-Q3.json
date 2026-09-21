@@ -1,0 +1,11 @@
+{
+  "statement": "The controls listed were reviewed for Identity Services and are implemented as described in the system security plan.",
+  "boundary": "ods-identity",
+  "period": "2026-Q3",
+  "controls": [
+    "cp-4",
+    "ia-5"
+  ],
+  "signed-by-role": "information-system-security-officer",
+  "synthetic": true
+}

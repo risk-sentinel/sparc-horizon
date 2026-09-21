@@ -161,6 +161,17 @@ uuid(obj)  = uuidv5(namespace, grammar + "\x1f" + join(fields(obj), "\x1f"))
 
 `uuidv5` is SHA-1 based (`uuid.NewSHA1` in Go), per RFC 9562 §5.5.
 
+**Until the federation namespace UUID is registered, derivation uses a provisional one**, and
+it is derived rather than invented so every implementation reaches the same value from the same
+published string:
+
+```
+namespace = uuidv5(url-namespace, "https://risk-sentinel.org/ns/sparc")   // provisional
+```
+
+`keys.ProvisionalNamespace()` is the one line that changes when `sparc#1155` lands. Everything
+derived under it — including every identifier in `fixtures/` — is regenerated at that point.
+
 **The separator is `\x1f` (ASCII unit separator), not `|`.** A printable delimiter is
 ambiguous: with `|`, `("a|b", "c")` and `("a", "b|c")` produce the same input and therefore the
 same UUID — a collision by accident, which is harder to notice than one by attack. `\x1f`
@@ -207,6 +218,21 @@ So the NIST rules above apply when `source-uuid` resolves to an 800-53 catalog, 
 over one. Everywhere else the identifier is NFC-normalised as an ordinary string and otherwise
 left alone. **`source-uuid` is what makes that decidable:** without it there is no way to know
 which vocabulary an identifier came from.
+
+**Within the NIST vocabulary, these spellings are accepted and converge.** SPARC's own API
+emits more than one of them (`sparc#1162`), so an implementation that assumes identifiers
+arrive canonical mints two identifiers for one control.
+
+| Accepted | Canonical |
+|---|---|
+| `AC-2`, `ac-2`, `AC-02`, `Ac-2` | `ac-2` |
+| `AC-2(1)`, `AC-2 (1)`, `AC-2.1`, `AC-02(01)`, `ac-2.1` | `ac-2.1` |
+| `AC`, `ac` — a family, for a projection cell column | `ac` |
+
+Anything else is **rejected, not repaired**: a statement fragment (`ac-2_smt.a`) names part of a
+control rather than a control, a third level (`ac-2.1.3`) names nothing, and a control numbered
+zero does not exist. Rejection is the point — a repaired identifier still validates, still
+derives a UUID, and may name the wrong object.
 
 ### What may appear in a natural key
 
@@ -265,6 +291,13 @@ for, rather than deriving without one. A key missing a field is not a key with a
 it is a different key, and two implementations disagreeing about that is the silent divergence
 this grammar exists to prevent.
 
+**The resource that names an external catalog or profile uses that document's own UUID.**
+Back-matter resource UUIDs are otherwise arbitrary, and a fresh one per citing document would
+give the same catalog a different `source-uuid` in every SSP that referenced it — which is
+precisely the federation-wide deduplication the qualifier exists to make possible. The fixtures
+follow this convention; it was not stated before generating them, and generating them is how it
+surfaced.
+
 A UUID is used rather than the catalog's own identifier string because it is already unique,
 already stable for the life of the document, and already how everything else here joins.
 
@@ -301,6 +334,21 @@ would name nothing in any catalog.
 
 Regenerating from the same source documents yields the same UUID, which is the property the
 P0 exit criterion measures: identical UUIDs across two independent regenerations.
+
+### Reference implementation and test vectors
+
+The Go reference implementation is [`internal/keys`](../internal/keys), over the field
+normalisation in [`internal/canonical`](../internal/canonical). It has no exported way to derive
+from raw strings: every entry point canonicalises its own fields and rejects what it cannot,
+because an identifier minted from a value another implementation would have normalised
+differently is exactly the divergence this grammar exists to prevent.
+
+The published vectors are [`fixtures/key-vectors.v1.json`](../fixtures/key-vectors.v1.json) —
+one vector per object type with its canonical field list and UUID, the equivalences and
+distinctions that must hold, the `("a|b","c")` join case, and the inputs a conforming
+implementation must refuse. The Ruby and Python ports (`sparc#1161`) are written against that
+file rather than against this prose: three implementations of a hashing grammar disagree
+eventually, and a shared vector file is the only thing that catches it.
 
 ### Status
 

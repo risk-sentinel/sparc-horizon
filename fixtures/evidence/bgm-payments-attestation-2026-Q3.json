@@ -1,0 +1,11 @@
+{
+  "statement": "The controls listed were reviewed for Payments Gateway and are implemented as described in the system security plan.",
+  "boundary": "bgm-payments",
+  "period": "2026-Q3",
+  "controls": [
+    "cp-4",
+    "ia-5"
+  ],
+  "signed-by-role": "information-system-security-officer",
+  "synthetic": true
+}

@@ -44,6 +44,65 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-21 — #49 — `feature/49_oscal_roundtrip_probe`
+
+**In flight:** nothing.
+
+**The re-test found something, which is the argument for having rescoped it.** #15 carried the
+#26 obligation as "re-run the probe against the fixture federation". That would have been
+circular — `fixtures/oscal/` was written by `go-oscal`, so it contains only fields `go-oscal`
+models, and neither thing the probe detects can occur against its own emitter. A green result
+there would have been recorded as the measurement that cleared P1. Rescoped to eight published
+NIST documents covering all seven models, and filed as #49.
+
+**`go-oscal` drops `results[*].local-definitions.tasks`.** It shares one `LocalDefinitions`
+struct between an assessment plan and an assessment result, but OSCAL's
+`result-local-definitions` carries `tasks` and the plan's does not. The field is therefore
+never modelled, at **every** version from 1.1.2 to 1.2.2, and `DisallowUnknownFields` names it.
+The document is schema-valid — checked with `go-oscal`'s own validator, so the library rejects
+nothing and loses the field anyway. #26 reported "no unknown fields in any of the five"
+documents it probed; none of them used that assembly. **Still present on upstream `main`,
+including the unreleased 1.2.3 types, with no open issue. Filing it upstream is the owner's
+call** — it is a third-party repository, not an estate one.
+
+**The baseline is recorded, not asserted.** `internal/oscal/testdata/measurements.json` holds
+every document against every supported version, regenerated with `-update` and reviewed as a
+diff. A test written to a guess either fails on a true finding or hides one; this fails when
+the measurement *changes*, which is the event worth a person's attention. The one known loss
+is additionally pinned by name, so a second gap cannot be absorbed into an updated baseline.
+
+**Cross-version decoding turned out to be a non-issue for this corpus** — every document
+decodes identically under all four type packages, so the gap is a missing assembly rather than
+version skew. That is a result about this corpus and not a guarantee, which is why
+`internal/oscal` still rejects a version it has no types for instead of reaching for the
+nearest.
+
+**One of my own tests caught one of my own bugs.** `Model()` was returning whatever single
+top-level key a document had, because that is what `go-oscal`'s helper does — right for a
+generic tool, wrong for a consumer that acts on the answer. It now rejects a root that is not
+an OSCAL model.
+
+**The gate caught a regression I shipped in #36.** `govulncheck` reported three standard-library
+vulnerabilities, reachable from this module. Cause: `x/text` v0.41.0 requires Go 1.25.0, so
+`go mod tidy` rewrote the directive from `go 1.25` to `go 1.25.0` — and `setup-go` with
+`go-version-file: go.mod` and `check-latest: false` then installed **exactly 1.25.0** instead of
+the newest patch on the line. Pinning a Go patch pins its known defects, and nothing here would
+ever have bumped it: Dependabot does not update a toolchain version in a workflow. `ci.yml` now
+pins the **minor** and takes the newest patch, which also matches `golang:1.25` in
+`docs/08-build-deploy.md` more closely than the old pin did. Verified: `go1.25.0` reports three
+vulnerabilities, `go1.25.13` reports none, and the whole suite — including the fixture
+regeneration check — passes under both 1.25.13 and 1.26.3.
+
+**Nothing in CI would have found that.** `govulncheck` is in the verification gate and not in a
+workflow; a person running the gate is the only reason it surfaced. That is the argument for
+S1's `govulncheck` job, recorded here rather than acted on, because S1 owns it.
+
+**Next:** **freeze API v0 and stand up the mock server** — the last P0 task, unblocked and
+needing no decision. Then the P0-exit checkpoint that #31 defers the threat-model staleness
+ledger to. `sparc#1155` remains the only thing between the fixtures and the exit criterion.
+
+---
+
 ## 2026-09-20 — #36 — `feature/36_fixture_federation`
 
 **In flight:** nothing.

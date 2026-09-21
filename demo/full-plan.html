@@ -282,11 +282,12 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
  <p>The Go module is rooted at the <b>repository</b>, not at <code>horizon/</code>: <code>go.mod</code> landed at the top level with the first package, and <code>horizon/</code> is an empty placeholder left from the original sketch.</p>
 <pre><code>  cmd/horizon/          serve | ingest | rebuild | verify
   cmd/genfixtures/      writes fixtures/ &mdash; the deterministic federation
+  cmd/oscalprobe/       round-trip fidelity matrix, by hand
   internal/canonical/   field normalisation for derived identifiers
   internal/keys/        the UUIDv5 key grammar, Go reference implementation
   internal/fixtures/    the fixture generator
   internal/sparc/       mTLS client, ETag cache, doc fetch
-  internal/oscal/       go-oscal adapters, document round-tripping
+  internal/oscal/       version dispatch, round-trip probe, go-oscal adapters
   internal/tree/        federation, org, boundary, system builder
   internal/authz/       responsible-parties to node-scoped roles, OIDC
   internal/ledger/      append-only, hash-chained events
@@ -301,7 +302,7 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
  <details><summary>Dependency choices</summary><div>
   <table>
    <tr><th>Need</th><th>Choice</th><th>Why</th></tr>
-   <tr><td>OSCAL types</td><td><code>defenseunicorns/go-oscal</code>, pinned</td><td><b>Decided in P0.</b> v0.7.1 ships <code>oscal-1-2-1</code> and <code>oscal-1-2-2</code>; all seven models Horizon reads are present. Five real documents round-trip losslessly apart from timestamp normalisation, and none contained a field the types do not model. The &ldquo;generate from the NIST schemas&rdquo; fallback is the same generator self-hosted, so it buys no fidelity. <b>Parse for reading, never to reproduce a signed document:</b> hash and verify the received bytes</td></tr>
+   <tr><td>OSCAL types</td><td><code>defenseunicorns/go-oscal</code>, pinned</td><td><b>Decided in P0, re-tested since.</b> v0.7.1 ships type packages for 1.1.x through 1.2.2; all seven models Horizon reads are present. Eight published NIST documents round-trip losslessly at their declared version apart from timestamp normalisation &mdash; <b>except <code>results[*].local-definitions.tasks</code> in an assessment-results document, which the types never model at any version.</b> The &ldquo;generate from the NIST schemas&rdquo; fallback is the same generator self-hosted, so it buys no fidelity. <b>Parse for reading, never to reproduce a signed document:</b> hash and verify the received bytes</td></tr>
    <tr><td>HDF types</td><td>Generated from the HDF v3 JSON schema</td><td>Only needed to read raw HDF from back-matter for provenance views.</td></tr>
    <tr><td>Storage</td><td><code>modernc.org/sqlite</code>, Postgres optional</td><td>Pure Go, so <code>CGO_ENABLED=0</code> and a static binary.</td></tr>
    <tr><td>HTTP</td><td><code>go-chi/chi</code></td><td>Standard <code>net/http</code> handlers, small surface.</td></tr>
@@ -565,7 +566,8 @@ ENTRYPOINT ["/horizon", "serve"]</code></pre>
  <div class="tbl"><table>
   <tr><th>Risk</th><th>Mitigation</th></tr>
   <tr><td>Party UUIDs drift between documents and break the tree</td><td>A validate rule plus a tree builder that reports orphans instead of silently dropping them</td></tr>
-  <tr><td><s>go-oscal lags OSCAL 1.2.x</s> &mdash; <b>not true as of v0.7.1</b></td><td>Retired. Decided in P0: adopt <code>go-oscal</code>, pinned. It ships the 1.2.x type packages and all five documents tested round-trip with no unknown fields</td></tr>
+  <tr><td><s>go-oscal lags OSCAL 1.2.x</s> &mdash; <b>not true as of v0.7.1</b></td><td>Retired. Decided in P0: adopt <code>go-oscal</code>, pinned. It ships the 1.2.x type packages</td></tr>
+  <tr><td><b>go-oscal does not model every OSCAL assembly.</b> It shares one <code>LocalDefinitions</code> struct between an assessment plan and an assessment result, but OSCAL's <code>result-local-definitions</code> carries <code>tasks</code> and the plan's does not &mdash; so a schema-valid assessment-results document loses <code>results[*].local-definitions.tasks</code>, at every version from 1.1.2 to 1.2.2</td><td>Recorded rather than worked around: the measured baseline is committed and a test fails when it changes. Horizon does not project from result tasks, and the standing rule &mdash; hash and verify <b>received bytes</b>, never a re-serialisation &mdash; already keeps the loss out of anything signed. <b>Do not re-emit a parsed assessment-results document as if it were the original.</b></td></tr>
   <tr><td>A signature fails on a document nobody tampered with</td><td>Typed OSCAL normalises timestamps (<code>+00:00</code> becomes <code>Z</code>) &mdash; same instant, different bytes. JCS canonicalises member order and numbers, <b>not</b> string values, so parse-then-re-serialise changes the digest. Verify and hash over the <b>received bytes</b>, never a re-serialisation</td></tr>
   <tr><td>Crosswalk quality skews the KSI axis and ranking reach</td><td>Show the mapping source on every swapped cell; flag low-confidence mappings</td></tr>
   <tr><td>The HUD ranks the wrong thing first and loses trust</td><td>Configurable weights, logged rankings, and a user session every two weeks</td></tr>

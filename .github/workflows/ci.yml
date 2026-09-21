@@ -30,7 +30,7 @@ env:
   # Minimum packages that must run tests. Raise it as packages gain tests;
   # it exists so deleting a test file is a build failure rather than a
   # quieter green run.
-  MIN_TESTED_PACKAGES: "3"
+  MIN_TESTED_PACKAGES: "4"
   MIN_COVERAGE: "80"
 
 jobs:
@@ -42,19 +42,37 @@ jobs:
 
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.0.0
         with:
-          go-version-file: go.mod
-          check-latest: false
+          # The MINOR is pinned; the patch is always the newest on that line.
+          #
+          # `go-version-file: go.mod` with `check-latest: false` looks like the
+          # stricter choice and is not. go.mod's directive became `go 1.25.0`
+          # the moment a dependency required that patch, and setup-go then
+          # installed exactly 1.25.0 — which `govulncheck` reports as carrying
+          # three standard-library vulnerabilities, including GO-2026-6218,
+          # reachable from this module. Pinning a Go patch release pins its
+          # known defects, and nothing in this repository would have bumped it:
+          # Dependabot does not update a toolchain version in a workflow.
+          #
+          # Go patch releases are security and bug fixes only, so taking the
+          # newest one on the pinned minor is both safer and closer to what
+          # ships: docs/08-build-deploy.md builds on `golang:1.25`, which is
+          # itself the newest 1.25 patch. The step below asserts the runner's
+          # minor still matches go.mod, so the pin is enforced where it means
+          # something.
+          go-version: "1.25.x"
+          check-latest: true
 
       - name: Assert the toolchain matches the pinned image
         run: |
           set -euo pipefail
           # docs/08-build-deploy.md builds on golang:1.25. A runner that
           # silently used a different minor would lint and test something the
-          # shipped image never compiles.
-          # Compare major.minor only. Go 1.26 normalises a `go 1.25` directive
-          # to `go 1.25.0` whenever it rewrites go.mod, so an exact-string
-          # comparison fails the moment someone runs `go mod tidy` on a newer
-          # toolchain — a green-to-red flip that says nothing about the pin.
+          # shipped image never compiles. This is where the go-version above is
+          # held to go.mod — change one without the other and this fails.
+          #
+          # Compare major.minor only: the patch is deliberately the newest on
+          # the line, and Go 1.26 normalises a `go 1.25` directive to
+          # `go 1.25.0` whenever it rewrites go.mod anyway.
           want="$(awk '/^go /{print $2}' go.mod | cut -d. -f1,2)"
           have="$(go env GOVERSION)"
           echo "go.mod wants ${want}.x; runner has ${have}"

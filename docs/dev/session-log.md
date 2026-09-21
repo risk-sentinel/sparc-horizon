@@ -91,7 +91,10 @@ from two `npx` findings in the new `fixture-props` job — and `npx` is the exac
 `docs/compliance/nist-sp800-53-rev5-mapping.md` already claims this repository does not do.
 The job now installs with `--ignore-scripts` and calls the binary directly, matching
 `sonarqube-hdf-emit.yml`. **The other jobs in `contracts.yml` still use `npx` and predate this
-PR**; that belongs to #42 rather than to a fixtures change touching required checks.
+PR** — five call sites, two inside loops that resolve 17 packages per run of a required check.
+**Filed as #48**, not folded into #42: that issue is suppression-shaped and lands as
+`sonar-project.properties`, while #48 is a true positive with a code fix. A fixtures PR is not
+where required checks get rewritten.
 
 **Open, and needing the owner:** the third security finding is
 `http://aws.amazon.com/ns/oscal` in `internal/fixtures/federation.go`, read as a cleartext

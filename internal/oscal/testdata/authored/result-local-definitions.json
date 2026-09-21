@@ -1,0 +1,44 @@
+{
+  "assessment-results": {
+    "uuid": "9f2a1c3d-5e7b-4a91-8c62-0d4e8b1a7f35",
+    "metadata": {
+      "title": "Result-level local-definitions, minimal and schema-valid",
+      "last-modified": "2026-09-21T00:00:00Z",
+      "version": "1.0.0",
+      "oscal-version": "1.2.2",
+      "remarks": "Authored here, not vendored. It exercises the two fields OSCAL allows on result-local-definitions and go-oscal does not model: tasks and assessment-assets. Kept minimal so the only interesting thing in it is that assembly."
+    },
+    "import-ap": { "href": "#assessment-plan" },
+    "results": [
+      {
+        "uuid": "2c8f4b16-77d3-4a08-9e51-3b6ac0192d84",
+        "title": "Continuous monitoring result",
+        "description": "A result whose local-definitions uses the assembly under test.",
+        "start": "2026-09-01T00:00:00Z",
+        "reviewed-controls": {
+          "control-selections": [
+            { "include-controls": [{ "control-id": "ac-2" }] }
+          ]
+        },
+        "local-definitions": {
+          "assessment-assets": {
+            "assessment-platforms": [
+              {
+                "uuid": "6d1e8a92-4c05-4f7e-b3a8-91c2d7460fe1",
+                "title": "Scanning platform"
+              }
+            ]
+          },
+          "tasks": [
+            {
+              "uuid": "b470c5e8-2f19-4d63-8a07-5e9314cb2d60",
+              "type": "action",
+              "title": "Collect configuration evidence",
+              "description": "The activity performed to produce the observations in this result."
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

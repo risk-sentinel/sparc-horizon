@@ -6,7 +6,7 @@
 |---|---|
 | Party UUIDs drift between documents and break the tree | A validate rule plus a tree builder that reports orphans instead of silently dropping them |
 | ~~`go-oscal` lags OSCAL 1.2.x~~ — **not true as of v0.7.1.** It ships `oscal-1-2-1` and `oscal-1-2-2` type packages | Retired. Decided in P0 (#26): adopt `go-oscal`, pinned. The two risks that replaced it are the next rows |
-| **`go-oscal` does not model every OSCAL assembly.** #26 reported no unknown fields in the five documents it probed; #49 probed eight published NIST documents covering all seven models and found one gap. `go-oscal` shares a single `LocalDefinitions` struct between an assessment plan and an assessment result, but OSCAL's `result-local-definitions` carries `tasks` and the plan's does not — so **a schema-valid assessment-results document loses `results[*].local-definitions.tasks`**, at every version from 1.1.2 to 1.2.2, and `DisallowUnknownFields` names it | The loss is recorded, not worked around: `internal/oscal/testdata/measurements.json` is the measured baseline and a test fails when it changes. Horizon does not project from result tasks today, and the standing rule from #26 — hash and verify **received bytes**, never a re-serialisation — already prevents the loss reaching a signed document. **Do not re-emit a parsed assessment-results document as if it were the original.** Unreported upstream as of 2026-09-21 |
+| **`go-oscal` collapses four OSCAL assemblies into one Go type.** OSCAL defines `local-definitions` four times with four different shapes and gives three of them the same schema title, "Local Definitions". `go-oscal` names generated types from that title, so the three become one struct carrying the **assessment-plan** shape. Consequences run both ways: **reading**, a schema-valid assessment-results document loses `results[*].local-definitions.tasks` **and** `.assessment-assets`; **writing**, the same struct accepts `components`, `inventory-items` and `users` on an assessment-results document, where OSCAL forbids them. Identical in the OSCAL 1.2.3 schema and in `go-oscal`'s unreleased 1.2.3 types, so no version bump resolves it | Both directions are pinned by tests over an authored, schema-valid document, and the corpus baseline in `internal/oscal/testdata/measurements.json` fails when the measurement changes. Horizon does not project from result tasks or assessment assets today, and the rule from #26 — hash and verify **received bytes**, never a re-serialisation — keeps the reading half out of anything signed. Two standing instructions follow: **do not re-emit a parsed assessment-results document as if it were the original**, and **schema-validate anything Horizon emits**, because the type system will not catch the writing half. Unreported upstream as of 2026-09-21 |
 | Crosswalk quality skews the KSI axis and ranking reach | Show the mapping source on every swapped cell; flag low-confidence mappings |
 | The HUD ranks the wrong thing first and loses trust | Configurable weights, logged rankings, and a user session every two weeks |
 | PKI is not available in the prototype environment | A dev CA behind the same signing interface |
@@ -26,9 +26,9 @@
   documents covering all seven models — including the SSP, profile and POA&M the original spike
   could not exercise. **The decision stands, with one measured limitation** (the risk table
   above): seven of eight documents are lossless at their declared version and strict-decode
-  clean, and the eighth loses `results[*].local-definitions.tasks`. Cross-version decoding was
-  measured too: every document in the corpus decodes identically under all four supported type
-  packages, so the gap is a missing assembly rather than a version-skew problem
+  clean, and the eighth loses two fields from `results[*].local-definitions`. Cross-version
+  decoding was measured too: every document in the corpus decodes identically under all four
+  supported type packages, so the gap is a collapsed assembly rather than a version-skew problem
 - Who owns the ranking weights: each AO, or the organization
 - When the ledger moves from SQLite to Postgres
 - Whether decision dates live only in SSP metadata or also come from the GRC calendar

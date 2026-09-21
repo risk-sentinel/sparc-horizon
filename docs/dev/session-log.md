@@ -55,15 +55,26 @@ models, and neither thing the probe detects can occur against its own emitter. A
 there would have been recorded as the measurement that cleared P1. Rescoped to eight published
 NIST documents covering all seven models, and filed as #49.
 
-**`go-oscal` drops `results[*].local-definitions.tasks`.** It shares one `LocalDefinitions`
-struct between an assessment plan and an assessment result, but OSCAL's
-`result-local-definitions` carries `tasks` and the plan's does not. The field is therefore
-never modelled, at **every** version from 1.1.2 to 1.2.2, and `DisallowUnknownFields` names it.
-The document is schema-valid — checked with `go-oscal`'s own validator, so the library rejects
-nothing and loses the field anyway. #26 reported "no unknown fields in any of the five"
-documents it probed; none of them used that assembly. **Still present on upstream `main`,
-including the unreleased 1.2.3 types, with no open issue. Filing it upstream is the owner's
-call** — it is a third-party repository, not an estate one.
+**`go-oscal` collapses four OSCAL assemblies into one Go type, and my first report of it was
+too narrow.** OSCAL defines `local-definitions` four times with four different shapes and gives
+three of them the same schema title, "Local Definitions". `go-oscal` derives type names from
+that title, so the three become one struct carrying the assessment-plan shape. The fourth is a
+named `$ref`, which is why `PlanOfActionAndMilestonesLocalDefinitions` exists and the others do
+not — the generator's parent-prefix disambiguation only has something to prefix with when the
+parent is a named definition.
+
+Two consequences, both now pinned by tests over an authored schema-valid document:
+**reading**, a result loses `tasks` *and* `assessment-assets`; **writing**, the same struct
+accepts `components`, `inventory-items` and `users` on an assessment-results document, where
+OSCAL forbids them — the types produce a document `go-oscal`'s own validator rejects. The
+second direction is the one a probe over other people's documents cannot find, because it is
+about what Horizon could emit.
+
+A scan of all 41 inline assembly names in the schema found **three** with more than one shape:
+`entries` and `status` disambiguate correctly because OSCAL titles them differently;
+`local-definitions` is the only collapse. Identical in the OSCAL 1.2.3 schema and in
+`go-oscal`'s unreleased 1.2.3 types, so no version bump resolves it. **Unreported upstream;
+filing it is the owner's call** — a third-party repository, not an estate one.
 
 **The baseline is recorded, not asserted.** `internal/oscal/testdata/measurements.json` holds
 every document against every supported version, regenerated with `-update` and reviewed as a

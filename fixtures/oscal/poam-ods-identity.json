@@ -1,0 +1,327 @@
+{
+  "plan-of-action-and-milestones": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "db91ee161b692afcc7fc34d3b61b23b2996a353c33a8b2c45a9571d05267bb8e"
+                }
+              ],
+              "href": "./ssp-ods-identity.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Identity Services system security plan",
+          "uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+        }
+      ]
+    },
+    "import-ssp": {
+      "href": "#f20b0311-6cb6-5588-9349-ff24440f6674"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Office of Digital Services",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "ODS",
+          "type": "organization",
+          "uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "IDENTITY Authorizing Official",
+          "type": "person",
+          "uuid": "5ca2edc5-eecf-5125-b491-523b9434e384"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "IDENTITY System Owner",
+          "type": "person",
+          "uuid": "7946ce13-e768-539f-95dd-fcb5384f5a37"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "IDENTITY Information System Security Officer",
+          "type": "person",
+          "uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "5ca2edc5-eecf-5125-b491-523b9434e384"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "7946ce13-e768-539f-95dd-fcb5384f5a37"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Identity Services plan of action and milestones 2026-Q3",
+      "version": "1.0.0"
+    },
+    "poam-items": [
+      {
+        "description": "Tracked remediation of the ia-5 finding on Identity Services.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "1c6f54c6-d053-571c-96ff-06268fe75624"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "71812334-a93f-55b1-9063-8fad4221663b"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "ba44956e-d7b3-53eb-8af1-259e74714923"
+          }
+        ],
+        "title": "ia-5 remediation",
+        "uuid": "bbdc22f6-4d18-5063-ab84-6b90c9d01450"
+      },
+      {
+        "description": "Tracked remediation of the si-7 finding on Identity Services.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "f303723c-3f8e-552d-8702-853b04bbb022"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "4f3035e6-d1b1-5b0c-8c65-0d9ce616a186"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "32274acf-96c9-5944-9c9d-55ea263547cf"
+          }
+        ],
+        "title": "si-7 remediation",
+        "uuid": "4bf79f8a-8fbd-5567-8d73-566243e2ebbc"
+      }
+    ],
+    "risks": [
+      {
+        "deadline": "2027-01-20T00:00:00Z",
+        "description": "Residual risk from the ia-5 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "71812334-a93f-55b1-9063-8fad4221663b"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for ia-5 on Identity Services.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2027-01-20T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: ia-5 remediation complete",
+                "type": "milestone",
+                "uuid": "2ce48a65-64b8-5a2b-9edd-b02957e60934"
+              }
+            ],
+            "title": "Remediate ia-5",
+            "uuid": "202e38a9-38b7-531d-9d74-f9dbbfb97fbd"
+          }
+        ],
+        "statement": "Until ia-5 is satisfied, Identity Services carries this exposure.",
+        "status": "open",
+        "title": "ia-5 shortfall on IDENTITY",
+        "uuid": "ba44956e-d7b3-53eb-8af1-259e74714923"
+      },
+      {
+        "deadline": "2027-02-12T00:00:00Z",
+        "description": "Residual risk from the si-7 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "false"
+          },
+          {
+            "name": "condition-expires",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "2026-12-18"
+          },
+          {
+            "name": "trigger",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "score<0.85"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "4f3035e6-d1b1-5b0c-8c65-0d9ce616a186"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for si-7 on Identity Services.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2027-02-12T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: si-7 remediation complete",
+                "type": "milestone",
+                "uuid": "93650b47-67de-51b6-be8a-e8744b09b5bc"
+              }
+            ],
+            "title": "Remediate si-7",
+            "uuid": "1a660ca6-60ee-51b9-ad21-4eea1f43c9d7"
+          }
+        ],
+        "risk-log": {
+          "entries": [
+            {
+              "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
+              "logged-by": [
+                {
+                  "party-uuid": "5ca2edc5-eecf-5125-b491-523b9434e384",
+                  "role-id": "authorizing-official"
+                }
+              ],
+              "start": "2026-09-08T00:00:00Z",
+              "status-change": "deviation-approved",
+              "title": "Risk accepted with conditions",
+              "uuid": "022475fc-001e-5cfa-81e8-10aa0b5df5ce"
+            }
+          ]
+        },
+        "statement": "Until si-7 is satisfied, Identity Services carries this exposure.",
+        "status": "deviation-approved",
+        "title": "si-7 shortfall on IDENTITY",
+        "uuid": "32274acf-96c9-5944-9c9d-55ea263547cf"
+      }
+    ],
+    "system-id": {
+      "id": "ods-identity",
+      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+    },
+    "uuid": "0904a783-9a7f-53a6-bf55-4394087bb375"
+  }
+}

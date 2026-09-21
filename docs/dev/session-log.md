@@ -44,6 +44,56 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-20 — #36 — `feature/36_fixture_federation`
+
+**In flight:** nothing.
+
+**`sparc#1155` checked 2026-09-20: still open.** The fixtures were generated anyway, under a
+namespace derived from the placeholder URI rather than an invented constant —
+`uuidv5(url-namespace, "https://risk-sentinel.org/ns/sparc")` — so any implementation in any
+language reaches the same provisional value from the same published string. When the real
+namespace lands it is one line, a regeneration, and a re-measurement of anything stated against
+the old identifiers. **The P0 exit criterion is not closed by this PR**: the regeneration check
+measures stability, not finality, and `sparc-validate` has not run against the tree.
+
+**Generating the fixtures forced a resolution rule that the grammar did not state.** `source-uuid`
+resolves to the UUID of the back-matter resource a `source` names — but back-matter resource
+UUIDs are otherwise arbitrary, so a fresh one per citing document would give the same catalog a
+different qualifier in every SSP that referenced it. That is the opposite of what the qualifier
+is for. The convention adopted, and now written into `docs/03`: **a resource naming an external
+catalog or profile carries that document's own UUID.** It is a clarification within v1, not a
+field-list change, so no v2 and no grammar bump.
+
+**The `Key` return type was a design choice, not an accident.** Every entry point returns the
+canonical field list alongside the UUID. The ports in `sparc#1161` will disagree with this
+implementation eventually; a bare UUID says only *that* they diverged, and the field list says
+*where*. It is also what makes `fixtures/key-vectors.v1.json` — 26 vectors, 10 assertions, 11
+rejections, 2 join cases — recomputable rather than a recording of what the generator happened
+to emit.
+
+**Rejected: `math/rand` with a documented seed.** It would have needed a `gosec` exclusion
+(G404) against `.golangci.yml`'s stated empty-exclusion steady state, and "seed 11" does not mean
+the same sequence in Go, Ruby and Python. A ten-line splitmix64 does. The same reasoning settled
+the one conversion `gosec` flagged (G115): a bound check that provably cannot fire, rather than a
+`nolint` comment — the check is the argument, written where a reader needs it.
+
+**Rejected: one evidence artifact per observation.** 112 files whose only purpose is to be
+hashed. One scan bundle and one attestation per boundary is what a real continuous-monitoring
+run produces anyway, and the digests are of bytes the same run actually wrote — so the chain
+resource → observation → finding → risk → POA&M item can be walked rather than trusted.
+
+**Not done, and deliberately:** no Sonar exclusion for the generated fixture JSON. #42 is open
+and owns that surface; adding one here would be a suppression without the record
+`issue_rules.md` requires. Expect Sonar to have opinions about 46 generated files on the next
+`main` run.
+
+**Next:** P0 has two tasks left — freeze API v0 with a mock server (unblocked, needs no
+decision), and re-run the #26 round-trip probe against these fixtures before P1 builds
+`internal/oscal`. The probe is now unblocked: SSP, profile and POA&M exist, which are exactly
+the three models the spike could not exercise.
+
+---
+
 ## 2026-09-20 — #37 — `feature/37_catalog_qualifier`
 
 **In flight:** nothing.

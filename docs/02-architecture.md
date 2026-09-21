@@ -42,11 +42,18 @@ flowchart TB
 
 ## Repository layout
 
+The Go module is rooted at the **repository**, not at `horizon/`: `go.mod` landed at the top
+level with the first package (#38), and the `horizon/` directory is an empty placeholder left
+from the original sketch.
+
 ```text
-horizon/
   cmd/horizon/          serve | ingest | rebuild | verify
+  cmd/genfixtures/      writes fixtures/ — the deterministic federation
+  internal/canonical/   field normalisation for derived identifiers
+  internal/keys/        the UUIDv5 key grammar, Go reference implementation
+  internal/fixtures/    the fixture generator
   internal/sparc/       mTLS client, ETag cache, doc fetch
-  internal/oscal/       go-oscal adapters, control-id normalization
+  internal/oscal/       go-oscal adapters, document round-tripping
   internal/tree/        federation, org, boundary, system builder
   internal/authz/       responsible-parties to node-scoped roles, OIDC
   internal/ledger/      append-only, hash-chained events
@@ -56,7 +63,7 @@ horizon/
   internal/federate/    peer bundles, reverse-inheritance index
   internal/api/         chi router, OpenAPI v0 handlers
   web/                  TypeScript + Vite SPA, embedded via go:embed
-  fixtures/             deterministic OSCAL federation
+  fixtures/             deterministic OSCAL federation, generated (#36)
   deploy/helm/  deploy/terraform/
 ```
 
@@ -69,5 +76,5 @@ horizon/
 | Storage | `modernc.org/sqlite`, Postgres optional | Pure Go, so `CGO_ENABLED=0` and a static binary |
 | HTTP | `github.com/go-chi/chi/v5` | Standard `net/http` handlers, small surface |
 | Identity | `github.com/coreos/go-oidc/v3` | Works with agency IdPs; groups map to node roles |
-| UUIDs | `github.com/google/uuid` (`NewSHA1`) | UUIDv5 over natural keys for idempotent reruns |
+| UUIDs | `github.com/google/uuid` (`NewSHA1`), pinned | UUIDv5 over natural keys for idempotent reruns. **In P0 (#36)** it is a direct dependency of `internal/keys` |
 | UI | TypeScript, Vite, CSS grid heatmap | No chart library needed for the HUD; add ECharts later for trends only |

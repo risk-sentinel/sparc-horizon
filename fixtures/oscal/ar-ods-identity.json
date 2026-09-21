@@ -1,0 +1,1144 @@
+{
+  "assessment-results": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
+          "props": [
+            {
+              "name": "evidence-kind",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "hdf-results"
+            },
+            {
+              "name": "signed-by",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+            }
+          ],
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "c4091a0c2af10e03f76ab83252383f39e65201d6996c983db84d26b6cc340822"
+                }
+              ],
+              "href": "../evidence/ods-identity-scan-2026-Q3.json",
+              "media-type": "application/json"
+            }
+          ],
+          "title": "Identity Services normalised scan results 2026-Q3",
+          "uuid": "a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+        },
+        {
+          "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
+          "props": [
+            {
+              "name": "evidence-kind",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "manual-attestation"
+            },
+            {
+              "name": "signed-by",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+            }
+          ],
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "351a2075351801e457772faa12c481511d75978668581175d1ab280be2231b6a"
+                }
+              ],
+              "href": "../evidence/ods-identity-attestation-2026-Q3.json",
+              "media-type": "application/json"
+            }
+          ],
+          "title": "Identity Services manual attestation 2026-Q3",
+          "uuid": "6bfb74f4-c3ee-5fbd-9ea6-e052e43570b3"
+        },
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "db91ee161b692afcc7fc34d3b61b23b2996a353c33a8b2c45a9571d05267bb8e"
+                }
+              ],
+              "href": "./ssp-ods-identity.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Identity Services system security plan",
+          "uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+        },
+        {
+          "citation": {
+            "text": "Identity Services continuous monitoring plan, 2026-Q3"
+          },
+          "description": "Cited rather than modelled: these fixtures carry no assessment-plan document.",
+          "title": "Identity Services continuous monitoring plan",
+          "uuid": "5a19ffe8-441e-5025-baf4-158c0276fc23"
+        }
+      ]
+    },
+    "import-ap": {
+      "href": "#5a19ffe8-441e-5025-baf4-158c0276fc23"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Office of Digital Services",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "ODS",
+          "type": "organization",
+          "uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "IDENTITY Authorizing Official",
+          "type": "person",
+          "uuid": "5ca2edc5-eecf-5125-b491-523b9434e384"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "IDENTITY System Owner",
+          "type": "person",
+          "uuid": "7946ce13-e768-539f-95dd-fcb5384f5a37"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "IDENTITY Information System Security Officer",
+          "type": "person",
+          "uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "5ca2edc5-eecf-5125-b491-523b9434e384"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "7946ce13-e768-539f-95dd-fcb5384f5a37"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Identity Services assessment results 2026-Q3",
+      "version": "1.0.0"
+    },
+    "results": [
+      {
+        "attestations": [
+          {
+            "parts": [
+              {
+                "class": "cp-4",
+                "name": "asset",
+                "prose": "The Information System Security Officer attests that cp-4 is implemented for Identity Services in 2026-Q3.",
+                "title": "Attestation for cp-4",
+                "uuid": "42111356-a0e9-5c11-9132-0b94eab1a263"
+              }
+            ],
+            "responsible-parties": [
+              {
+                "party-uuids": [
+                  "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+                ],
+                "role-id": "information-system-security-officer"
+              }
+            ]
+          }
+        ],
+        "description": "Continuous monitoring results for Identity Services.",
+        "end": "2026-09-14T00:00:00Z",
+        "findings": [
+          {
+            "description": "The assessment of ia-5 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "71812334-a93f-55b1-9063-8fad4221663b"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "ba44956e-d7b3-53eb-8af1-259e74714923"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "ia-5_obj",
+              "title": "Authenticator Management",
+              "type": "objective-id"
+            },
+            "title": "ia-5 is not satisfied on IDENTITY",
+            "uuid": "1c6f54c6-d053-571c-96ff-06268fe75624"
+          },
+          {
+            "description": "The assessment of si-7 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "4f3035e6-d1b1-5b0c-8c65-0d9ce616a186"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "32274acf-96c9-5944-9c9d-55ea263547cf"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "si-7_obj",
+              "title": "Software, Firmware, and Information Integrity",
+              "type": "objective-id"
+            },
+            "title": "si-7 is not satisfied on IDENTITY",
+            "uuid": "f303723c-3f8e-552d-8702-853b04bbb022"
+          }
+        ],
+        "observations": [
+          {
+            "collected": "2026-09-01T00:00:00Z",
+            "description": "Assessment of ac-2 against Identity Services for 2026-Q3.",
+            "expires": "2027-07-18T00:00:00Z",
+            "links": [
+              {
+                "href": "#20298769-b0a1-5b7d-85f1-519ff87908ff",
+                "rel": "assessed-control",
+                "resource-fragment": "ac-2",
+                "text": "Implemented requirement for ac-2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "8e162878-289c-57f0-9086-619798656a95",
+                "type": "component"
+              }
+            ],
+            "title": "ac-2 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "1b44c907-63bc-5619-a13a-f93a967115af"
+          },
+          {
+            "collected": "2026-09-12T00:00:00Z",
+            "description": "Assessment of ac-2.1 against Identity Services for 2026-Q3.",
+            "expires": "2027-09-26T00:00:00Z",
+            "links": [
+              {
+                "href": "#ce0ba001-05ab-5860-a941-b9e8f7332ee4",
+                "rel": "assessed-control",
+                "resource-fragment": "ac-2.1",
+                "text": "Implemented requirement for ac-2.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+                "type": "component"
+              }
+            ],
+            "title": "ac-2.1 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "a2a47009-0a01-52f2-b458-6469ca794613"
+          },
+          {
+            "collected": "2026-09-02T00:00:00Z",
+            "description": "Assessment of au-6 against Identity Services for 2026-Q3.",
+            "expires": "2027-04-27T00:00:00Z",
+            "links": [
+              {
+                "href": "#d3cdf51b-9ed4-5764-a334-ad13447589e8",
+                "rel": "assessed-control",
+                "resource-fragment": "au-6",
+                "text": "Implemented requirement for au-6"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+                "type": "component"
+              }
+            ],
+            "title": "au-6 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "05915918-bd78-5701-89ba-7f48f3a8903c"
+          },
+          {
+            "collected": "2026-08-31T00:00:00Z",
+            "description": "Assessment of au-6.1 against Identity Services for 2026-Q3.",
+            "expires": "2027-06-15T00:00:00Z",
+            "links": [
+              {
+                "href": "#31ab7eff-9ba1-5ccd-ab3d-73a5b57e3773",
+                "rel": "assessed-control",
+                "resource-fragment": "au-6.1",
+                "text": "Implemented requirement for au-6.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "8e162878-289c-57f0-9086-619798656a95",
+                "type": "component"
+              }
+            ],
+            "title": "au-6.1 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "0e092d81-78f3-53ee-9ac6-c680882a1256"
+          },
+          {
+            "collected": "2026-09-07T00:00:00Z",
+            "description": "Assessment of cp-4 against Identity Services for 2026-Q3.",
+            "expires": "2027-04-11T00:00:00Z",
+            "links": [
+              {
+                "href": "#336faa1e-490f-5e2e-a1bb-012953ffe36a",
+                "rel": "assessed-control",
+                "resource-fragment": "cp-4",
+                "text": "Implemented requirement for cp-4"
+              }
+            ],
+            "methods": [
+              "EXAMINE"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services manual attestation 2026-Q3",
+                "href": "#6bfb74f4-c3ee-5fbd-9ea6-e052e43570b3"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+                "type": "component"
+              }
+            ],
+            "title": "cp-4 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "3ecaff6a-3928-5c8c-9bf8-f953392f59f7"
+          },
+          {
+            "collected": "2026-09-05T00:00:00Z",
+            "description": "Assessment of cp-9 against Identity Services for 2026-Q3.",
+            "expires": "2027-09-01T00:00:00Z",
+            "links": [
+              {
+                "href": "#c52434b4-aca7-5ebe-a28a-9637ed555541",
+                "rel": "assessed-control",
+                "resource-fragment": "cp-9",
+                "text": "Implemented requirement for cp-9"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+                "type": "component"
+              }
+            ],
+            "title": "cp-9 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "d2e4a8fe-efb9-5596-ad2f-f488cd8e97c4"
+          },
+          {
+            "collected": "2026-09-13T00:00:00Z",
+            "description": "Assessment of ia-2 against Identity Services for 2026-Q3.",
+            "expires": "2027-08-10T00:00:00Z",
+            "links": [
+              {
+                "href": "#24c43e22-53a0-5e41-9147-09c084bc511a",
+                "rel": "assessed-control",
+                "resource-fragment": "ia-2",
+                "text": "Implemented requirement for ia-2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "8e162878-289c-57f0-9086-619798656a95",
+                "type": "component"
+              }
+            ],
+            "title": "ia-2 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "1ea08ed3-d02e-52e1-bc67-587100623e3b"
+          },
+          {
+            "collected": "2026-09-04T00:00:00Z",
+            "description": "Assessment of ia-5 against Identity Services for 2026-Q3.",
+            "expires": "2026-11-28T00:00:00Z",
+            "links": [
+              {
+                "href": "#2b272767-7e1f-5507-b9d3-a40bf2992dcf",
+                "rel": "assessed-control",
+                "resource-fragment": "ia-5",
+                "text": "Implemented requirement for ia-5"
+              }
+            ],
+            "methods": [
+              "EXAMINE"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services manual attestation 2026-Q3",
+                "href": "#6bfb74f4-c3ee-5fbd-9ea6-e052e43570b3"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+                "type": "component"
+              }
+            ],
+            "title": "ia-5 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "71812334-a93f-55b1-9063-8fad4221663b"
+          },
+          {
+            "collected": "2026-08-31T00:00:00Z",
+            "description": "Assessment of sc-7 against Identity Services for 2026-Q3.",
+            "expires": "2026-10-04T00:00:00Z",
+            "links": [
+              {
+                "href": "#3131321c-e291-58eb-b407-069b58164e18",
+                "rel": "assessed-control",
+                "resource-fragment": "sc-7",
+                "text": "Implemented requirement for sc-7"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+                "type": "component"
+              }
+            ],
+            "title": "sc-7 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "9b840c2c-5fd0-56c7-8445-ae477247335d"
+          },
+          {
+            "collected": "2026-09-07T00:00:00Z",
+            "description": "Assessment of sc-28 against Identity Services for 2026-Q3.",
+            "expires": "2026-09-29T00:00:00Z",
+            "links": [
+              {
+                "href": "#cf0e36ea-a78c-54c9-8e3b-822745770fc0",
+                "rel": "assessed-control",
+                "resource-fragment": "sc-28",
+                "text": "Implemented requirement for sc-28"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "8e162878-289c-57f0-9086-619798656a95",
+                "type": "component"
+              }
+            ],
+            "title": "sc-28 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "3438ccd1-7fff-5913-8bcc-80f2eef3ce0d"
+          },
+          {
+            "collected": "2026-08-31T00:00:00Z",
+            "description": "Assessment of si-4 against Identity Services for 2026-Q3.",
+            "expires": "2026-09-29T00:00:00Z",
+            "links": [
+              {
+                "href": "#8adba208-653f-5c93-9241-c6353c74ca9c",
+                "rel": "assessed-control",
+                "resource-fragment": "si-4",
+                "text": "Implemented requirement for si-4"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+                "type": "component"
+              }
+            ],
+            "title": "si-4 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "dfd61c7e-db44-5955-b426-bf564834132e"
+          },
+          {
+            "collected": "2026-08-25T00:00:00Z",
+            "description": "Assessment of si-7 against Identity Services for 2026-Q3.",
+            "expires": "2026-10-25T00:00:00Z",
+            "links": [
+              {
+                "href": "#5f0d7bde-e084-5b96-a850-aa4985f0cce8",
+                "rel": "assessed-control",
+                "resource-fragment": "si-7",
+                "text": "Implemented requirement for si-7"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+                "type": "component"
+              }
+            ],
+            "title": "si-7 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "4f3035e6-d1b1-5b0c-8c65-0d9ce616a186"
+          },
+          {
+            "collected": "2026-09-04T00:00:00Z",
+            "description": "Assessment of ACM.1 against Identity Services for 2026-Q3.",
+            "expires": "2026-10-01T00:00:00Z",
+            "links": [
+              {
+                "href": "#17224a91-09fd-5eca-808d-7845a55e996b",
+                "rel": "assessed-control",
+                "resource-fragment": "ACM.1",
+                "text": "Implemented requirement for ACM.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "f843f4ca-f210-53ca-bd3e-e8b7b11bb053",
+                "type": "component"
+              }
+            ],
+            "title": "ACM.1 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "f891d5e9-fae1-5922-b02f-8940250e8783"
+          },
+          {
+            "collected": "2026-09-01T00:00:00Z",
+            "description": "Assessment of IAM.4 against Identity Services for 2026-Q3.",
+            "expires": "2027-02-25T00:00:00Z",
+            "links": [
+              {
+                "href": "#2fba0f32-bab4-58ed-bc68-07775b85656f",
+                "rel": "assessed-control",
+                "resource-fragment": "IAM.4",
+                "text": "Implemented requirement for IAM.4"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "f843f4ca-f210-53ca-bd3e-e8b7b11bb053",
+                "type": "component"
+              }
+            ],
+            "title": "IAM.4 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "a0503a28-df26-50c4-b3d9-d7e8d55799a9"
+          },
+          {
+            "collected": "2026-08-29T00:00:00Z",
+            "description": "Assessment of S3.5 against Identity Services for 2026-Q3.",
+            "expires": "2027-07-13T00:00:00Z",
+            "links": [
+              {
+                "href": "#1896ca38-921e-5454-82c8-8d53349917d4",
+                "rel": "assessed-control",
+                "resource-fragment": "S3.5",
+                "text": "Implemented requirement for S3.5"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "f843f4ca-f210-53ca-bd3e-e8b7b11bb053",
+                "type": "component"
+              }
+            ],
+            "title": "S3.5 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "8ea045b8-e524-564d-b912-3ffb7da3e580"
+          },
+          {
+            "collected": "2026-09-09T00:00:00Z",
+            "description": "Assessment of EC2.2 against Identity Services for 2026-Q3.",
+            "expires": "2027-01-16T00:00:00Z",
+            "links": [
+              {
+                "href": "#082e05a6-2099-54b8-9b77-0020bf3dbc7c",
+                "rel": "assessed-control",
+                "resource-fragment": "EC2.2",
+                "text": "Implemented requirement for EC2.2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Identity Services normalised scan results 2026-Q3",
+                "href": "#a3a65675-c3b1-5f7c-bc9b-7e5a7f47222d"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "f843f4ca-f210-53ca-bd3e-e8b7b11bb053",
+                "type": "component"
+              }
+            ],
+            "title": "EC2.2 on IDENTITY",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "da2b8998-2ed4-5dda-8aed-93614f5c8dd9"
+          }
+        ],
+        "reviewed-controls": {
+          "control-selections": [
+            {
+              "description": "Controls assessed for Identity Services in 2026-Q3.",
+              "include-controls": [
+                {
+                  "control-id": "ac-2"
+                },
+                {
+                  "control-id": "ac-2.1"
+                },
+                {
+                  "control-id": "au-6"
+                },
+                {
+                  "control-id": "au-6.1"
+                },
+                {
+                  "control-id": "cp-4"
+                },
+                {
+                  "control-id": "cp-9"
+                },
+                {
+                  "control-id": "ia-2"
+                },
+                {
+                  "control-id": "ia-5"
+                },
+                {
+                  "control-id": "sc-7"
+                },
+                {
+                  "control-id": "sc-28"
+                },
+                {
+                  "control-id": "si-4"
+                },
+                {
+                  "control-id": "si-7"
+                },
+                {
+                  "control-id": "ACM.1"
+                },
+                {
+                  "control-id": "IAM.4"
+                },
+                {
+                  "control-id": "S3.5"
+                },
+                {
+                  "control-id": "EC2.2"
+                }
+              ]
+            }
+          ]
+        },
+        "risks": [
+          {
+            "description": "Residual risk from the ia-5 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "true"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "71812334-a93f-55b1-9063-8fad4221663b"
+              }
+            ],
+            "statement": "Until ia-5 is satisfied, Identity Services carries this exposure.",
+            "status": "open",
+            "title": "ia-5 shortfall on IDENTITY",
+            "uuid": "ba44956e-d7b3-53eb-8af1-259e74714923"
+          },
+          {
+            "description": "Residual risk from the si-7 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "false"
+              },
+              {
+                "name": "condition-expires",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "2026-12-18"
+              },
+              {
+                "name": "trigger",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "score<0.85"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "4f3035e6-d1b1-5b0c-8c65-0d9ce616a186"
+              }
+            ],
+            "risk-log": {
+              "entries": [
+                {
+                  "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
+                  "logged-by": [
+                    {
+                      "party-uuid": "5ca2edc5-eecf-5125-b491-523b9434e384",
+                      "role-id": "authorizing-official"
+                    }
+                  ],
+                  "start": "2026-09-08T00:00:00Z",
+                  "status-change": "deviation-approved",
+                  "title": "Risk accepted with conditions",
+                  "uuid": "022475fc-001e-5cfa-81e8-10aa0b5df5ce"
+                }
+              ]
+            },
+            "statement": "Until si-7 is satisfied, Identity Services carries this exposure.",
+            "status": "deviation-approved",
+            "title": "si-7 shortfall on IDENTITY",
+            "uuid": "32274acf-96c9-5944-9c9d-55ea263547cf"
+          }
+        ],
+        "start": "2026-08-25T00:00:00Z",
+        "title": "Identity Services assessment 2026-Q3",
+        "uuid": "06e6aa61-2dc1-50cd-9ea4-ea0f7994a0ce"
+      }
+    ],
+    "uuid": "ca2a231e-f060-5bf8-8450-875ac1d03547"
+  }
+}

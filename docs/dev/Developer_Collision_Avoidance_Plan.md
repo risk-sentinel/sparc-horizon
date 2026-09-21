@@ -4,7 +4,13 @@ Companion to [`Implementation_plan.md`](Implementation_plan.md). Maps work to ex
 files and domains, defines branching rules, and documents file-touch hot spots so
 work can parallelize without collisions.
 
-**Last updated:** 2026-09-19 (**repository preparation.** No application code
+**Last updated:** 2026-09-20 (**P0 code landed.** `internal/keys`, `internal/fixtures`
+and the generated `fixtures/` tree. `fixtures/` is a new hot path — 46 generated files
+committed beside the generator that writes them — and unlike the three duplication axes
+below it is one a check closes completely: `TestCommittedFixturesMatch` fails the moment
+the tree and the generator disagree.)
+
+**Previously:** 2026-09-19 (**repository preparation.** No application code
 exists, so the collision surface today is entirely docs, contracts, demos, and the
 `.github/` tree being stood up in Phase S0. **The hot files are the three
 duplication axes described below** — they are the only places in this repository
@@ -26,7 +32,8 @@ they will cause every avoidable conflict until they are removed.)
 | Demos | `demo/*.html` | S0, P3 | Synthetic data, no build step. `full-plan.html` **duplicates** the other two — see hot files |
 | Pipeline | `.github/workflows/`, `.github/actions/`, `.security/`, `container-baseline.yml` | S0, S1 | One workflow PR at a time (rule below) |
 | Compliance artefacts | `docs/compliance/` | S0-15, then every security-touching issue | CDEFs, the NIST mapping, inline control comments. **Exists as of #11.** `oscal/cdefs/*.json` must stay OSCAL 1.2.x valid; UUIDs there are deterministic UUIDv5, so do not regenerate them casually |
-| Go service | `cmd/horizon/`, `internal/*` | P1–P7 | Does not exist yet; ownership splits by package, per `docs/02-architecture.md` |
+| Go service | `cmd/horizon/`, `internal/*` | P1–P7 | The service does not exist yet. Four packages do — see the table below. Ownership splits by package, per `docs/02-architecture.md` |
+| Fixtures | `fixtures/` | P0 | **Generated. Never edited by hand.** Written by `go run ./cmd/genfixtures`; a hand edit is lost on the next run and fails `TestCommittedFixturesMatch` before that |
 | Web UI | `web/` | P3, P7 | Does not exist yet |
 
 ### Package-level ownership, once code lands
@@ -36,7 +43,9 @@ which makes most product phases collision-free against each other:
 
 | Package | Phase | Collides with |
 |---|---|---|
-| `internal/canonical` | **P0 (#38)** | Nothing yet. **Read by every phase that derives an identifier**, so treat its signatures as a contract rather than an implementation detail. It deliberately excludes control-id canonicalisation until #37 scopes it to a vocabulary |
+| `internal/canonical` | **P0 (#38, #36)** | Nothing yet. **Read by every phase that derives an identifier**, so treat its signatures as a contract rather than an implementation detail. It now canonicalises control ids too, scoped to a vocabulary (#37): the NIST rules apply only where `source-uuid` resolves to an 800-53 catalog, or to a profile over one |
+| `internal/keys` | **P0 (#36)** | `internal/canonical` only. **The Go reference implementation of a normative grammar with ports in two other languages.** A change to a field list is a v2 of `docs/03-data-model.md`, a regeneration of `fixtures/`, and an upstream change in `sparc` — not a refactor |
+| `internal/fixtures`, `cmd/genfixtures` | **P0 (#36)** | `internal/keys`. Every later phase reads its output: P1's tree builder and P2's recompute audit are written against it, so changing the federation's shape invalidates whatever was measured against the old one |
 | `internal/sparc`, `internal/oscal`, `internal/tree`, `internal/authz` | P1 | Each other only |
 | `internal/ledger`, `internal/project` | P2 | P7 reads `project`; do not refactor its signatures while P7 is open |
 | `internal/attest` | P4 | `internal/ledger` writers |
@@ -155,6 +164,24 @@ alongside the fixture or config it needs (`secret-scan.yml` with
 `tests/trufflehog-fixture/` and `.trufflehog-exclude-paths`), which is one change.
 
 ---
+
+### 2.6 `fixtures/` — generated, committed, and checked
+
+46 files written by `internal/fixtures` and committed. The duplication is deliberate:
+consumers read the tree without running Go, and the P0 exit criterion is measured by
+regenerating it.
+
+**Never edit a file under `fixtures/` by hand.** Change the generator and run
+`go run ./cmd/genfixtures`. Unlike the three axes above, nothing here depends on a person
+remembering: `TestCommittedFixturesMatch` regenerates the tree and diffs it against what is
+committed, in both directions, so a stale fixture and an orphaned one both fail.
+
+Two branches that both regenerate will conflict across the whole tree. Resolve by taking
+either side and regenerating — the output is a function of the generator alone.
+
+**`sparc#1155` will invalidate every UUID in it at once.** That is one PR, not a migration:
+change `keys.ProvisionalNamespace`, regenerate, and re-measure anything that was stated
+against the old identifiers.
 
 ## 3. Branching strategy
 

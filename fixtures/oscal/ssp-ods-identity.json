@@ -1,0 +1,721 @@
+{
+  "system-security-plan": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "e0a64373ff12749523dffa42589aa35ed03ffcf1cda80c38caa2ef64c0fe7719"
+                }
+              ],
+              "href": "./profile-moderate.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Fixture moderate baseline",
+          "uuid": "02db532b-5963-5617-a8bb-6f883ed54422"
+        }
+      ]
+    },
+    "control-implementation": {
+      "description": "Controls resolved from the fixture moderate baseline. The control-implementation carries no `source` of its own, so `source-uuid` resolves through import-profile.",
+      "implemented-requirements": [
+        {
+          "by-components": [
+            {
+              "component-uuid": "8e162878-289c-57f0-9086-619798656a95",
+              "description": "Agency Identity Provider implements ac-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "c6a632a1-401a-52b7-bb34-ea9d732d7fc8"
+            },
+            {
+              "component-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+              "description": "Directory Service implements ac-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "7d0497c0-a52d-5c7e-8d75-26072f40346d"
+            }
+          ],
+          "control-id": "ac-2",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "20298769-b0a1-5b7d-85f1-519ff87908ff"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+              "description": "Directory Service implements ac-2.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "fe0f1443-d21b-56e4-88d0-fdb0142ae900"
+            },
+            {
+              "component-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+              "description": "Multi-Factor Service implements ac-2.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "75f0ce16-fef7-5034-8fb5-e7a5e3f1493d"
+            }
+          ],
+          "control-id": "ac-2.1",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "ce0ba001-05ab-5860-a941-b9e8f7332ee4"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+              "description": "Multi-Factor Service implements au-6.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "85d9a434-e29e-5b65-92da-ab9b04e7eeca"
+            },
+            {
+              "component-uuid": "8e162878-289c-57f0-9086-619798656a95",
+              "description": "Agency Identity Provider implements au-6.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "66bd63da-e3b0-53d9-89b1-da86626f5721"
+            }
+          ],
+          "control-id": "au-6",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "d3cdf51b-9ed4-5764-a334-ad13447589e8"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "8e162878-289c-57f0-9086-619798656a95",
+              "description": "Agency Identity Provider implements au-6.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "2cf95677-361f-5969-9bfc-e2c01c2c650e"
+            },
+            {
+              "component-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+              "description": "Directory Service implements au-6.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "f73c6a0f-fa05-57fb-91d0-20f8c702c56e"
+            }
+          ],
+          "control-id": "au-6.1",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "31ab7eff-9ba1-5ccd-ab3d-73a5b57e3773"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+              "description": "Directory Service implements cp-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "fe079b34-203f-5c90-adfb-2160433ac597"
+            },
+            {
+              "component-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+              "description": "Multi-Factor Service implements cp-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "7b851437-6958-5898-a68c-1bf9ab506909"
+            }
+          ],
+          "control-id": "cp-4",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "336faa1e-490f-5e2e-a1bb-012953ffe36a"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+              "description": "Multi-Factor Service implements cp-9.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "badd6cf1-f870-50b1-98de-5226c0511282"
+            },
+            {
+              "component-uuid": "8e162878-289c-57f0-9086-619798656a95",
+              "description": "Agency Identity Provider implements cp-9.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "9c5e88d2-7573-51d0-aa7c-82e7b3386712"
+            }
+          ],
+          "control-id": "cp-9",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "c52434b4-aca7-5ebe-a28a-9637ed555541"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "8e162878-289c-57f0-9086-619798656a95",
+              "description": "Agency Identity Provider implements ia-2.",
+              "export": {
+                "description": "Provided to every leveraging boundary in the federation.",
+                "provided": [
+                  {
+                    "description": "Authentication and authenticator management for leveraging boundaries.",
+                    "uuid": "724d525c-fc55-5d8a-828e-f40a65da02b9"
+                  }
+                ],
+                "responsibilities": [
+                  {
+                    "description": "The leveraging boundary configures its own session and account policy against this service.",
+                    "provided-uuid": "724d525c-fc55-5d8a-828e-f40a65da02b9",
+                    "uuid": "8cdb9c79-1168-5433-b17e-0219baac249a"
+                  }
+                ]
+              },
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "c2a9649b-4dbe-53e7-bb4a-15e9b2b13c68"
+            },
+            {
+              "component-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+              "description": "Directory Service implements ia-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "54a2816b-c1a9-5e77-871d-84522345c742"
+            }
+          ],
+          "control-id": "ia-2",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "24c43e22-53a0-5e41-9147-09c084bc511a"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "8e162878-289c-57f0-9086-619798656a95",
+              "description": "Directory Service implements ia-5.",
+              "export": {
+                "description": "Provided to every leveraging boundary in the federation.",
+                "provided": [
+                  {
+                    "description": "Authentication and authenticator management for leveraging boundaries.",
+                    "uuid": "b5c46ed0-ea2e-54b0-a76e-bbe4f2dd6cac"
+                  }
+                ],
+                "responsibilities": [
+                  {
+                    "description": "The leveraging boundary configures its own session and account policy against this service.",
+                    "provided-uuid": "b5c46ed0-ea2e-54b0-a76e-bbe4f2dd6cac",
+                    "uuid": "9abc3f63-4a89-5de3-9dab-a84480338794"
+                  }
+                ]
+              },
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "840fa8ab-a16a-5b9b-b396-628ca36716b3"
+            },
+            {
+              "component-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+              "description": "Multi-Factor Service implements ia-5.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "c7f622e9-a806-5eaa-aaa8-a1555fc5eb21"
+            }
+          ],
+          "control-id": "ia-5",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "2b272767-7e1f-5507-b9d3-a40bf2992dcf"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+              "description": "Multi-Factor Service implements sc-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "9547c20d-c1bf-51e5-8c26-dc119e21f13c"
+            },
+            {
+              "component-uuid": "8e162878-289c-57f0-9086-619798656a95",
+              "description": "Agency Identity Provider implements sc-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "0393adab-b33c-5680-9d18-10086a7a163e"
+            }
+          ],
+          "control-id": "sc-7",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "3131321c-e291-58eb-b407-069b58164e18"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "8e162878-289c-57f0-9086-619798656a95",
+              "description": "Agency Identity Provider implements sc-28.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "6b8b431c-8df1-5d65-9887-5c61abee7bde"
+            },
+            {
+              "component-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+              "description": "Directory Service implements sc-28.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "81f0cbd8-fe5e-5801-b121-793c0a8cfecd"
+            }
+          ],
+          "control-id": "sc-28",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "cf0e36ea-a78c-54c9-8e3b-822745770fc0"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "2f7d560a-6886-5440-886b-6a48516b5050",
+              "description": "Directory Service implements si-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "e7c5e5fa-4001-54a0-8c29-a44893c316ba"
+            },
+            {
+              "component-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+              "description": "Multi-Factor Service implements si-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "edc67cf3-aba5-5c83-afa8-550c33d4b205"
+            }
+          ],
+          "control-id": "si-4",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "8adba208-653f-5c93-9241-c6353c74ca9c"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9",
+              "description": "Multi-Factor Service implements si-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "77974079-0f48-5c0b-8086-c1a6cc79cd6b"
+            },
+            {
+              "component-uuid": "8e162878-289c-57f0-9086-619798656a95",
+              "description": "Agency Identity Provider implements si-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "028d4164-b175-5249-9dad-e33562fdde36"
+            }
+          ],
+          "control-id": "si-7",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "5f0d7bde-e084-5b96-a850-aa4985f0cce8"
+        }
+      ]
+    },
+    "import-profile": {
+      "href": "#02db532b-5963-5617-a8bb-6f883ed54422"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Office of Digital Services",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "ODS",
+          "type": "organization",
+          "uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "IDENTITY Authorizing Official",
+          "type": "person",
+          "uuid": "5ca2edc5-eecf-5125-b491-523b9434e384"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "IDENTITY System Owner",
+          "type": "person",
+          "uuid": "7946ce13-e768-539f-95dd-fcb5384f5a37"
+        },
+        {
+          "member-of-organizations": [
+            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          ],
+          "name": "IDENTITY Information System Security Officer",
+          "type": "person",
+          "uuid": "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+        }
+      ],
+      "props": [
+        {
+          "name": "node-type",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "boundary"
+        },
+        {
+          "name": "parent-uuid",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "9a9eb954-166e-559f-b23a-1c3e5d078707"
+        },
+        {
+          "name": "next-decision-date",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "2026-11-02"
+        },
+        {
+          "name": "fips-199",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "high"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "5ca2edc5-eecf-5125-b491-523b9434e384"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "7946ce13-e768-539f-95dd-fcb5384f5a37"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "680a8afa-aec5-5762-a4e6-3eb1113ac66d"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Identity Services system security plan",
+      "version": "1.0.0"
+    },
+    "system-characteristics": {
+      "authorization-boundary": {
+        "description": "Agency identity provider and directory, leveraged by every other boundary in the federation."
+      },
+      "date-authorized": "2026-03-02",
+      "description": "Agency identity provider and directory, leveraged by every other boundary in the federation.",
+      "security-impact-level": {
+        "security-objective-availability": "high",
+        "security-objective-confidentiality": "high",
+        "security-objective-integrity": "high"
+      },
+      "security-sensitivity-level": "high",
+      "status": {
+        "state": "operational"
+      },
+      "system-ids": [
+        {
+          "id": "ods-identity",
+          "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+        },
+        {
+          "id": "2",
+          "identifier-type": "https://risk-sentinel.org/ns/sparc/id"
+        }
+      ],
+      "system-information": {
+        "information-types": [
+          {
+            "availability-impact": {
+              "base": "fips-199-high"
+            },
+            "confidentiality-impact": {
+              "base": "fips-199-high"
+            },
+            "description": "Synthetic information type for the fixture federation.",
+            "integrity-impact": {
+              "base": "fips-199-high"
+            },
+            "title": "Identity Services operational records",
+            "uuid": "6a52b772-b265-5e1d-ab91-85254257187d"
+          }
+        ]
+      },
+      "system-name": "Identity Services",
+      "system-name-short": "IDENTITY"
+    },
+    "system-implementation": {
+      "components": [
+        {
+          "description": "Authenticates users for every leveraging boundary.",
+          "purpose": "Authenticates users for every leveraging boundary.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "7946ce13-e768-539f-95dd-fcb5384f5a37"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Agency Identity Provider",
+          "type": "software",
+          "uuid": "8e162878-289c-57f0-9086-619798656a95"
+        },
+        {
+          "description": "Holds the authoritative user and group records.",
+          "purpose": "Holds the authoritative user and group records.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "7946ce13-e768-539f-95dd-fcb5384f5a37"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Directory Service",
+          "type": "software",
+          "uuid": "2f7d560a-6886-5440-886b-6a48516b5050"
+        },
+        {
+          "description": "Issues and verifies second factors.",
+          "purpose": "Issues and verifies second factors.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "7946ce13-e768-539f-95dd-fcb5384f5a37"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Multi-Factor Service",
+          "type": "service",
+          "uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9"
+        },
+        {
+          "description": "Inherited platform service, assessed by the provider against AWS Security Hub controls.",
+          "props": [
+            {
+              "name": "EvaluatedServices",
+              "ns": "http://aws.amazon.com/ns/oscal",
+              "value": "acm"
+            },
+            {
+              "name": "SeverityLabel",
+              "ns": "http://aws.amazon.com/ns/oscal",
+              "value": "MEDIUM"
+            },
+            {
+              "name": "implementation-point",
+              "value": "external"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "AWS Certificate Manager",
+          "type": "service",
+          "uuid": "f843f4ca-f210-53ca-bd3e-e8b7b11bb053"
+        }
+      ],
+      "inventory-items": [
+        {
+          "description": "Agency Identity Provider inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "8e162878-289c-57f0-9086-619798656a95"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "ods-identity/idp"
+            }
+          ],
+          "uuid": "21c22e3e-7caa-59b5-ba83-b4e758dad270"
+        },
+        {
+          "description": "Directory Service inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "2f7d560a-6886-5440-886b-6a48516b5050"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "ods-identity/idp-dir"
+            }
+          ],
+          "uuid": "8dbb1dfd-e277-58f3-9f52-74f9fe4e46ad"
+        },
+        {
+          "description": "Multi-Factor Service inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "42eaa128-83d2-57f3-b1bc-240b4e5f2fc9"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "ods-identity/idp-mfa"
+            }
+          ],
+          "uuid": "04a48aa0-9a89-5a1f-82bf-fd8fe4182fb9"
+        }
+      ]
+    },
+    "uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+  }
+}

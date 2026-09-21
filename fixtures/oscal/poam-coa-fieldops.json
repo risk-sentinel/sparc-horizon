@@ -1,0 +1,327 @@
+{
+  "plan-of-action-and-milestones": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "391ef5a6d538dc9ce916f67227ebba4fc6eddbf9dc246f36169775f42790819b"
+                }
+              ],
+              "href": "./ssp-coa-fieldops.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Field Operations system security plan",
+          "uuid": "6c6f0631-051a-5412-9e5c-d1772725f170"
+        }
+      ]
+    },
+    "import-ssp": {
+      "href": "#6c6f0631-051a-5412-9e5c-d1772725f170"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Coastal Operations Agency",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "COA",
+          "type": "organization",
+          "uuid": "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+        },
+        {
+          "member-of-organizations": [
+            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+          ],
+          "name": "FIELDOPS Authorizing Official",
+          "type": "person",
+          "uuid": "871a0b35-c244-5eab-96af-0787fe21717b"
+        },
+        {
+          "member-of-organizations": [
+            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+          ],
+          "name": "FIELDOPS System Owner",
+          "type": "person",
+          "uuid": "e303760c-e28d-5fc0-841e-ee0f19a4b31e"
+        },
+        {
+          "member-of-organizations": [
+            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+          ],
+          "name": "FIELDOPS Information System Security Officer",
+          "type": "person",
+          "uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "871a0b35-c244-5eab-96af-0787fe21717b"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "e303760c-e28d-5fc0-841e-ee0f19a4b31e"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Field Operations plan of action and milestones 2026-Q3",
+      "version": "1.0.0"
+    },
+    "poam-items": [
+      {
+        "description": "Tracked remediation of the au-6.1 finding on Field Operations.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "9f17a4ec-1661-584d-96a3-9478dfecf78b"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "d4d5dd84-9edb-50c3-98cd-0d27756a6248"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "6f5477ce-0424-5a30-98a3-7e0d0cfffae7"
+          }
+        ],
+        "title": "au-6.1 remediation",
+        "uuid": "1d8e3c49-b00c-54da-8b94-020bb1c28ab9"
+      },
+      {
+        "description": "Tracked remediation of the sc-7 finding on Field Operations.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "3ebbc6ba-adb3-57f4-bd4d-d8c2fe6d5992"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "c12e633b-f147-5d33-8bef-9e4ebb6deef4"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "ce75b1db-0b76-5d7f-a125-1a5ef439f96b"
+          }
+        ],
+        "title": "sc-7 remediation",
+        "uuid": "8667c3fe-591d-5d0f-b90d-0e354d38f31a"
+      }
+    ],
+    "risks": [
+      {
+        "deadline": "2027-01-20T00:00:00Z",
+        "description": "Residual risk from the au-6.1 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "d4d5dd84-9edb-50c3-98cd-0d27756a6248"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for au-6.1 on Field Operations.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2027-01-20T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: au-6.1 remediation complete",
+                "type": "milestone",
+                "uuid": "f7dec8eb-d42b-5c54-94ef-c826893f1637"
+              }
+            ],
+            "title": "Remediate au-6.1",
+            "uuid": "7775f3b2-eb77-59f2-83dd-8bd80033f37a"
+          }
+        ],
+        "statement": "Until au-6.1 is satisfied, Field Operations carries this exposure.",
+        "status": "open",
+        "title": "au-6.1 shortfall on FIELDOPS",
+        "uuid": "6f5477ce-0424-5a30-98a3-7e0d0cfffae7"
+      },
+      {
+        "deadline": "2027-01-15T00:00:00Z",
+        "description": "Residual risk from the sc-7 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "false"
+          },
+          {
+            "name": "condition-expires",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "2026-12-30"
+          },
+          {
+            "name": "trigger",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "score<0.85"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "c12e633b-f147-5d33-8bef-9e4ebb6deef4"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for sc-7 on Field Operations.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2027-01-15T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: sc-7 remediation complete",
+                "type": "milestone",
+                "uuid": "01023e8a-1694-5f1d-9cbf-4affecfde475"
+              }
+            ],
+            "title": "Remediate sc-7",
+            "uuid": "176db879-3e03-5fc0-9e67-5ca6e6b43b58"
+          }
+        ],
+        "risk-log": {
+          "entries": [
+            {
+              "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
+              "logged-by": [
+                {
+                  "party-uuid": "871a0b35-c244-5eab-96af-0787fe21717b",
+                  "role-id": "authorizing-official"
+                }
+              ],
+              "start": "2026-09-08T00:00:00Z",
+              "status-change": "deviation-approved",
+              "title": "Risk accepted with conditions",
+              "uuid": "52976014-ae58-5df0-86ba-e2a0003c3fa1"
+            }
+          ]
+        },
+        "statement": "Until sc-7 is satisfied, Field Operations carries this exposure.",
+        "status": "deviation-approved",
+        "title": "sc-7 shortfall on FIELDOPS",
+        "uuid": "ce75b1db-0b76-5d7f-a125-1a5ef439f96b"
+      }
+    ],
+    "system-id": {
+      "id": "coa-fieldops",
+      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+    },
+    "uuid": "b14db5b7-f7cb-59ae-a41b-7423f1d39b04"
+  }
+}

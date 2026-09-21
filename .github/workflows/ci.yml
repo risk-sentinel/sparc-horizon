@@ -30,7 +30,7 @@ env:
   # Minimum packages that must run tests. Raise it as packages gain tests;
   # it exists so deleting a test file is a build failure rather than a
   # quieter green run.
-  MIN_TESTED_PACKAGES: "1"
+  MIN_TESTED_PACKAGES: "3"
   MIN_COVERAGE: "80"
 
 jobs:
@@ -51,11 +51,15 @@ jobs:
           # docs/08-build-deploy.md builds on golang:1.25. A runner that
           # silently used a different minor would lint and test something the
           # shipped image never compiles.
-          want="$(awk '/^go /{print $2}' go.mod)"
+          # Compare major.minor only. Go 1.26 normalises a `go 1.25` directive
+          # to `go 1.25.0` whenever it rewrites go.mod, so an exact-string
+          # comparison fails the moment someone runs `go mod tidy` on a newer
+          # toolchain — a green-to-red flip that says nothing about the pin.
+          want="$(awk '/^go /{print $2}' go.mod | cut -d. -f1,2)"
           have="$(go env GOVERSION)"
-          echo "go.mod wants ${want}; runner has ${have}"
+          echo "go.mod wants ${want}.x; runner has ${have}"
           case "${have}" in
-            go${want}*) echo "PASS — toolchain matches go.mod." ;;
+            "go${want}"|"go${want}."*) echo "PASS — toolchain matches go.mod." ;;
             *) echo "::error::Runner is ${have} but go.mod pins ${want}."; exit 1 ;;
           esac
 

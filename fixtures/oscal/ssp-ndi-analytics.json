@@ -1,0 +1,749 @@
+{
+  "system-security-plan": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "e0a64373ff12749523dffa42589aa35ed03ffcf1cda80c38caa2ef64c0fe7719"
+                }
+              ],
+              "href": "./profile-moderate.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Fixture moderate baseline",
+          "uuid": "02db532b-5963-5617-a8bb-6f883ed54422"
+        },
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "db91ee161b692afcc7fc34d3b61b23b2996a353c33a8b2c45a9571d05267bb8e"
+                }
+              ],
+              "href": "./ssp-ods-identity.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Identity Services system security plan",
+          "uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+        }
+      ]
+    },
+    "control-implementation": {
+      "description": "Controls resolved from the fixture moderate baseline. The control-implementation carries no `source` of its own, so `source-uuid` resolves through import-profile.",
+      "implemented-requirements": [
+        {
+          "by-components": [
+            {
+              "component-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+              "description": "Notebook Service implements ac-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "e799c5ae-5372-5d05-89df-3969b60fb068"
+            },
+            {
+              "component-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+              "description": "Job Scheduler implements ac-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "cd4e7d5b-f384-5c21-ac55-b05d3a493947"
+            }
+          ],
+          "control-id": "ac-2",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "af189b56-507f-55f0-b65b-30e1dcca77d6"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+              "description": "Job Scheduler implements ac-2.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "4cad6e75-f6de-56fc-a505-ea4e8b9b947c"
+            },
+            {
+              "component-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+              "description": "Model Registry implements ac-2.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "c9a671e7-135d-5ae8-a610-57854dd64626"
+            }
+          ],
+          "control-id": "ac-2.1",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "341680c1-70ba-5c09-8af2-2df9f8680469"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+              "description": "Model Registry implements au-6.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "754c7a7b-1026-5bb6-8feb-43d161c38d98"
+            },
+            {
+              "component-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+              "description": "Notebook Service implements au-6.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "846c6680-a3a2-56ea-8b00-087f6d9e05b8"
+            }
+          ],
+          "control-id": "au-6",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "adc43fb5-9870-511f-8790-74fe1b4e3403"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+              "description": "Notebook Service implements au-6.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "a9b2d322-3ad2-5adc-a90a-99203205691c"
+            },
+            {
+              "component-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+              "description": "Job Scheduler implements au-6.1.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "1f24bdaf-5857-5590-a340-2efd0e531916"
+            }
+          ],
+          "control-id": "au-6.1",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "a978e0e8-7a82-5929-9b0d-e9e0b155ebd5"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+              "description": "Job Scheduler implements cp-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "464e2b44-d0d4-5b91-b3e2-ddde83fdf642"
+            },
+            {
+              "component-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+              "description": "Model Registry implements cp-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "0d6fc907-79bb-5df6-8343-77b06a8e26e4"
+            }
+          ],
+          "control-id": "cp-4",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "853b3c6d-5e44-5de3-ba28-53fd0b5d71eb"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+              "description": "Model Registry implements cp-9.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "f1460738-7954-539e-a598-e42164da714b"
+            },
+            {
+              "component-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+              "description": "Notebook Service implements cp-9.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "3538335b-8640-5689-b374-88de4209300a"
+            }
+          ],
+          "control-id": "cp-9",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "21ec962a-f7e0-5192-aa42-c7ab3f8a569e"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+              "description": "Notebook Service implements ia-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "inherited": [
+                {
+                  "description": "Inherited from Identity Services.",
+                  "provided-uuid": "724d525c-fc55-5d8a-828e-f40a65da02b9",
+                  "uuid": "e149f757-312b-5a1f-b66d-1b0e6f9c6643"
+                }
+              ],
+              "satisfied": [
+                {
+                  "description": "Boundary-side configuration answering the provider's stated responsibility.",
+                  "responsibility-uuid": "8cdb9c79-1168-5433-b17e-0219baac249a",
+                  "uuid": "df217f51-d7c2-59a0-920c-c8da5f60ca9b"
+                }
+              ],
+              "uuid": "66dd7246-4087-54d6-a760-c8076b577759"
+            },
+            {
+              "component-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+              "description": "Job Scheduler implements ia-2.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "b04c04ea-83e7-50e2-ac0a-6c591f1fa2e5"
+            }
+          ],
+          "control-id": "ia-2",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "1f409382-040f-5165-86f5-934a699f2684"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+              "description": "Job Scheduler implements ia-5.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "inherited": [
+                {
+                  "description": "Inherited from Identity Services.",
+                  "provided-uuid": "b5c46ed0-ea2e-54b0-a76e-bbe4f2dd6cac",
+                  "uuid": "704ddefa-e031-553c-81c6-56e946eb82e2"
+                }
+              ],
+              "satisfied": [
+                {
+                  "description": "Boundary-side configuration answering the provider's stated responsibility.",
+                  "responsibility-uuid": "9abc3f63-4a89-5de3-9dab-a84480338794",
+                  "uuid": "98cf076d-5f0d-5298-9e57-30be3b1844aa"
+                }
+              ],
+              "uuid": "e05c4fa5-0d64-51a2-9b14-f150462034b0"
+            },
+            {
+              "component-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+              "description": "Model Registry implements ia-5.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "6ef94da6-fc4a-521b-a004-4b286172007e"
+            }
+          ],
+          "control-id": "ia-5",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "c90a170a-296c-5302-966f-bc48c19d9e10"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+              "description": "Model Registry implements sc-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "f8ce1813-5d5c-5781-adda-aae057aadbe9"
+            },
+            {
+              "component-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+              "description": "Notebook Service implements sc-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "f256c8f5-787d-54a3-bffa-becae02e3b04"
+            }
+          ],
+          "control-id": "sc-7",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "8a637df1-3034-523c-9130-1388ed3778fe"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+              "description": "Notebook Service implements sc-28.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "902bdf1d-eff5-592c-8ba2-e28363d08aa6"
+            },
+            {
+              "component-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+              "description": "Job Scheduler implements sc-28.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "e5d7bb82-b17c-5d7e-8220-88a7ae541152"
+            }
+          ],
+          "control-id": "sc-28",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "e3e3ca39-61de-533c-b803-527b76283387"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+              "description": "Job Scheduler implements si-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "a542b342-0f16-5fa9-bc12-24c9817d8b03"
+            },
+            {
+              "component-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+              "description": "Model Registry implements si-4.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "04977338-6bfb-5ec2-81af-7205246578b7"
+            }
+          ],
+          "control-id": "si-4",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "39b1b472-06b5-5852-acb5-83ac18d597bc"
+        },
+        {
+          "by-components": [
+            {
+              "component-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+              "description": "Model Registry implements si-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "8a919730-7fd7-5e0b-a178-62125939ca1b"
+            },
+            {
+              "component-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+              "description": "Notebook Service implements si-7.",
+              "implementation-status": {
+                "state": "implemented"
+              },
+              "uuid": "9c56b4ba-8f2a-500f-b58e-680dd39b832e"
+            }
+          ],
+          "control-id": "si-7",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "06d5e411-42da-5019-9f15-247f194dccae"
+              ],
+              "role-id": "information-system-security-officer"
+            }
+          ],
+          "uuid": "3e25cc0a-2e76-5480-8a0b-66b57d8d2619"
+        }
+      ]
+    },
+    "import-profile": {
+      "href": "#02db532b-5963-5617-a8bb-6f883ed54422"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "National Data Institute",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "NDI",
+          "type": "organization",
+          "uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+        },
+        {
+          "member-of-organizations": [
+            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          ],
+          "name": "WORKBENCH Authorizing Official",
+          "type": "person",
+          "uuid": "d23aa4e7-e2ef-5ff0-a68e-363fd56f02f3"
+        },
+        {
+          "member-of-organizations": [
+            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          ],
+          "name": "WORKBENCH System Owner",
+          "type": "person",
+          "uuid": "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+        },
+        {
+          "member-of-organizations": [
+            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          ],
+          "name": "WORKBENCH Information System Security Officer",
+          "type": "person",
+          "uuid": "06d5e411-42da-5019-9f15-247f194dccae"
+        }
+      ],
+      "props": [
+        {
+          "name": "node-type",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "boundary"
+        },
+        {
+          "name": "parent-uuid",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+        },
+        {
+          "name": "next-decision-date",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "2027-02-20"
+        },
+        {
+          "name": "fips-199",
+          "ns": "https://risk-sentinel.org/ns/sparc",
+          "value": "low"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "d23aa4e7-e2ef-5ff0-a68e-363fd56f02f3"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "06d5e411-42da-5019-9f15-247f194dccae"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Analytics Workbench system security plan",
+      "version": "1.0.0"
+    },
+    "system-characteristics": {
+      "authorization-boundary": {
+        "description": "Analyst notebooks and scheduled jobs over the data lake."
+      },
+      "date-authorized": "2026-03-02",
+      "description": "Analyst notebooks and scheduled jobs over the data lake.",
+      "security-impact-level": {
+        "security-objective-availability": "low",
+        "security-objective-confidentiality": "low",
+        "security-objective-integrity": "low"
+      },
+      "security-sensitivity-level": "low",
+      "status": {
+        "state": "operational"
+      },
+      "system-ids": [
+        {
+          "id": "ndi-analytics",
+          "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+        },
+        {
+          "id": "6",
+          "identifier-type": "https://risk-sentinel.org/ns/sparc/id"
+        }
+      ],
+      "system-information": {
+        "information-types": [
+          {
+            "availability-impact": {
+              "base": "fips-199-low"
+            },
+            "confidentiality-impact": {
+              "base": "fips-199-low"
+            },
+            "description": "Synthetic information type for the fixture federation.",
+            "integrity-impact": {
+              "base": "fips-199-low"
+            },
+            "title": "Analytics Workbench operational records",
+            "uuid": "e795efa8-f23e-5f14-a439-2a966516f0e7"
+          }
+        ]
+      },
+      "system-name": "Analytics Workbench",
+      "system-name-short": "WORKBENCH"
+    },
+    "system-implementation": {
+      "components": [
+        {
+          "description": "Hosts analyst notebooks.",
+          "purpose": "Hosts analyst notebooks.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Notebook Service",
+          "type": "software",
+          "uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b"
+        },
+        {
+          "description": "Runs scheduled analysis jobs.",
+          "purpose": "Runs scheduled analysis jobs.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Job Scheduler",
+          "type": "software",
+          "uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598"
+        },
+        {
+          "description": "Versions trained models.",
+          "purpose": "Versions trained models.",
+          "responsible-roles": [
+            {
+              "party-uuids": [
+                "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+              ],
+              "role-id": "system-owner"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "Model Registry",
+          "type": "software",
+          "uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e"
+        },
+        {
+          "description": "Inherited platform service, assessed by the provider against AWS Security Hub controls.",
+          "props": [
+            {
+              "name": "EvaluatedServices",
+              "ns": "http://aws.amazon.com/ns/oscal",
+              "value": "acm"
+            },
+            {
+              "name": "SeverityLabel",
+              "ns": "http://aws.amazon.com/ns/oscal",
+              "value": "MEDIUM"
+            },
+            {
+              "name": "implementation-point",
+              "value": "external"
+            }
+          ],
+          "status": {
+            "state": "operational"
+          },
+          "title": "AWS Certificate Manager",
+          "type": "service",
+          "uuid": "9c94fa90-c857-5c97-98e0-fbf33056be34"
+        }
+      ],
+      "inventory-items": [
+        {
+          "description": "Notebook Service inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "ndi-analytics/wb-notebook"
+            }
+          ],
+          "uuid": "a37ecebc-0511-56cd-a685-615703f10b22"
+        },
+        {
+          "description": "Job Scheduler inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "ndi-analytics/wb-scheduler"
+            }
+          ],
+          "uuid": "5eb5416f-5461-5046-aa00-2e52bfd51a23"
+        },
+        {
+          "description": "Model Registry inventory record.",
+          "implemented-components": [
+            {
+              "component-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e"
+            }
+          ],
+          "props": [
+            {
+              "name": "asset-id",
+              "value": "ndi-analytics/wb-registry"
+            }
+          ],
+          "uuid": "247aa363-7185-5931-beb3-979ec7224367"
+        }
+      ],
+      "leveraged-authorizations": [
+        {
+          "date-authorized": "2026-03-02",
+          "links": [
+            {
+              "href": "#f20b0311-6cb6-5588-9349-ff24440f6674",
+              "rel": "leveraged-authorization"
+            }
+          ],
+          "party-uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707",
+          "remarks": "The reverse-inheritance index behind blast radius is built from this link.",
+          "title": "Identity Services",
+          "uuid": "add629c5-aba3-5644-a6d9-8b00734e2dc0"
+        }
+      ]
+    },
+    "uuid": "ac72c68e-fa06-5948-9aba-c323c96f6164"
+  }
+}

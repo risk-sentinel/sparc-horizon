@@ -111,6 +111,93 @@ jobs:
           echo "Schema assertions: $PASS passed, $FAIL failed (expected 17 passed, 0 failed)"
           [ "$PASS" -eq 17 ] && [ "$FAIL" -eq 0 ]
 
+  fixture-props:
+    name: Fixture namespace props
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Validate every SPARC-namespace prop in the fixtures
+        run: |
+          set -euo pipefail
+          # The namespace schema is a SELECTIVE validator: it applies to props
+          # whose ns is the SPARC namespace, and to every one of them. Props
+          # from other namespaces, and props with no ns at all, are preserved
+          # as issued and must not be validated here — applying the schema to
+          # them would reject valid OSCAL.
+          #
+          # This is not `sparc-validate`, which also enforces which props a
+          # document must carry. It is the half that can run in this
+          # repository, and it is labelled as a proxy rather than as the P0
+          # exit criterion being met.
+          S=schemas/sparc-namespace-props.v1.schema.json
+          NS="https://risk-sentinel.org/ns/sparc"
+
+          jq -s --arg ns "$NS" '[.. | objects | select(has("props")) | .props[] | select(.ns == $ns)]' \
+            fixtures/oscal/*.json > /tmp/sparc-props.json
+
+          TOTAL=$(jq 'length' /tmp/sparc-props.json)
+          NAMES=$(jq -r '[.[].name] | unique | length' /tmp/sparc-props.json)
+          echo "SPARC-namespace props in fixtures/oscal: ${TOTAL}, across ${NAMES} distinct names."
+
+          # A loop over an empty list validates nothing and exits 0.
+          if [ "${TOTAL:-0}" -lt 1 ]; then
+            echo "::error::No SPARC-namespace props found in the fixtures. Either the fixtures are missing or the filter is wrong; both make this job meaningless."
+            exit 1
+          fi
+          if [ "${NAMES:-0}" -ne 9 ]; then
+            echo "::error::Expected all 9 namespace props to be exercised, found ${NAMES}."
+            jq -r '[.[].name] | unique | .[]' /tmp/sparc-props.json
+            exit 1
+          fi
+
+          # One validation over the whole array rather than one npx call per
+          # prop: a wrapper schema whose items $ref the namespace schema by
+          # its $id, with the real schema supplied as a reference.
+          cat > /tmp/fixture-props.schema.json <<'JSON'
+          {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://risk-sentinel.org/ns/sparc/v1/fixture-props.schema.json",
+            "type": "array",
+            "items": { "$ref": "https://risk-sentinel.org/ns/sparc/v1/props.schema.json" }
+          }
+          JSON
+
+          npx --yes -p ajv-cli@5.0.0 -p ajv@8.20.0 \
+            ajv validate -s /tmp/fixture-props.schema.json -r "$S" -d /tmp/sparc-props.json --spec=draft2020
+          echo "PASS — ${TOTAL} props validated against the namespace schema."
+
+      - name: Canary — the batch validation must still reject a bad prop
+        run: |
+          set -euo pipefail
+          # A wrapper schema that resolved its $ref to nothing would validate
+          # an array of anything and report green over 150 unchecked props.
+          jq '. + [{"name":"fips-199","ns":"https://risk-sentinel.org/ns/sparc","value":"catastrophic"}]' \
+            /tmp/sparc-props.json > /tmp/sparc-props-planted.json
+
+          if npx --yes -p ajv-cli@5.0.0 -p ajv@8.20.0 \
+            ajv validate -s /tmp/fixture-props.schema.json -r schemas/sparc-namespace-props.v1.schema.json \
+            -d /tmp/sparc-props-planted.json --spec=draft2020 >/dev/null 2>&1; then
+            echo "::error::A prop with fips-199=catastrophic was ACCEPTED. The batch validation is not validating."
+            exit 1
+          fi
+          echo "PASS — the planted prop was rejected."
+
+      - name: Assert the foreign and absent-ns props are still there
+        run: |
+          set -euo pipefail
+          # The fixtures carry a prop from an authority Horizon does not own,
+          # CamelCase intact, and a prop with no ns at all. Both exist so the
+          # selective-validator rule above is exercised rather than asserted;
+          # losing them would make the job above pass while proving less.
+          FOREIGN=$(jq -s '[.. | objects | select(has("props")) | .props[] | select(.ns != null and (.ns | startswith("https://risk-sentinel.org/ns/sparc") | not))] | length' fixtures/oscal/*.json)
+          ABSENT=$(jq -s '[.. | objects | select(has("props")) | .props[] | select(has("ns") | not)] | length' fixtures/oscal/*.json)
+          echo "Foreign-namespace props: ${FOREIGN}; props with no ns: ${ABSENT}."
+          if [ "${FOREIGN:-0}" -lt 1 ] || [ "${ABSENT:-0}" -lt 1 ]; then
+            echo "::error::The fixtures no longer carry both a foreign-namespace prop and an ns-less prop."
+            exit 1
+          fi
+
   actionlint:
     name: Workflow lint
     runs-on: ubuntu-latest

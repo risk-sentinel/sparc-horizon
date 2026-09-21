@@ -1,0 +1,466 @@
+{
+  "plan-of-action-and-milestones": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "33ec59571f273b1e37a713975d8e7f042446cb7692737476ad4ca9e247f40dfa"
+                }
+              ],
+              "href": "./ssp-bgm-payments.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Payments Gateway system security plan",
+          "uuid": "01605f49-bb0e-5020-a245-b9f01c6ec078"
+        }
+      ]
+    },
+    "import-ssp": {
+      "href": "#01605f49-bb0e-5020-a245-b9f01c6ec078"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Bureau of Grants Management",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "BGM",
+          "type": "organization",
+          "uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "PAYMENTS Authorizing Official",
+          "type": "person",
+          "uuid": "6ce009f0-9c97-5dd7-9217-d800f0cf2a8a"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "PAYMENTS System Owner",
+          "type": "person",
+          "uuid": "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+        },
+        {
+          "member-of-organizations": [
+            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          ],
+          "name": "PAYMENTS Information System Security Officer",
+          "type": "person",
+          "uuid": "6f8d0179-9906-5125-b416-43f858b7633d"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "6ce009f0-9c97-5dd7-9217-d800f0cf2a8a"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "6f8d0179-9906-5125-b416-43f858b7633d"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Payments Gateway plan of action and milestones 2026-Q3",
+      "version": "1.0.0"
+    },
+    "poam-items": [
+      {
+        "description": "Tracked remediation of the ac-2.1 finding on Payments Gateway.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "b959f0a3-81ea-5c44-8314-e87879d034d7"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "b30ac6c6-6a48-5e34-9311-2d47bc861448"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "6d21713c-10f5-5b6a-b5fe-7f80a914f2f0"
+          }
+        ],
+        "title": "ac-2.1 remediation",
+        "uuid": "49f6c5c6-603b-5375-ad87-9a620685afb0"
+      },
+      {
+        "description": "Tracked remediation of the si-7 finding on Payments Gateway.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "6ef25be1-a51a-5a70-849c-e7d4b42a4b56"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "db7120be-5b0c-54fb-9eea-dff53d8bc26d"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "f24a6839-f3c8-575a-959f-953f3b41c27f"
+          }
+        ],
+        "title": "si-7 remediation",
+        "uuid": "540e85c6-d8ad-5bf1-aaea-3c396d86d468"
+      },
+      {
+        "description": "Tracked remediation of the IAM.4 finding on Payments Gateway.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "5c5f953b-6bff-5d78-8602-a5927e268180"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "6440c662-e188-505a-bbd8-004b08ea4b38"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "652d5a5d-2f3c-5147-91a3-fe76839d3e1b"
+          }
+        ],
+        "title": "IAM.4 remediation",
+        "uuid": "56f29e01-e4de-54c8-839c-5b64581b26f6"
+      },
+      {
+        "description": "Tracked remediation of the EC2.2 finding on Payments Gateway.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "de07acfc-50b5-59ff-9a94-c34a7bb13f38"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "7e409984-b58a-5805-9f69-5b17b15d48d0"
+          }
+        ],
+        "related-risks": [
+          {
+            "risk-uuid": "d73dc9b4-5710-5df3-b141-f1499f719837"
+          }
+        ],
+        "title": "EC2.2 remediation",
+        "uuid": "6ebdcd4b-02e6-52fc-ac44-74f0bb699391"
+      }
+    ],
+    "risks": [
+      {
+        "deadline": "2026-12-12T00:00:00Z",
+        "description": "Residual risk from the ac-2.1 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "b30ac6c6-6a48-5e34-9311-2d47bc861448"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for ac-2.1 on Payments Gateway.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-12-12T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: ac-2.1 remediation complete",
+                "type": "milestone",
+                "uuid": "14b40047-04db-5b37-b955-c27cc4197989"
+              }
+            ],
+            "title": "Remediate ac-2.1",
+            "uuid": "60e08506-a302-55c7-99b9-976a1547ed86"
+          }
+        ],
+        "statement": "Until ac-2.1 is satisfied, Payments Gateway carries this exposure.",
+        "status": "open",
+        "title": "ac-2.1 shortfall on PAYMENTS",
+        "uuid": "6d21713c-10f5-5b6a-b5fe-7f80a914f2f0"
+      },
+      {
+        "deadline": "2026-11-01T00:00:00Z",
+        "description": "Residual risk from the si-7 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "db7120be-5b0c-54fb-9eea-dff53d8bc26d"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for si-7 on Payments Gateway.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-11-01T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: si-7 remediation complete",
+                "type": "milestone",
+                "uuid": "2b35fcec-4ba6-583d-8f78-cb36bb0b0f5d"
+              }
+            ],
+            "title": "Remediate si-7",
+            "uuid": "2b9b65f7-b7e1-50f8-99e7-2b4b3a0535bf"
+          }
+        ],
+        "statement": "Until si-7 is satisfied, Payments Gateway carries this exposure.",
+        "status": "open",
+        "title": "si-7 shortfall on PAYMENTS",
+        "uuid": "f24a6839-f3c8-575a-959f-953f3b41c27f"
+      },
+      {
+        "deadline": "2026-11-05T00:00:00Z",
+        "description": "Residual risk from the IAM.4 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "6440c662-e188-505a-bbd8-004b08ea4b38"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for IAM.4 on Payments Gateway.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-11-05T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: IAM.4 remediation complete",
+                "type": "milestone",
+                "uuid": "e74253e8-1254-54e0-af05-d8c811af4dcc"
+              }
+            ],
+            "title": "Remediate IAM.4",
+            "uuid": "091a5c6c-0719-5aee-8b0e-7c2de8d1884b"
+          }
+        ],
+        "statement": "Until IAM.4 is satisfied, Payments Gateway carries this exposure.",
+        "status": "open",
+        "title": "IAM.4 shortfall on PAYMENTS",
+        "uuid": "652d5a5d-2f3c-5147-91a3-fe76839d3e1b"
+      },
+      {
+        "deadline": "2026-11-25T00:00:00Z",
+        "description": "Residual risk from the EC2.2 finding.",
+        "origins": [
+          {
+            "actors": [
+              {
+                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "role-id": "information-system-security-officer",
+                "type": "party"
+              }
+            ]
+          }
+        ],
+        "props": [
+          {
+            "name": "blocks-ato",
+            "ns": "https://risk-sentinel.org/ns/sparc",
+            "value": "true"
+          }
+        ],
+        "related-observations": [
+          {
+            "observation-uuid": "7e409984-b58a-5805-9f69-5b17b15d48d0"
+          }
+        ],
+        "remediations": [
+          {
+            "description": "Planned remediation for EC2.2 on Payments Gateway.",
+            "lifecycle": "planned",
+            "tasks": [
+              {
+                "description": "The milestone the projection engine reads as open before its date.",
+                "timing": {
+                  "on-date": {
+                    "date": "2026-11-25T00:00:00Z"
+                  }
+                },
+                "title": "Milestone: EC2.2 remediation complete",
+                "type": "milestone",
+                "uuid": "432f9e4b-2177-5fa0-93d8-40594582c459"
+              }
+            ],
+            "title": "Remediate EC2.2",
+            "uuid": "f387742a-cf0f-5296-90c6-d1f55a674541"
+          }
+        ],
+        "statement": "Until EC2.2 is satisfied, Payments Gateway carries this exposure.",
+        "status": "open",
+        "title": "EC2.2 shortfall on PAYMENTS",
+        "uuid": "d73dc9b4-5710-5df3-b141-f1499f719837"
+      }
+    ],
+    "system-id": {
+      "id": "bgm-payments",
+      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+    },
+    "uuid": "e8b98d2a-4f7d-5ebe-8f9a-2242e96af9cb"
+  }
+}

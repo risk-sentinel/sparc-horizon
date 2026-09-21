@@ -1,0 +1,57 @@
+{
+  "profile": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "683a8c16ece1974d76d9cf0ad0021228c5b36d4116b1a1ced98af06ab975078c"
+                }
+              ],
+              "href": "./catalog-nist-800-53-subset.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Fixture subset of NIST SP 800-53 Revision 5",
+          "uuid": "fbe288de-b7bc-5ca2-88ff-4da7560175c8"
+        }
+      ]
+    },
+    "imports": [
+      {
+        "href": "#fbe288de-b7bc-5ca2-88ff-4da7560175c8",
+        "include-controls": [
+          {
+            "with-ids": [
+              "ac-2",
+              "ac-2.1",
+              "au-6",
+              "au-6.1",
+              "cp-4",
+              "cp-9",
+              "ia-2",
+              "ia-5",
+              "sc-7",
+              "sc-28",
+              "si-4",
+              "si-7"
+            ]
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "published": "2026-09-15T00:00:00Z",
+      "remarks": "The resolved control set every fixture SSP imports. Where a control-implementation carries no source of its own, this profile is what `source-uuid` resolves to.",
+      "title": "Fixture moderate baseline",
+      "version": "1.0.0"
+    },
+    "uuid": "02db532b-5963-5617-a8bb-6f883ed54422"
+  }
+}

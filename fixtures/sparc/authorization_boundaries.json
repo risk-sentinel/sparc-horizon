@@ -1,0 +1,78 @@
+{
+  "collection": "authorization_boundaries",
+  "endpoint": "GET /api/v1/authorization_boundaries",
+  "note": "Boundary tier. One SSP each.",
+  "count": 7,
+  "data": [
+    {
+      "id": 1,
+      "slug": "ods-portal",
+      "name": "Public Portal",
+      "organization_id": 1,
+      "organization_slug": "ods",
+      "fips_199": "moderate",
+      "next_decision_date": "2026-10-11",
+      "oscal_ssp_uuid": "0db913d7-c382-536f-8c67-b4b52b4e67e6"
+    },
+    {
+      "id": 2,
+      "slug": "ods-identity",
+      "name": "Identity Services",
+      "organization_id": 1,
+      "organization_slug": "ods",
+      "fips_199": "high",
+      "next_decision_date": "2026-11-02",
+      "oscal_ssp_uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+    },
+    {
+      "id": 3,
+      "slug": "bgm-grants",
+      "name": "Grants Platform",
+      "organization_id": 2,
+      "organization_slug": "bgm",
+      "fips_199": "high",
+      "next_decision_date": "2026-10-24",
+      "oscal_ssp_uuid": "93bb33d1-a2ad-5eee-ac9e-2894f09162f2"
+    },
+    {
+      "id": 4,
+      "slug": "bgm-payments",
+      "name": "Payments Gateway",
+      "organization_id": 2,
+      "organization_slug": "bgm",
+      "fips_199": "high",
+      "next_decision_date": "2026-12-01",
+      "oscal_ssp_uuid": "01605f49-bb0e-5020-a245-b9f01c6ec078"
+    },
+    {
+      "id": 5,
+      "slug": "ndi-datalake",
+      "name": "Research Data Lake",
+      "organization_id": 3,
+      "organization_slug": "ndi",
+      "fips_199": "moderate",
+      "next_decision_date": "2027-01-15",
+      "oscal_ssp_uuid": "e69b2d2b-2f73-530d-a2ce-460f15fce279"
+    },
+    {
+      "id": 6,
+      "slug": "ndi-analytics",
+      "name": "Analytics Workbench",
+      "organization_id": 3,
+      "organization_slug": "ndi",
+      "fips_199": "low",
+      "next_decision_date": "2027-02-20",
+      "oscal_ssp_uuid": "ac72c68e-fa06-5948-9aba-c323c96f6164"
+    },
+    {
+      "id": 7,
+      "slug": "coa-fieldops",
+      "name": "Field Operations",
+      "organization_id": 4,
+      "organization_slug": "coa",
+      "fips_199": "moderate",
+      "next_decision_date": "2026-10-30",
+      "oscal_ssp_uuid": "6c6f0631-051a-5412-9e5c-d1772725f170"
+    }
+  ]
+}

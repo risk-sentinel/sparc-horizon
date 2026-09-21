@@ -1,0 +1,11 @@
+{
+  "statement": "The controls listed were reviewed for Public Portal and are implemented as described in the system security plan.",
+  "boundary": "ods-portal",
+  "period": "2026-Q3",
+  "controls": [
+    "cp-4",
+    "ia-5"
+  ],
+  "signed-by-role": "information-system-security-officer",
+  "synthetic": true
+}

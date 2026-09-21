@@ -1,0 +1,15 @@
+{
+  "collection": "federation_peers",
+  "endpoint": "GET /api/v1/federation_peers",
+  "note": "Federation tier. The OSCAL join key is the party UUID, which appears in every SSP beneath it.",
+  "count": 1,
+  "data": [
+    {
+      "id": 1,
+      "slug": "cascade",
+      "name": "Cascade Federation",
+      "short_name": "CASCADE",
+      "oscal_party_uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+    }
+  ]
+}

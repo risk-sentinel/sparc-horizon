@@ -402,19 +402,32 @@
               {
                 "uuid": "050f4a00-be41-5e39-8f1a-500b68be1308",
                 "control-id": "si-10",
-                "description": "Anything OSCAL cannot model is constrained by the namespace props schema, and documents are validated on ingestion.",
+                "description": "Every field an identifier is derived from is validated and canonicalised before it is hashed, and rejected rather than repaired when it does not conform: a value carrying the unit separator, a control identifier outside its issuing vocabulary, a malformed period label, a component that is not a UUID, an unresolved source-uuid. Validation of whole documents on ingestion is still planned and arrives with internal/oscal in P1.",
                 "props": [
                   {
                     "name": "implementation-status",
-                    "value": "planned"
+                    "value": "partial"
                   }
                 ],
                 "links": [
                   {
                     "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/docs/03-data-model.md",
                     "rel": "reference"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/internal/canonical",
+                    "rel": "implementation"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/internal/keys",
+                    "rel": "implementation"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/fixtures/key-vectors.v1.json",
+                    "rel": "evidence"
                   }
-                ]
+                ],
+                "remarks": "Configuration dependency: the rejection behaviour is the contract, not a defensive extra. A caller that cannot resolve a source-uuid, or that supplies a control identifier from an authority other than the one the source resolves to, gets an error rather than an identifier. 11 of the refusals are published in fixtures/key-vectors.v1.json so the Ruby and Python ports of the grammar (sparc#1161) inherit them."
               }
             ]
           }

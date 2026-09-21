@@ -8,11 +8,11 @@ the rule that a claim is worth what its evidence says are there, not repeated he
 design reference is the only thing behind it. `inherited` — another repository's
 control, recorded so the boundary is visible.
 
-**Scope note.** Horizon is at the design and prototype-plan stage: there is no
-application source yet. Every application-layer row is therefore `planned`, and the
-`implemented` rows are all repository and pipeline controls. That ratio is expected to
-invert through phases P1–P3, and an application row that reaches `implemented` without a
-code location is a defect in this table.
+**Scope note.** Horizon is at the design and prototype-plan stage. There is now a little
+application source — the identifier grammar and the fixture generator (#38, #36) — and
+exactly one application-layer row has moved off `planned` because of it. Everything else
+is still design. That ratio is expected to invert through phases P1–P3, and an application
+row that reaches `implemented` without a code location is a defect in this table.
 
 ---
 
@@ -37,6 +37,20 @@ code location is a defect in this table.
 | AC-6 | Least privilege | The emit role is scoped to this repository's prefix and deliberately not granted the `sparc/*` prefix the in-boundary producers hold, because Horizon sits above the SPARC authorization boundary. A write to the wrong boundary is refused rather than silently accepted | An attempted write outside the scoped prefix is denied | `.github/workflows/secret-scan-hdf-emit.yml`; role owned by `sparc-iac` |
 | IA-5 | Authenticator management | CI authenticates to AWS by OIDC federation and receives short-lived credentials. No static access key exists to rotate, leak or scan for | The workflow's `id-token: write` permission and role assumption | `.github/workflows/` |
 | SC-28 | Protection of information at rest | Evidence uploads send `x-amz-server-side-encryption: aws:kms` on the request rather than relying on the bucket default, because the bucket policy tests the request header and default encryption does not populate the condition key (#10) | `ServerSideEncryption: aws:kms` on the landed object, read back with `head-object` | `.github/workflows/secret-scan-hdf-emit.yml`, `.github/workflows/sonarqube-hdf-emit.yml` |
+
+## Partial — application layer
+
+| Control | Title | Status | Implementation | Evidence | Location |
+|---|---|---|---|---|---|
+| SI-10 | Information input validation | `partial` | Every field an identifier is derived from is validated and canonicalised before it is hashed, and **rejected rather than repaired** when it does not conform: a value carrying the unit separator, a control identifier outside its issuing vocabulary, a malformed period, a component that is not a UUID, an unresolved `source-uuid`. Rejection is the design choice — a repaired identifier still validates, still derives a UUID, and may name the wrong object. **What is still `planned`** is validation of whole documents on ingestion, which arrives with `internal/oscal` in P1 | Over seventy rejection cases across the `internal/canonical` and `internal/keys` tests — 76 at the time of writing, counted by hand — of which **11 are published** in `fixtures/key-vectors.v1.json`, so the Ruby and Python ports inherit the same refusals rather than re-deciding them | `internal/canonical/`, `internal/keys/`, `fixtures/key-vectors.v1.json` |
+
+**Why this is one row and not three.** The same code is also the reason two federated peers
+cannot mint different identifiers for one object, which is an integrity property rather than an
+input-validation one. It is claimed once, here, under the control whose scope it actually sits
+in; SI-7 stays `planned` until evidence resources are hashed and verified by running code rather
+than by a fixture generator.
+
+---
 
 ### One thing this table must keep saying out loud
 
@@ -66,7 +80,7 @@ each becomes a step-9 obligation on the issue that implements it.
 | SC-8 | Transmission confidentiality and integrity | mTLS to SPARC peers over the existing federation trust fabric; bundles verified before ingestion | `docs/07-security.md` |
 | SC-12, SC-13 | Key establishment and management, cryptographic protection | Signing certificate and key referenced by `HORIZON_SIGNING_CERT`, held in the platform secret store — the store itself is inherited | `docs/08-build-deploy.md` |
 | SI-7 | Software, firmware and information integrity | Evidence resources are hashed in back-matter; the chain from resource to observation to finding to risk to POA&M item is fixed and verifiable | `docs/06-attestation-workflow.md` |
-| SI-10 | Information input validation | Anything OSCAL cannot model is constrained by `schemas/sparc-namespace-props.v1.schema.json`; documents are validated on ingestion | `docs/03-data-model.md`, `schemas/` |
+| SI-10 | Information input validation | **Partial — see the row above.** What remains planned is validation of *documents* on ingestion; what exists is validation of the *fields* an identifier is derived from | `docs/03-data-model.md`, `schemas/` |
 | CA-5 | Plan of action and milestones | POA&M items are first-class in the evidence chain, and an open milestone before the projection date is one of the three ways a control reads as down | `docs/05-projection-engine.md` |
 | CA-7 | Continuous monitoring | The projection engine *is* the continuous-monitoring answer: state on date X, with expiry driven by the observation's native `expires` | `docs/05-projection-engine.md` |
 | CM-2 | Baseline configuration | The container and env-var contract | `docs/08-build-deploy.md` |
@@ -109,7 +123,7 @@ an owner, which is what it is — not as a claim, and not as a missing capabilit
 | Layer | implemented | partial | planned | inherited |
 |---|---|---|---|---|
 | Repository and pipeline | 16 | 1 | 0 | — |
-| Application | 0 | 0 | 15 | — |
+| Application | 0 | 1 | 14 | — |
 | Platform | — | — | — | 9 |
 
 Counts are maintained by hand and checked at review. The application row moving off zero

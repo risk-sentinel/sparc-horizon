@@ -1,0 +1,1151 @@
+{
+  "assessment-results": {
+    "back-matter": {
+      "resources": [
+        {
+          "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
+          "props": [
+            {
+              "name": "evidence-kind",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "hdf-results"
+            },
+            {
+              "name": "signed-by",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+            }
+          ],
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "785fbc8238158d0d7fc727b86811edf411f2f936fbe10b2ca2a0f69784018e94"
+                }
+              ],
+              "href": "../evidence/coa-fieldops-scan-2026-Q3.json",
+              "media-type": "application/json"
+            }
+          ],
+          "title": "Field Operations normalised scan results 2026-Q3",
+          "uuid": "1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+        },
+        {
+          "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
+          "props": [
+            {
+              "name": "evidence-kind",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "manual-attestation"
+            },
+            {
+              "name": "signed-by",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+            }
+          ],
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "b7d66a086efe098e8cabfa0921b5c2f96aa907f8bee675f0f3ebf00701ce2e45"
+                }
+              ],
+              "href": "../evidence/coa-fieldops-attestation-2026-Q3.json",
+              "media-type": "application/json"
+            }
+          ],
+          "title": "Field Operations manual attestation 2026-Q3",
+          "uuid": "16e248b9-1c7a-515b-b73e-4e130257bea9"
+        },
+        {
+          "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
+          "rlinks": [
+            {
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "391ef5a6d538dc9ce916f67227ebba4fc6eddbf9dc246f36169775f42790819b"
+                }
+              ],
+              "href": "./ssp-coa-fieldops.json",
+              "media-type": "application/oscal+json"
+            }
+          ],
+          "title": "Field Operations system security plan",
+          "uuid": "6c6f0631-051a-5412-9e5c-d1772725f170"
+        },
+        {
+          "citation": {
+            "text": "Field Operations continuous monitoring plan, 2026-Q3"
+          },
+          "description": "Cited rather than modelled: these fixtures carry no assessment-plan document.",
+          "title": "Field Operations continuous monitoring plan",
+          "uuid": "cb6172d1-4a50-5d0e-842f-29e33e067e32"
+        }
+      ]
+    },
+    "import-ap": {
+      "href": "#cb6172d1-4a50-5d0e-842f-29e33e067e32"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.2",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+        },
+        {
+          "member-of-organizations": [
+            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          ],
+          "name": "Coastal Operations Agency",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://risk-sentinel.org/ns/sparc",
+              "value": "organization"
+            }
+          ],
+          "short-name": "COA",
+          "type": "organization",
+          "uuid": "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+        },
+        {
+          "member-of-organizations": [
+            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+          ],
+          "name": "FIELDOPS Authorizing Official",
+          "type": "person",
+          "uuid": "871a0b35-c244-5eab-96af-0787fe21717b"
+        },
+        {
+          "member-of-organizations": [
+            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+          ],
+          "name": "FIELDOPS System Owner",
+          "type": "person",
+          "uuid": "e303760c-e28d-5fc0-841e-ee0f19a4b31e"
+        },
+        {
+          "member-of-organizations": [
+            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+          ],
+          "name": "FIELDOPS Information System Security Officer",
+          "type": "person",
+          "uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "871a0b35-c244-5eab-96af-0787fe21717b"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "e303760c-e28d-5fc0-841e-ee0f19a4b31e"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Field Operations assessment results 2026-Q3",
+      "version": "1.0.0"
+    },
+    "results": [
+      {
+        "attestations": [
+          {
+            "parts": [
+              {
+                "class": "cp-4",
+                "name": "asset",
+                "prose": "The Information System Security Officer attests that cp-4 is implemented for Field Operations in 2026-Q3.",
+                "title": "Attestation for cp-4",
+                "uuid": "274b791e-ef41-5d5a-8348-d314a31f4b81"
+              },
+              {
+                "class": "ia-5",
+                "name": "asset",
+                "prose": "The Information System Security Officer attests that ia-5 is implemented for Field Operations in 2026-Q3.",
+                "title": "Attestation for ia-5",
+                "uuid": "009476a3-653a-58d7-bdfd-d7cace48ed6b"
+              }
+            ],
+            "responsible-parties": [
+              {
+                "party-uuids": [
+                  "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                ],
+                "role-id": "information-system-security-officer"
+              }
+            ]
+          }
+        ],
+        "description": "Continuous monitoring results for Field Operations.",
+        "end": "2026-09-14T00:00:00Z",
+        "findings": [
+          {
+            "description": "The assessment of au-6.1 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "d4d5dd84-9edb-50c3-98cd-0d27756a6248"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "6f5477ce-0424-5a30-98a3-7e0d0cfffae7"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "au-6_1_obj",
+              "title": "Audit Record Review, Analysis, and Reporting | Automated Process Integration",
+              "type": "objective-id"
+            },
+            "title": "au-6.1 is not satisfied on FIELDOPS",
+            "uuid": "9f17a4ec-1661-584d-96a3-9478dfecf78b"
+          },
+          {
+            "description": "The assessment of sc-7 did not satisfy the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "c12e633b-f147-5d33-8bef-9e4ebb6deef4"
+              }
+            ],
+            "related-risks": [
+              {
+                "risk-uuid": "ce75b1db-0b76-5d7f-a125-1a5ef439f96b"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "not-satisfied"
+              },
+              "target-id": "sc-7_obj",
+              "title": "Boundary Protection",
+              "type": "objective-id"
+            },
+            "title": "sc-7 is not satisfied on FIELDOPS",
+            "uuid": "3ebbc6ba-adb3-57f4-bd4d-d8c2fe6d5992"
+          }
+        ],
+        "observations": [
+          {
+            "collected": "2026-09-04T00:00:00Z",
+            "description": "Assessment of ac-2 against Field Operations for 2026-Q3.",
+            "expires": "2027-04-06T00:00:00Z",
+            "links": [
+              {
+                "href": "#30cb119e-7ad7-5111-ab76-089d1b00dd9a",
+                "rel": "assessed-control",
+                "resource-fragment": "ac-2",
+                "text": "Implemented requirement for ac-2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "type": "component"
+              }
+            ],
+            "title": "ac-2 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "48233123-5b6e-51a8-8360-2515ad534000"
+          },
+          {
+            "collected": "2026-09-01T00:00:00Z",
+            "description": "Assessment of ac-2.1 against Field Operations for 2026-Q3.",
+            "expires": "2027-01-31T00:00:00Z",
+            "links": [
+              {
+                "href": "#a38c7953-421b-5835-b1d6-9f9b2b71f9b7",
+                "rel": "assessed-control",
+                "resource-fragment": "ac-2.1",
+                "text": "Implemented requirement for ac-2.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "type": "component"
+              }
+            ],
+            "title": "ac-2.1 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "683de7d5-c9d6-535b-8f08-97568bf54722"
+          },
+          {
+            "collected": "2026-08-31T00:00:00Z",
+            "description": "Assessment of au-6 against Field Operations for 2026-Q3.",
+            "expires": "2027-10-18T00:00:00Z",
+            "links": [
+              {
+                "href": "#235574dd-8e01-56c5-96c9-102827b43a69",
+                "rel": "assessed-control",
+                "resource-fragment": "au-6",
+                "text": "Implemented requirement for au-6"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "type": "component"
+              }
+            ],
+            "title": "au-6 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "58a42d25-63d2-507f-b85d-14e538160f51"
+          },
+          {
+            "collected": "2026-09-13T00:00:00Z",
+            "description": "Assessment of au-6.1 against Field Operations for 2026-Q3.",
+            "expires": "2026-11-16T00:00:00Z",
+            "links": [
+              {
+                "href": "#0542eb5a-6f7a-520b-a15e-503a305edba4",
+                "rel": "assessed-control",
+                "resource-fragment": "au-6.1",
+                "text": "Implemented requirement for au-6.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "type": "component"
+              }
+            ],
+            "title": "au-6.1 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "d4d5dd84-9edb-50c3-98cd-0d27756a6248"
+          },
+          {
+            "collected": "2026-09-01T00:00:00Z",
+            "description": "Assessment of cp-4 against Field Operations for 2026-Q3.",
+            "expires": "2026-09-19T00:00:00Z",
+            "links": [
+              {
+                "href": "#ea874aea-1c3f-5048-a978-b04090675c16",
+                "rel": "assessed-control",
+                "resource-fragment": "cp-4",
+                "text": "Implemented requirement for cp-4"
+              }
+            ],
+            "methods": [
+              "EXAMINE"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations manual attestation 2026-Q3",
+                "href": "#16e248b9-1c7a-515b-b73e-4e130257bea9"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "type": "component"
+              }
+            ],
+            "title": "cp-4 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "410093f4-6683-582a-8251-0eba41e972b4"
+          },
+          {
+            "collected": "2026-08-26T00:00:00Z",
+            "description": "Assessment of cp-9 against Field Operations for 2026-Q3.",
+            "expires": "2027-05-12T00:00:00Z",
+            "links": [
+              {
+                "href": "#b90fedb6-0d29-59b1-86ec-465a00a5582d",
+                "rel": "assessed-control",
+                "resource-fragment": "cp-9",
+                "text": "Implemented requirement for cp-9"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "type": "component"
+              }
+            ],
+            "title": "cp-9 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "6ee94d0f-8d61-5300-8873-8bf3b2abac90"
+          },
+          {
+            "collected": "2026-08-30T00:00:00Z",
+            "description": "Assessment of ia-2 against Field Operations for 2026-Q3.",
+            "expires": "2027-03-25T00:00:00Z",
+            "links": [
+              {
+                "href": "#a5064b8d-63de-57a8-beef-3a3ebf6fd4c3",
+                "rel": "assessed-control",
+                "resource-fragment": "ia-2",
+                "text": "Implemented requirement for ia-2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "type": "component"
+              }
+            ],
+            "title": "ia-2 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "b50dc072-e4c9-585f-b716-60d67ac853c8"
+          },
+          {
+            "collected": "2026-08-25T00:00:00Z",
+            "description": "Assessment of ia-5 against Field Operations for 2026-Q3.",
+            "expires": "2027-04-09T00:00:00Z",
+            "links": [
+              {
+                "href": "#1d46748d-9fc1-5f82-90b9-3fd118e81dbc",
+                "rel": "assessed-control",
+                "resource-fragment": "ia-5",
+                "text": "Implemented requirement for ia-5"
+              }
+            ],
+            "methods": [
+              "EXAMINE"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations manual attestation 2026-Q3",
+                "href": "#16e248b9-1c7a-515b-b73e-4e130257bea9"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "type": "component"
+              }
+            ],
+            "title": "ia-5 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "958fc19d-9bf5-571a-866a-6df536803283"
+          },
+          {
+            "collected": "2026-09-13T00:00:00Z",
+            "description": "Assessment of sc-7 against Field Operations for 2026-Q3.",
+            "expires": "2026-10-31T00:00:00Z",
+            "links": [
+              {
+                "href": "#0f4f8b73-716e-5f97-820c-6bf96cd1897f",
+                "rel": "assessed-control",
+                "resource-fragment": "sc-7",
+                "text": "Implemented requirement for sc-7"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "type": "component"
+              }
+            ],
+            "title": "sc-7 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "c12e633b-f147-5d33-8bef-9e4ebb6deef4"
+          },
+          {
+            "collected": "2026-08-30T00:00:00Z",
+            "description": "Assessment of sc-28 against Field Operations for 2026-Q3.",
+            "expires": "2027-08-19T00:00:00Z",
+            "links": [
+              {
+                "href": "#3a853096-ee5f-564c-b06b-d519d7500e1e",
+                "rel": "assessed-control",
+                "resource-fragment": "sc-28",
+                "text": "Implemented requirement for sc-28"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "type": "component"
+              }
+            ],
+            "title": "sc-28 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "1ed77c7c-618f-5192-a62f-962c9125ef1c"
+          },
+          {
+            "collected": "2026-08-29T00:00:00Z",
+            "description": "Assessment of si-4 against Field Operations for 2026-Q3.",
+            "expires": "2026-09-24T00:00:00Z",
+            "links": [
+              {
+                "href": "#444d3645-7b7b-521f-b148-ed85e30f37cb",
+                "rel": "assessed-control",
+                "resource-fragment": "si-4",
+                "text": "Implemented requirement for si-4"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "type": "component"
+              }
+            ],
+            "title": "si-4 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "65785b35-b5c5-5a73-8a6f-b37eb183cc26"
+          },
+          {
+            "collected": "2026-08-25T00:00:00Z",
+            "description": "Assessment of si-7 against Field Operations for 2026-Q3.",
+            "expires": "2027-09-24T00:00:00Z",
+            "links": [
+              {
+                "href": "#e9d6f181-552f-5da2-a901-30200325fd41",
+                "rel": "assessed-control",
+                "resource-fragment": "si-7",
+                "text": "Implemented requirement for si-7"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "type": "component"
+              }
+            ],
+            "title": "si-7 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "73c0e8d4-85c5-5a49-9c09-7fe77408230b"
+          },
+          {
+            "collected": "2026-09-12T00:00:00Z",
+            "description": "Assessment of ACM.1 against Field Operations for 2026-Q3.",
+            "expires": "2027-05-20T00:00:00Z",
+            "links": [
+              {
+                "href": "#17224a91-09fd-5eca-808d-7845a55e996b",
+                "rel": "assessed-control",
+                "resource-fragment": "ACM.1",
+                "text": "Implemented requirement for ACM.1"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "6dcfeb85-7b70-5c40-ad3c-c77b59992a9b",
+                "type": "component"
+              }
+            ],
+            "title": "ACM.1 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "9b447164-7369-5eae-95be-f36bb36eaede"
+          },
+          {
+            "collected": "2026-08-29T00:00:00Z",
+            "description": "Assessment of IAM.4 against Field Operations for 2026-Q3.",
+            "expires": "2027-04-29T00:00:00Z",
+            "links": [
+              {
+                "href": "#2fba0f32-bab4-58ed-bc68-07775b85656f",
+                "rel": "assessed-control",
+                "resource-fragment": "IAM.4",
+                "text": "Implemented requirement for IAM.4"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "6dcfeb85-7b70-5c40-ad3c-c77b59992a9b",
+                "type": "component"
+              }
+            ],
+            "title": "IAM.4 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "0d60ab66-3129-584a-b42b-c76b3c0ca561"
+          },
+          {
+            "collected": "2026-09-08T00:00:00Z",
+            "description": "Assessment of S3.5 against Field Operations for 2026-Q3.",
+            "expires": "2027-07-08T00:00:00Z",
+            "links": [
+              {
+                "href": "#1896ca38-921e-5454-82c8-8d53349917d4",
+                "rel": "assessed-control",
+                "resource-fragment": "S3.5",
+                "text": "Implemented requirement for S3.5"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "6dcfeb85-7b70-5c40-ad3c-c77b59992a9b",
+                "type": "component"
+              }
+            ],
+            "title": "S3.5 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "aa9ec06f-e07f-5dfe-a906-6c575fc2a128"
+          },
+          {
+            "collected": "2026-09-14T00:00:00Z",
+            "description": "Assessment of EC2.2 against Field Operations for 2026-Q3.",
+            "expires": "2027-07-17T00:00:00Z",
+            "links": [
+              {
+                "href": "#082e05a6-2099-54b8-9b77-0020bf3dbc7c",
+                "rel": "assessed-control",
+                "resource-fragment": "EC2.2",
+                "text": "Implemented requirement for EC2.2"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "description": "Field Operations normalised scan results 2026-Q3",
+                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+              }
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "6dcfeb85-7b70-5c40-ad3c-c77b59992a9b",
+                "type": "component"
+              }
+            ],
+            "title": "EC2.2 on FIELDOPS",
+            "types": [
+              "control-objective"
+            ],
+            "uuid": "3615f07e-4e0e-52cf-8682-c7fa6456ed21"
+          }
+        ],
+        "reviewed-controls": {
+          "control-selections": [
+            {
+              "description": "Controls assessed for Field Operations in 2026-Q3.",
+              "include-controls": [
+                {
+                  "control-id": "ac-2"
+                },
+                {
+                  "control-id": "ac-2.1"
+                },
+                {
+                  "control-id": "au-6"
+                },
+                {
+                  "control-id": "au-6.1"
+                },
+                {
+                  "control-id": "cp-4"
+                },
+                {
+                  "control-id": "cp-9"
+                },
+                {
+                  "control-id": "ia-2"
+                },
+                {
+                  "control-id": "ia-5"
+                },
+                {
+                  "control-id": "sc-7"
+                },
+                {
+                  "control-id": "sc-28"
+                },
+                {
+                  "control-id": "si-4"
+                },
+                {
+                  "control-id": "si-7"
+                },
+                {
+                  "control-id": "ACM.1"
+                },
+                {
+                  "control-id": "IAM.4"
+                },
+                {
+                  "control-id": "S3.5"
+                },
+                {
+                  "control-id": "EC2.2"
+                }
+              ]
+            }
+          ]
+        },
+        "risks": [
+          {
+            "description": "Residual risk from the au-6.1 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "true"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "d4d5dd84-9edb-50c3-98cd-0d27756a6248"
+              }
+            ],
+            "statement": "Until au-6.1 is satisfied, Field Operations carries this exposure.",
+            "status": "open",
+            "title": "au-6.1 shortfall on FIELDOPS",
+            "uuid": "6f5477ce-0424-5a30-98a3-7e0d0cfffae7"
+          },
+          {
+            "description": "Residual risk from the sc-7 finding.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "props": [
+              {
+                "name": "blocks-ato",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "false"
+              },
+              {
+                "name": "condition-expires",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "2026-12-30"
+              },
+              {
+                "name": "trigger",
+                "ns": "https://risk-sentinel.org/ns/sparc",
+                "value": "score<0.85"
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "c12e633b-f147-5d33-8bef-9e4ebb6deef4"
+              }
+            ],
+            "risk-log": {
+              "entries": [
+                {
+                  "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
+                  "logged-by": [
+                    {
+                      "party-uuid": "871a0b35-c244-5eab-96af-0787fe21717b",
+                      "role-id": "authorizing-official"
+                    }
+                  ],
+                  "start": "2026-09-08T00:00:00Z",
+                  "status-change": "deviation-approved",
+                  "title": "Risk accepted with conditions",
+                  "uuid": "52976014-ae58-5df0-86ba-e2a0003c3fa1"
+                }
+              ]
+            },
+            "statement": "Until sc-7 is satisfied, Field Operations carries this exposure.",
+            "status": "deviation-approved",
+            "title": "sc-7 shortfall on FIELDOPS",
+            "uuid": "ce75b1db-0b76-5d7f-a125-1a5ef439f96b"
+          }
+        ],
+        "start": "2026-08-25T00:00:00Z",
+        "title": "Field Operations assessment 2026-Q3",
+        "uuid": "8f576876-8ad0-5442-860f-312c891b3cab"
+      }
+    ],
+    "uuid": "c7b05e16-9caf-5003-9986-a958f53cabd6"
+  }
+}

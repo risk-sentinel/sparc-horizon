@@ -50,9 +50,23 @@ Machine-readable contracts:
 - [`schemas/sparc-namespace-props.v1.schema.json`](schemas/sparc-namespace-props.v1.schema.json): the namespace props Horizon depends on
 - [`api/openapi.yaml`](api/openapi.yaml): API v0 skeleton
 - [`docs/compliance/oscal/cdefs/`](docs/compliance/oscal/cdefs/): OSCAL 1.2.x component definitions for Horizon itself
+- [`fixtures/key-vectors.v1.json`](fixtures/key-vectors.v1.json): test vectors for the UUIDv5 key grammar, for the Ruby and Python ports
+
+The fixture federation itself — four organizations, seven authorization boundaries, twenty
+systems, OSCAL 1.2.2 — is generated into [`fixtures/`](fixtures/README.md):
+
+```bash
+go run ./cmd/genfixtures     # rewrites fixtures/ wholesale; never edit it by hand
+go test ./...                # includes the regeneration-stability check
+```
 
 ## Placeholders to replace
 
 - The namespace URI `https://risk-sentinel.org/ns/sparc` is illustrative.
+- The **federation namespace UUID is not registered** (`sparc#1155`), so every identifier in
+  `fixtures/` is derived under a provisional namespace and is regenerated when the real one
+  lands. The fixtures are buildable and stable; they are not frozen.
 - The KSI theme mapping in the demo is illustrative; real mappings come from SPARC.
-- `go-oscal` coverage of OSCAL 1.2.x is a phase 0 decision, not an assumption.
+- ~~`go-oscal` coverage of OSCAL 1.2.x is a phase 0 decision, not an assumption.~~ **Decided
+  (#26): `go-oscal`, pinned.** The fixtures are emitted through its `oscal-1-2-2` types and
+  validated against the 1.2.2 schema in `go test`.

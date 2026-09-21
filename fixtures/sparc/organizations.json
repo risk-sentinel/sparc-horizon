@@ -1,0 +1,40 @@
+{
+  "collection": "organizations",
+  "endpoint": "GET /api/v1/organizations",
+  "note": "Organization tier. oscal_party_uuid is what `parent-uuid` on a boundary SSP points at.",
+  "count": 4,
+  "data": [
+    {
+      "id": 1,
+      "slug": "ods",
+      "name": "Office of Digital Services",
+      "short_name": "ODS",
+      "federation_slug": "cascade",
+      "oscal_party_uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707"
+    },
+    {
+      "id": 2,
+      "slug": "bgm",
+      "name": "Bureau of Grants Management",
+      "short_name": "BGM",
+      "federation_slug": "cascade",
+      "oscal_party_uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+    },
+    {
+      "id": 3,
+      "slug": "ndi",
+      "name": "National Data Institute",
+      "short_name": "NDI",
+      "federation_slug": "cascade",
+      "oscal_party_uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+    },
+    {
+      "id": 4,
+      "slug": "coa",
+      "name": "Coastal Operations Agency",
+      "short_name": "COA",
+      "federation_slug": "cascade",
+      "oscal_party_uuid": "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+    }
+  ]
+}

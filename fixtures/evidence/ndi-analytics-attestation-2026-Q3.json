@@ -1,0 +1,11 @@
+{
+  "statement": "The controls listed were reviewed for Analytics Workbench and are implemented as described in the system security plan.",
+  "boundary": "ndi-analytics",
+  "period": "2026-Q3",
+  "controls": [
+    "cp-4",
+    "ia-5"
+  ],
+  "signed-by-role": "information-system-security-officer",
+  "synthetic": true
+}

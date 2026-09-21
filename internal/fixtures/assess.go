@@ -147,8 +147,8 @@ func (g *Generator) assess(b Boundary, artifacts []evidenceArtifact, sspBytes []
 			Title:       a.title,
 			Description: "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
 			Props: &[]oscal.Property{
-				sparcProp("evidence-kind", a.kind),
-				sparcProp("signed-by", iso),
+				sparcProp(PropEvidenceKind, a.kind),
+				sparcProp(PropSignedBy, iso),
 			},
 			Rlinks: &[]oscal.ResourceLink{{
 				Href:      "../" + a.path,
@@ -266,7 +266,7 @@ func (g *Generator) assess(b Boundary, artifacts []evidenceArtifact, sspBytes []
 			},
 		})
 
-		props := []oscal.Property{sparcProp("blocks-ato", boolValue(j.blocksATO))}
+		props := []oscal.Property{sparcProp(PropBlocksATO, boolValue(j.blocksATO))}
 		status := "open"
 		var riskLog *oscal.RiskLog
 		if j.accepted {
@@ -274,8 +274,8 @@ func (g *Generator) assess(b Boundary, artifacts []evidenceArtifact, sspBytes []
 			// acceptance expires by itself rather than by someone remembering.
 			status = "deviation-approved"
 			props = append(props,
-				sparcProp("condition-expires", days(90+g.rng.intn(120)).Format("2006-01-02")),
-				sparcProp("trigger", "score<0.85"),
+				sparcProp(PropConditionExpires, days(90+g.rng.intn(120)).Format("2006-01-02")),
+				sparcProp(PropTrigger, "score<0.85"),
 			)
 			decision, err := g.keys.AODecision(ssp, risk.UUID.String(), Period)
 			if err != nil {

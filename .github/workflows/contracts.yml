@@ -151,9 +151,9 @@ jobs:
             exit 1
           fi
 
-          # One validation over the whole array rather than one npx call per
-          # prop: a wrapper schema whose items $ref the namespace schema by
-          # its $id, with the real schema supplied as a reference.
+          # One validation over the whole array rather than one call per prop:
+          # a wrapper schema whose items $ref the namespace schema by its $id,
+          # with the real schema supplied as a reference.
           cat > /tmp/fixture-props.schema.json <<'JSON'
           {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -163,8 +163,19 @@ jobs:
           }
           JSON
 
-          npx --yes -p ajv-cli@5.0.0 -p ajv@8.20.0 \
-            ajv validate -s /tmp/fixture-props.schema.json -r "$S" -d /tmp/sparc-props.json --spec=draft2020
+          # Installed with --ignore-scripts and called directly, rather than
+          # through `npx`. npx resolves and executes a package on demand,
+          # running its install lifecycle scripts — arbitrary code from the
+          # registry — before the tool does anything. This is the pattern
+          # sonarqube-hdf-emit.yml already uses and the one SR-3 in
+          # docs/compliance/nist-sp800-53-rev5-mapping.md claims for this
+          # repository. The other jobs in this file still use npx; that is
+          # pre-existing and tracked on #42, not something this job should
+          # quietly inherit.
+          npm install --prefix /tmp/ajv --no-fund --no-audit --ignore-scripts \
+            ajv-cli@5.0.0 ajv@8.20.0
+          /tmp/ajv/node_modules/.bin/ajv validate \
+            -s /tmp/fixture-props.schema.json -r "$S" -d /tmp/sparc-props.json --spec=draft2020
           echo "PASS — ${TOTAL} props validated against the namespace schema."
 
       - name: Canary — the batch validation must still reject a bad prop
@@ -175,8 +186,8 @@ jobs:
           jq '. + [{"name":"fips-199","ns":"https://risk-sentinel.org/ns/sparc","value":"catastrophic"}]' \
             /tmp/sparc-props.json > /tmp/sparc-props-planted.json
 
-          if npx --yes -p ajv-cli@5.0.0 -p ajv@8.20.0 \
-            ajv validate -s /tmp/fixture-props.schema.json -r schemas/sparc-namespace-props.v1.schema.json \
+          if /tmp/ajv/node_modules/.bin/ajv validate \
+            -s /tmp/fixture-props.schema.json -r schemas/sparc-namespace-props.v1.schema.json \
             -d /tmp/sparc-props-planted.json --spec=draft2020 >/dev/null 2>&1; then
             echo "::error::A prop with fips-199=catastrophic was ACCEPTED. The batch validation is not validating."
             exit 1

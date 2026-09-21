@@ -111,6 +111,18 @@ const (
 	// SHA-256 of the empty string, so a port can confirm it is hashing what
 	// it thinks it is hashing.
 	vecSHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	// The decision date, used as both a period and a horizon bucket.
+	vecDecisionDate = "2026-10-11"
+)
+
+// Vector names the assertions refer back to. A vector and the assertion that
+// constrains it are written far apart, so a typo in either would produce an
+// assertion over a vector that does not exist rather than a failing one.
+const (
+	nameAttestationWorked = "attestation-worked-example"
+	nameObservationSame   = "observation-same-arguments"
+	nameEnhancementDotted = "observation-enhancement-spelling-4"
+	nameSecurityHub       = "observation-security-hub"
 )
 
 func nistSource() Source { return Source{UUID: vecNISTCat, Vocabulary: canonical.VocabNIST80053} }
@@ -169,7 +181,7 @@ func Vectors(ns uuid.UUID) (VectorDocument, error) {
 
 	nist, profile, secHub := nistSource(), profileSource(), secHubSource()
 
-	decision, err := BucketOnDate("2026-10-11")
+	decision, err := BucketOnDate(vecDecisionDate)
 	if err != nil {
 		return VectorDocument{}, err
 	}
@@ -177,10 +189,10 @@ func Vectors(ns uuid.UUID) (VectorDocument, error) {
 	specs := []spec{
 		// One object of each control-scoped kind on identical arguments, so
 		// the object-kind token is visibly the only thing separating them.
-		{"attestation-worked-example", KindAttestation, controlArgs(nist, "cp-4", vecPeriod), func() (Key, error) {
+		{nameAttestationWorked, KindAttestation, controlArgs(nist, "cp-4", vecPeriod), func() (Key, error) {
 			return d.Attestation(vecSSP, nist, "cp-4", vecComponent, vecPeriod)
 		}},
-		{"observation-same-arguments", KindObservation, controlArgs(nist, "cp-4", vecPeriod), func() (Key, error) {
+		{nameObservationSame, KindObservation, controlArgs(nist, "cp-4", vecPeriod), func() (Key, error) {
 			return d.Observation(vecSSP, nist, "cp-4", vecComponent, vecPeriod)
 		}},
 		{"finding-same-arguments", KindFinding, controlArgs(nist, "cp-4", vecPeriod), func() (Key, error) {
@@ -213,7 +225,7 @@ func Vectors(ns uuid.UUID) (VectorDocument, error) {
 		{"observation-enhancement-spelling-3", KindObservation, controlArgs(nist, "AC-2.1", vecPeriod), func() (Key, error) {
 			return d.Observation(vecSSP, nist, "AC-2.1", vecComponent, vecPeriod)
 		}},
-		{"observation-enhancement-spelling-4", KindObservation, controlArgs(nist, "ac-2.1", vecPeriod), func() (Key, error) {
+		{nameEnhancementDotted, KindObservation, controlArgs(nist, "ac-2.1", vecPeriod), func() (Key, error) {
 			return d.Observation(vecSSP, nist, "ac-2.1", vecComponent, vecPeriod)
 		}},
 		// The enhancement is a control in its own right, not a spelling of
@@ -224,7 +236,7 @@ func Vectors(ns uuid.UUID) (VectorDocument, error) {
 
 		// The qualifier at work: one component, one period, one SSP,
 		// assessed against two authorities.
-		{"observation-security-hub", KindObservation, controlArgs(secHub, "ACM.1", vecPeriod), func() (Key, error) {
+		{nameSecurityHub, KindObservation, controlArgs(secHub, "ACM.1", vecPeriod), func() (Key, error) {
 			return d.Observation(vecSSP, secHub, "ACM.1", vecComponent, vecPeriod)
 		}},
 		// "acm.1" is a legal opaque identifier and a different one. This is
@@ -258,8 +270,8 @@ func Vectors(ns uuid.UUID) (VectorDocument, error) {
 			return d.EvidenceResource(vecSSP, strings.ToUpper(vecSHA256))
 		}},
 
-		{"ao-decision", KindDecision, Args{ParentSSPUUID: vecSSP, RiskUUID: vecRisk, Period: "2026-10-11"}, func() (Key, error) {
-			return d.AODecision(vecSSP, vecRisk, "2026-10-11")
+		{"ao-decision", KindDecision, Args{ParentSSPUUID: vecSSP, RiskUUID: vecRisk, Period: vecDecisionDate}, func() (Key, error) {
+			return d.AODecision(vecSSP, vecRisk, vecDecisionDate)
 		}},
 
 		// The two halves of an inherited control.
@@ -309,43 +321,43 @@ func Vectors(ns uuid.UUID) (VectorDocument, error) {
 		{
 			Name:     "object-kind-separates-otherwise-identical-keys",
 			Relation: "distinct",
-			Vectors:  []string{"attestation-worked-example", "observation-same-arguments", "finding-same-arguments", "risk-same-arguments", "poam-item-same-arguments"},
+			Vectors:  []string{nameAttestationWorked, nameObservationSame, "finding-same-arguments", "risk-same-arguments", "poam-item-same-arguments"},
 			Why:      "The five kinds share a field list; only the object-kind token distinguishes them.",
 		},
 		{
 			Name:     "nist-spellings-converge",
 			Relation: "same",
-			Vectors:  []string{"attestation-worked-example", "attestation-nist-spelling-1", "attestation-nist-spelling-2", "attestation-nist-spelling-3"},
+			Vectors:  []string{nameAttestationWorked, "attestation-nist-spelling-1", "attestation-nist-spelling-2", "attestation-nist-spelling-3"},
 			Why:      "SPARC's API emits control identifiers in more than one casing (sparc#1162); all of them name one control.",
 		},
 		{
 			Name:     "enhancement-spellings-converge",
 			Relation: "same",
-			Vectors:  []string{"observation-enhancement-spelling-1", "observation-enhancement-spelling-2", "observation-enhancement-spelling-3", "observation-enhancement-spelling-4"},
+			Vectors:  []string{"observation-enhancement-spelling-1", "observation-enhancement-spelling-2", "observation-enhancement-spelling-3", nameEnhancementDotted},
 			Why:      "Parenthesised, spaced and dotted enhancements are one control; OSCAL's form is the dotted one.",
 		},
 		{
 			Name:     "enhancement-is-not-its-parent",
 			Relation: "distinct",
-			Vectors:  []string{"observation-enhancement-spelling-4", "observation-parent-control"},
+			Vectors:  []string{nameEnhancementDotted, "observation-parent-control"},
 			Why:      "ac-2.1 is a control in its own right.",
 		},
 		{
 			Name:     "catalog-authority-partitions-the-key-space",
 			Relation: "distinct",
-			Vectors:  []string{"observation-same-arguments", "observation-security-hub", "observation-resolved-through-profile"},
+			Vectors:  []string{nameObservationSame, nameSecurityHub, "observation-resolved-through-profile"},
 			Why:      "The same component, period and SSP assessed against two authorities must not collide; nor must one authority's identifier resolved through two documents.",
 		},
 		{
 			Name:     "opaque-identifiers-are-case-sensitive",
 			Relation: "distinct",
-			Vectors:  []string{"observation-security-hub", "observation-security-hub-lowercased"},
+			Vectors:  []string{nameSecurityHub, "observation-security-hub-lowercased"},
 			Why:      "ACM.1 is an AWS Security Hub control; acm.1 names nothing. An implementation that lowercases them into one has lost the difference.",
 		},
 		{
 			Name:     "period-and-boundary-are-key-fields",
 			Relation: "distinct",
-			Vectors:  []string{"observation-same-arguments", "observation-next-period", "observation-peer-boundary"},
+			Vectors:  []string{nameObservationSame, "observation-next-period", "observation-peer-boundary"},
 			Why:      "A later period and a peer boundary are different objects, not revisions of one.",
 		},
 		{

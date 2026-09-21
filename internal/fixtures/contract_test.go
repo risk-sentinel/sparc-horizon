@@ -21,103 +21,104 @@ func decode[T any](t *testing.T, tree Tree, path string) T {
 	return doc
 }
 
-// The audit claim in docs/09-acceptance.md, at the identifier level: every
-// keyed object must recompute from the exported documents alone.
-//
-// Nothing here reads the generator's state. The observation names the
-// implemented requirement it assesses; that requirement lives either in the
-// boundary's SSP — where `source-uuid` falls back to import-profile — or in
-// the inherited component's own component definition, which carries `source`
-// directly. The vocabulary comes from the class on the control in the catalog
-// the source resolves to, which is what the qualifier exists to make
-// decidable.
-func TestObservationIdentifiersRecomputeFromTheDocuments(t *testing.T) {
-	tree := generate(t)
-	d := keys.New(keys.ProvisionalNamespace())
+// requirement is what an observation's assessed-control link resolves to: the
+// control identifier, and the document that says which catalog defines it.
+type requirement struct {
+	control string
+	source  string
+}
+
+// controlVocabularies reads the class off every control in both catalogs, as a
+// consumer holding only the exported documents would have to. This is the
+// resolution `source-uuid` exists to make possible.
+func controlVocabularies(t *testing.T, tree Tree) map[string]canonical.Vocabulary {
+	t.Helper()
 
 	vocab := map[string]canonical.Vocabulary{}
 	for _, p := range []string{pathNISTCatalog, pathSecurityHubCatalog} {
 		cat := decode[oscal.OscalCompleteSchema](t, tree, p).Catalog
 		for _, group := range *cat.Groups {
 			for _, c := range *group.Controls {
+				vocab[c.ID] = canonical.VocabOpaque
 				if c.Class == "SP800-53" {
 					vocab[c.ID] = canonical.VocabNIST80053
-					continue
 				}
-				vocab[c.ID] = canonical.VocabOpaque
 			}
 		}
 	}
-	if len(vocab) != len(NISTControls)+len(SecurityHubControls) {
-		t.Fatalf("resolved %d control classes, want %d", len(vocab), len(NISTControls)+len(SecurityHubControls))
-	}
+	return vocab
+}
 
-	// Requirements reachable through the inherited component definition, with
-	// the source that document states on its control-implementation. This is
-	// rule 1 in docs/03-data-model.md; the SSP path below is rule 2.
-	type requirement struct {
-		control string
-		source  string
-	}
-	requirements := map[string]requirement{}
+// inheritedRequirements are the ones reachable through the inherited
+// component's own component definition, with the source that document states
+// on its control-implementation — rule 1 in docs/03-data-model.md.
+func inheritedRequirements(t *testing.T, tree Tree) map[string]requirement {
+	t.Helper()
+
+	out := map[string]requirement{}
 	cdef := decode[oscal.OscalCompleteSchema](t, tree, pathComponentDefinition).ComponentDefinition
 	for _, component := range *cdef.Components {
 		for _, ci := range *component.ControlImplementations {
 			source := strings.TrimPrefix(ci.Source, "#")
 			for _, ir := range ci.ImplementedRequirements {
-				requirements[ir.UUID] = requirement{control: ir.ControlId, source: source}
+				out[ir.UUID] = requirement{control: ir.ControlId, source: source}
 			}
 		}
 	}
+	return out
+}
+
+// localRequirements are the boundary's own, which carry no `source` and so
+// fall back to the SSP's import-profile — rule 2.
+func localRequirements(t *testing.T, ssp *oscal.SystemSecurityPlan) map[string]requirement {
+	t.Helper()
+
+	profileSource := strings.TrimPrefix(ssp.ImportProfile.Href, "#")
+	found := false
+	for _, r := range *ssp.BackMatter.Resources {
+		if r.UUID == profileSource {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("%s: import-profile names %s, which is not in back-matter", ssp.UUID, profileSource)
+	}
+
+	out := map[string]requirement{}
+	for _, ir := range ssp.ControlImplementation.ImplementedRequirements {
+		out[ir.UUID] = requirement{control: ir.ControlId, source: profileSource}
+	}
+	return out
+}
+
+// The audit claim in docs/09-acceptance.md, at the identifier level: every
+// keyed object must recompute from the exported documents alone.
+//
+// Nothing here reads the generator's state. The observation names the
+// implemented requirement it assesses; that requirement lives either in the
+// boundary's SSP or in the inherited component's own component definition; and
+// the vocabulary comes from the class on the control in the catalog the source
+// resolves to.
+func TestObservationIdentifiersRecomputeFromTheDocuments(t *testing.T) {
+	tree := generate(t)
+	d := keys.New(keys.ProvisionalNamespace())
+
+	vocab := controlVocabularies(t, tree)
+	if want := len(NISTControls) + len(SecurityHubControls); len(vocab) != want {
+		t.Fatalf("resolved %d control classes, want %d", len(vocab), want)
+	}
+	inherited := inheritedRequirements(t, tree)
 
 	recomputed := 0
 	for _, b := range Boundaries {
 		ssp := decode[oscal.OscalCompleteSchema](t, tree, pathSSP(b)).SystemSecurityPlan
-		profileSource := strings.TrimPrefix(ssp.ImportProfile.Href, "#")
-
-		// The href must name a back-matter resource that is really there.
-		found := false
-		for _, r := range *ssp.BackMatter.Resources {
-			if r.UUID == profileSource {
-				found = true
-			}
-		}
-		if !found {
-			t.Errorf("%s: import-profile names %s, which is not in back-matter", b.Slug, profileSource)
-		}
-
-		local := map[string]requirement{}
-		for _, ir := range ssp.ControlImplementation.ImplementedRequirements {
-			local[ir.UUID] = requirement{control: ir.ControlId, source: profileSource}
-		}
+		local := localRequirements(t, ssp)
 
 		ar := decode[oscal.OscalCompleteSchema](t, tree, pathAssessmentResults(b)).AssessmentResults
 		for _, obs := range *ar.Results[0].Observations {
-			href := strings.TrimPrefix((*obs.Links)[0].Href, "#")
-			req, ok := local[href]
-			if !ok {
-				req, ok = requirements[href]
+			if recomputeObservation(t, d, obs, ssp.UUID, local, inherited, vocab) {
+				recomputed++
 			}
-			if !ok {
-				t.Errorf("%s: observation %s names requirement %s, which no document defines", b.Slug, obs.UUID, href)
-				continue
-			}
-			v, ok := vocab[req.control]
-			if !ok {
-				t.Errorf("%s: requirement names control %q, which no catalog defines", b.Slug, req.control)
-				continue
-			}
-			component := (*obs.Subjects)[0].SubjectUuid
-
-			key, err := d.Observation(ssp.UUID, keys.Source{UUID: req.source, Vocabulary: v}, req.control, component, Period)
-			if err != nil {
-				t.Errorf("%s/%s: %v", b.Slug, req.control, err)
-				continue
-			}
-			if key.UUID.String() != obs.UUID {
-				t.Errorf("%s/%s: recomputed %s, document says %s", b.Slug, req.control, key.UUID, obs.UUID)
-			}
-			recomputed++
 		}
 	}
 	if want := len(Boundaries) * (len(NISTControls) + len(SecurityHubControls)); recomputed != want {
@@ -125,79 +126,59 @@ func TestObservationIdentifiersRecomputeFromTheDocuments(t *testing.T) {
 	}
 }
 
-// Every prop in the namespace Horizon owns, checked against the contract the
-// schema states. The ajv job in contracts.yml validates the same props against
-// the schema itself; this is the half that can fail a Go test, and it also
-// asserts that all nine names are actually exercised.
-func TestSPARCNamespacePropsHonourTheContract(t *testing.T) {
-	tree := generate(t)
+// recomputeObservation re-derives one observation's UUID from the documents and
+// reports whether it matched.
+func recomputeObservation(
+	t *testing.T,
+	d keys.Deriver,
+	obs oscal.Observation,
+	sspUUID string,
+	local, inherited map[string]requirement,
+	vocab map[string]canonical.Vocabulary,
+) bool {
+	t.Helper()
 
-	var (
-		uuidRe = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[45][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$`)
-		dateRe = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`)
-		trigRe = regexp.MustCompile(`^(score|blockers)(<|<=|>|>=)[0-9.]+$`)
-		enums  = map[string][]string{
-			"node-type":     {"federation", "organization", "boundary", "system"},
-			"fips-199":      {"low", "moderate", "high"},
-			"blocks-ato":    {"true", "false"},
-			"evidence-kind": {"manual-attestation", "hdf-results", "scan-report", "document", "screenshot"},
-		}
-	)
-
-	seen := map[string]int{}
-	foreign, absentNs := 0, 0
-	var walk func(v any)
-	walk = func(v any) {
-		switch x := v.(type) {
-		case map[string]any:
-			for k, val := range x {
-				if k == "props" {
-					list, _ := val.([]any)
-					for _, p := range list {
-						prop, _ := p.(map[string]any)
-						ns, has := prop["ns"].(string)
-						switch {
-						case !has:
-							absentNs++
-							continue
-						case ns != NamespaceSPARC:
-							foreign++
-							continue
-						}
-						name, _ := prop["name"].(string)
-						value, _ := prop["value"].(string)
-						seen[name]++
-
-						if allowed, ok := enums[name]; ok {
-							if !contains(allowed, value) {
-								t.Errorf("prop %s has value %q, outside its enumeration", name, value)
-							}
-						}
-						switch name {
-						case "parent-uuid", "signed-by":
-							if !uuidRe.MatchString(value) {
-								t.Errorf("prop %s has value %q, which is not a UUID", name, value)
-							}
-						case "next-decision-date", "condition-expires":
-							if !dateRe.MatchString(value) {
-								t.Errorf("prop %s has value %q, which is not a date", name, value)
-							}
-						case "trigger":
-							if !trigRe.MatchString(value) {
-								t.Errorf("prop %s has value %q, which is not a trigger expression", name, value)
-							}
-						}
-					}
-				}
-				walk(val)
-			}
-		case []any:
-			for _, e := range x {
-				walk(e)
-			}
-		}
+	href := strings.TrimPrefix((*obs.Links)[0].Href, "#")
+	req, ok := local[href]
+	if !ok {
+		req, ok = inherited[href]
+	}
+	if !ok {
+		t.Errorf("observation %s names requirement %s, which no document defines", obs.UUID, href)
+		return false
+	}
+	v, ok := vocab[req.control]
+	if !ok {
+		t.Errorf("requirement names control %q, which no catalog defines", req.control)
+		return false
 	}
 
+	key, err := d.Observation(sspUUID, keys.Source{UUID: req.source, Vocabulary: v}, req.control,
+		(*obs.Subjects)[0].SubjectUuid, Period)
+	if err != nil {
+		t.Errorf("%s: %v", req.control, err)
+		return false
+	}
+	if key.UUID.String() != obs.UUID {
+		t.Errorf("%s: recomputed %s, document says %s", req.control, key.UUID, obs.UUID)
+		return false
+	}
+	return true
+}
+
+// propCensus is what a walk of the fixtures found, split by the only
+// distinction that matters to the namespace schema: props it validates, props
+// from an authority Horizon does not own, and props with no `ns` at all.
+type propCensus struct {
+	sparc    []oscal.Property
+	foreign  int
+	absentNs int
+}
+
+func censusProps(t *testing.T, tree Tree) propCensus {
+	t.Helper()
+
+	var census propCensus
 	for _, p := range tree.Paths() {
 		if !strings.HasPrefix(p, "oscal/") {
 			continue
@@ -206,12 +187,85 @@ func TestSPARCNamespacePropsHonourTheContract(t *testing.T) {
 		if err := json.Unmarshal(tree[p], &doc); err != nil {
 			t.Fatalf("%s: %v", p, err)
 		}
-		walk(doc)
+		walkProps(doc, func(prop map[string]any) {
+			ns, has := prop["ns"].(string)
+			switch {
+			case !has:
+				census.absentNs++
+			case ns != NamespaceSPARC:
+				census.foreign++
+			default:
+				name, _ := prop["name"].(string)
+				value, _ := prop["value"].(string)
+				census.sparc = append(census.sparc, oscal.Property{Name: name, Ns: ns, Value: value})
+			}
+		})
+	}
+	return census
+}
+
+// walkProps visits every entry of every props array in a decoded document.
+func walkProps(v any, visit func(map[string]any)) {
+	switch x := v.(type) {
+	case map[string]any:
+		if list, ok := x["props"].([]any); ok {
+			for _, p := range list {
+				if prop, ok := p.(map[string]any); ok {
+					visit(prop)
+				}
+			}
+		}
+		for _, val := range x {
+			walkProps(val, visit)
+		}
+	case []any:
+		for _, e := range x {
+			walkProps(e, visit)
+		}
+	}
+}
+
+var (
+	propUUIDRe    = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[45][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$`)
+	propDateRe    = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`)
+	propTriggerRe = regexp.MustCompile(`^(score|blockers)(<|<=|>|>=)[0-9.]+$`)
+
+	propEnums = map[string][]string{
+		PropNodeType:     {"federation", "organization", "boundary", "system"},
+		PropFIPS199:      {"low", "moderate", "high"},
+		PropBlocksATO:    {"true", "false"},
+		PropEvidenceKind: {"manual-attestation", "hdf-results", "scan-report", "document", "screenshot"},
+	}
+	propPatterns = map[string]*regexp.Regexp{
+		PropParentUUID:       propUUIDRe,
+		PropSignedBy:         propUUIDRe,
+		PropNextDecisionDate: propDateRe,
+		PropConditionExpires: propDateRe,
+		PropTrigger:          propTriggerRe,
+	}
+)
+
+// Every prop in the namespace Horizon owns, checked against the contract the
+// schema states. The ajv job in contracts.yml validates the same props against
+// the schema itself; this is the half that can fail a Go test, and it also
+// asserts that all nine names are exercised.
+func TestSPARCNamespacePropsHonourTheContract(t *testing.T) {
+	census := censusProps(t, generate(t))
+
+	seen := map[string]int{}
+	for _, prop := range census.sparc {
+		seen[prop.Name]++
+		if allowed, ok := propEnums[prop.Name]; ok && !contains(allowed, prop.Value) {
+			t.Errorf("prop %s has value %q, outside its enumeration", prop.Name, prop.Value)
+		}
+		if re, ok := propPatterns[prop.Name]; ok && !re.MatchString(prop.Value) {
+			t.Errorf("prop %s has value %q, which does not match its pattern", prop.Name, prop.Value)
+		}
 	}
 
 	for _, name := range []string{
-		"node-type", "parent-uuid", "next-decision-date", "fips-199",
-		"blocks-ato", "evidence-kind", "signed-by", "condition-expires", "trigger",
+		PropNodeType, PropParentUUID, PropNextDecisionDate, PropFIPS199, PropBlocksATO,
+		PropEvidenceKind, PropSignedBy, PropConditionExpires, PropTrigger,
 	} {
 		if seen[name] == 0 {
 			t.Errorf("prop %q never appears in the fixtures; the contract is not being exercised", name)
@@ -221,10 +275,10 @@ func TestSPARCNamespacePropsHonourTheContract(t *testing.T) {
 	// The two cases the schema must be seen not to fire on: a prop from an
 	// authority Horizon does not own, and a prop with no `ns` at all, which
 	// OSCAL reads as the default NIST namespace.
-	if foreign == 0 {
+	if census.foreign == 0 {
 		t.Error("no foreign-namespace prop in the fixtures")
 	}
-	if absentNs == 0 {
+	if census.absentNs == 0 {
 		t.Error("no prop with an absent ns in the fixtures")
 	}
 }
@@ -258,6 +312,12 @@ func TestForeignPropsArePreservedAsIssued(t *testing.T) {
 	}
 }
 
+type boundaryRow struct {
+	ID           int    `json:"id"`
+	Slug         string `json:"slug"`
+	OSCALSSPUUID string `json:"oscal_ssp_uuid"`
+}
+
 // Both addressing schemes on one object, which is what lets P1's client be
 // exercised honestly: SPARC addresses a boundary by numeric id and slug, and
 // every row carries the OSCAL UUID the documents join on.
@@ -265,21 +325,18 @@ func TestSPARCRowsCarryTheOSCALUUIDs(t *testing.T) {
 	tree := generate(t)
 	g := New(keys.ProvisionalNamespace())
 
-	var boundaries struct {
-		Count int `json:"count"`
-		Data  []struct {
-			ID           int    `json:"id"`
-			Slug         string `json:"slug"`
-			OSCALSSPUUID string `json:"oscal_ssp_uuid"`
-		} `json:"data"`
+	var rows struct {
+		Count int           `json:"count"`
+		Data  []boundaryRow `json:"data"`
 	}
-	if err := json.Unmarshal(tree[pathSPARC("authorization_boundaries")], &boundaries); err != nil {
+	if err := json.Unmarshal(tree[pathSPARC("authorization_boundaries")], &rows); err != nil {
 		t.Fatalf("authorization_boundaries: %v", err)
 	}
-	if boundaries.Count != len(Boundaries) || len(boundaries.Data) != len(Boundaries) {
-		t.Fatalf("%d rows (count says %d), want %d", len(boundaries.Data), boundaries.Count, len(Boundaries))
+	if rows.Count != len(Boundaries) || len(rows.Data) != len(Boundaries) {
+		t.Fatalf("%d rows (count says %d), want %d", len(rows.Data), rows.Count, len(Boundaries))
 	}
-	for i, row := range boundaries.Data {
+
+	for i, row := range rows.Data {
 		b := Boundaries[i]
 		if row.Slug != b.Slug || row.ID != b.ID {
 			t.Errorf("row %d addresses %d/%s, want %d/%s", i, row.ID, row.Slug, b.ID, b.Slug)
@@ -291,19 +348,54 @@ func TestSPARCRowsCarryTheOSCALUUIDs(t *testing.T) {
 		if ssp.SystemCharacteristics.SystemIds[0].ID != b.Slug {
 			t.Errorf("%s: the SSP does not carry SPARC's slug", b.Slug)
 		}
-		if ssp.Metadata.Props == nil {
-			t.Fatalf("%s: no metadata props", b.Slug)
-		}
-		parent := ""
-		for _, p := range *ssp.Metadata.Props {
-			if p.Name == "parent-uuid" {
-				parent = p.Value
-			}
-		}
-		if want := g.orgPartyUUID(b.Org()); parent != want {
-			t.Errorf("%s: parent-uuid is %s, want the organization party %s", b.Slug, parent, want)
+		if got, want := metadataProp(t, ssp, PropParentUUID), g.orgPartyUUID(b.Org()); got != want {
+			t.Errorf("%s: parent-uuid is %s, want the organization party %s", b.Slug, got, want)
 		}
 	}
+}
+
+func metadataProp(t *testing.T, ssp *oscal.SystemSecurityPlan, name string) string {
+	t.Helper()
+
+	if ssp.Metadata.Props == nil {
+		t.Fatalf("%s: no metadata props", ssp.UUID)
+	}
+	for _, p := range *ssp.Metadata.Props {
+		if p.Name == name {
+			return p.Value
+		}
+	}
+	return ""
+}
+
+// providerResponsibilities maps control id to the responsibility UUID the
+// provider declared for it.
+func providerResponsibilities(ssp *oscal.SystemSecurityPlan) map[string]string {
+	out := map[string]string{}
+	for _, ir := range ssp.ControlImplementation.ImplementedRequirements {
+		for _, bc := range *ir.ByComponents {
+			if bc.Export == nil || bc.Export.Responsibilities == nil {
+				continue
+			}
+			out[ir.ControlId] = (*bc.Export.Responsibilities)[0].UUID
+		}
+	}
+	return out
+}
+
+// consumerAnswers maps control id to the responsibility UUID this boundary
+// answers for it.
+func consumerAnswers(ssp *oscal.SystemSecurityPlan) map[string]string {
+	out := map[string]string{}
+	for _, ir := range ssp.ControlImplementation.ImplementedRequirements {
+		for _, bc := range *ir.ByComponents {
+			if bc.Satisfied == nil {
+				continue
+			}
+			out[ir.ControlId] = (*bc.Satisfied)[0].ResponsibilityUuid
+		}
+	}
+	return out
 }
 
 // The inherited control is the one case where two boundaries have to agree on
@@ -312,43 +404,31 @@ func TestInheritedControlHalvesJoinAcrossBoundaries(t *testing.T) {
 	tree := generate(t)
 	provider := decode[oscal.OscalCompleteSchema](t, tree, pathSSP(providerBoundary())).SystemSecurityPlan
 
-	responsibilities := map[string]string{} // control id -> responsibility uuid
-	for _, ir := range provider.ControlImplementation.ImplementedRequirements {
-		for _, bc := range *ir.ByComponents {
-			if bc.Export == nil || bc.Export.Responsibilities == nil {
-				continue
-			}
-			responsibilities[ir.ControlId] = (*bc.Export.Responsibilities)[0].UUID
-		}
-	}
-	if len(responsibilities) != len(InheritedControls) {
-		t.Fatalf("the provider exports %d responsibilities, want %d", len(responsibilities), len(InheritedControls))
+	declared := providerResponsibilities(provider)
+	if len(declared) != len(InheritedControls) {
+		t.Fatalf("the provider exports %d responsibilities, want %d", len(declared), len(InheritedControls))
 	}
 
-	consumers := 0
+	answered := 0
 	for _, b := range Boundaries {
 		if b.Slug == ProviderBoundarySlug {
 			continue
 		}
 		ssp := decode[oscal.OscalCompleteSchema](t, tree, pathSSP(b)).SystemSecurityPlan
-		for _, ir := range ssp.ControlImplementation.ImplementedRequirements {
-			want, inherited := responsibilities[ir.ControlId]
+		for control, got := range consumerAnswers(ssp) {
+			want, inherited := declared[control]
 			if !inherited {
+				t.Errorf("%s/%s: answers a responsibility the provider never declared", b.Slug, control)
 				continue
 			}
-			for _, bc := range *ir.ByComponents {
-				if bc.Satisfied == nil {
-					continue
-				}
-				if got := (*bc.Satisfied)[0].ResponsibilityUuid; got != want {
-					t.Errorf("%s/%s: answers responsibility %s, the provider declared %s", b.Slug, ir.ControlId, got, want)
-				}
-				consumers++
+			if got != want {
+				t.Errorf("%s/%s: answers responsibility %s, the provider declared %s", b.Slug, control, got, want)
 			}
+			answered++
 		}
 	}
-	if want := (len(Boundaries) - 1) * len(InheritedControls); consumers != want {
-		t.Errorf("%d consumer halves, want %d", consumers, want)
+	if want := (len(Boundaries) - 1) * len(InheritedControls); answered != want {
+		t.Errorf("%d consumer halves, want %d", answered, want)
 	}
 }
 

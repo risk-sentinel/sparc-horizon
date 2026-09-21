@@ -104,36 +104,41 @@ func TestVectorAssertionsHold(t *testing.T) {
 	if len(doc.Assertions) == 0 {
 		t.Fatal("no assertions emitted")
 	}
-
 	for _, a := range doc.Assertions {
-		if len(a.Vectors) < 2 {
-			t.Errorf("%s: an assertion over %d vectors states nothing", a.Name, len(a.Vectors))
+		checkAssertion(t, a, byName)
+	}
+}
+
+// checkAssertion resolves one assertion's vectors and applies its relation.
+func checkAssertion(t *testing.T, a Assertion, byName map[string]Vector) {
+	t.Helper()
+
+	if len(a.Vectors) < 2 {
+		t.Errorf("%s: an assertion over %d vectors states nothing", a.Name, len(a.Vectors))
+	}
+	if a.Why == "" {
+		t.Errorf("%s: no rationale", a.Name)
+	}
+	if a.Relation != "same" && a.Relation != "distinct" {
+		t.Errorf("%s: unknown relation %q", a.Name, a.Relation)
+		return
+	}
+
+	// uuid -> the first vector that derived it.
+	derivedBy := map[string]string{}
+	for _, name := range a.Vectors {
+		v, ok := byName[name]
+		if !ok {
+			t.Errorf("%s: references unknown vector %q", a.Name, name)
+			continue
 		}
-		if a.Why == "" {
-			t.Errorf("%s: no rationale", a.Name)
+		if other, clash := derivedBy[v.UUID]; clash && a.Relation == "distinct" {
+			t.Errorf("%s: %q and %q both derived %s", a.Name, other, name, v.UUID)
 		}
-		uuids := map[string]string{}
-		for _, name := range a.Vectors {
-			v, ok := byName[name]
-			if !ok {
-				t.Errorf("%s: references unknown vector %q", a.Name, name)
-				continue
-			}
-			switch a.Relation {
-			case "same":
-				uuids[v.UUID] = name
-			case "distinct":
-				if other, clash := uuids[v.UUID]; clash {
-					t.Errorf("%s: %q and %q both derived %s", a.Name, other, name, v.UUID)
-				}
-				uuids[v.UUID] = name
-			default:
-				t.Errorf("%s: unknown relation %q", a.Name, a.Relation)
-			}
-		}
-		if a.Relation == "same" && len(uuids) != 1 {
-			t.Errorf("%s: %d distinct UUIDs in a group that must agree: %v", a.Name, len(uuids), uuids)
-		}
+		derivedBy[v.UUID] = name
+	}
+	if a.Relation == "same" && len(derivedBy) != 1 {
+		t.Errorf("%s: %d distinct UUIDs in a group that must agree: %v", a.Name, len(derivedBy), derivedBy)
 	}
 }
 

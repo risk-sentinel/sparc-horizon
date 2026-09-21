@@ -46,7 +46,7 @@ func TestGrammarVersionLeadsEveryKey(t *testing.T) {
 	if !strings.HasPrefix(k.Input(), GrammarVersion+canonical.Separator) {
 		t.Errorf("input does not begin with the grammar version: %q", k.Input())
 	}
-	if want := strings.Join(k.Fields, canonical.Separator); k.Input() != want {
+	if k.Input() != strings.Join(k.Fields, canonical.Separator) {
 		t.Errorf("Input() = %q, want the fields joined with the unit separator", k.Input())
 	}
 	if k.Kind != KindAttestation {

@@ -12,7 +12,36 @@ package fixtures
 // are preserved exactly as issued, CamelCase included.
 const (
 	NamespaceSPARC = "https://risk-sentinel.org/ns/sparc"
-	NamespaceAWS   = "http://aws.amazon.com/ns/oscal"
+
+	// NamespaceAWS is an OSCAL prop namespace, which is an opaque identifier
+	// rather than an endpoint. Nothing dereferences it, no request is made to
+	// it, and it is the exact string AWS issues on the props in its published
+	// component definitions.
+	//
+	// It stays `http://`. Rewriting it to `https://` would produce a namespace
+	// that matches nothing AWS emits, which breaks the pass-through
+	// preservation docs/03-data-model.md requires: a prop in a namespace
+	// Horizon does not own is re-emitted with its name, namespace and value
+	// unchanged, because a cell has to recompute from exported OSCAL alone.
+	// A scanner flagging this as a cleartext protocol is reading a URI as a
+	// URL.
+	NamespaceAWS = "http://aws.amazon.com/ns/oscal"
+)
+
+// The nine prop names in the namespace Horizon owns. They are the contract
+// every phase joins on, enumerated in
+// schemas/sparc-namespace-props.v1.schema.json, so they are constants here
+// rather than string literals scattered across the builders.
+const (
+	PropNodeType         = "node-type"
+	PropParentUUID       = "parent-uuid"
+	PropNextDecisionDate = "next-decision-date"
+	PropFIPS199          = "fips-199"
+	PropBlocksATO        = "blocks-ato"
+	PropEvidenceKind     = "evidence-kind"
+	PropSignedBy         = "signed-by"
+	PropConditionExpires = "condition-expires"
+	PropTrigger          = "trigger"
 )
 
 // OSCALVersion is the version every fixture document declares.

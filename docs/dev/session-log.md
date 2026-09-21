@@ -84,8 +84,21 @@ resource → observation → finding → risk → POA&M item can be walked rathe
 
 **Not done, and deliberately:** no Sonar exclusion for the generated fixture JSON. #42 is open
 and owns that surface; adding one here would be a suppression without the record
-`issue_rules.md` requires. Expect Sonar to have opinions about 46 generated files on the next
-`main` run.
+`issue_rules.md` requires.
+
+**Sonar had opinions, and one of them was right.** The quality gate failed on Security Rating,
+from two `npx` findings in the new `fixture-props` job — and `npx` is the exact thing SR-3 in
+`docs/compliance/nist-sp800-53-rev5-mapping.md` already claims this repository does not do.
+The job now installs with `--ignore-scripts` and calls the binary directly, matching
+`sonarqube-hdf-emit.yml`. **The other jobs in `contracts.yml` still use `npx` and predate this
+PR**; that belongs to #42 rather than to a fixtures change touching required checks.
+
+**Open, and needing the owner:** the third security finding is
+`http://aws.amazon.com/ns/oscal` in `internal/fixtures/federation.go`, read as a cleartext
+protocol. It is an OSCAL prop namespace — an identifier nothing dereferences — and rewriting
+it to `https` produces a namespace AWS never issues, which breaks pass-through preservation.
+Nothing was suppressed: the rationale is in the constant's doc comment and in PR #47, and the
+disposition is the owner's to make in Sonar, where the platform records who decided.
 
 **Next:** P0 has two tasks left — freeze API v0 with a mock server (unblocked, needs no
 decision), and re-run the #26 round-trip probe against these fixtures before P1 builds

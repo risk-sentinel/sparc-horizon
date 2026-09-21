@@ -116,7 +116,7 @@ func (g *Generator) parties(b Boundary) []oscal.Party {
 			Type:      "organization",
 			Name:      FederationName,
 			ShortName: FederationShort,
-			Props:     &[]oscal.Property{sparcProp("node-type", "federation")},
+			Props:     &[]oscal.Property{sparcProp(PropNodeType, "federation")},
 			Remarks:   "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
 		},
 		{
@@ -125,7 +125,7 @@ func (g *Generator) parties(b Boundary) []oscal.Party {
 			Name:                  org.Name,
 			ShortName:             org.Short,
 			MemberOfOrganizations: &[]string{federation},
-			Props:                 &[]oscal.Property{sparcProp("node-type", "organization")},
+			Props:                 &[]oscal.Property{sparcProp(PropNodeType, "organization")},
 		},
 	}
 	for _, r := range fixtureRoles {
@@ -289,10 +289,10 @@ func (g *Generator) ssp(b Boundary, profileBytes, providerSSPBytes []byte, expor
 	responsible := g.responsibleParties(b)
 	meta.ResponsibleParties = &responsible
 	meta.Props = &[]oscal.Property{
-		sparcProp("node-type", "boundary"),
-		sparcProp("parent-uuid", g.orgPartyUUID(org)),
-		sparcProp("next-decision-date", b.NextDecision),
-		sparcProp("fips-199", b.FIPS),
+		sparcProp(PropNodeType, "boundary"),
+		sparcProp(PropParentUUID, g.orgPartyUUID(org)),
+		sparcProp(PropNextDecisionDate, b.NextDecision),
+		sparcProp(PropFIPS199, b.FIPS),
 	}
 
 	resources := []oscal.Resource{

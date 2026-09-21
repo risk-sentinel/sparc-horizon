@@ -30,7 +30,7 @@ they will cause every avoidable conflict until they are removed.)
 |---|---|---|---|
 | Design of record | `docs/01-scope.md` … `docs/10-risks-decisions.md` | all | Changing a contract here is a change to the product, not documentation housekeeping |
 | Roadmap | `docs/roadmap.md` | all | **Duplicated** into two demo files — see hot files |
-| Process | `docs/dev/*.md` | all | `issue_rules.md` is binding; this file and `Implementation_plan.md` update on every issue |
+| Process | `docs/dev/*.md` | all | `issue_rules.md` is binding; this file and `Implementation_plan.md` update on every issue. `go-oscal-local-definitions.md` is the exception: a third-party bug report, written to be filed as-is, and edited only if the finding changes |
 | API contract | `api/openapi.yaml` | P0, P2–P5 | Frozen at end of P0; changes after that are versioned, not edited in place |
 | Namespace contract | `schemas/sparc-namespace-props.v1.schema.json` | P0 | **Additive only within v1.** A new prop touches the `enum` and a matching `allOf` branch |
 | UUIDv5 key grammar | `docs/03-data-model.md` § Deterministic UUIDs | P0 | **Normative, and a change is a v2 not an edit** — the grammar version is part of the hashed input, so touching a field list changes every identifier in the estate. Ports live in `sparc` (X-10) |

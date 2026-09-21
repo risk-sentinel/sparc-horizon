@@ -73,8 +73,14 @@ about what Horizon could emit.
 A scan of all 41 inline assembly names in the schema found **three** with more than one shape:
 `entries` and `status` disambiguate correctly because OSCAL titles them differently;
 `local-definitions` is the only collapse. Identical in the OSCAL 1.2.3 schema and in
-`go-oscal`'s unreleased 1.2.3 types, so no version bump resolves it. **Unreported upstream;
-filing it is the owner's call** — a third-party repository, not an estate one.
+`go-oscal`'s unreleased 1.2.3 types, so no version bump resolves it.
+
+**The upstream report is written and not filed** —
+[`go-oscal-local-definitions.md`](go-oscal-local-definitions.md), with a standalone reproducer
+that was run as written rather than retyped into the document. Filing it is the owner's call,
+it being a third-party repository. The sharpest line in it is the one found last: the
+re-serialised document **still validates**, so a pipeline that schema-validates at both ends
+sees green twice and has lost the assessment activities and assets a result recorded.
 
 **The baseline is recorded, not asserted.** `internal/oscal/testdata/measurements.json` holds
 every document against every supported version, regenerated with `-update` and reviewed as a

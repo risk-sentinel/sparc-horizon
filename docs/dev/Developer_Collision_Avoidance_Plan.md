@@ -4,7 +4,12 @@ Companion to [`Implementation_plan.md`](Implementation_plan.md). Maps work to ex
 files and domains, defines branching rules, and documents file-touch hot spots so
 work can parallelize without collisions.
 
-**Last updated:** 2026-09-20 (**P0 code landed.** `internal/keys`, `internal/fixtures`
+**Last updated:** 2026-09-21 (**`internal/oscal` seeded by #49** with the round-trip probe and a
+vendored corpus of published NIST documents. Its `testdata/measurements.json` is the same kind of
+file as `fixtures/`: generated, committed, and checked — but it records what a third-party library
+does, so a diff there is a finding rather than a mistake.)
+
+**Previously:** 2026-09-20 (**P0 code landed.** `internal/keys`, `internal/fixtures`
 and the generated `fixtures/` tree. `fixtures/` is a new hot path — 46 generated files
 committed beside the generator that writes them — and unlike the three duplication axes
 below it is one a check closes completely: `TestCommittedFixturesMatch` fails the moment
@@ -25,7 +30,7 @@ they will cause every avoidable conflict until they are removed.)
 |---|---|---|---|
 | Design of record | `docs/01-scope.md` … `docs/10-risks-decisions.md` | all | Changing a contract here is a change to the product, not documentation housekeeping |
 | Roadmap | `docs/roadmap.md` | all | **Duplicated** into two demo files — see hot files |
-| Process | `docs/dev/*.md` | all | `issue_rules.md` is binding; this file and `Implementation_plan.md` update on every issue |
+| Process | `docs/dev/*.md` | all | `issue_rules.md` is binding; this file and `Implementation_plan.md` update on every issue. `go-oscal-local-definitions.md` is the exception: a third-party bug report, written to be filed as-is, and edited only if the finding changes |
 | API contract | `api/openapi.yaml` | P0, P2–P5 | Frozen at end of P0; changes after that are versioned, not edited in place |
 | Namespace contract | `schemas/sparc-namespace-props.v1.schema.json` | P0 | **Additive only within v1.** A new prop touches the `enum` and a matching `allOf` branch |
 | UUIDv5 key grammar | `docs/03-data-model.md` § Deterministic UUIDs | P0 | **Normative, and a change is a v2 not an edit** — the grammar version is part of the hashed input, so touching a field list changes every identifier in the estate. Ports live in `sparc` (X-10) |
@@ -46,7 +51,8 @@ which makes most product phases collision-free against each other:
 | `internal/canonical` | **P0 (#38, #36)** | Nothing yet. **Read by every phase that derives an identifier**, so treat its signatures as a contract rather than an implementation detail. It now canonicalises control ids too, scoped to a vocabulary (#37): the NIST rules apply only where `source-uuid` resolves to an 800-53 catalog, or to a profile over one |
 | `internal/keys` | **P0 (#36)** | `internal/canonical` only. **The Go reference implementation of a normative grammar with ports in two other languages.** A change to a field list is a v2 of `docs/03-data-model.md`, a regeneration of `fixtures/`, and an upstream change in `sparc` — not a refactor |
 | `internal/fixtures`, `cmd/genfixtures` | **P0 (#36)** | `internal/keys`. Every later phase reads its output: P1's tree builder and P2's recompute audit are written against it, so changing the federation's shape invalidates whatever was measured against the old one |
-| `internal/sparc`, `internal/oscal`, `internal/tree`, `internal/authz` | P1 | Each other only |
+| `internal/oscal` | **P0 (#49)**, then P1 | Seeded with the round-trip probe, its vendored NIST corpus and the version dispatch. P1 adds the adapters on top. **`testdata/measurements.json` is a recorded measurement, not a preference** — regenerate it with `go test ./internal/oscal/ -update` and review the diff; never edit it to make a test pass |
+| `internal/sparc`, `internal/tree`, `internal/authz` | P1 | Each other only |
 | `internal/ledger`, `internal/project` | P2 | P7 reads `project`; do not refactor its signatures while P7 is open |
 | `internal/attest` | P4 | `internal/ledger` writers |
 | `internal/decide` | P5 | `internal/attest` lifecycle states |

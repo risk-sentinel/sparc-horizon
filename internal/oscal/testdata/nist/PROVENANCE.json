@@ -1,0 +1,81 @@
+{
+  "about": [
+    "Published OSCAL content, vendored so the round-trip probe runs against documents this",
+    "repository did not author. Fetched once and committed rather than fetched at test time:",
+    "CI deciding whether a PR may merge must not depend on GitHub being reachable.",
+    "Every digest is recomputed by TestVendoredDocumentsMatchTheirProvenance. A vendored",
+    "third-party document with no provenance is indistinguishable from one someone edited."
+  ],
+  "upstream": {
+    "repository": "https://github.com/usnistgov/oscal-content",
+    "commit": "78650f02ad9321bb7b817846f8fbd4f2bcd620de",
+    "retrieved": "2026-09-21",
+    "licence": "Public domain (NIST, 17 U.S.C. 105). Reproduced unmodified."
+  },
+  "documents": [
+    {
+      "file": "basic-catalog.json",
+      "model": "catalog",
+      "oscal-version": "1.1.3",
+      "sha256": "e6c8c0b0617686dd563a0926a11fea2dadeb7ac9433328d3d02cced1ca1a2ed4",
+      "bytes": 15735,
+      "upstream-path": "examples/catalog/json/basic-catalog.json"
+    },
+    {
+      "file": "basic-profile-resolved.json",
+      "model": "catalog",
+      "oscal-version": "1.1.3",
+      "sha256": "fe3edbc4ef0840c70d7e8ed079cd286d94e7b3b89b0d4eb9f547da4ae53a0a13",
+      "bytes": 11504,
+      "upstream-path": "examples/profile/json/basic-profile-resolved.json"
+    },
+    {
+      "file": "basic-profile.json",
+      "model": "profile",
+      "oscal-version": "1.1.3",
+      "sha256": "23f1544794b4190e468caf5883f46eeeef9819c771d4bda713a1b5c3b93fcb9f",
+      "bytes": 1692,
+      "upstream-path": "examples/profile/json/basic-profile.json"
+    },
+    {
+      "file": "example-component-definition.json",
+      "model": "component-definition",
+      "oscal-version": "1.1.2",
+      "sha256": "01f3d038884c895c15cf68150e598f6f353e8bc73a4988d542301fd2c784127a",
+      "bytes": 6366,
+      "upstream-path": "examples/component-definition/json/example-component-definition.json"
+    },
+    {
+      "file": "ifa_assessment-plan.json",
+      "model": "assessment-plan",
+      "oscal-version": "1.2.2",
+      "sha256": "66380f4279eb60905f7ec2684b5f885ee1743d648cf6315acaddaaf232d4501d",
+      "bytes": 8515,
+      "upstream-path": "examples/ap/json/ifa_assessment-plan.json"
+    },
+    {
+      "file": "ifa_assessment-results.json",
+      "model": "assessment-results",
+      "oscal-version": "1.2.2",
+      "sha256": "b7e429db3f25f9a70b2da549dbdf70ab28ab70250c0377dc8a93612da711a455",
+      "bytes": 14128,
+      "upstream-path": "examples/ar/json/ifa_assessment-results.json"
+    },
+    {
+      "file": "ifa_plan-of-action-and-milestones.json",
+      "model": "plan-of-action-and-milestones",
+      "oscal-version": "1.2.2",
+      "sha256": "1d5cb45cce37adaa53cb994564f747a0d9559bae0747a780d6035bd9e16dbe14",
+      "bytes": 14070,
+      "upstream-path": "examples/poam/json/ifa_plan-of-action-and-milestones.json"
+    },
+    {
+      "file": "ifa_ssp-example.json",
+      "model": "system-security-plan",
+      "oscal-version": "1.1.2",
+      "sha256": "bfbdec10b2425d65767f7aa487849d58eaca82cf45f7736084f3481932931498",
+      "bytes": 18609,
+      "upstream-path": "examples/ssp/json/ifa_ssp-example.json"
+    }
+  ]
+}

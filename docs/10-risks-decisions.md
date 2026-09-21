@@ -5,7 +5,8 @@
 | Risk | Mitigation |
 |---|---|
 | Party UUIDs drift between documents and break the tree | A validate rule plus a tree builder that reports orphans instead of silently dropping them |
-| ~~`go-oscal` lags OSCAL 1.2.x~~ — **not true as of v0.7.1.** It ships `oscal-1-2-1` and `oscal-1-2-2` type packages, and all five real documents tested round-trip with no unknown fields | Retired. Decided in P0 (#26): adopt `go-oscal`, pinned. The risk that replaced it is the next row |
+| ~~`go-oscal` lags OSCAL 1.2.x~~ — **not true as of v0.7.1.** It ships `oscal-1-2-1` and `oscal-1-2-2` type packages | Retired. Decided in P0 (#26): adopt `go-oscal`, pinned. The two risks that replaced it are the next rows |
+| **`go-oscal` collapses four OSCAL assemblies into one Go type.** OSCAL defines `local-definitions` four times with four different shapes and gives three of them the same schema title, "Local Definitions". `go-oscal` names generated types from that title, so the three become one struct carrying the **assessment-plan** shape. Consequences run both ways: **reading**, a schema-valid assessment-results document loses `results[*].local-definitions.tasks` **and** `.assessment-assets`; **writing**, the same struct accepts `components`, `inventory-items` and `users` on an assessment-results document, where OSCAL forbids them. Identical in the OSCAL 1.2.3 schema and in `go-oscal`'s unreleased 1.2.3 types, so no version bump resolves it | Both directions are pinned by tests over an authored, schema-valid document, and the corpus baseline in `internal/oscal/testdata/measurements.json` fails when the measurement changes. Horizon does not project from result tasks or assessment assets today, and the rule from #26 — hash and verify **received bytes**, never a re-serialisation — keeps the reading half out of anything signed. Two standing instructions follow: **do not re-emit a parsed assessment-results document as if it were the original**, and **schema-validate anything Horizon emits**, because the type system will not catch the writing half. **Unreported upstream as of 2026-09-21; the report is written and waiting on the owner** — [`docs/dev/go-oscal-local-definitions.md`](dev/go-oscal-local-definitions.md), with a standalone reproducer |
 | Crosswalk quality skews the KSI axis and ranking reach | Show the mapping source on every swapped cell; flag low-confidence mappings |
 | The HUD ranks the wrong thing first and loses trust | Configurable weights, logged rankings, and a user session every two weeks |
 | PKI is not available in the prototype environment | A dev CA behind the same signing interface |
@@ -21,8 +22,13 @@
 - ~~`go-oscal` versus types generated from the NIST JSON schemas~~ — **decided 2026-09-19 in #26:**
   `go-oscal`, pinned. Its 1.2.x coverage is real, the round trip is lossless apart from timestamp
   normalisation, and the "generated types" fallback turned out to be the same generator
-  self-hosted, for no fidelity gain. Re-test against the P0 fixture federation before P1 builds
-  `internal/oscal`: SSP, profile and POA&M have no fixtures yet and so were not exercised
+  self-hosted, for no fidelity gain. **Re-tested 2026-09-21 in #49** against eight published NIST
+  documents covering all seven models — including the SSP, profile and POA&M the original spike
+  could not exercise. **The decision stands, with one measured limitation** (the risk table
+  above): seven of eight documents are lossless at their declared version and strict-decode
+  clean, and the eighth loses two fields from `results[*].local-definitions`. Cross-version
+  decoding was measured too: every document in the corpus decodes identically under all four
+  supported type packages, so the gap is a collapsed assembly rather than a version-skew problem
 - Who owns the ranking weights: each AO, or the organization
 - When the ledger moves from SQLite to Postgres
 - Whether decision dates live only in SSP metadata or also come from the GRC calendar

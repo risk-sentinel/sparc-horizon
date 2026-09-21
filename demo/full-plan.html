@@ -282,11 +282,12 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
  <p>The Go module is rooted at the <b>repository</b>, not at <code>horizon/</code>: <code>go.mod</code> landed at the top level with the first package, and <code>horizon/</code> is an empty placeholder left from the original sketch.</p>
 <pre><code>  cmd/horizon/          serve | ingest | rebuild | verify
   cmd/genfixtures/      writes fixtures/ &mdash; the deterministic federation
+  cmd/oscalprobe/       round-trip fidelity matrix, by hand
   internal/canonical/   field normalisation for derived identifiers
   internal/keys/        the UUIDv5 key grammar, Go reference implementation
   internal/fixtures/    the fixture generator
   internal/sparc/       mTLS client, ETag cache, doc fetch
-  internal/oscal/       go-oscal adapters, document round-tripping
+  internal/oscal/       version dispatch, round-trip probe, go-oscal adapters
   internal/tree/        federation, org, boundary, system builder
   internal/authz/       responsible-parties to node-scoped roles, OIDC
   internal/ledger/      append-only, hash-chained events
@@ -301,7 +302,7 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
  <details><summary>Dependency choices</summary><div>
   <table>
    <tr><th>Need</th><th>Choice</th><th>Why</th></tr>
-   <tr><td>OSCAL types</td><td><code>defenseunicorns/go-oscal</code>, pinned</td><td><b>Decided in P0.</b> v0.7.1 ships <code>oscal-1-2-1</code> and <code>oscal-1-2-2</code>; all seven models Horizon reads are present. Five real documents round-trip losslessly apart from timestamp normalisation, and none contained a field the types do not model. The &ldquo;generate from the NIST schemas&rdquo; fallback is the same generator self-hosted, so it buys no fidelity. <b>Parse for reading, never to reproduce a signed document:</b> hash and verify the received bytes</td></tr>
+   <tr><td>OSCAL types</td><td><code>defenseunicorns/go-oscal</code>, pinned</td><td><b>Decided in P0, re-tested since.</b> v0.7.1 ships type packages for 1.1.x through 1.2.2; all seven models Horizon reads are present. Eight published NIST documents round-trip losslessly at their declared version apart from timestamp normalisation &mdash; <b>except <code>results[*].local-definitions</code>, where <code>tasks</code> and <code>assessment-assets</code> are never modelled at any version, because go-oscal collapses OSCAL's four differently-shaped <code>local-definitions</code> assemblies into one Go type. The same collapse lets the types emit a document OSCAL rejects, so validate what Horizon writes.</b> The &ldquo;generate from the NIST schemas&rdquo; fallback is the same generator self-hosted, so it buys no fidelity. <b>Parse for reading, never to reproduce a signed document:</b> hash and verify the received bytes</td></tr>
    <tr><td>HDF types</td><td>Generated from the HDF v3 JSON schema</td><td>Only needed to read raw HDF from back-matter for provenance views.</td></tr>
    <tr><td>Storage</td><td><code>modernc.org/sqlite</code>, Postgres optional</td><td>Pure Go, so <code>CGO_ENABLED=0</code> and a static binary.</td></tr>
    <tr><td>HTTP</td><td><code>go-chi/chi</code></td><td>Standard <code>net/http</code> handlers, small surface.</td></tr>
@@ -565,7 +566,8 @@ ENTRYPOINT ["/horizon", "serve"]</code></pre>
  <div class="tbl"><table>
   <tr><th>Risk</th><th>Mitigation</th></tr>
   <tr><td>Party UUIDs drift between documents and break the tree</td><td>A validate rule plus a tree builder that reports orphans instead of silently dropping them</td></tr>
-  <tr><td><s>go-oscal lags OSCAL 1.2.x</s> &mdash; <b>not true as of v0.7.1</b></td><td>Retired. Decided in P0: adopt <code>go-oscal</code>, pinned. It ships the 1.2.x type packages and all five documents tested round-trip with no unknown fields</td></tr>
+  <tr><td><s>go-oscal lags OSCAL 1.2.x</s> &mdash; <b>not true as of v0.7.1</b></td><td>Retired. Decided in P0: adopt <code>go-oscal</code>, pinned. It ships the 1.2.x type packages</td></tr>
+  <tr><td><b>go-oscal collapses four OSCAL assemblies into one Go type.</b> OSCAL defines <code>local-definitions</code> four times with four different shapes and gives three of them the same schema title, so go-oscal &mdash; which names types from the title &mdash; generates one struct with the assessment-plan shape. <b>Reading</b>, a schema-valid assessment-results document loses <code>tasks</code> and <code>assessment-assets</code> from a result; <b>writing</b>, the same struct accepts fields OSCAL forbids on an assessment-results document. Unchanged in OSCAL 1.2.3</td><td>Both directions pinned by tests over an authored, schema-valid document. Horizon projects from neither field today, and the rule &mdash; hash and verify <b>received bytes</b>, never a re-serialisation &mdash; keeps the reading half out of anything signed. <b>Do not re-emit a parsed assessment-results document as if it were the original</b>, and <b>schema-validate anything Horizon emits</b>, because the type system will not catch the writing half.</td></tr>
   <tr><td>A signature fails on a document nobody tampered with</td><td>Typed OSCAL normalises timestamps (<code>+00:00</code> becomes <code>Z</code>) &mdash; same instant, different bytes. JCS canonicalises member order and numbers, <b>not</b> string values, so parse-then-re-serialise changes the digest. Verify and hash over the <b>received bytes</b>, never a re-serialisation</td></tr>
   <tr><td>Crosswalk quality skews the KSI axis and ranking reach</td><td>Show the mapping source on every swapped cell; flag low-confidence mappings</td></tr>
   <tr><td>The HUD ranks the wrong thing first and loses trust</td><td>Configurable weights, logged rankings, and a user session every two weeks</td></tr>

@@ -402,7 +402,7 @@
               {
                 "uuid": "050f4a00-be41-5e39-8f1a-500b68be1308",
                 "control-id": "si-10",
-                "description": "Every field an identifier is derived from is validated and canonicalised before it is hashed, and rejected rather than repaired when it does not conform: a value carrying the unit separator, a control identifier outside its issuing vocabulary, a malformed period label, a component that is not a UUID, an unresolved source-uuid. Validation of whole documents on ingestion is still planned and arrives with internal/oscal in P1.",
+                "description": "Every field an identifier is derived from is validated and canonicalised before it is hashed, and rejected rather than repaired when it does not conform: a value carrying the unit separator, a control identifier outside its issuing vocabulary, a malformed period label, a component that is not a UUID, an unresolved source-uuid. At the document level, an unrecognised OSCAL version or a root that is not an OSCAL model is refused rather than decoded with the nearest available types. Full schema validation on ingestion is still planned and arrives with P1's adapters.",
                 "props": [
                   {
                     "name": "implementation-status",
@@ -420,6 +420,10 @@
                   },
                   {
                     "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/internal/keys",
+                    "rel": "implementation"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/internal/oscal",
                     "rel": "implementation"
                   },
                   {

@@ -68,7 +68,7 @@ carry. Step 8 updates it in the same PR as the work.
 
 | Bucket | Current state |
 |---|---|
-| Application code | **4 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `cmd/genfixtures` (#38, #36). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
+| Application code | **6 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `cmd/genfixtures`, `cmd/oscalprobe` (#38, #36, #49). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
 | Design docs | **11** (`docs/01`–`docs/10` + `roadmap.md`) — the design of record |
 | Machine-readable contracts | **3** — `api/openapi.yaml` (v0 skeleton), `schemas/sparc-namespace-props.v1.schema.json` (v1, 9 props), `fixtures/key-vectors.v1.json` (key-grammar vectors, for the Ruby and Python ports) |
 | Demos | **4** static HTML files, synthetic data, seeded PRNG, no build step |
@@ -83,7 +83,7 @@ carry. Step 8 updates it in the same PR as the work.
 | `container-build-sign` consumer list | **Not listed.** No ECR repo, no signed image, no pin-bump notifications |
 | AWS deployment | **None.** No `sparc-iac` module, no emit role, no task definition |
 | NIST control coverage (application layer) | **0 documented.** No `docs/compliance/` tree yet |
-| Highest-priority next work | **P0's remaining two tasks** — freeze API v0 with a mock server, and re-run the #26 round-trip probe against the fixtures before P1 builds `internal/oscal`. The phase exit criterion itself stays open on `sparc#1155` |
+| Highest-priority next work | **Freeze API v0 with a mock server** — the last P0 task. The round-trip probe closed in #49, with one measured limitation in `go-oscal` recorded in `docs/10-risks-decisions.md`. The phase exit criterion itself stays open on `sparc#1155` |
 
 ---
 
@@ -352,7 +352,7 @@ baseline and the deployment target.
 
 | Phase | Name | Effort | Depends on | Notes |
 |---|---|---|---|---|
-| P0 | Contracts and fixtures | 3 ew | **S0** | Namespace schema v1 already exists. **Landed:** the UUIDv5 key grammar (#30, #37), the `go-oscal` decision (#26), the Go toolchain and CI (#38), and the Go reference implementation, test vectors and fixture federation (#36). **Remaining:** freeze API v0 with a mock server, and the #26 round-trip probe against the fixtures. The `sparc-validate` rules are filed upstream |
+| P0 | Contracts and fixtures | 3 ew | **S0** | Namespace schema v1 already exists. **Landed:** the UUIDv5 key grammar (#30, #37), the `go-oscal` decision (#26) and its re-test (#49), the Go toolchain and CI (#38), and the Go reference implementation, test vectors and fixture federation (#36). **Remaining:** freeze API v0 with a mock server. The `sparc-validate` rules are filed upstream |
 | P1 | SPARC client and tree builder | 4 ew | P0 | First Go code — carries **S1** with it |
 | P3 | HUD heatmap interface | 6 ew | P0 | Built against the mock; first TypeScript — also carries S1 |
 | P2 | Ledger, rollup, projection engine | 4 ew | P1, **S1** | The recompute-from-OSCAL audit test is a gate from here on |

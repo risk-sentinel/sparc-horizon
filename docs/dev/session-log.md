@@ -44,6 +44,82 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-21 — #49 — `feature/49_oscal_roundtrip_probe`
+
+**In flight:** nothing.
+
+**The re-test found something, which is the argument for having rescoped it.** #15 carried the
+#26 obligation as "re-run the probe against the fixture federation". That would have been
+circular — `fixtures/oscal/` was written by `go-oscal`, so it contains only fields `go-oscal`
+models, and neither thing the probe detects can occur against its own emitter. A green result
+there would have been recorded as the measurement that cleared P1. Rescoped to eight published
+NIST documents covering all seven models, and filed as #49.
+
+**`go-oscal` collapses four OSCAL assemblies into one Go type, and my first report of it was
+too narrow.** OSCAL defines `local-definitions` four times with four different shapes and gives
+three of them the same schema title, "Local Definitions". `go-oscal` derives type names from
+that title, so the three become one struct carrying the assessment-plan shape. The fourth is a
+named `$ref`, which is why `PlanOfActionAndMilestonesLocalDefinitions` exists and the others do
+not — the generator's parent-prefix disambiguation only has something to prefix with when the
+parent is a named definition.
+
+Two consequences, both now pinned by tests over an authored schema-valid document:
+**reading**, a result loses `tasks` *and* `assessment-assets`; **writing**, the same struct
+accepts `components`, `inventory-items` and `users` on an assessment-results document, where
+OSCAL forbids them — the types produce a document `go-oscal`'s own validator rejects. The
+second direction is the one a probe over other people's documents cannot find, because it is
+about what Horizon could emit.
+
+A scan of all 41 inline assembly names in the schema found **three** with more than one shape:
+`entries` and `status` disambiguate correctly because OSCAL titles them differently;
+`local-definitions` is the only collapse. Identical in the OSCAL 1.2.3 schema and in
+`go-oscal`'s unreleased 1.2.3 types, so no version bump resolves it.
+
+**The upstream report is written and not filed** —
+[`go-oscal-local-definitions.md`](go-oscal-local-definitions.md), with a standalone reproducer
+that was run as written rather than retyped into the document. Filing it is the owner's call,
+it being a third-party repository. The sharpest line in it is the one found last: the
+re-serialised document **still validates**, so a pipeline that schema-validates at both ends
+sees green twice and has lost the assessment activities and assets a result recorded.
+
+**The baseline is recorded, not asserted.** `internal/oscal/testdata/measurements.json` holds
+every document against every supported version, regenerated with `-update` and reviewed as a
+diff. A test written to a guess either fails on a true finding or hides one; this fails when
+the measurement *changes*, which is the event worth a person's attention. The one known loss
+is additionally pinned by name, so a second gap cannot be absorbed into an updated baseline.
+
+**Cross-version decoding turned out to be a non-issue for this corpus** — every document
+decodes identically under all four type packages, so the gap is a missing assembly rather than
+version skew. That is a result about this corpus and not a guarantee, which is why
+`internal/oscal` still rejects a version it has no types for instead of reaching for the
+nearest.
+
+**One of my own tests caught one of my own bugs.** `Model()` was returning whatever single
+top-level key a document had, because that is what `go-oscal`'s helper does — right for a
+generic tool, wrong for a consumer that acts on the answer. It now rejects a root that is not
+an OSCAL model.
+
+**The gate caught a regression I shipped in #36.** `govulncheck` reported three standard-library
+vulnerabilities, reachable from this module. Cause: `x/text` v0.41.0 requires Go 1.25.0, so
+`go mod tidy` rewrote the directive from `go 1.25` to `go 1.25.0` — and `setup-go` with
+`go-version-file: go.mod` and `check-latest: false` then installed **exactly 1.25.0** instead of
+the newest patch on the line. Pinning a Go patch pins its known defects, and nothing here would
+ever have bumped it: Dependabot does not update a toolchain version in a workflow. `ci.yml` now
+pins the **minor** and takes the newest patch, which also matches `golang:1.25` in
+`docs/08-build-deploy.md` more closely than the old pin did. Verified: `go1.25.0` reports three
+vulnerabilities, `go1.25.13` reports none, and the whole suite — including the fixture
+regeneration check — passes under both 1.25.13 and 1.26.3.
+
+**Nothing in CI would have found that.** `govulncheck` is in the verification gate and not in a
+workflow; a person running the gate is the only reason it surfaced. That is the argument for
+S1's `govulncheck` job, recorded here rather than acted on, because S1 owns it.
+
+**Next:** **freeze API v0 and stand up the mock server** — the last P0 task, unblocked and
+needing no decision. Then the P0-exit checkpoint that #31 defers the threat-model staleness
+ledger to. `sparc#1155` remains the only thing between the fixtures and the exit criterion.
+
+---
+
 ## 2026-09-20 — #36 — `feature/36_fixture_federation`
 
 **In flight:** nothing.

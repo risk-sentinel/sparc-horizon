@@ -1,0 +1,16 @@
+{
+  "node": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+  "col": "CP",
+  "horizon": "2026-10-15",
+  "controls": [
+    {
+      "controlId": "cp-4",
+      "component": "1e0d3586-ddd0-59bd-97f9-19eaad9c6aea",
+      "state": "blocks",
+      "reason": "Not satisfied, and the open risk blocks the authorization.",
+      "expires": "2026-12-07",
+      "blocksAto": true,
+      "chain": "6a6537f0-8ff7-5405-997e-eac753c071c1"
+    }
+  ]
+}

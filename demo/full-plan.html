@@ -406,6 +406,8 @@ namespace  = uuidv5(url-namespace, "https://sparc.risk-sentinel.org/ns")
 <section id="api" aria-labelledby="api-h">
  <h2 id="api-h">API v0</h2>
  <p class="sub">Frozen as OpenAPI at the end of phase 0 so interface work can start on mocks.</p>
+ <p><b>A refusal is a 404, never a 403.</b> A node the caller holds no role on returns 404, identical to a node that does not exist. Horizon's tree spans organizations that are not meant to see each other, and a 403 confirms that a boundary exists, that it is called something in particular, and by inference who owns it &mdash; a disclosure a federated HUD should not make. The cost is accepted and written down: a mistyped node id is indistinguishable from one the caller may not see. The same rule applies to an evidence chain whose component the caller cannot see.</p>
+ <p><b>The mock serves the fixture federation.</b> <code>cmd/mockserver</code> answers the read endpoints from goldens derived by parsing the OSCAL the fixture generator emitted, so what it serves recomputes from exported documents. A persona header picks the caller, and each persona sees a <b>different tree</b> rather than the same tree with parts greyed out &mdash; which is what makes the 404 rule coherent. It does not project: cell states are computed once, for one horizon, and <code>horizon</code> is accepted and ignored. It answers the write endpoints with 501 rather than accepting a write and forgetting it.</p>
  <div class="tbl"><table>
   <tr><th>Method and path</th><th>Purpose</th></tr>
   <tr><td><code>GET /v1/tree</code></td><td>Nodes visible to the caller, with role bindings</td></tr>
@@ -426,6 +428,7 @@ namespace  = uuidv5(url-namespace, "https://sparc.risk-sentinel.org/ns")
    {"id": "portal", "name": "Portal", "cells": [
      {"col": "CP", "state": "blocks", "blockers": 2, "worsening": true, "inherited": false},
      {"col": "RA", "state": "watch", "blockers": 0, "worsening": true, "inherited": false}]}]}</code></pre>
+  <p>A row carries a cell only for the columns that survived collapsing, so <code>cells</code> is a subset of <code>columns</code> &mdash; five columns and two cells above. A family a row has nothing in is omitted rather than drawn as passing; they are not the same claim. <b>The 800-53 axis carries NIST families only:</b> identifiers from another authority, such as the AWS Security Hub controls that arrive through inherited component definitions, are off this axis until SPARC's crosswalk maps them, because placing <code>ACM</code> beside <code>AC</code> would claim a mapping this repository does not own.</p>
  </div></details>
 </section>
 

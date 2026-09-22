@@ -1,0 +1,12 @@
+{
+  "requirement": "b72a71b2-131a-5c10-a6a0-0d04355ebb12",
+  "controlId": "si-7",
+  "component": "38cf1a62-8ac2-5e3f-be6c-1ea8f4028fb3",
+  "resource": "a56c1315-282b-5ad9-a566-606f0be41f74",
+  "observation": "09bd23ec-4ae0-5a8c-88eb-bf53f026c1d4",
+  "expires": "2026-10-25",
+  "finding": "83d8fdb2-2b5c-52a5-9b36-6bf00e646db0",
+  "risk": "b2b2bb34-6da1-5ca8-8a69-ba0548f7d017",
+  "blocksAto": false,
+  "poamItem": "62f42c4d-74ea-5b87-8fa1-7e387d6607ea"
+}

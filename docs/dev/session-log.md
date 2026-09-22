@@ -44,6 +44,56 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-22 — #61 — `feature/61_freeze_api_v0`
+
+**In flight:** nothing. **P0's last task.** Every task in #15 is now done; what remains are the
+phase's exit criteria, one of which is upstream.
+
+**The spec was not reviewable, which is why "reviewed by both owners" had never happened.** It
+was 120 lines with most responses reading `"200": { description: Ranked controls }`. Freezing
+meant writing the contract: schemas for all eleven paths, bodies for the four writes, a shared
+error shape, and the refusal rule.
+
+**A refusal is a 404, never a 403.** `docs/07-security.md` already said every node-scoped call
+authorizes against the node rather than the endpoint; it never said what the refusal looks like.
+A 403 confirms a boundary exists, is called something particular, and by inference who owns it —
+across organizations not meant to see each other. The cost, that a mistyped node id reads the
+same, is accepted and written down rather than left to be rediscovered as a bug.
+
+**`internal/project` is seeded rather than copied.** `docs/05` gives `StateAt` and `Roll` as
+source, and the golden generator needs exactly them. A private copy inside the generator would
+have put two implementations of one documented algorithm in the repository — the divergence the
+key grammar exists to prevent, one layer up. The package doc names what is P2's and absent,
+because that boundary will be under pressure.
+
+**The goldens are built by parsing the OSCAL the same run emitted**, not from the generator's
+state. That is the cheap version of the audit claim: if a response cannot be recomputed from
+exported documents, it does not belong in the contract either. It also caught a real contract
+bug — the `800-53` axis was rendering AWS Security Hub families beside NIST ones, which claims a
+crosswalk this repository does not own (`sparc#1103`). They are off the axis now, and the
+fixtures still carry them so the distinction stays exercised.
+
+**The check that makes the freeze mean something**: 108 goldens validated against the schema each
+path declares, in both directions — the contract cannot declare an endpoint the mock cannot
+answer, and the mock cannot serve a shape the contract does not describe. It earned its keep
+immediately, failing when the generated README appeared as an unmapped file.
+
+**The mock enforces the 404 rule rather than describing it**, and that is tested through the
+router as HTTP responses: an unseen node and an absent one return the same status *and the same
+body*, because a difference in either is the leak in another form. A client written against a
+lenient mock is a client that breaks on the real service.
+
+**Surfaced, not invented:** `docs/05` weights rollups by FIPS 199 and never gives the weights.
+`FIPSWeight` carries a documented default so the mock is reproducible, and `docs/10` now records
+it as P2's to settle with users, because the weighting decides which boundary a person is told to
+look at first.
+
+**Next:** the **P0 exit checkpoint**. Two criteria left and one is upstream — `sparc-validate`
+against the fixtures (`sparc#1154`, no response since 2026-09-19) and the OpenAPI review by both
+owners. #31's threat-model staleness ledger folds in at the same point.
+
+---
+
 ## 2026-09-22 — #59 — `feature/59_record_upstream_filings`
 
 **In flight:** nothing. **Merge note:** #56 merged first, so both entries sit at the top of this

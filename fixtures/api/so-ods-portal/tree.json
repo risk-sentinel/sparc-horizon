@@ -1,0 +1,34 @@
+{
+  "id": "f7de308a-5555-5e35-be6a-029ad885320e",
+  "name": "Public Portal",
+  "nodeType": "boundary",
+  "roles": [
+    "system-owner"
+  ],
+  "children": [
+    {
+      "id": "78d2ee1e-5677-502e-910d-aad763832309",
+      "name": "Portal Web Tier",
+      "nodeType": "system",
+      "roles": [
+        "system-owner"
+      ]
+    },
+    {
+      "id": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
+      "name": "Portal API",
+      "nodeType": "system",
+      "roles": [
+        "system-owner"
+      ]
+    },
+    {
+      "id": "193c0b92-191f-51ae-8155-18c027ae2d92",
+      "name": "Portal Edge Cache",
+      "nodeType": "system",
+      "roles": [
+        "system-owner"
+      ]
+    }
+  ]
+}

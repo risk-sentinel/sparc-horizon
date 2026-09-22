@@ -1,0 +1,25 @@
+{
+  "node": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
+  "col": "SC",
+  "horizon": "2026-10-15",
+  "controls": [
+    {
+      "controlId": "sc-28",
+      "component": "c8700a65-1310-5c0c-a9c2-c90b25ef1859",
+      "state": "degraded",
+      "reason": "Evidence expires 2026-09-29, before the 2026-10-15 horizon.",
+      "expires": "2026-09-29",
+      "blocksAto": false,
+      "chain": "e33fe506-bb9f-57df-95af-e88f5b67a854"
+    },
+    {
+      "controlId": "sc-7",
+      "component": "38cf1a62-8ac2-5e3f-be6c-1ea8f4028fb3",
+      "state": "degraded",
+      "reason": "Evidence expires 2026-10-04, before the 2026-10-15 horizon.",
+      "expires": "2026-10-04",
+      "blocksAto": false,
+      "chain": "371fd62c-67ec-59ab-87d0-0d7515d29599"
+    }
+  ]
+}

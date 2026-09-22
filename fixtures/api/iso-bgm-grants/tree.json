@@ -1,0 +1,34 @@
+{
+  "id": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+  "name": "Grants Platform",
+  "nodeType": "boundary",
+  "roles": [
+    "information-system-security-officer"
+  ],
+  "children": [
+    {
+      "id": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
+      "name": "Grants Application",
+      "nodeType": "system",
+      "roles": [
+        "information-system-security-officer"
+      ]
+    },
+    {
+      "id": "1e0d3586-ddd0-59bd-97f9-19eaad9c6aea",
+      "name": "Grants Database",
+      "nodeType": "system",
+      "roles": [
+        "information-system-security-officer"
+      ]
+    },
+    {
+      "id": "5c5fbbf2-e794-5470-89ba-d59e04b2b856",
+      "name": "Grants ETL",
+      "nodeType": "system",
+      "roles": [
+        "information-system-security-officer"
+      ]
+    }
+  ]
+}

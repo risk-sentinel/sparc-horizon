@@ -1,0 +1,16 @@
+{
+  "node": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+  "col": "AU",
+  "horizon": "2026-10-15",
+  "controls": [
+    {
+      "controlId": "au-6.1",
+      "component": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
+      "state": "blocks",
+      "reason": "Not satisfied, and the open risk blocks the authorization.",
+      "expires": "2026-12-10",
+      "blocksAto": true,
+      "chain": "40630fdb-bab1-59d4-861e-d35e47c694e5"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "node": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
+  "horizon": "2026-10-15",
+  "axis": "800-53",
+  "columns": [
+    "IA",
+    "SC",
+    "SI"
+  ],
+  "collapsed": [
+    "AC",
+    "AU",
+    "CP"
+  ],
+  "rows": [
+    {
+      "id": "f7de308a-5555-5e35-be6a-029ad885320e",
+      "name": "Public Portal",
+      "cells": [
+        {
+          "col": "IA",
+          "state": "nominal",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": true
+        },
+        {
+          "col": "SC",
+          "state": "nominal",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        },
+        {
+          "col": "SI",
+          "state": "degraded",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        }
+      ]
+    },
+    {
+      "id": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
+      "name": "Identity Services",
+      "cells": [
+        {
+          "col": "IA",
+          "state": "blocks",
+          "blockers": 1,
+          "worsening": false,
+          "inherited": false
+        },
+        {
+          "col": "SC",
+          "state": "degraded",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        },
+        {
+          "col": "SI",
+          "state": "degraded",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        }
+      ]
+    }
+  ]
+}

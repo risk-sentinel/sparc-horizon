@@ -1,0 +1,77 @@
+{
+  "node": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
+  "horizon": "2026-10-15",
+  "axis": "800-53",
+  "columns": [
+    "IA",
+    "SC",
+    "SI"
+  ],
+  "collapsed": [
+    "AC",
+    "AU",
+    "CP"
+  ],
+  "rows": [
+    {
+      "id": "c8700a65-1310-5c0c-a9c2-c90b25ef1859",
+      "name": "Agency Identity Provider",
+      "cells": [
+        {
+          "col": "IA",
+          "state": "nominal",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        },
+        {
+          "col": "SC",
+          "state": "degraded",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        }
+      ]
+    },
+    {
+      "id": "60d15e42-8c2e-547d-a445-d2e29d55ec57",
+      "name": "Directory Service",
+      "cells": [
+        {
+          "col": "IA",
+          "state": "blocks",
+          "blockers": 1,
+          "worsening": false,
+          "inherited": false
+        },
+        {
+          "col": "SI",
+          "state": "degraded",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        }
+      ]
+    },
+    {
+      "id": "38cf1a62-8ac2-5e3f-be6c-1ea8f4028fb3",
+      "name": "Multi-Factor Service",
+      "cells": [
+        {
+          "col": "SC",
+          "state": "degraded",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        },
+        {
+          "col": "SI",
+          "state": "degraded",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "node": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
+  "col": "SI",
+  "horizon": "2026-10-15",
+  "controls": [
+    {
+      "controlId": "si-4",
+      "component": "60d15e42-8c2e-547d-a445-d2e29d55ec57",
+      "state": "degraded",
+      "reason": "Evidence expires 2026-09-29, before the 2026-10-15 horizon.",
+      "expires": "2026-09-29",
+      "blocksAto": false,
+      "chain": "a72131db-5c26-52a3-b4f5-fb5031a24948"
+    },
+    {
+      "controlId": "si-7",
+      "component": "38cf1a62-8ac2-5e3f-be6c-1ea8f4028fb3",
+      "state": "degraded",
+      "reason": "Not satisfied at the assessment.",
+      "expires": "2026-10-25",
+      "blocksAto": false,
+      "chain": "b72a71b2-131a-5c10-a6a0-0d04355ebb12"
+    }
+  ]
+}

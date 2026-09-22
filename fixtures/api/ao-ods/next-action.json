@@ -1,0 +1,8 @@
+{
+  "node": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
+  "title": "Resolve ia-5 on Identity Services",
+  "consequence": "An open risk on this control blocks the authorization for Identity Services.",
+  "controlId": "ia-5",
+  "chain": "beed167a-28d5-5cfe-aaef-14917b3d938c",
+  "horizon": "2026-10-15"
+}

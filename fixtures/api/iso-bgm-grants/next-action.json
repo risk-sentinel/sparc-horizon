@@ -1,0 +1,8 @@
+{
+  "node": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+  "title": "Resolve EC2.2 on Grants Platform",
+  "consequence": "An open risk on this control blocks the authorization for Grants Platform.",
+  "controlId": "EC2.2",
+  "chain": "30f49312-0b47-5904-b326-a3bb9d1968df",
+  "horizon": "2026-10-15"
+}

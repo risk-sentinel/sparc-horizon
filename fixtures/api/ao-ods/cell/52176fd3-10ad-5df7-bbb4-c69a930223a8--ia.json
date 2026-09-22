@@ -1,0 +1,16 @@
+{
+  "node": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
+  "col": "IA",
+  "horizon": "2026-10-15",
+  "controls": [
+    {
+      "controlId": "ia-5",
+      "component": "60d15e42-8c2e-547d-a445-d2e29d55ec57",
+      "state": "blocks",
+      "reason": "Not satisfied, and the open risk blocks the authorization.",
+      "expires": "2026-11-28",
+      "blocksAto": true,
+      "chain": "beed167a-28d5-5cfe-aaef-14917b3d938c"
+    }
+  ]
+}

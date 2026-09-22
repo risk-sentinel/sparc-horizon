@@ -30,7 +30,7 @@ env:
   # Minimum packages that must run tests. Raise it as packages gain tests;
   # it exists so deleting a test file is a build failure rather than a
   # quieter green run.
-  MIN_TESTED_PACKAGES: "4"
+  MIN_TESTED_PACKAGES: "6"
   MIN_COVERAGE: "80"
 
 jobs:

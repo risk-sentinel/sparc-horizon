@@ -1,0 +1,29 @@
+[
+  {
+    "id": "ao-ods",
+    "role": "authorizing-official",
+    "party-uuid": "377df8c6-c8fa-5217-a2ff-445247a7b7c5",
+    "node-uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
+    "node-type": "organization",
+    "name": "Office of Digital Services Authorizing Official",
+    "about": "Sees the organization, its boundaries and their systems. Roles inherit downward."
+  },
+  {
+    "id": "so-ods-portal",
+    "role": "system-owner",
+    "party-uuid": "f935a0b4-4974-5aec-a8ed-590328a8fa6d",
+    "node-uuid": "f7de308a-5555-5e35-be6a-029ad885320e",
+    "node-type": "boundary",
+    "name": "Public Portal System Owner",
+    "about": "Sees one boundary and its systems. Everything above it is 404, not 403."
+  },
+  {
+    "id": "iso-bgm-grants",
+    "role": "information-system-security-officer",
+    "party-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
+    "node-uuid": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+    "node-type": "boundary",
+    "name": "Grants Platform Information System Security Officer",
+    "about": "A different organization entirely, to show that two personas do not overlap."
+  }
+]

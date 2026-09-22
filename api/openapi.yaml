@@ -1,120 +1,571 @@
 openapi: 3.1.0
 info:
   title: SPARC Horizon API
-  version: 0.1.0
-  description: API v0 skeleton. Every node-scoped call is authorized against the caller's role on that node.
+  version: "0.1.0"
+  summary: API v0, frozen at the end of P0.
+  license:
+    name: Apache-2.0
+    identifier: Apache-2.0
+  description: |
+    The Delivery-layer HUD for authorization risk: attestations, AO decisions, forward
+    projections and the role lenses.
+
+    **Frozen.** Changes after this are versioned rather than edited in place — see
+    `docs/dev/Developer_Collision_Avoidance_Plan.md`. P1 builds its client against this
+    contract and P3 builds the HUD against it, so a change here is a change to two phases.
+
+    ## Authorization, and what a refusal looks like
+
+    Every node-scoped call authorizes against **the node the request names**, not the endpoint
+    it reached. Roles come from `responsible-parties` in the OSCAL documents, so authorization
+    follows document edits rather than an admin screen (`docs/07-security.md`).
+
+    **A node the caller holds no role on returns `404`, not `403`** — identical to a node that
+    does not exist. Horizon's tree spans organizations that are not meant to see each other, and
+    a `403` confirms that a boundary exists, that it is called something in particular, and by
+    inference who owns it. That is a disclosure a federated HUD should not make.
+
+    The cost is accepted and stated here so nobody reads it as a bug: a mistyped node id is
+    indistinguishable from one the caller may not see.
+
+    ## Projection, not reporting
+
+    Every date-bearing response answers "what is the state on date X", where a control is down if
+    it is failing, its evidence expires by X, or an open POA&M milestone falls before X
+    (`docs/05-projection-engine.md`). Cell `state` is exactly `nominal`, `watch`, `degraded` or
+    `blocks`, with thresholds pass ratio >= 0.95 and >= 0.85.
 servers:
   - url: http://localhost:8080
+    description: The mock server over the fixture federation (`cmd/mockserver`).
 security:
   - oidc: []
+tags:
+  - name: read
+    description: Projections and evidence. Node-scoped, and a node the caller cannot see is a 404.
+  - name: write
+    description: Attestations, signatures, decisions and overlays. An overlay writes nothing.
+
 paths:
   /v1/tree:
     get:
+      tags: [read]
+      operationId: getTree
       summary: Nodes visible to the caller, with role bindings
+      description: |
+        The caller's own subtree. A caller sees a different tree rather than the same tree with
+        parts greyed out, which is what makes the `404` rule above coherent.
       responses:
-        "200": { description: Tree, content: { application/json: { schema: { $ref: "#/components/schemas/Node" } } } }
+        "200":
+          description: The caller's tree
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Node" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+
   /v1/nodes/{id}/heat:
     get:
+      tags: [read]
+      operationId: getHeat
       summary: Heatmap rows, ordered columns, collapsed families, and cell states
+      description: |
+        Rows are the children of `id`; columns are control families, ordered by blockers
+        descending then pass ratio ascending. Nominal columns are collapsed into `collapsed`
+        rather than drawn — green is quiet.
+
+        A row carries a cell only for the columns it has controls in, so `cells` is a subset of
+        `columns`. Cell payloads stay small; detail comes from `/cell` and `/chain`.
       parameters:
         - $ref: "#/components/parameters/NodeId"
-        - { name: horizon, in: query, schema: { type: string, example: 23d } }
-        - { name: axis, in: query, schema: { type: string, enum: ["800-53", ksi], default: "800-53" } }
-        - { name: overlay, in: query, description: What-if overlay ID, schema: { type: string } }
+        - $ref: "#/components/parameters/Horizon"
+        - name: axis
+          in: query
+          description: |
+            Column vocabulary. `800-53` renders control families. Identifiers from another
+            authority — AWS Security Hub arrives through inherited component definitions — are
+            **off this axis** until SPARC's crosswalk maps them (`sparc#1103`), rather than
+            being placed beside NIST families as though they were mapped.
+          schema: { type: string, enum: ["800-53", ksi], default: "800-53" }
+        - name: overlay
+          in: query
+          description: What-if overlay id from `POST /v1/whatif`. An overlay never persists and never emits.
+          schema: { type: string }
       responses:
-        "200": { description: Heat, content: { application/json: { schema: { $ref: "#/components/schemas/Heat" } } } }
+        "200":
+          description: Heatmap
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Heat" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NodeNotVisible" }
+
   /v1/nodes/{id}/cell:
     get:
+      tags: [read]
+      operationId: getCell
       summary: Controls down in one cell, ranked, with reasons
+      description: Blocking controls first, then by control id. Each carries why it is down and a link into its chain.
       parameters:
         - $ref: "#/components/parameters/NodeId"
-        - { name: col, in: query, required: true, schema: { type: string } }
-        - { name: horizon, in: query, schema: { type: string } }
+        - name: col
+          in: query
+          required: true
+          description: A column from the heat response's `columns`.
+          schema: { type: string, examples: [IA] }
+        - $ref: "#/components/parameters/Horizon"
       responses:
-        "200": { description: Ranked controls }
+        "200":
+          description: Ranked controls in the cell
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CellDetail" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NodeNotVisible" }
+
   /v1/controls/{uuid}/chain:
     get:
-      summary: Evidence, observation, finding, risk, and POA&M for a control
+      tags: [read]
+      operationId: getChain
+      summary: Evidence, observation, finding, risk and POA&M for one implemented requirement
+      description: |
+        The chain in the fixed order `docs/03-data-model.md` sets: back-matter resource,
+        observation, finding, risk, POA&M item. `uuid` is the implemented requirement, which is
+        what an observation names — a control id alone is not unique outside its catalog.
+
+        A requirement outside the caller's tree returns `404`, for the same reason a node does.
       parameters:
-        - { name: uuid, in: path, required: true, schema: { type: string, format: uuid } }
+        - name: uuid
+          in: path
+          required: true
+          description: Implemented requirement UUID.
+          schema: { type: string, format: uuid }
       responses:
-        "200": { description: Evidence chain }
+        "200":
+          description: The evidence chain
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Chain" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NodeNotVisible" }
+
   /v1/nodes/{id}/next-action:
     get:
+      tags: [read]
+      operationId: getNextAction
       summary: Top-ranked action for the caller's lens
-      parameters: [ { $ref: "#/components/parameters/NodeId" } ]
+      description: One focal point, with the consequence stated beside it. One lens, one next best action.
+      parameters:
+        - $ref: "#/components/parameters/NodeId"
+        - $ref: "#/components/parameters/Horizon"
       responses:
-        "200": { description: Next best action }
+        "200":
+          description: The next best action
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/NextAction" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NodeNotVisible" }
+
   /v1/attestations:
     post:
+      tags: [write]
+      operationId: createAttestation
       summary: Submit an M&O attestation with evidence references
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AttestationRequest" }
       responses:
-        "201": { description: Created }
+        "201":
+          description: Created, with the derived identifier
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Created" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NodeNotVisible" }
+
   /v1/attestations/{id}/sign:
     post:
+      tags: [write]
+      operationId: signAttestation
       summary: Sign a reviewed attestation
-      parameters: [ { name: id, in: path, required: true, schema: { type: string } } ]
+      description: |
+        The signature is detached, over JCS-canonical (RFC 8785) JSON, and computed over the
+        **received bytes** rather than a re-serialisation — typed OSCAL normalises timestamps,
+        and JCS does not normalise string values.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
       responses:
-        "200": { description: Signed }
+        "200":
+          description: Signed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Signed" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NodeNotVisible" }
+        "409":
+          description: Already signed, or not in a reviewable state
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+
   /v1/decisions:
     post:
+      tags: [write]
+      operationId: createDecision
       summary: AO risk acceptance with conditions
+      description: |
+        A decision is keyed on the risk it decides and the **day** it was taken, so it lines up
+        with the `next-decision-date` prop the HUD counts down to. Conditions are recorded as
+        `condition-expires` and `trigger` props, which is what reopens the decision by itself
+        rather than by someone remembering.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DecisionRequest" }
       responses:
-        "201": { description: Created }
+        "201":
+          description: Recorded
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Created" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NodeNotVisible" }
+
   /v1/whatif:
     post:
+      tags: [write]
+      operationId: createOverlay
       summary: Create a copy-on-write overlay for simulation
+      description: |
+        The overlay id is passed back to `/heat` as `overlay`. **An overlay never persists and
+        never emits**: it cannot write to the ledger and cannot produce OSCAL or `saf attest`
+        files. That is a security property, not a convenience — see `docs/07-security.md` and
+        threat model TM-2.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OverlayRequest" }
       responses:
-        "201": { description: Overlay ID }
+        "201":
+          description: Overlay created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Overlay" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NodeNotVisible" }
+
   /v1/nodes/{id}/blast-radius:
     get:
+      tags: [read]
+      operationId: getBlastRadius
       summary: Leveraging boundaries affected by a provider cell
-      parameters: [ { $ref: "#/components/parameters/NodeId" } ]
+      description: Built from the reverse-inheritance index; a consumer appears only where the caller can see it.
+      parameters:
+        - $ref: "#/components/parameters/NodeId"
+        - name: col
+          in: query
+          description: Restrict to one column.
+          schema: { type: string }
       responses:
-        "200": { description: Affected nodes }
+        "200":
+          description: Affected nodes
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BlastRadius" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NodeNotVisible" }
+
   /v1/export/oscal/{boundary}:
     get:
+      tags: [read]
+      operationId: exportOSCAL
       summary: Assessment results and POA&M for a boundary
-      parameters: [ { name: boundary, in: path, required: true, schema: { type: string } } ]
+      description: |
+        The export any GRC can render, and the input to the recompute audit: every cell at every
+        tier must recompute from these documents alone.
+      parameters:
+        - name: boundary
+          in: path
+          required: true
+          description: Boundary slug or SSP UUID.
+          schema: { type: string }
       responses:
-        "200": { description: OSCAL documents }
+        "200":
+          description: OSCAL documents
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Export" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NodeNotVisible" }
+
 components:
   securitySchemes:
     oidc:
       type: openIdConnect
       openIdConnectUrl: https://idp.example.gov/.well-known/openid-configuration
+      description: |
+        Identity comes from the agency IdP; party UUIDs map to subjects. Authentication proves
+        who the caller is and nothing about what they may see — that is decided per node.
+
   parameters:
-    NodeId: { name: id, in: path, required: true, schema: { type: string } }
+    NodeId:
+      name: id
+      in: path
+      required: true
+      description: Node UUID. Organization party UUID, SSP UUID, or component UUID.
+      schema: { type: string, format: uuid }
+    Horizon:
+      name: horizon
+      in: query
+      description: The date to project to, `YYYY-MM-DD`. Defaults to the service's today.
+      schema: { type: string, format: date }
+
+  responses:
+    Unauthenticated:
+      description: No valid identity was presented.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    BadRequest:
+      description: The request body is malformed or fails the namespace contract.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NodeNotVisible:
+      description: |
+        No such node, **or** the caller holds no role on it. The two are deliberately
+        indistinguishable: a `403` here would confirm that a boundary exists and roughly what it
+        is, across organizations that are not meant to see each other.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+
   schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string, description: "A short, stable code." }
+        detail: { type: string, description: "Human-readable, and never leaks the existence of a node the caller cannot see." }
+      additionalProperties: false
+
     Node:
       type: object
+      required: [id, name, nodeType, roles]
       properties:
-        id: { type: string }
+        id: { type: string, format: uuid }
         name: { type: string }
         nodeType: { type: string, enum: [federation, organization, boundary, system] }
-        roles: { type: array, items: { type: string, enum: [authorizing-official, system-owner, information-system-security-officer] } }
-        children: { type: array, items: { $ref: "#/components/schemas/Node" } }
+        roles:
+          type: array
+          items: { type: string, enum: [authorizing-official, system-owner, information-system-security-officer] }
+        children:
+          type: array
+          items: { $ref: "#/components/schemas/Node" }
+      additionalProperties: false
+
     Cell:
       type: object
+      required: [col, state, blockers, worsening, inherited]
       properties:
         col: { type: string }
         state: { type: string, enum: [nominal, watch, degraded, blocks] }
-        blockers: { type: integer }
-        worsening: { type: boolean }
+        blockers: { type: integer, minimum: 0, description: "Open risks carrying `blocks-ato`. Summed upward, never averaged away." }
+        worsening: { type: boolean, description: "Passing now, with evidence expiring inside the look-ahead window." }
         inherited: { type: boolean }
+      additionalProperties: false
+
     Heat:
       type: object
+      required: [node, horizon, axis, columns, collapsed, rows]
       properties:
-        node: { type: string }
+        node: { type: string, format: uuid }
         horizon: { type: string, format: date }
-        axis: { type: string }
+        axis: { type: string, enum: ["800-53", ksi] }
         columns: { type: array, items: { type: string } }
-        collapsed: { type: array, items: { type: string } }
+        collapsed: { type: array, items: { type: string }, description: "Nominal columns, not drawn." }
         rows:
           type: array
           items:
             type: object
+            required: [id, name, cells]
             properties:
-              id: { type: string }
+              id: { type: string, format: uuid }
               name: { type: string }
               cells: { type: array, items: { $ref: "#/components/schemas/Cell" } }
+            additionalProperties: false
+      additionalProperties: false
+
+    CellDetail:
+      type: object
+      required: [node, col, horizon, controls]
+      properties:
+        node: { type: string, format: uuid }
+        col: { type: string }
+        horizon: { type: string, format: date }
+        controls:
+          type: array
+          items:
+            type: object
+            required: [controlId, component, state, reason, blocksAto, chain]
+            properties:
+              controlId: { type: string, description: "Canonical within its catalog: `ac-2.1` under NIST, as issued elsewhere." }
+              component: { type: string, format: uuid }
+              state: { type: string, enum: [nominal, watch, degraded, blocks] }
+              reason: { type: string, description: "Why it is down, stated with the consequence." }
+              expires: { type: string, format: date }
+              blocksAto: { type: boolean }
+              chain: { type: string, format: uuid, description: "Implemented requirement, for the chain endpoint." }
+            additionalProperties: false
+      additionalProperties: false
+
+    Chain:
+      type: object
+      required: [requirement, controlId, component, blocksAto]
+      properties:
+        requirement: { type: string, format: uuid }
+        controlId: { type: string }
+        component: { type: string, format: uuid }
+        resource: { type: string, format: uuid, description: "Back-matter resource, keyed on the hash of its content." }
+        observation: { type: string, format: uuid }
+        expires: { type: string, format: date, description: "The observation's native expiry, which drives every countdown." }
+        finding: { type: string, format: uuid }
+        risk: { type: string, format: uuid }
+        blocksAto: { type: boolean }
+        poamItem: { type: string, format: uuid }
+      additionalProperties: false
+
+    NextAction:
+      type: object
+      required: [node, title, consequence, horizon]
+      properties:
+        node: { type: string, format: uuid }
+        title: { type: string }
+        consequence: { type: string, description: "Stated with the item, never in a separate panel." }
+        controlId: { type: string }
+        chain: { type: string, format: uuid }
+        horizon: { type: string, format: date }
+      additionalProperties: false
+
+    BlastRadius:
+      type: object
+      required: [node, affected]
+      properties:
+        node: { type: string, format: uuid }
+        col: { type: string }
+        affected:
+          type: array
+          items:
+            type: object
+            required: [id, name, nodeType]
+            properties:
+              id: { type: string, format: uuid }
+              name: { type: string }
+              nodeType: { type: string, enum: [organization, boundary, system] }
+              responsibility: { type: string, format: uuid, description: "The consumer half of the inherited control." }
+            additionalProperties: false
+      additionalProperties: false
+
+    Export:
+      type: object
+      required: [boundary, documents]
+      properties:
+        boundary: { type: string }
+        documents:
+          type: array
+          items:
+            type: object
+            required: [model, href]
+            properties:
+              model: { type: string, enum: [system-security-plan, assessment-results, plan-of-action-and-milestones] }
+              href: { type: string }
+              sha256: { type: string, pattern: "^[0-9a-f]{64}$" }
+            additionalProperties: false
+      additionalProperties: false
+
+    AttestationRequest:
+      type: object
+      required: [node, controlId, component, period, evidence]
+      properties:
+        node: { type: string, format: uuid }
+        controlId: { type: string }
+        component: { type: string, format: uuid }
+        period: { type: string, pattern: "^[0-9]{4}-(Q[1-4]|(0[1-9]|1[0-2]))$", description: "A quarter or a month." }
+        evidence:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [sha256, kind]
+            properties:
+              sha256: { type: string, pattern: "^[0-9a-f]{64}$" }
+              kind: { type: string, enum: [manual-attestation, hdf-results, scan-report, document, screenshot] }
+              href: { type: string }
+            additionalProperties: false
+        statement: { type: string }
+      additionalProperties: false
+
+    DecisionRequest:
+      type: object
+      required: [node, risk, decidedOn]
+      properties:
+        node: { type: string, format: uuid }
+        risk: { type: string, format: uuid }
+        decidedOn: { type: string, format: date, description: "The day the decision was taken." }
+        conditionExpires: { type: string, format: date }
+        trigger: { type: string, pattern: "^(score|blockers)(<|<=|>|>=)[0-9.]+$" }
+        rationale: { type: string }
+      additionalProperties: false
+
+    OverlayRequest:
+      type: object
+      required: [node, changes]
+      properties:
+        node: { type: string, format: uuid }
+        changes:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [controlId, component]
+            properties:
+              controlId: { type: string }
+              component: { type: string, format: uuid }
+              satisfied: { type: boolean }
+              expires: { type: string, format: date }
+            additionalProperties: false
+      additionalProperties: false
+
+    Created:
+      type: object
+      required: [id]
+      properties:
+        id: { type: string, format: uuid, description: "Derived from the natural key, so a resubmission is idempotent." }
+      additionalProperties: false
+
+    Signed:
+      type: object
+      required: [id, signedBy, signedAt]
+      properties:
+        id: { type: string, format: uuid }
+        signedBy: { type: string, format: uuid }
+        signedAt: { type: string, format: date-time }
+        signature: { type: string, description: "Detached, over JCS-canonical JSON of the received bytes." }
+      additionalProperties: false
+
+    Overlay:
+      type: object
+      required: [overlay, expiresAt]
+      properties:
+        overlay: { type: string, description: "Pass to `/heat` as `overlay`. Never persisted, never emitted." }
+        expiresAt: { type: string, format: date-time }
+      additionalProperties: false

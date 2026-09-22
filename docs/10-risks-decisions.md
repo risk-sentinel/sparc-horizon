@@ -31,6 +31,11 @@
   clean, and the eighth loses two fields from `results[*].local-definitions`. Cross-version
   decoding was measured too: every document in the corpus decodes identically under all four
   supported type packages, so the gap is a collapsed assembly rather than a version-skew problem
+- **The FIPS 199 rollup weights have no values.** `docs/05-projection-engine.md` weights totals by
+  impact level and never says by how much, while the ranking weights it does discuss are
+  explicitly configuration. `internal/project.FIPSWeight` carries a documented default (3, 2, 1)
+  so the mock's responses are reproducible — it is not a decision. The weighting changes which
+  boundary a person is told to look at first, so P2 settles it with users
 - Who owns the ranking weights: each AO, or the organization
 - When the ledger moves from SQLite to Postgres
 - Whether decision dates live only in SSP metadata or also come from the GRC calendar

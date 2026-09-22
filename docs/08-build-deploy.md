@@ -32,7 +32,7 @@ Pin base image digests in the real repo.
 | `HORIZON_EVIDENCE_URI` | none | Object store for evidence |
 | `HORIZON_SIGNING_CERT` | none | PKI certificate and key reference |
 | `HORIZON_BUCKETS` | `0,7,14,30` | Projection horizons in days |
-| `HORIZON_NAMESPACE` | `https://risk-sentinel.org/ns/sparc` | Namespace contract |
+| `HORIZON_NAMESPACE` | `https://sparc.risk-sentinel.org/ns` | Namespace contract |
 
 ## Terraform
 

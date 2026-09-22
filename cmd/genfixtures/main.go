@@ -19,9 +19,9 @@ func main() {
 	out := flag.String("out", "fixtures", "directory to write the fixture federation into")
 	flag.Parse()
 
-	// The federation namespace is still provisional; sparc#1155 has not
-	// registered the real one.
-	g := fixtures.New(keys.ProvisionalNamespace())
+	// The registered federation namespace (sparc#1155). Derived from the
+	// published URI, so it is recomputed here rather than pasted.
+	g := fixtures.New(keys.Namespace())
 	if err := g.Write(*out); err != nil {
 		fmt.Fprintln(os.Stderr, "genfixtures:", err)
 		os.Exit(1)

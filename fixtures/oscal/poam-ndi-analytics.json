@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "51b1c268cfb2d030f648a5f02061ea71dd3443636b384b0fe7babe486bdf2e78"
+                  "value": "e57fdb962fcab5d225bd69d7afa226bde33010d796a38e1c2b3fda505dfb6ec5"
                 }
               ],
               "href": "./ssp-ndi-analytics.json",
@@ -17,12 +17,12 @@
             }
           ],
           "title": "Analytics Workbench system security plan",
-          "uuid": "ac72c68e-fa06-5948-9aba-c323c96f6164"
+          "uuid": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520"
         }
       ]
     },
     "import-ssp": {
-      "href": "#ac72c68e-fa06-5948-9aba-c323c96f6164"
+      "href": "#f495f200-e9d9-5985-a5fd-0f2bb3c6e520"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -33,73 +33,73 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "National Data Institute",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "NDI",
           "type": "organization",
-          "uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          "uuid": "bd4969d2-d748-5a13-889f-636f6d3322df"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "WORKBENCH Authorizing Official",
           "type": "person",
-          "uuid": "d23aa4e7-e2ef-5ff0-a68e-363fd56f02f3"
+          "uuid": "358bbd00-eecd-5a5f-9e67-350ed079c6cd"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "WORKBENCH System Owner",
           "type": "person",
-          "uuid": "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+          "uuid": "4bc67254-2a3e-50ce-9767-2704d5bb907b"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "WORKBENCH Information System Security Officer",
           "type": "person",
-          "uuid": "06d5e411-42da-5019-9f15-247f194dccae"
+          "uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44"
         }
       ],
       "published": "2026-09-15T00:00:00Z",
       "responsible-parties": [
         {
           "party-uuids": [
-            "d23aa4e7-e2ef-5ff0-a68e-363fd56f02f3"
+            "358bbd00-eecd-5a5f-9e67-350ed079c6cd"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+            "4bc67254-2a3e-50ce-9767-2704d5bb907b"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "06d5e411-42da-5019-9f15-247f194dccae"
+            "d20f3e32-7495-5a92-b6ae-25c67507dc44"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -128,7 +128,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -137,21 +137,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "eafc6581-3f10-59ba-9849-62f563d160f6"
+            "finding-uuid": "a1e3caec-7096-596d-8027-ac05a9d95197"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "d2a1b51e-029f-56ce-b407-4a58161aa638"
+            "observation-uuid": "c1835894-e69b-53f6-9925-38d7b440455e"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "9324cf70-4e40-5e5a-8f3b-c7a1d0b6f2cc"
+            "risk-uuid": "c2d263ac-ea06-585a-a517-0d0b55b1d00f"
           }
         ],
         "title": "S3.5 remediation",
-        "uuid": "ef955788-ae8a-59dc-bc71-9300ea410226"
+        "uuid": "c659159f-0c20-5073-aae4-c2aa0ca57705"
       }
     ],
     "risks": [
@@ -162,7 +162,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -172,13 +172,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "false"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "d2a1b51e-029f-56ce-b407-4a58161aa638"
+            "observation-uuid": "c1835894-e69b-53f6-9925-38d7b440455e"
           }
         ],
         "remediations": [
@@ -195,23 +195,23 @@
                 },
                 "title": "Milestone: S3.5 remediation complete",
                 "type": "milestone",
-                "uuid": "6d602ccd-732d-52af-b159-b6c3792605e3"
+                "uuid": "dc340b7b-fa1c-5cca-9eaa-7621851c8150"
               }
             ],
             "title": "Remediate S3.5",
-            "uuid": "085fd6a5-cd85-537d-baef-22301377fbe8"
+            "uuid": "52928a7a-8464-571a-bfce-c4bd485151a3"
           }
         ],
         "statement": "Until S3.5 is satisfied, Analytics Workbench carries this exposure.",
         "status": "open",
         "title": "S3.5 shortfall on WORKBENCH",
-        "uuid": "9324cf70-4e40-5e5a-8f3b-c7a1d0b6f2cc"
+        "uuid": "c2d263ac-ea06-585a-a517-0d0b55b1d00f"
       }
     ],
     "system-id": {
       "id": "ndi-analytics",
-      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+      "identifier-type": "https://sparc.risk-sentinel.org/ns/slug"
     },
-    "uuid": "637dbea4-f692-50e7-a465-46ee4b7bbcbd"
+    "uuid": "400dec13-fd90-52dd-ba52-953ba5f57d01"
   }
 }

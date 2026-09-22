@@ -7,13 +7,13 @@
           "props": [
             {
               "name": "evidence-kind",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "hdf-results"
             },
             {
               "name": "signed-by",
-              "ns": "https://risk-sentinel.org/ns/sparc",
-              "value": "06d5e411-42da-5019-9f15-247f194dccae"
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "d20f3e32-7495-5a92-b6ae-25c67507dc44"
             }
           ],
           "rlinks": [
@@ -29,20 +29,20 @@
             }
           ],
           "title": "Analytics Workbench normalised scan results 2026-Q3",
-          "uuid": "42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+          "uuid": "7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
         },
         {
           "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
           "props": [
             {
               "name": "evidence-kind",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "manual-attestation"
             },
             {
               "name": "signed-by",
-              "ns": "https://risk-sentinel.org/ns/sparc",
-              "value": "06d5e411-42da-5019-9f15-247f194dccae"
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "d20f3e32-7495-5a92-b6ae-25c67507dc44"
             }
           ],
           "rlinks": [
@@ -58,7 +58,7 @@
             }
           ],
           "title": "Analytics Workbench manual attestation 2026-Q3",
-          "uuid": "924f34ae-c2c3-5eb4-bf53-5621a21c5a8e"
+          "uuid": "db100a15-2eb1-535e-afa1-56335f5cb255"
         },
         {
           "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
@@ -67,7 +67,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "51b1c268cfb2d030f648a5f02061ea71dd3443636b384b0fe7babe486bdf2e78"
+                  "value": "e57fdb962fcab5d225bd69d7afa226bde33010d796a38e1c2b3fda505dfb6ec5"
                 }
               ],
               "href": "./ssp-ndi-analytics.json",
@@ -75,7 +75,7 @@
             }
           ],
           "title": "Analytics Workbench system security plan",
-          "uuid": "ac72c68e-fa06-5948-9aba-c323c96f6164"
+          "uuid": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520"
         },
         {
           "citation": {
@@ -83,12 +83,12 @@
           },
           "description": "Cited rather than modelled: these fixtures carry no assessment-plan document.",
           "title": "Analytics Workbench continuous monitoring plan",
-          "uuid": "04ca7c97-1f72-5e71-8fed-d2a0986fcf12"
+          "uuid": "4711818f-aed2-54d5-ae71-f40c82dfd419"
         }
       ]
     },
     "import-ap": {
-      "href": "#04ca7c97-1f72-5e71-8fed-d2a0986fcf12"
+      "href": "#4711818f-aed2-54d5-ae71-f40c82dfd419"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -99,73 +99,73 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "National Data Institute",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "NDI",
           "type": "organization",
-          "uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          "uuid": "bd4969d2-d748-5a13-889f-636f6d3322df"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "WORKBENCH Authorizing Official",
           "type": "person",
-          "uuid": "d23aa4e7-e2ef-5ff0-a68e-363fd56f02f3"
+          "uuid": "358bbd00-eecd-5a5f-9e67-350ed079c6cd"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "WORKBENCH System Owner",
           "type": "person",
-          "uuid": "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+          "uuid": "4bc67254-2a3e-50ce-9767-2704d5bb907b"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "WORKBENCH Information System Security Officer",
           "type": "person",
-          "uuid": "06d5e411-42da-5019-9f15-247f194dccae"
+          "uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44"
         }
       ],
       "published": "2026-09-15T00:00:00Z",
       "responsible-parties": [
         {
           "party-uuids": [
-            "d23aa4e7-e2ef-5ff0-a68e-363fd56f02f3"
+            "358bbd00-eecd-5a5f-9e67-350ed079c6cd"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "cbc56b4b-bcd0-5c9d-9e6c-dfd80e3d7720"
+            "4bc67254-2a3e-50ce-9767-2704d5bb907b"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "06d5e411-42da-5019-9f15-247f194dccae"
+            "d20f3e32-7495-5a92-b6ae-25c67507dc44"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -197,20 +197,20 @@
                 "name": "asset",
                 "prose": "The Information System Security Officer attests that cp-4 is implemented for Analytics Workbench in 2026-Q3.",
                 "title": "Attestation for cp-4",
-                "uuid": "3fe19d2e-f003-59ae-bd43-395072e94be5"
+                "uuid": "65d6d7ee-4035-51bf-8d0b-3ccde592102e"
               },
               {
                 "class": "ia-5",
                 "name": "asset",
                 "prose": "The Information System Security Officer attests that ia-5 is implemented for Analytics Workbench in 2026-Q3.",
                 "title": "Attestation for ia-5",
-                "uuid": "1b2e11ff-015c-566b-8dde-ac23c19df220"
+                "uuid": "2f82410f-c6df-55c2-bec8-4be77e48e7a3"
               }
             ],
             "responsible-parties": [
               {
                 "party-uuids": [
-                  "06d5e411-42da-5019-9f15-247f194dccae"
+                  "d20f3e32-7495-5a92-b6ae-25c67507dc44"
                 ],
                 "role-id": "information-system-security-officer"
               }
@@ -226,7 +226,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -235,12 +235,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "d2a1b51e-029f-56ce-b407-4a58161aa638"
+                "observation-uuid": "c1835894-e69b-53f6-9925-38d7b440455e"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "9324cf70-4e40-5e5a-8f3b-c7a1d0b6f2cc"
+                "risk-uuid": "c2d263ac-ea06-585a-a517-0d0b55b1d00f"
               }
             ],
             "target": {
@@ -252,7 +252,7 @@
               "type": "objective-id"
             },
             "title": "S3.5 is not satisfied on WORKBENCH",
-            "uuid": "eafc6581-3f10-59ba-9849-62f563d160f6"
+            "uuid": "a1e3caec-7096-596d-8027-ac05a9d95197"
           }
         ],
         "observations": [
@@ -262,7 +262,7 @@
             "expires": "2027-02-05T00:00:00Z",
             "links": [
               {
-                "href": "#af189b56-507f-55f0-b65b-30e1dcca77d6",
+                "href": "#c7dd3278-f523-5318-a683-2a28bb010995",
                 "rel": "assessed-control",
                 "resource-fragment": "ac-2",
                 "text": "Implemented requirement for ac-2"
@@ -275,7 +275,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -285,12 +285,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+                "subject-uuid": "8eedda72-1a8e-517a-b02d-b011bd8d49cd",
                 "type": "component"
               }
             ],
@@ -298,7 +298,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "7f0fc8ab-022b-50fc-864f-fc383da5e527"
+            "uuid": "609b3808-e7c0-5164-a3f5-7c84001e7917"
           },
           {
             "collected": "2026-09-13T00:00:00Z",
@@ -306,7 +306,7 @@
             "expires": "2026-10-06T00:00:00Z",
             "links": [
               {
-                "href": "#341680c1-70ba-5c09-8af2-2df9f8680469",
+                "href": "#6ba215da-b8ca-5086-8205-4ef1654ce209",
                 "rel": "assessed-control",
                 "resource-fragment": "ac-2.1",
                 "text": "Implemented requirement for ac-2.1"
@@ -319,7 +319,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -329,12 +329,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+                "subject-uuid": "da6ec359-8c87-5b80-90d7-68e5b3b7efd1",
                 "type": "component"
               }
             ],
@@ -342,7 +342,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "185382f8-f681-5895-965a-1b841182ad41"
+            "uuid": "49dedcd8-6d97-50a1-b5ad-66b10bf9adb0"
           },
           {
             "collected": "2026-08-27T00:00:00Z",
@@ -350,7 +350,7 @@
             "expires": "2027-05-19T00:00:00Z",
             "links": [
               {
-                "href": "#adc43fb5-9870-511f-8790-74fe1b4e3403",
+                "href": "#e1651f46-8e77-5dbd-b8fe-86b68ab4694c",
                 "rel": "assessed-control",
                 "resource-fragment": "au-6",
                 "text": "Implemented requirement for au-6"
@@ -363,7 +363,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -373,12 +373,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+                "subject-uuid": "405038e1-edd3-5bd7-991e-db1a23dc5b62",
                 "type": "component"
               }
             ],
@@ -386,7 +386,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "970b095d-e087-5f66-8ca5-836f1d65b8b3"
+            "uuid": "0692c44c-d4c1-5400-a860-54bc7cac48dd"
           },
           {
             "collected": "2026-09-06T00:00:00Z",
@@ -394,7 +394,7 @@
             "expires": "2027-09-07T00:00:00Z",
             "links": [
               {
-                "href": "#a978e0e8-7a82-5929-9b0d-e9e0b155ebd5",
+                "href": "#429772fe-f5f9-5121-8b1a-35f23c6347a1",
                 "rel": "assessed-control",
                 "resource-fragment": "au-6.1",
                 "text": "Implemented requirement for au-6.1"
@@ -407,7 +407,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -417,12 +417,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+                "subject-uuid": "8eedda72-1a8e-517a-b02d-b011bd8d49cd",
                 "type": "component"
               }
             ],
@@ -430,7 +430,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "b80ce97a-baa5-5455-abc4-8f0680d7b9c4"
+            "uuid": "ab20d8ce-18b0-53a0-a251-4513e0a1db6f"
           },
           {
             "collected": "2026-09-04T00:00:00Z",
@@ -438,7 +438,7 @@
             "expires": "2027-04-20T00:00:00Z",
             "links": [
               {
-                "href": "#853b3c6d-5e44-5de3-ba28-53fd0b5d71eb",
+                "href": "#ee6a3361-7142-5c74-aabe-777f54ad83e6",
                 "rel": "assessed-control",
                 "resource-fragment": "cp-4",
                 "text": "Implemented requirement for cp-4"
@@ -451,7 +451,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -461,12 +461,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench manual attestation 2026-Q3",
-                "href": "#924f34ae-c2c3-5eb4-bf53-5621a21c5a8e"
+                "href": "#db100a15-2eb1-535e-afa1-56335f5cb255"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+                "subject-uuid": "da6ec359-8c87-5b80-90d7-68e5b3b7efd1",
                 "type": "component"
               }
             ],
@@ -474,7 +474,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "839b435b-c354-54bb-8f52-5c1d2061b44a"
+            "uuid": "5a6c955a-1f08-58bf-8db5-efc5e3bc22a8"
           },
           {
             "collected": "2026-09-09T00:00:00Z",
@@ -482,7 +482,7 @@
             "expires": "2027-02-03T00:00:00Z",
             "links": [
               {
-                "href": "#21ec962a-f7e0-5192-aa42-c7ab3f8a569e",
+                "href": "#0de6cbc2-64bb-5fdb-8038-3b84fe3c1ad1",
                 "rel": "assessed-control",
                 "resource-fragment": "cp-9",
                 "text": "Implemented requirement for cp-9"
@@ -495,7 +495,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -505,12 +505,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+                "subject-uuid": "405038e1-edd3-5bd7-991e-db1a23dc5b62",
                 "type": "component"
               }
             ],
@@ -518,7 +518,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "46985d9f-a360-554b-9917-b4561b64e23c"
+            "uuid": "4de7fda9-f858-59c6-8242-785f6b36a1bf"
           },
           {
             "collected": "2026-08-28T00:00:00Z",
@@ -526,7 +526,7 @@
             "expires": "2027-06-29T00:00:00Z",
             "links": [
               {
-                "href": "#1f409382-040f-5165-86f5-934a699f2684",
+                "href": "#9ac4cbda-2c58-55cd-beb7-30fa0a46dca8",
                 "rel": "assessed-control",
                 "resource-fragment": "ia-2",
                 "text": "Implemented requirement for ia-2"
@@ -539,7 +539,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -549,12 +549,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+                "subject-uuid": "8eedda72-1a8e-517a-b02d-b011bd8d49cd",
                 "type": "component"
               }
             ],
@@ -562,7 +562,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "298bcc89-eac4-5017-80cb-e0842e993f50"
+            "uuid": "8b0a2c1a-f830-50c3-9dc9-1cd86077bdc6"
           },
           {
             "collected": "2026-09-14T00:00:00Z",
@@ -570,7 +570,7 @@
             "expires": "2027-06-20T00:00:00Z",
             "links": [
               {
-                "href": "#c90a170a-296c-5302-966f-bc48c19d9e10",
+                "href": "#a72fddec-5613-5281-afee-f4fad8e62562",
                 "rel": "assessed-control",
                 "resource-fragment": "ia-5",
                 "text": "Implemented requirement for ia-5"
@@ -583,7 +583,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -593,12 +593,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench manual attestation 2026-Q3",
-                "href": "#924f34ae-c2c3-5eb4-bf53-5621a21c5a8e"
+                "href": "#db100a15-2eb1-535e-afa1-56335f5cb255"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+                "subject-uuid": "da6ec359-8c87-5b80-90d7-68e5b3b7efd1",
                 "type": "component"
               }
             ],
@@ -606,7 +606,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "fa22aac3-b8fb-5d21-8ef4-e1e9c9f98748"
+            "uuid": "e0ef7540-74a3-5f07-9eaf-d8b95793a8a6"
           },
           {
             "collected": "2026-09-06T00:00:00Z",
@@ -614,7 +614,7 @@
             "expires": "2027-06-27T00:00:00Z",
             "links": [
               {
-                "href": "#8a637df1-3034-523c-9130-1388ed3778fe",
+                "href": "#08d4d925-f225-56ef-b14d-3d475bb263f2",
                 "rel": "assessed-control",
                 "resource-fragment": "sc-7",
                 "text": "Implemented requirement for sc-7"
@@ -627,7 +627,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -637,12 +637,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+                "subject-uuid": "405038e1-edd3-5bd7-991e-db1a23dc5b62",
                 "type": "component"
               }
             ],
@@ -650,7 +650,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "51adb8d6-6118-5a50-ba05-3b64b52479f0"
+            "uuid": "199a9956-ed37-534a-9057-0372691f8d61"
           },
           {
             "collected": "2026-09-04T00:00:00Z",
@@ -658,7 +658,7 @@
             "expires": "2027-05-28T00:00:00Z",
             "links": [
               {
-                "href": "#e3e3ca39-61de-533c-b803-527b76283387",
+                "href": "#d4605d35-e564-587e-9501-12b838d53224",
                 "rel": "assessed-control",
                 "resource-fragment": "sc-28",
                 "text": "Implemented requirement for sc-28"
@@ -671,7 +671,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -681,12 +681,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "0f405de0-c3ef-5c92-9d23-c7d6d45cd12b",
+                "subject-uuid": "8eedda72-1a8e-517a-b02d-b011bd8d49cd",
                 "type": "component"
               }
             ],
@@ -694,7 +694,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "b819ce18-e77e-5660-9816-da80a32f72ac"
+            "uuid": "d3f146e0-7059-505c-8316-028b67126978"
           },
           {
             "collected": "2026-09-03T00:00:00Z",
@@ -702,7 +702,7 @@
             "expires": "2027-02-03T00:00:00Z",
             "links": [
               {
-                "href": "#39b1b472-06b5-5852-acb5-83ac18d597bc",
+                "href": "#926cff27-6fac-5acc-90ed-9e8268cf08f1",
                 "rel": "assessed-control",
                 "resource-fragment": "si-4",
                 "text": "Implemented requirement for si-4"
@@ -715,7 +715,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -725,12 +725,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "aadb5d08-5a49-5d71-a426-db17d10ef598",
+                "subject-uuid": "da6ec359-8c87-5b80-90d7-68e5b3b7efd1",
                 "type": "component"
               }
             ],
@@ -738,7 +738,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "c31cbcf9-0a9d-54b9-80dd-2a53cab58d2c"
+            "uuid": "2239d31b-edd9-59bb-a4cc-df32001860d8"
           },
           {
             "collected": "2026-08-27T00:00:00Z",
@@ -746,7 +746,7 @@
             "expires": "2027-08-29T00:00:00Z",
             "links": [
               {
-                "href": "#3e25cc0a-2e76-5480-8a0b-66b57d8d2619",
+                "href": "#7e29cddf-e5c3-5bc7-a2d5-588a601e6766",
                 "rel": "assessed-control",
                 "resource-fragment": "si-7",
                 "text": "Implemented requirement for si-7"
@@ -759,7 +759,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -769,12 +769,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "d097442d-dd3a-5c9f-b694-aa4f2c40b22e",
+                "subject-uuid": "405038e1-edd3-5bd7-991e-db1a23dc5b62",
                 "type": "component"
               }
             ],
@@ -782,7 +782,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "3620c514-b435-5f77-9c39-c3bc1b7f5891"
+            "uuid": "00ca8ffa-c216-5ee3-8f61-bbd30a6f1c6a"
           },
           {
             "collected": "2026-09-13T00:00:00Z",
@@ -790,7 +790,7 @@
             "expires": "2027-04-26T00:00:00Z",
             "links": [
               {
-                "href": "#17224a91-09fd-5eca-808d-7845a55e996b",
+                "href": "#364fd99c-b9cc-5758-afa4-b953f4f368c0",
                 "rel": "assessed-control",
                 "resource-fragment": "ACM.1",
                 "text": "Implemented requirement for ACM.1"
@@ -803,7 +803,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -813,12 +813,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "9c94fa90-c857-5c97-98e0-fbf33056be34",
+                "subject-uuid": "4e66061f-6712-537d-b9fb-696a4861301c",
                 "type": "component"
               }
             ],
@@ -826,7 +826,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "e04c405d-45c0-56e0-b20d-97fd16d3b20a"
+            "uuid": "0a53d390-3a69-5409-9a34-17b86e19ac18"
           },
           {
             "collected": "2026-09-03T00:00:00Z",
@@ -834,7 +834,7 @@
             "expires": "2027-09-28T00:00:00Z",
             "links": [
               {
-                "href": "#2fba0f32-bab4-58ed-bc68-07775b85656f",
+                "href": "#af9309c2-d10b-5789-a0fe-cc8189ade671",
                 "rel": "assessed-control",
                 "resource-fragment": "IAM.4",
                 "text": "Implemented requirement for IAM.4"
@@ -847,7 +847,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -857,12 +857,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "9c94fa90-c857-5c97-98e0-fbf33056be34",
+                "subject-uuid": "4e66061f-6712-537d-b9fb-696a4861301c",
                 "type": "component"
               }
             ],
@@ -870,7 +870,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "0ac2ec53-7adb-52eb-912a-8a7d3ae9270d"
+            "uuid": "f2210bce-a1e3-5667-952d-8c26419e4a1c"
           },
           {
             "collected": "2026-09-10T00:00:00Z",
@@ -878,7 +878,7 @@
             "expires": "2026-12-11T00:00:00Z",
             "links": [
               {
-                "href": "#1896ca38-921e-5454-82c8-8d53349917d4",
+                "href": "#9e7296fa-3f7d-510b-8719-fac5b53824b9",
                 "rel": "assessed-control",
                 "resource-fragment": "S3.5",
                 "text": "Implemented requirement for S3.5"
@@ -891,7 +891,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -901,12 +901,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "9c94fa90-c857-5c97-98e0-fbf33056be34",
+                "subject-uuid": "4e66061f-6712-537d-b9fb-696a4861301c",
                 "type": "component"
               }
             ],
@@ -914,7 +914,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "d2a1b51e-029f-56ce-b407-4a58161aa638"
+            "uuid": "c1835894-e69b-53f6-9925-38d7b440455e"
           },
           {
             "collected": "2026-08-28T00:00:00Z",
@@ -922,7 +922,7 @@
             "expires": "2027-06-17T00:00:00Z",
             "links": [
               {
-                "href": "#082e05a6-2099-54b8-9b77-0020bf3dbc7c",
+                "href": "#30f49312-0b47-5904-b326-a3bb9d1968df",
                 "rel": "assessed-control",
                 "resource-fragment": "EC2.2",
                 "text": "Implemented requirement for EC2.2"
@@ -935,7 +935,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -945,12 +945,12 @@
             "relevant-evidence": [
               {
                 "description": "Analytics Workbench normalised scan results 2026-Q3",
-                "href": "#42d40a8a-8cfe-5e7b-a62f-ac6e7a37e562"
+                "href": "#7c6812d0-0bab-56ff-9e78-2e6fe3d725b0"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "9c94fa90-c857-5c97-98e0-fbf33056be34",
+                "subject-uuid": "4e66061f-6712-537d-b9fb-696a4861301c",
                 "type": "component"
               }
             ],
@@ -958,7 +958,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "e64bd876-16f6-5774-8387-8aaa438454af"
+            "uuid": "e9b1c4c3-c6bb-53a6-8ade-3753085030e4"
           }
         ],
         "reviewed-controls": {
@@ -1025,7 +1025,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "06d5e411-42da-5019-9f15-247f194dccae",
+                    "actor-uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1035,26 +1035,26 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "false"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "d2a1b51e-029f-56ce-b407-4a58161aa638"
+                "observation-uuid": "c1835894-e69b-53f6-9925-38d7b440455e"
               }
             ],
             "statement": "Until S3.5 is satisfied, Analytics Workbench carries this exposure.",
             "status": "open",
             "title": "S3.5 shortfall on WORKBENCH",
-            "uuid": "9324cf70-4e40-5e5a-8f3b-c7a1d0b6f2cc"
+            "uuid": "c2d263ac-ea06-585a-a517-0d0b55b1d00f"
           }
         ],
         "start": "2026-08-25T00:00:00Z",
         "title": "Analytics Workbench assessment 2026-Q3",
-        "uuid": "44160b85-5473-5f6f-8dbd-ff77853153dc"
+        "uuid": "c6bfe754-eff0-5f99-a8d6-2566254292c8"
       }
     ],
-    "uuid": "1c30b447-e391-5964-b202-c3c6a5992c28"
+    "uuid": "f5863eaa-f6c4-5fa8-a622-b75dd11012ea"
   }
 }

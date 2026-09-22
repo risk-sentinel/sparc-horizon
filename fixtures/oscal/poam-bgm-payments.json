@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "33ec59571f273b1e37a713975d8e7f042446cb7692737476ad4ca9e247f40dfa"
+                  "value": "802ff2a30ac8d6c3714e5f2494bff6d7e75ac5b9552fe387c52e27f421de10d4"
                 }
               ],
               "href": "./ssp-bgm-payments.json",
@@ -17,12 +17,12 @@
             }
           ],
           "title": "Payments Gateway system security plan",
-          "uuid": "01605f49-bb0e-5020-a245-b9f01c6ec078"
+          "uuid": "15781999-2cd0-51a4-ad7a-3c65a478d3d3"
         }
       ]
     },
     "import-ssp": {
-      "href": "#01605f49-bb0e-5020-a245-b9f01c6ec078"
+      "href": "#15781999-2cd0-51a4-ad7a-3c65a478d3d3"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -33,73 +33,73 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "Bureau of Grants Management",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "BGM",
           "type": "organization",
-          "uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          "uuid": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
         },
         {
           "member-of-organizations": [
-            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
           ],
           "name": "PAYMENTS Authorizing Official",
           "type": "person",
-          "uuid": "6ce009f0-9c97-5dd7-9217-d800f0cf2a8a"
+          "uuid": "559ea211-238b-5a0b-aa81-5e60a62248e7"
         },
         {
           "member-of-organizations": [
-            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
           ],
           "name": "PAYMENTS System Owner",
           "type": "person",
-          "uuid": "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+          "uuid": "5ef8d6fa-f968-5b99-8c45-e0cd39aba9d3"
         },
         {
           "member-of-organizations": [
-            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
           ],
           "name": "PAYMENTS Information System Security Officer",
           "type": "person",
-          "uuid": "6f8d0179-9906-5125-b416-43f858b7633d"
+          "uuid": "b9d755e3-b11a-5689-8055-ed78d47138e0"
         }
       ],
       "published": "2026-09-15T00:00:00Z",
       "responsible-parties": [
         {
           "party-uuids": [
-            "6ce009f0-9c97-5dd7-9217-d800f0cf2a8a"
+            "559ea211-238b-5a0b-aa81-5e60a62248e7"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "b94d764e-6e7f-5168-8c3d-b8543c4d0a2b"
+            "5ef8d6fa-f968-5b99-8c45-e0cd39aba9d3"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "6f8d0179-9906-5125-b416-43f858b7633d"
+            "b9d755e3-b11a-5689-8055-ed78d47138e0"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -128,7 +128,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "actor-uuid": "b9d755e3-b11a-5689-8055-ed78d47138e0",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -137,21 +137,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "b959f0a3-81ea-5c44-8314-e87879d034d7"
+            "finding-uuid": "5ff83d6b-9d44-51a1-a3c3-f6368288452e"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "b30ac6c6-6a48-5e34-9311-2d47bc861448"
+            "observation-uuid": "3ad1467a-3cc7-53a1-9a4f-f43d07d1b1cd"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "6d21713c-10f5-5b6a-b5fe-7f80a914f2f0"
+            "risk-uuid": "9e04ffeb-8ffa-5bed-ace3-0d428999ef30"
           }
         ],
         "title": "ac-2.1 remediation",
-        "uuid": "49f6c5c6-603b-5375-ad87-9a620685afb0"
+        "uuid": "eda377dc-a8f4-53be-9ea6-4157e52510d4"
       },
       {
         "description": "Tracked remediation of the si-7 finding on Payments Gateway.",
@@ -159,7 +159,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "actor-uuid": "b9d755e3-b11a-5689-8055-ed78d47138e0",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -168,21 +168,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "6ef25be1-a51a-5a70-849c-e7d4b42a4b56"
+            "finding-uuid": "dcff0d79-bfec-539a-8109-3fb020de3a3d"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "db7120be-5b0c-54fb-9eea-dff53d8bc26d"
+            "observation-uuid": "dc18cfd7-c843-59cd-b0e2-66c7f67dc372"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "f24a6839-f3c8-575a-959f-953f3b41c27f"
+            "risk-uuid": "fc2062b8-4cb8-529b-b516-e6b5b24df51e"
           }
         ],
         "title": "si-7 remediation",
-        "uuid": "540e85c6-d8ad-5bf1-aaea-3c396d86d468"
+        "uuid": "64e2cd77-4d67-578e-a582-8e5f1341b606"
       },
       {
         "description": "Tracked remediation of the IAM.4 finding on Payments Gateway.",
@@ -190,7 +190,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "actor-uuid": "b9d755e3-b11a-5689-8055-ed78d47138e0",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -199,21 +199,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "5c5f953b-6bff-5d78-8602-a5927e268180"
+            "finding-uuid": "a6906c4f-8c62-5d61-ac54-d7e9617ddf19"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "6440c662-e188-505a-bbd8-004b08ea4b38"
+            "observation-uuid": "247b2df9-b725-52c3-a110-52caa4324b82"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "652d5a5d-2f3c-5147-91a3-fe76839d3e1b"
+            "risk-uuid": "53d4be20-f2a2-54c5-9bbd-82c6e3bee157"
           }
         ],
         "title": "IAM.4 remediation",
-        "uuid": "56f29e01-e4de-54c8-839c-5b64581b26f6"
+        "uuid": "92ec2006-5891-537e-8009-67007ecc2390"
       },
       {
         "description": "Tracked remediation of the EC2.2 finding on Payments Gateway.",
@@ -221,7 +221,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "actor-uuid": "b9d755e3-b11a-5689-8055-ed78d47138e0",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -230,21 +230,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "de07acfc-50b5-59ff-9a94-c34a7bb13f38"
+            "finding-uuid": "9228b980-a0b6-5609-a311-38eab9e92371"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "7e409984-b58a-5805-9f69-5b17b15d48d0"
+            "observation-uuid": "51170da5-9e5d-5ae6-86c1-872bb71aedc5"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "d73dc9b4-5710-5df3-b141-f1499f719837"
+            "risk-uuid": "df33b7e0-d6fa-59cf-83a5-33ef3ecd008c"
           }
         ],
         "title": "EC2.2 remediation",
-        "uuid": "6ebdcd4b-02e6-52fc-ac44-74f0bb699391"
+        "uuid": "e4271790-aae7-52db-a628-ffbf459b52dc"
       }
     ],
     "risks": [
@@ -255,7 +255,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "actor-uuid": "b9d755e3-b11a-5689-8055-ed78d47138e0",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -265,13 +265,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "true"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "b30ac6c6-6a48-5e34-9311-2d47bc861448"
+            "observation-uuid": "3ad1467a-3cc7-53a1-9a4f-f43d07d1b1cd"
           }
         ],
         "remediations": [
@@ -288,17 +288,17 @@
                 },
                 "title": "Milestone: ac-2.1 remediation complete",
                 "type": "milestone",
-                "uuid": "14b40047-04db-5b37-b955-c27cc4197989"
+                "uuid": "e33a83f5-670b-5041-9dbc-310312614de2"
               }
             ],
             "title": "Remediate ac-2.1",
-            "uuid": "60e08506-a302-55c7-99b9-976a1547ed86"
+            "uuid": "78b0062c-8d11-5851-968e-b167359ddfe1"
           }
         ],
         "statement": "Until ac-2.1 is satisfied, Payments Gateway carries this exposure.",
         "status": "open",
         "title": "ac-2.1 shortfall on PAYMENTS",
-        "uuid": "6d21713c-10f5-5b6a-b5fe-7f80a914f2f0"
+        "uuid": "9e04ffeb-8ffa-5bed-ace3-0d428999ef30"
       },
       {
         "deadline": "2026-11-01T00:00:00Z",
@@ -307,7 +307,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "actor-uuid": "b9d755e3-b11a-5689-8055-ed78d47138e0",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -317,13 +317,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "true"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "db7120be-5b0c-54fb-9eea-dff53d8bc26d"
+            "observation-uuid": "dc18cfd7-c843-59cd-b0e2-66c7f67dc372"
           }
         ],
         "remediations": [
@@ -340,17 +340,17 @@
                 },
                 "title": "Milestone: si-7 remediation complete",
                 "type": "milestone",
-                "uuid": "2b35fcec-4ba6-583d-8f78-cb36bb0b0f5d"
+                "uuid": "a693c792-fc18-5b35-9f45-f5d041c40db7"
               }
             ],
             "title": "Remediate si-7",
-            "uuid": "2b9b65f7-b7e1-50f8-99e7-2b4b3a0535bf"
+            "uuid": "5279520a-0347-5585-b361-c7ae9bdee371"
           }
         ],
         "statement": "Until si-7 is satisfied, Payments Gateway carries this exposure.",
         "status": "open",
         "title": "si-7 shortfall on PAYMENTS",
-        "uuid": "f24a6839-f3c8-575a-959f-953f3b41c27f"
+        "uuid": "fc2062b8-4cb8-529b-b516-e6b5b24df51e"
       },
       {
         "deadline": "2026-11-05T00:00:00Z",
@@ -359,7 +359,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "actor-uuid": "b9d755e3-b11a-5689-8055-ed78d47138e0",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -369,13 +369,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "true"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "6440c662-e188-505a-bbd8-004b08ea4b38"
+            "observation-uuid": "247b2df9-b725-52c3-a110-52caa4324b82"
           }
         ],
         "remediations": [
@@ -392,17 +392,17 @@
                 },
                 "title": "Milestone: IAM.4 remediation complete",
                 "type": "milestone",
-                "uuid": "e74253e8-1254-54e0-af05-d8c811af4dcc"
+                "uuid": "546c2617-b68f-503b-adf4-706b803b6d7b"
               }
             ],
             "title": "Remediate IAM.4",
-            "uuid": "091a5c6c-0719-5aee-8b0e-7c2de8d1884b"
+            "uuid": "b864cecf-27bb-51b7-85f0-3ca964eeae9f"
           }
         ],
         "statement": "Until IAM.4 is satisfied, Payments Gateway carries this exposure.",
         "status": "open",
         "title": "IAM.4 shortfall on PAYMENTS",
-        "uuid": "652d5a5d-2f3c-5147-91a3-fe76839d3e1b"
+        "uuid": "53d4be20-f2a2-54c5-9bbd-82c6e3bee157"
       },
       {
         "deadline": "2026-11-25T00:00:00Z",
@@ -411,7 +411,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "6f8d0179-9906-5125-b416-43f858b7633d",
+                "actor-uuid": "b9d755e3-b11a-5689-8055-ed78d47138e0",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -421,13 +421,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "true"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "7e409984-b58a-5805-9f69-5b17b15d48d0"
+            "observation-uuid": "51170da5-9e5d-5ae6-86c1-872bb71aedc5"
           }
         ],
         "remediations": [
@@ -444,23 +444,23 @@
                 },
                 "title": "Milestone: EC2.2 remediation complete",
                 "type": "milestone",
-                "uuid": "432f9e4b-2177-5fa0-93d8-40594582c459"
+                "uuid": "ef97e264-78f0-5433-a740-8bfbf1a66669"
               }
             ],
             "title": "Remediate EC2.2",
-            "uuid": "f387742a-cf0f-5296-90c6-d1f55a674541"
+            "uuid": "e45a962d-94e8-5399-aa67-b2057a7ceb67"
           }
         ],
         "statement": "Until EC2.2 is satisfied, Payments Gateway carries this exposure.",
         "status": "open",
         "title": "EC2.2 shortfall on PAYMENTS",
-        "uuid": "d73dc9b4-5710-5df3-b141-f1499f719837"
+        "uuid": "df33b7e0-d6fa-59cf-83a5-33ef3ecd008c"
       }
     ],
     "system-id": {
       "id": "bgm-payments",
-      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+      "identifier-type": "https://sparc.risk-sentinel.org/ns/slug"
     },
-    "uuid": "e8b98d2a-4f7d-5ebe-8f9a-2242e96af9cb"
+    "uuid": "4eca7ce2-1ee2-5c2d-a630-07130cbbf783"
   }
 }

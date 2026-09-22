@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "999c52ef2ae46e8ef7e4d8ed9d973f9bf415fcd6be8215bada6681af2a17b744"
+                  "value": "10db97bf5b6d1db9db6772c9e5bdb1b1fe15a2a89f8cdf6fab31d2742a212c80"
                 }
               ],
               "href": "./ssp-bgm-grants.json",
@@ -17,12 +17,12 @@
             }
           ],
           "title": "Grants Platform system security plan",
-          "uuid": "93bb33d1-a2ad-5eee-ac9e-2894f09162f2"
+          "uuid": "a8a226ff-c477-5c42-abdb-a46e356db5d8"
         }
       ]
     },
     "import-ssp": {
-      "href": "#93bb33d1-a2ad-5eee-ac9e-2894f09162f2"
+      "href": "#a8a226ff-c477-5c42-abdb-a46e356db5d8"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -33,73 +33,73 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "Bureau of Grants Management",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "BGM",
           "type": "organization",
-          "uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          "uuid": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
         },
         {
           "member-of-organizations": [
-            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
           ],
           "name": "GRANTS Authorizing Official",
           "type": "person",
-          "uuid": "51cc5630-99e7-5bdb-8736-aae06b692619"
+          "uuid": "d525eea8-a8b6-595e-9bd9-84ae9ba7ba01"
         },
         {
           "member-of-organizations": [
-            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
           ],
           "name": "GRANTS System Owner",
           "type": "person",
-          "uuid": "846dbdd0-44b5-534e-9af3-8bc400b03534"
+          "uuid": "ca3593e0-7813-5676-a0ee-012cc44e8fb8"
         },
         {
           "member-of-organizations": [
-            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
           ],
           "name": "GRANTS Information System Security Officer",
           "type": "person",
-          "uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+          "uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967"
         }
       ],
       "published": "2026-09-15T00:00:00Z",
       "responsible-parties": [
         {
           "party-uuids": [
-            "51cc5630-99e7-5bdb-8736-aae06b692619"
+            "d525eea8-a8b6-595e-9bd9-84ae9ba7ba01"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "846dbdd0-44b5-534e-9af3-8bc400b03534"
+            "ca3593e0-7813-5676-a0ee-012cc44e8fb8"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+            "2ee39e09-fc22-50f9-ad38-ff397563e967"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -128,7 +128,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -137,21 +137,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "e003537f-1469-5e98-bbba-e27a258dcd83"
+            "finding-uuid": "92054b49-ddb3-5e86-965b-2e3e208c0138"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "b3f66165-cfd2-5027-81f1-b595aad6900f"
+            "observation-uuid": "b306e111-f287-5a87-9a8e-e7ee15e070d4"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "7571fd9a-e8cf-5e88-9fe7-ff9e911eb8b3"
+            "risk-uuid": "7cf250f5-d148-5d30-bdba-1d2b90fc311a"
           }
         ],
         "title": "au-6.1 remediation",
-        "uuid": "833812d1-4625-5dbb-8bb9-e4b5f86a095a"
+        "uuid": "49b790a9-7c44-5b98-a291-b3e48948e74c"
       },
       {
         "description": "Tracked remediation of the cp-4 finding on Grants Platform.",
@@ -159,7 +159,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -168,21 +168,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "e27eec46-595c-5812-a067-4152e702f9fa"
+            "finding-uuid": "66694cb6-87bb-595f-ba6e-885ca72e232c"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "1f38f7b4-cc52-56ba-bd66-bb0801c5701a"
+            "observation-uuid": "f388760b-d831-57a3-bae5-fbfe49c1a720"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "ade1ca31-bf13-56a5-8703-d33163475f18"
+            "risk-uuid": "42bf9c9a-6e7a-5881-8a19-ea1e5a90d271"
           }
         ],
         "title": "cp-4 remediation",
-        "uuid": "903437c8-959d-5587-a487-82d516942e8f"
+        "uuid": "29f58bd4-36c4-584d-94ab-8cfbf88a4f6f"
       },
       {
         "description": "Tracked remediation of the sc-28 finding on Grants Platform.",
@@ -190,7 +190,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -199,21 +199,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "48f75f8e-3a94-521f-a491-67c72eb3f9f2"
+            "finding-uuid": "67e948a3-49e1-52b3-aa85-f658b1ed7605"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "316ad834-84ec-5034-ac02-a48844292bbe"
+            "observation-uuid": "308c80e9-d73b-5102-9fc0-12aa4e4fc877"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "786d700a-a98f-5143-8bae-e17599c163b4"
+            "risk-uuid": "725a072d-f698-54a2-8fbc-75a6cf27b054"
           }
         ],
         "title": "sc-28 remediation",
-        "uuid": "b962915f-1a02-5c73-8332-39f1f732604e"
+        "uuid": "a5463f5e-017d-5ce4-b593-c8f311bb623e"
       },
       {
         "description": "Tracked remediation of the IAM.4 finding on Grants Platform.",
@@ -221,7 +221,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -230,21 +230,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "089af37f-3218-5a78-9417-1d50a85f3ae9"
+            "finding-uuid": "7dd93f54-79a8-55cf-b218-904e308e641f"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "86f50285-8a33-5c6d-b121-14095e0d4d95"
+            "observation-uuid": "97e6c2b4-c123-5ce2-a8e9-9d4b814da650"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "4671adbc-fd3a-55bb-bb14-8cbb6db53f48"
+            "risk-uuid": "91f8fe60-790a-53b3-8248-98c9d5e75a79"
           }
         ],
         "title": "IAM.4 remediation",
-        "uuid": "4a552586-95b0-552a-aa24-c3818e8f4cf7"
+        "uuid": "63131244-8c93-50ed-af98-19e96c68cc0b"
       },
       {
         "description": "Tracked remediation of the EC2.2 finding on Grants Platform.",
@@ -252,7 +252,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -261,21 +261,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "1be96308-9a2e-5890-ac55-ccae0788134c"
+            "finding-uuid": "114cd3f1-e7d9-523c-97a6-1cd8dd6c6be8"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "5f2ab399-94af-5132-b6f3-950936a9240e"
+            "observation-uuid": "61bc1995-17eb-5521-a916-33924de5c88a"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "28a5aa43-3d06-59fc-a3c7-4e53ec7e0486"
+            "risk-uuid": "14cdd367-6569-5600-a783-ee43cb39564c"
           }
         ],
         "title": "EC2.2 remediation",
-        "uuid": "dc3d6536-1510-59d9-b4da-736c79e16821"
+        "uuid": "b9b81c94-eb8d-520c-82b3-2d782d047263"
       }
     ],
     "risks": [
@@ -286,7 +286,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -296,13 +296,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "true"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "b3f66165-cfd2-5027-81f1-b595aad6900f"
+            "observation-uuid": "b306e111-f287-5a87-9a8e-e7ee15e070d4"
           }
         ],
         "remediations": [
@@ -319,17 +319,17 @@
                 },
                 "title": "Milestone: au-6.1 remediation complete",
                 "type": "milestone",
-                "uuid": "ce14c980-2f5f-5cc8-a8cc-fee7ca328024"
+                "uuid": "46be707d-b2ab-5231-b4a3-3460952968a6"
               }
             ],
             "title": "Remediate au-6.1",
-            "uuid": "1cc79883-f25f-5a1c-84d5-e04cbfe260ef"
+            "uuid": "3c92020a-d217-5c66-a1d4-987376faff8c"
           }
         ],
         "statement": "Until au-6.1 is satisfied, Grants Platform carries this exposure.",
         "status": "open",
         "title": "au-6.1 shortfall on GRANTS",
-        "uuid": "7571fd9a-e8cf-5e88-9fe7-ff9e911eb8b3"
+        "uuid": "7cf250f5-d148-5d30-bdba-1d2b90fc311a"
       },
       {
         "deadline": "2026-11-23T00:00:00Z",
@@ -338,7 +338,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -348,13 +348,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "true"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "1f38f7b4-cc52-56ba-bd66-bb0801c5701a"
+            "observation-uuid": "f388760b-d831-57a3-bae5-fbfe49c1a720"
           }
         ],
         "remediations": [
@@ -371,17 +371,17 @@
                 },
                 "title": "Milestone: cp-4 remediation complete",
                 "type": "milestone",
-                "uuid": "57ac50dd-8a5a-5e61-bf4e-51659a6f9404"
+                "uuid": "8d1a64e5-e0b4-5f05-96a5-46c664c65d22"
               }
             ],
             "title": "Remediate cp-4",
-            "uuid": "49d8e7e4-f0fb-5a0e-83e1-6aab0b2b0cb1"
+            "uuid": "966410cf-fcc9-5f8b-97af-88c3976b6835"
           }
         ],
         "statement": "Until cp-4 is satisfied, Grants Platform carries this exposure.",
         "status": "open",
         "title": "cp-4 shortfall on GRANTS",
-        "uuid": "ade1ca31-bf13-56a5-8703-d33163475f18"
+        "uuid": "42bf9c9a-6e7a-5881-8a19-ea1e5a90d271"
       },
       {
         "deadline": "2026-11-23T00:00:00Z",
@@ -390,7 +390,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -400,13 +400,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "true"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "316ad834-84ec-5034-ac02-a48844292bbe"
+            "observation-uuid": "308c80e9-d73b-5102-9fc0-12aa4e4fc877"
           }
         ],
         "remediations": [
@@ -423,17 +423,17 @@
                 },
                 "title": "Milestone: sc-28 remediation complete",
                 "type": "milestone",
-                "uuid": "058a7d46-4f7d-5184-aeca-ce714154aaf7"
+                "uuid": "15da57d4-a576-58e5-abbd-5068dfbc55a7"
               }
             ],
             "title": "Remediate sc-28",
-            "uuid": "33af6e30-584b-5024-b486-13251421e29c"
+            "uuid": "fe8d0622-7b6b-538e-bf2c-47bdd4fbd425"
           }
         ],
         "statement": "Until sc-28 is satisfied, Grants Platform carries this exposure.",
         "status": "open",
         "title": "sc-28 shortfall on GRANTS",
-        "uuid": "786d700a-a98f-5143-8bae-e17599c163b4"
+        "uuid": "725a072d-f698-54a2-8fbc-75a6cf27b054"
       },
       {
         "deadline": "2026-12-02T00:00:00Z",
@@ -442,7 +442,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -452,23 +452,23 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "false"
           },
           {
             "name": "condition-expires",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "2027-01-25"
           },
           {
             "name": "trigger",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "score<0.85"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "86f50285-8a33-5c6d-b121-14095e0d4d95"
+            "observation-uuid": "97e6c2b4-c123-5ce2-a8e9-9d4b814da650"
           }
         ],
         "remediations": [
@@ -485,11 +485,11 @@
                 },
                 "title": "Milestone: IAM.4 remediation complete",
                 "type": "milestone",
-                "uuid": "b24c30c8-0ffb-57d2-a5fb-c2b8972c8855"
+                "uuid": "f355fcb8-7f0a-5839-be60-a9d54eac6ce7"
               }
             ],
             "title": "Remediate IAM.4",
-            "uuid": "7b1e73f6-d1bb-51b4-b072-42bbbfabdd29"
+            "uuid": "7e5c988d-1f3c-51ba-8a3b-96c1b3623ba2"
           }
         ],
         "risk-log": {
@@ -498,21 +498,21 @@
               "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
               "logged-by": [
                 {
-                  "party-uuid": "51cc5630-99e7-5bdb-8736-aae06b692619",
+                  "party-uuid": "d525eea8-a8b6-595e-9bd9-84ae9ba7ba01",
                   "role-id": "authorizing-official"
                 }
               ],
               "start": "2026-09-08T00:00:00Z",
               "status-change": "deviation-approved",
               "title": "Risk accepted with conditions",
-              "uuid": "81906f37-3b35-5498-8b93-ce0d936b41d8"
+              "uuid": "bd054be9-3e15-5aa9-aa3d-9533359cbfb5"
             }
           ]
         },
         "statement": "Until IAM.4 is satisfied, Grants Platform carries this exposure.",
         "status": "deviation-approved",
         "title": "IAM.4 shortfall on GRANTS",
-        "uuid": "4671adbc-fd3a-55bb-bb14-8cbb6db53f48"
+        "uuid": "91f8fe60-790a-53b3-8248-98c9d5e75a79"
       },
       {
         "deadline": "2027-02-22T00:00:00Z",
@@ -521,7 +521,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -531,13 +531,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "true"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "5f2ab399-94af-5132-b6f3-950936a9240e"
+            "observation-uuid": "61bc1995-17eb-5521-a916-33924de5c88a"
           }
         ],
         "remediations": [
@@ -554,23 +554,23 @@
                 },
                 "title": "Milestone: EC2.2 remediation complete",
                 "type": "milestone",
-                "uuid": "2287489b-a387-584c-9d57-f272046e490f"
+                "uuid": "ff0d33ce-58cc-5765-a398-4df82ff2999d"
               }
             ],
             "title": "Remediate EC2.2",
-            "uuid": "79cdbf18-b229-573b-ba54-98685feaa575"
+            "uuid": "b3dc9e00-13a1-5064-8a23-5f1b478ea1f4"
           }
         ],
         "statement": "Until EC2.2 is satisfied, Grants Platform carries this exposure.",
         "status": "open",
         "title": "EC2.2 shortfall on GRANTS",
-        "uuid": "28a5aa43-3d06-59fc-a3c7-4e53ec7e0486"
+        "uuid": "14cdd367-6569-5600-a783-ee43cb39564c"
       }
     ],
     "system-id": {
       "id": "bgm-grants",
-      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+      "identifier-type": "https://sparc.risk-sentinel.org/ns/slug"
     },
-    "uuid": "76d9a77b-5dd9-5468-92a9-dd27f9757dab"
+    "uuid": "b9fdf04e-1183-5ac2-a124-5d25ad6c34d1"
   }
 }

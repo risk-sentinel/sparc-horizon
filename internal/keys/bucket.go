@@ -33,9 +33,11 @@ func BucketOnDate(date string) (Bucket, error) {
 	if !bucketDate.MatchString(date) {
 		return "", fmt.Errorf("keys: %q is not a decision date (want YYYY-MM-DD)", date)
 	}
-	// Reuse the period rules so a bucket date and a period date cannot be
-	// validated by two different notions of what a date is.
-	if _, err := canonical.Period(date); err != nil {
+	// Reuse the decision-date rules so a bucket date and the date an AO
+	// decision is keyed on cannot be validated by two different notions of
+	// what a date is. A period is a quarter or a month and is not one of
+	// these.
+	if _, err := canonical.DecisionDate(date); err != nil {
 		return "", err
 	}
 	return Bucket(date), nil

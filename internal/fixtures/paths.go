@@ -6,7 +6,6 @@ const (
 	pathSecurityHubCatalog  = "oscal/catalog-aws-security-hub-subset.json"
 	pathProfile             = "oscal/profile-moderate.json"
 	pathComponentDefinition = "oscal/component-definition-aws-platform.json"
-	pathKeyVectors          = "key-vectors.v1.json"
 	pathREADME              = "README.md"
 )
 

@@ -1,18 +1,275 @@
 {
   "grammar": "v1",
   "namespace": {
-    "uuid": "d051648c-1ae1-569e-8569-b679a9aaf142",
-    "derivation": "uuidv5(urn:uuid:6ba7b811-9dad-11d1-80b4-00c04fd430c8, \"https://risk-sentinel.org/ns/sparc\")",
-    "provisional": true,
-    "issue": "sparc#1155 — the federation namespace UUID is not registered yet"
+    "uuid": "9f434272-f796-589b-b972-954790395630",
+    "derivation": "uuidv5(urn:uuid:6ba7b811-9dad-11d1-80b4-00c04fd430c8, \"https://sparc.risk-sentinel.org/ns\")",
+    "provisional": false,
+    "registered": "sparc#1155, owner-decided 2026-09-21"
   },
   "separator": "\u001f",
   "about": [
-    "Test vectors for the UUIDv5 key grammar specified in docs/03-data-model.md.",
+    "Test vectors AND machine-readable field lists for the UUIDv5 key grammar specified",
+    "normatively in sparc-horizon docs/03-data-model.md, section 'Deterministic UUIDs'.",
     "input = grammar-version + separator + fields joined by the separator; uuid = uuidv5(namespace, input).",
     "canonical-fields is that joined list, already normalised, beginning with the grammar version.",
-    "Every UUID here is provisional until the federation namespace UUID is registered."
+    "field-lists is the declarative source every runtime builds keys from, so the ordering and",
+    "the normalisation are not reimplemented per language. Every canonical-fields below is",
+    "REGENERATED from field-lists + args, so the two cannot drift apart silently."
   ],
+  "provenance": {
+    "origin": "risk-sentinel/sparc-horizon, fixtures/key-vectors.v1.json",
+    "adopted": "2026-09-21 (sparc#1161) — SPARC is now the source of truth; Horizon consumes this file",
+    "namespace-change": "Every uuid here was regenerated under the REGISTERED namespace. The upstream file derived them from the provisional d051648c-1ae1-569e-8569-b679a9aaf142, which came from the placeholder URI https://risk-sentinel.org/ns/sparc. Horizon's own docs anticipated this regeneration."
+  },
+  "normalisers": {
+    "control-id": "SPARC ControlId.canonical — lowercase, unpadded, dot notation. 'AC-2 (1)' -> 'ac-2.1'.",
+    "lowercase": "ASCII/Unicode lowercase.",
+    "none": "Passed through unchanged (NFC still applies, as it does to every field).",
+    "by-vocabulary": "Dispatch on the 'vocabulary' arg via vocabulary-normalisers below."
+  },
+  "vocabulary-normalisers": {
+    "nist-sp800-53": "control-id",
+    "opaque": "none"
+  },
+  "context-args": [
+    "vocabulary"
+  ],
+  "required-context": [
+    "vocabulary"
+  ],
+  "required-context-note": "Required for any object carrying a control identifier, and NOT defaulted. Without a vocabulary there is no way to know whether the identifier may be canonicalised, so the grammar rejects rather than guessing.",
+  "types": {
+    "uuid": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+    "control-id": "Under nist-sp800-53 the CANONICALISED value must match ^[a-z]{2,3}-\\d+(\\.\\d+)*$ — which rejects a statement fragment (ac-2_smt.a) and a foreign-vocabulary identifier (ACM.1 canonicalises to acm.1, which validates and names nothing). Under an opaque vocabulary any non-empty value is accepted unchanged.",
+    "family-id": "^[a-z]{2,3}$ after lowercasing.",
+    "period": "^\\d{4}-(Q[1-4]|(0[1-9]|1[0-2]))$ — 2026-Q3 or 2026-01. 2026-1 is not a spelling of 2026-01, and 2026Q3 is not a quarter.",
+    "sha256": "^[0-9a-f]{64}$ after lowercasing.",
+    "decision-date": "^\\d{4}-\\d{2}-\\d{2}$ — an AO decision is keyed on the DATE it decides, matching the next-decision-date prop. The normative field table names this field 'period' for every kind, but the accepted value differs: a decision takes a date, everything else takes a reporting period. Only the vectors reveal it.",
+    "half": "provider | consumer — there are two halves, and a third would silently create a third object.",
+    "horizon-bucket": "today | +7 | +14 | +30 | a YYYY-MM-DD decision date. Only these are materialised; a cell keyed elsewhere is never invalidated."
+  },
+  "context-args-note": "Present in args, NEVER hashed. 'vocabulary' selects how the control identifier is normalised; it is not itself part of the key. A port that hashes every arg derives different UUIDs for 23 of the 26 vectors below.",
+  "unicode": "Every field is NFC-normalised. No trimming, no case folding beyond the normaliser named above.",
+  "field-lists": {
+    "attestation": [
+      {
+        "arg": "parent-ssp-uuid",
+        "type": "uuid"
+      },
+      {
+        "literal": "attestation"
+      },
+      {
+        "arg": "source-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "control-id",
+        "normalise": "by-vocabulary",
+        "type": "control-id"
+      },
+      {
+        "arg": "component-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "period",
+        "type": "period"
+      }
+    ],
+    "observation": [
+      {
+        "arg": "parent-ssp-uuid",
+        "type": "uuid"
+      },
+      {
+        "literal": "observation"
+      },
+      {
+        "arg": "source-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "control-id",
+        "normalise": "by-vocabulary",
+        "type": "control-id"
+      },
+      {
+        "arg": "component-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "period",
+        "type": "period"
+      }
+    ],
+    "finding": [
+      {
+        "arg": "parent-ssp-uuid",
+        "type": "uuid"
+      },
+      {
+        "literal": "finding"
+      },
+      {
+        "arg": "source-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "control-id",
+        "normalise": "by-vocabulary",
+        "type": "control-id"
+      },
+      {
+        "arg": "component-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "period",
+        "type": "period"
+      }
+    ],
+    "risk": [
+      {
+        "arg": "parent-ssp-uuid",
+        "type": "uuid"
+      },
+      {
+        "literal": "risk"
+      },
+      {
+        "arg": "source-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "control-id",
+        "normalise": "by-vocabulary",
+        "type": "control-id"
+      },
+      {
+        "arg": "component-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "period",
+        "type": "period"
+      }
+    ],
+    "poam-item": [
+      {
+        "arg": "parent-ssp-uuid",
+        "type": "uuid"
+      },
+      {
+        "literal": "poam-item"
+      },
+      {
+        "arg": "source-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "control-id",
+        "normalise": "by-vocabulary",
+        "type": "control-id"
+      },
+      {
+        "arg": "component-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "period",
+        "type": "period"
+      }
+    ],
+    "resource": [
+      {
+        "arg": "parent-ssp-uuid",
+        "type": "uuid"
+      },
+      {
+        "literal": "resource"
+      },
+      {
+        "arg": "sha256",
+        "normalise": "lowercase",
+        "type": "sha256"
+      }
+    ],
+    "decision": [
+      {
+        "arg": "parent-ssp-uuid",
+        "type": "uuid"
+      },
+      {
+        "literal": "decision"
+      },
+      {
+        "arg": "risk-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "period",
+        "type": "decision-date"
+      }
+    ],
+    "responsibility": [
+      {
+        "arg": "parent-ssp-uuid",
+        "type": "uuid"
+      },
+      {
+        "literal": "responsibility"
+      },
+      {
+        "arg": "source-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "control-id",
+        "normalise": "by-vocabulary",
+        "type": "control-id"
+      },
+      {
+        "arg": "component-uuid",
+        "type": "uuid"
+      },
+      {
+        "arg": "half",
+        "type": "half"
+      }
+    ],
+    "cell": [
+      {
+        "arg": "node-uuid",
+        "type": "uuid"
+      },
+      {
+        "literal": "cell"
+      },
+      {
+        "arg": "source-uuid",
+        "type": "uuid"
+      },
+      {
+        "one-of": [
+          "control-id",
+          "family-id"
+        ],
+        "normalise": {
+          "control-id": "by-vocabulary",
+          "family-id": "lowercase"
+        },
+        "type": {
+          "control-id": "control-id",
+          "family-id": "family-id"
+        }
+      },
+      {
+        "arg": "horizon-bucket",
+        "type": "horizon-bucket"
+      }
+    ]
+  },
   "vectors": [
     {
       "name": "attestation-worked-example",
@@ -34,7 +291,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95"
+      "uuid": "1e3d3ab8-dd9a-5212-8ed5-a14dd32d84cb"
     },
     {
       "name": "observation-same-arguments",
@@ -56,7 +313,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "c80e79ed-5097-5dec-b229-dff6bb0af6da"
+      "uuid": "f600fcdf-9ab4-52f5-afad-374a192ce99f"
     },
     {
       "name": "finding-same-arguments",
@@ -78,7 +335,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "3452be22-7376-5537-9211-ca4e5724533d"
+      "uuid": "a708b51c-757a-5fa9-bdff-be53724c6769"
     },
     {
       "name": "risk-same-arguments",
@@ -100,7 +357,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "8f0c3f6e-da6e-52d3-aa39-b719e4176965"
+      "uuid": "3cee8dd6-4727-5d9d-a523-f2292fae2e35"
     },
     {
       "name": "poam-item-same-arguments",
@@ -122,7 +379,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "43cfc7da-2f3a-5173-9a24-665a62f2df1a"
+      "uuid": "74f6a225-2464-5a6e-8175-8e84355ef7a4"
     },
     {
       "name": "attestation-nist-spelling-1",
@@ -144,7 +401,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95"
+      "uuid": "1e3d3ab8-dd9a-5212-8ed5-a14dd32d84cb"
     },
     {
       "name": "attestation-nist-spelling-2",
@@ -166,7 +423,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95"
+      "uuid": "1e3d3ab8-dd9a-5212-8ed5-a14dd32d84cb"
     },
     {
       "name": "attestation-nist-spelling-3",
@@ -188,7 +445,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95"
+      "uuid": "1e3d3ab8-dd9a-5212-8ed5-a14dd32d84cb"
     },
     {
       "name": "observation-enhancement-spelling-1",
@@ -210,7 +467,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "ee7ddc0c-d2e9-5e3c-bfa7-93fae3b4c030"
+      "uuid": "1cb7ce08-21e8-52bb-9c6b-555107532589"
     },
     {
       "name": "observation-enhancement-spelling-2",
@@ -232,7 +489,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "ee7ddc0c-d2e9-5e3c-bfa7-93fae3b4c030"
+      "uuid": "1cb7ce08-21e8-52bb-9c6b-555107532589"
     },
     {
       "name": "observation-enhancement-spelling-3",
@@ -254,7 +511,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "ee7ddc0c-d2e9-5e3c-bfa7-93fae3b4c030"
+      "uuid": "1cb7ce08-21e8-52bb-9c6b-555107532589"
     },
     {
       "name": "observation-enhancement-spelling-4",
@@ -276,7 +533,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "ee7ddc0c-d2e9-5e3c-bfa7-93fae3b4c030"
+      "uuid": "1cb7ce08-21e8-52bb-9c6b-555107532589"
     },
     {
       "name": "observation-parent-control",
@@ -298,7 +555,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "046e3bf6-5b3b-581a-ba13-a7973d2de325"
+      "uuid": "60f0bb95-3d22-5aa9-8648-7bd8d43699b4"
     },
     {
       "name": "observation-security-hub",
@@ -320,7 +577,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "0e6f215e-3bda-58aa-9f00-d4333c9a2f63"
+      "uuid": "5f696c7a-b97e-5016-9b06-2cdc76b61738"
     },
     {
       "name": "observation-security-hub-lowercased",
@@ -342,7 +599,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "7c9a5114-df7a-58e0-93ec-68fefa9c7806"
+      "uuid": "8c4c61c7-0dad-5dcd-8504-7909abc0a01c"
     },
     {
       "name": "observation-resolved-through-profile",
@@ -364,7 +621,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "9dc6f203-b11b-51bc-b5b7-d69411d4e1fd"
+      "uuid": "519bb11f-d023-56d3-93be-26cb8994cce2"
     },
     {
       "name": "observation-next-period",
@@ -386,7 +643,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q4"
       ],
-      "uuid": "e28c605b-dd9d-56dd-bb4b-79ea07816460"
+      "uuid": "69ac3e26-a7ad-5e08-be33-37c3436eda2c"
     },
     {
       "name": "observation-peer-boundary",
@@ -408,7 +665,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "2026-Q3"
       ],
-      "uuid": "2e894677-852f-540d-aa93-a03fd6e55a79"
+      "uuid": "866df235-3910-5680-9fcb-3915ed6f96a8"
     },
     {
       "name": "evidence-resource",
@@ -423,7 +680,7 @@
         "resource",
         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       ],
-      "uuid": "e39f9a52-5b52-5235-b5b5-9fa8f89d1be6"
+      "uuid": "a7752566-3e82-546f-b13a-3ea70c136752"
     },
     {
       "name": "evidence-resource-uppercase-hash",
@@ -438,7 +695,7 @@
         "resource",
         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       ],
-      "uuid": "e39f9a52-5b52-5235-b5b5-9fa8f89d1be6"
+      "uuid": "a7752566-3e82-546f-b13a-3ea70c136752"
     },
     {
       "name": "ao-decision",
@@ -455,7 +712,7 @@
         "c1a2b3d4-5e6f-4071-8293-a4b5c6d7e8f9",
         "2026-10-11"
       ],
-      "uuid": "2133fa09-3a33-53fd-8606-51418ae2e622"
+      "uuid": "e5598165-df5c-5e19-98b9-b7f67c9151e4"
     },
     {
       "name": "responsibility-provider",
@@ -477,7 +734,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "provider"
       ],
-      "uuid": "8180d397-cd0b-5058-8f5b-a9b5ceeeb85d"
+      "uuid": "d2459687-76ab-5082-add3-300b5aa14ffa"
     },
     {
       "name": "responsibility-consumer",
@@ -499,7 +756,7 @@
         "9f1c0f4e-2b7a-4d61-8f52-1c9a3b7d4e60",
         "consumer"
       ],
-      "uuid": "d722b0c7-3ea7-5d29-a62a-855f2aadc82a"
+      "uuid": "7e6044b0-da88-50d8-a90b-758f847f7231"
     },
     {
       "name": "cell-for-control",
@@ -519,7 +776,7 @@
         "cp-4",
         "+30"
       ],
-      "uuid": "298dc9d5-3b7e-5f92-96e6-cc9733335bcd"
+      "uuid": "94a238b4-c266-5a00-bc08-66442572a062"
     },
     {
       "name": "cell-for-family",
@@ -539,7 +796,7 @@
         "cp",
         "+30"
       ],
-      "uuid": "0dcdf1b0-1c6b-5d08-9b43-2d94f08805ac"
+      "uuid": "b2ca5079-7a48-5527-918c-9aacb19bd369"
     },
     {
       "name": "cell-on-decision-date",
@@ -559,7 +816,7 @@
         "cp",
         "2026-10-11"
       ],
-      "uuid": "a78e38fc-b2e7-56a0-ba8a-ee63f9899c0f"
+      "uuid": "2393bc8d-98e7-5e3e-abe1-f2e8a7528829"
     }
   ],
   "assertions": [
@@ -671,7 +928,7 @@
         "a|b",
         "c"
       ],
-      "uuid": "33a54c6f-748c-5604-b775-b3d5df6af254"
+      "uuid": "09c82443-5c4a-5e28-9626-4fad36aa83ac"
     },
     {
       "name": "join-ambiguity-right",
@@ -679,7 +936,7 @@
         "a",
         "b|c"
       ],
-      "uuid": "1399a429-a9ca-5ab2-b6e6-0bddb4c4c2a2"
+      "uuid": "0ef387ef-19ba-5ee9-8764-6749e254fa79"
     }
   ],
   "rejections": [
@@ -819,5 +1076,123 @@
       },
       "why": "Only today, +7, +14, +30 and decision dates are materialised; a cell keyed elsewhere is never invalidated."
     }
-  ]
+  ],
+  "dedup": {
+    "key": [
+      "object-uuid",
+      "originating-party"
+    ],
+    "conflict": "surface",
+    "identifies": "a thing, not an assertion about a thing",
+    "why": [
+      "The grammar is public, the namespace is shared, and the inputs are things like a",
+      "boundary system id, a control id and a period. So EVERY peer can compute the",
+      "identifier of any object in any boundary, including boundaries it does not own.",
+      "That is the intended determinism being used as an addressing scheme, and addressing",
+      "needs an owner.",
+      "Deduplicating on the object UUID alone therefore lets a hostile or compromised peer",
+      "precompute another boundary's attestation identifier and submit a document claiming",
+      "it. The receiver then treats two parties' assertions about different things as one",
+      "object, and which one survives is a property of INGESTION ORDER rather than of",
+      "authority.",
+      "This is not a hash collision and not a weakness in UUIDv5 (sparc#1159, Horizon TM-6)."
+    ],
+    "rules": {
+      "scope": "Deduplicate on the PAIR (object UUID, originating party). Never on the UUID alone.",
+      "collapse": "Two claims with the same pair are the same assertion and collapse to one.",
+      "conflict": "Two claims sharing an object UUID under DIFFERENT parties are a conflict to surface, never a duplicate to collapse. Silently keeping one is the failure mode, whichever one it keeps.",
+      "party-provenance": "The originating party must come from bundle VERIFICATION, not from the payload. A party asserted inside a document it also signs is the same claim twice, not a second fact."
+    },
+    "cases": [
+      {
+        "name": "same-object-same-party-collapses",
+        "claims": [
+          {
+            "object-uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95",
+            "originating-party": "party-a"
+          },
+          {
+            "object-uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95",
+            "originating-party": "party-a"
+          }
+        ],
+        "expect": {
+          "objects": 1,
+          "conflicts": 0
+        },
+        "why": "One party restating its own assertion is a duplicate."
+      },
+      {
+        "name": "same-uuid-different-parties-conflicts",
+        "claims": [
+          {
+            "object-uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95",
+            "originating-party": "party-a"
+          },
+          {
+            "object-uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95",
+            "originating-party": "party-b"
+          }
+        ],
+        "expect": {
+          "objects": 2,
+          "conflicts": 1
+        },
+        "why": "The attack this rule exists for. Both are kept and the clash is surfaced."
+      },
+      {
+        "name": "different-uuids-same-party-are-two-objects",
+        "claims": [
+          {
+            "object-uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95",
+            "originating-party": "party-a"
+          },
+          {
+            "object-uuid": "1399a429-a9ca-5ab2-b6e6-0bddb4c4c2a2",
+            "originating-party": "party-a"
+          }
+        ],
+        "expect": {
+          "objects": 2,
+          "conflicts": 0
+        },
+        "why": "Ordinary case: one party asserting two different things."
+      },
+      {
+        "name": "three-parties-one-uuid-is-one-conflict",
+        "claims": [
+          {
+            "object-uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95",
+            "originating-party": "party-a"
+          },
+          {
+            "object-uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95",
+            "originating-party": "party-b"
+          },
+          {
+            "object-uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95",
+            "originating-party": "party-c"
+          }
+        ],
+        "expect": {
+          "objects": 3,
+          "conflicts": 1
+        },
+        "why": "A conflict is per contested UUID, not per excess claim — otherwise the count grows with how many peers pile on."
+      },
+      {
+        "name": "missing-party-is-refused",
+        "claims": [
+          {
+            "object-uuid": "73b4b970-e2ba-5e5e-884a-7c7de1600e95",
+            "originating-party": ""
+          }
+        ],
+        "expect": {
+          "reject": true
+        },
+        "why": "A claim with no established party cannot be scoped, and scoping it to a default would recreate dedup-by-uuid for exactly the claims that skipped verification."
+      }
+    ]
+  }
 }

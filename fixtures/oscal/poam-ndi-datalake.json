@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "678816f95c653d1c5d60d691186498e158f7ab2b0346944e08915c22c55c0d7c"
+                  "value": "f169d9e097fb42b287835e089580fd6eebd9809ab4914f504439488750689865"
                 }
               ],
               "href": "./ssp-ndi-datalake.json",
@@ -17,12 +17,12 @@
             }
           ],
           "title": "Research Data Lake system security plan",
-          "uuid": "e69b2d2b-2f73-530d-a2ce-460f15fce279"
+          "uuid": "f47d858e-7af8-5990-a4de-7365abd272d8"
         }
       ]
     },
     "import-ssp": {
-      "href": "#e69b2d2b-2f73-530d-a2ce-460f15fce279"
+      "href": "#f47d858e-7af8-5990-a4de-7365abd272d8"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -33,73 +33,73 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "National Data Institute",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "NDI",
           "type": "organization",
-          "uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          "uuid": "bd4969d2-d748-5a13-889f-636f6d3322df"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "DATALAKE Authorizing Official",
           "type": "person",
-          "uuid": "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d"
+          "uuid": "27ccf06a-fb31-5a67-adb8-baf35c2920e4"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "DATALAKE System Owner",
           "type": "person",
-          "uuid": "249617f4-640c-5698-b060-8e48e6bb7737"
+          "uuid": "2f1c7108-5359-56ef-80c3-f5fadacf0b70"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "DATALAKE Information System Security Officer",
           "type": "person",
-          "uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+          "uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a"
         }
       ],
       "published": "2026-09-15T00:00:00Z",
       "responsible-parties": [
         {
           "party-uuids": [
-            "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d"
+            "27ccf06a-fb31-5a67-adb8-baf35c2920e4"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "249617f4-640c-5698-b060-8e48e6bb7737"
+            "2f1c7108-5359-56ef-80c3-f5fadacf0b70"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+            "adf4b1da-b23e-5cba-afdf-892af5fe622a"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -128,7 +128,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -137,21 +137,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "ce709653-1c8a-5695-8c72-493481aa5cff"
+            "finding-uuid": "cd763269-3b1f-5212-956c-91a312bdbca0"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "95ee269e-6cba-579b-92a4-4881d276d6e4"
+            "observation-uuid": "dfaeec66-8595-5436-9fbb-203d13c4de66"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "d5b3842a-a6c5-59d3-a806-efe69fa3e292"
+            "risk-uuid": "3ed97b0d-6669-5f55-a3eb-119b36ce48a5"
           }
         ],
         "title": "ac-2 remediation",
-        "uuid": "ded2bb30-1aa7-5b82-9fc1-4ba8b6d36f50"
+        "uuid": "56ffd5d7-7fec-5e8f-b65b-e887cbf42c4e"
       },
       {
         "description": "Tracked remediation of the cp-9 finding on Research Data Lake.",
@@ -159,7 +159,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -168,21 +168,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "921c14a2-5d85-5bfd-8814-a5fe7f35c694"
+            "finding-uuid": "cf800390-c645-5803-a798-6feafcc031a8"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "eff22b80-c129-5243-b56e-096c94b7f7a0"
+            "observation-uuid": "4c9caae3-468a-58aa-af04-32e907bb6e23"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "2b7e846c-850c-5b97-8d8f-c2d78dee6ad0"
+            "risk-uuid": "b63c171b-ef7b-5acb-a55c-1da0688a2a0b"
           }
         ],
         "title": "cp-9 remediation",
-        "uuid": "7675d5f7-1c42-5f70-a8b2-cb10e11e9ae2"
+        "uuid": "39817650-02c3-54b4-bbf0-2f646fe521c1"
       },
       {
         "description": "Tracked remediation of the ia-5 finding on Research Data Lake.",
@@ -190,7 +190,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -199,21 +199,21 @@
         ],
         "related-findings": [
           {
-            "finding-uuid": "a7a03ce4-d3f5-5079-8725-4f31f76d8c28"
+            "finding-uuid": "a5ca40c1-47a5-5cb0-bad9-7f9f7a9c8f41"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "5dd31d14-5f3b-5417-9ebf-873d82631ce7"
+            "observation-uuid": "e672c7f5-ba59-5c8b-860f-ab9ae51d5fd4"
           }
         ],
         "related-risks": [
           {
-            "risk-uuid": "eea2d20e-6a53-5d9e-8402-bcf5086ff88f"
+            "risk-uuid": "d4c26bd1-ecfa-581c-9675-2194083a963e"
           }
         ],
         "title": "ia-5 remediation",
-        "uuid": "bd01a6e2-3070-5fd1-8961-fcc3fa3fe1bb"
+        "uuid": "2fe76235-136b-5277-9df7-4c153bc7bcd8"
       }
     ],
     "risks": [
@@ -224,7 +224,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -234,23 +234,23 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "false"
           },
           {
             "name": "condition-expires",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "2027-03-26"
           },
           {
             "name": "trigger",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "score<0.85"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "95ee269e-6cba-579b-92a4-4881d276d6e4"
+            "observation-uuid": "dfaeec66-8595-5436-9fbb-203d13c4de66"
           }
         ],
         "remediations": [
@@ -267,11 +267,11 @@
                 },
                 "title": "Milestone: ac-2 remediation complete",
                 "type": "milestone",
-                "uuid": "1628cade-ccab-59e8-b888-121592a8dd7b"
+                "uuid": "3a3c2899-5696-55ae-873a-e329eb2803e3"
               }
             ],
             "title": "Remediate ac-2",
-            "uuid": "e9055f8d-8d84-5b88-a204-3d7c5acbda66"
+            "uuid": "1f86f547-d23e-53db-9e2f-98d7e8427216"
           }
         ],
         "risk-log": {
@@ -280,21 +280,21 @@
               "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
               "logged-by": [
                 {
-                  "party-uuid": "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d",
+                  "party-uuid": "27ccf06a-fb31-5a67-adb8-baf35c2920e4",
                   "role-id": "authorizing-official"
                 }
               ],
               "start": "2026-09-08T00:00:00Z",
               "status-change": "deviation-approved",
               "title": "Risk accepted with conditions",
-              "uuid": "0c95001a-91fd-55ce-b09b-65adf05c1ef8"
+              "uuid": "553b4a7f-8155-5a0e-94ee-c38b5b95ef3e"
             }
           ]
         },
         "statement": "Until ac-2 is satisfied, Research Data Lake carries this exposure.",
         "status": "deviation-approved",
         "title": "ac-2 shortfall on DATALAKE",
-        "uuid": "d5b3842a-a6c5-59d3-a806-efe69fa3e292"
+        "uuid": "3ed97b0d-6669-5f55-a3eb-119b36ce48a5"
       },
       {
         "deadline": "2027-02-19T00:00:00Z",
@@ -303,7 +303,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -313,13 +313,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "false"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "eff22b80-c129-5243-b56e-096c94b7f7a0"
+            "observation-uuid": "4c9caae3-468a-58aa-af04-32e907bb6e23"
           }
         ],
         "remediations": [
@@ -336,17 +336,17 @@
                 },
                 "title": "Milestone: cp-9 remediation complete",
                 "type": "milestone",
-                "uuid": "9d2a4eb6-efc8-53f9-ac4c-a8b1a6bbfa5f"
+                "uuid": "bf387936-1cd6-597b-9a92-f3020087fac1"
               }
             ],
             "title": "Remediate cp-9",
-            "uuid": "6a14ffb5-c782-512f-bf75-b4e4f18da5eb"
+            "uuid": "80cbd01c-b2d0-5525-acc2-3bdc9c58cf89"
           }
         ],
         "statement": "Until cp-9 is satisfied, Research Data Lake carries this exposure.",
         "status": "open",
         "title": "cp-9 shortfall on DATALAKE",
-        "uuid": "2b7e846c-850c-5b97-8d8f-c2d78dee6ad0"
+        "uuid": "b63c171b-ef7b-5acb-a55c-1da0688a2a0b"
       },
       {
         "deadline": "2026-11-15T00:00:00Z",
@@ -355,7 +355,7 @@
           {
             "actors": [
               {
-                "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                 "role-id": "information-system-security-officer",
                 "type": "party"
               }
@@ -365,13 +365,13 @@
         "props": [
           {
             "name": "blocks-ato",
-            "ns": "https://risk-sentinel.org/ns/sparc",
+            "ns": "https://sparc.risk-sentinel.org/ns",
             "value": "true"
           }
         ],
         "related-observations": [
           {
-            "observation-uuid": "5dd31d14-5f3b-5417-9ebf-873d82631ce7"
+            "observation-uuid": "e672c7f5-ba59-5c8b-860f-ab9ae51d5fd4"
           }
         ],
         "remediations": [
@@ -388,23 +388,23 @@
                 },
                 "title": "Milestone: ia-5 remediation complete",
                 "type": "milestone",
-                "uuid": "fb4db8ae-4591-5717-a212-a44a3ed88030"
+                "uuid": "eda63686-8117-53b4-9572-24c062fe50ab"
               }
             ],
             "title": "Remediate ia-5",
-            "uuid": "71c51a0e-530d-5bd0-b694-e5de99fbffd6"
+            "uuid": "eebb4692-07aa-5983-9330-3560f7bff38c"
           }
         ],
         "statement": "Until ia-5 is satisfied, Research Data Lake carries this exposure.",
         "status": "open",
         "title": "ia-5 shortfall on DATALAKE",
-        "uuid": "eea2d20e-6a53-5d9e-8402-bcf5086ff88f"
+        "uuid": "d4c26bd1-ecfa-581c-9675-2194083a963e"
       }
     ],
     "system-id": {
       "id": "ndi-datalake",
-      "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+      "identifier-type": "https://sparc.risk-sentinel.org/ns/slug"
     },
-    "uuid": "d14cab0c-f45a-54a4-907c-832503b80505"
+    "uuid": "98c9a41e-6a51-5500-87b6-5210a81867e1"
   }
 }

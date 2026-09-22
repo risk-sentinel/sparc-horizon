@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "e0a64373ff12749523dffa42589aa35ed03ffcf1cda80c38caa2ef64c0fe7719"
+                  "value": "b4f80988f26ea0a980a38c30d763cf7ae8c1e783555652b11129ae5f324d482f"
                 }
               ],
               "href": "./profile-moderate.json",
@@ -17,7 +17,7 @@
             }
           ],
           "title": "Fixture moderate baseline",
-          "uuid": "02db532b-5963-5617-a8bb-6f883ed54422"
+          "uuid": "1605aa04-f147-5497-b05c-6bc161fb226f"
         },
         {
           "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
@@ -26,7 +26,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "db91ee161b692afcc7fc34d3b61b23b2996a353c33a8b2c45a9571d05267bb8e"
+                  "value": "9759f28a638e4791813fc5eb17e5c95731ae77263930c1985068727e55cc3977"
                 }
               ],
               "href": "./ssp-ods-identity.json",
@@ -34,7 +34,7 @@
             }
           ],
           "title": "Identity Services system security plan",
-          "uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+          "uuid": "52176fd3-10ad-5df7-bbb4-c69a930223a8"
         }
       ]
     },
@@ -44,187 +44,187 @@
         {
           "by-components": [
             {
-              "component-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+              "component-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
               "description": "Portal Web Tier implements ac-2.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "6e4388dc-4da5-5658-8632-c3c1b0c7b006"
+              "uuid": "98be7c57-cdc5-5718-8050-d04e33da6c69"
             },
             {
-              "component-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+              "component-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
               "description": "Portal API implements ac-2.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "4ce7e2f4-44c5-5ed8-894b-cb1ee30ee35e"
+              "uuid": "4ec863ad-33f6-5a57-a63a-66cf242b335a"
             }
           ],
           "control-id": "ac-2",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "1727cb33-e16a-584c-a2ea-3612ed0d9491"
+          "uuid": "03ad19ed-f143-530d-bbb1-a2e671fc978c"
         },
         {
           "by-components": [
             {
-              "component-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+              "component-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
               "description": "Portal API implements ac-2.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "974eaeda-d65f-5414-835d-e5c45c11fad7"
+              "uuid": "d27a348f-ebc6-59c1-8984-ae47a17a5df7"
             },
             {
-              "component-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+              "component-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
               "description": "Portal Edge Cache implements ac-2.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "1c3d86e3-bb81-51c3-a7eb-cd872f89c197"
+              "uuid": "24c3e66e-d5df-5891-b0e2-13b4ea0721e4"
             }
           ],
           "control-id": "ac-2.1",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "dcd296b4-c387-5cbd-9dbb-08b1c04abfe3"
+          "uuid": "326d739a-bac7-5597-85d3-d7f695bb9fa0"
         },
         {
           "by-components": [
             {
-              "component-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+              "component-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
               "description": "Portal Edge Cache implements au-6.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "5f8ad984-e514-5341-b093-6d7ed232fbee"
+              "uuid": "59dd9a17-d1fd-572a-b4b5-17db5238dac2"
             },
             {
-              "component-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+              "component-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
               "description": "Portal Web Tier implements au-6.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "0dc76398-63ed-530e-bcdb-3cab9e6268e5"
+              "uuid": "629c632b-5774-59fc-b863-ece45251f105"
             }
           ],
           "control-id": "au-6",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "f248286e-18ca-5a9d-a9ea-4c9b891de61d"
+          "uuid": "5c7084e4-387b-5cad-a2e3-bffa5f71fdca"
         },
         {
           "by-components": [
             {
-              "component-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+              "component-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
               "description": "Portal Web Tier implements au-6.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "362a6a90-22f1-57b6-a222-106fddf7465d"
+              "uuid": "512cb77f-a3b4-5a0d-936e-f666b5542713"
             },
             {
-              "component-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+              "component-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
               "description": "Portal API implements au-6.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "2888d56c-a809-5385-9841-8cf9c05c0ae2"
+              "uuid": "8597cb3f-2795-5216-8bf7-1f832cfb542f"
             }
           ],
           "control-id": "au-6.1",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "461c1afd-6a19-5421-82eb-bcbd98057c70"
+          "uuid": "ada209c0-1ed8-5d76-bcfe-581ba6348058"
         },
         {
           "by-components": [
             {
-              "component-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+              "component-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
               "description": "Portal API implements cp-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "82ca01dc-46cb-58de-b9a4-a6833bb0dadd"
+              "uuid": "97e4116b-eba2-5c38-ba61-8279bb69ab58"
             },
             {
-              "component-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+              "component-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
               "description": "Portal Edge Cache implements cp-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "18d87682-7ccd-5b2a-8c62-5d5b17126cad"
+              "uuid": "808f31d2-4fd5-50d2-adb7-4c0c0bb94407"
             }
           ],
           "control-id": "cp-4",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "25f96b16-40d1-59df-9a4d-3778b2d957bb"
+          "uuid": "37845d5e-b197-5a0f-9cff-825e3657113a"
         },
         {
           "by-components": [
             {
-              "component-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+              "component-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
               "description": "Portal Edge Cache implements cp-9.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "b9f334ca-7303-51dd-a57b-19b7819767a1"
+              "uuid": "69b071a9-92af-57ef-aa63-3f733d8bb9a6"
             },
             {
-              "component-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+              "component-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
               "description": "Portal Web Tier implements cp-9.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "9b4e6f6e-2485-5bc7-9e8c-994b33f11a15"
+              "uuid": "0cdf0e4f-7fa7-5666-a46d-120c6f4752cd"
             }
           ],
           "control-id": "cp-9",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "89f0852e-a5ee-5d6c-aa3a-90b6c5c3b4a7"
+          "uuid": "debb8397-7b59-5411-8bba-8cef00600a92"
         },
         {
           "by-components": [
             {
-              "component-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+              "component-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
               "description": "Portal Web Tier implements ia-2.",
               "implementation-status": {
                 "state": "implemented"
@@ -232,43 +232,43 @@
               "inherited": [
                 {
                   "description": "Inherited from Identity Services.",
-                  "provided-uuid": "724d525c-fc55-5d8a-828e-f40a65da02b9",
-                  "uuid": "f1c51eec-5474-5ac7-8618-2c18617b8a58"
+                  "provided-uuid": "4b48f9ad-0c28-59f1-88fd-d3cd2253df68",
+                  "uuid": "3cdd544e-fd48-5240-a93d-98a43bdabce0"
                 }
               ],
               "satisfied": [
                 {
                   "description": "Boundary-side configuration answering the provider's stated responsibility.",
-                  "responsibility-uuid": "8cdb9c79-1168-5433-b17e-0219baac249a",
-                  "uuid": "410e506e-8a18-5d83-9581-946bb11f0c15"
+                  "responsibility-uuid": "c1d209ee-b2e8-5ae6-b257-90365a4bf836",
+                  "uuid": "c2155380-d98b-5309-98a7-4ccc04d4cc32"
                 }
               ],
-              "uuid": "8ebb8153-a5d1-54c6-bc32-b1e17e1ad956"
+              "uuid": "ccbb837e-5602-52b4-a811-1cb7a0e4ed53"
             },
             {
-              "component-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+              "component-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
               "description": "Portal API implements ia-2.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "9c608bb0-5a0f-50fd-90af-198fe06d26aa"
+              "uuid": "6fa47476-56c0-5afa-b7f4-7ba6ac97c1bc"
             }
           ],
           "control-id": "ia-2",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "78b070ca-c1ba-5065-a02b-e6994558c6e4"
+          "uuid": "905fa709-2a1d-5720-86e3-4ad180d38cf6"
         },
         {
           "by-components": [
             {
-              "component-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+              "component-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
               "description": "Portal API implements ia-5.",
               "implementation-status": {
                 "state": "implemented"
@@ -276,163 +276,163 @@
               "inherited": [
                 {
                   "description": "Inherited from Identity Services.",
-                  "provided-uuid": "b5c46ed0-ea2e-54b0-a76e-bbe4f2dd6cac",
-                  "uuid": "4773b6df-27b8-5da4-9a38-6f0b3027ad32"
+                  "provided-uuid": "c4785d8d-f45f-5485-b823-6ae450ce4a27",
+                  "uuid": "3f4fb03b-03c1-5266-b9d5-f793dcf4ce90"
                 }
               ],
               "satisfied": [
                 {
                   "description": "Boundary-side configuration answering the provider's stated responsibility.",
-                  "responsibility-uuid": "9abc3f63-4a89-5de3-9dab-a84480338794",
-                  "uuid": "018789ff-cef1-5271-b10a-6cd0cbc0acc6"
+                  "responsibility-uuid": "0a6106cf-5fb3-52c4-957e-8fa7de3a2746",
+                  "uuid": "c34cea94-0715-576d-861b-1a4286943b72"
                 }
               ],
-              "uuid": "9d3c7b7a-b46a-555d-9075-e9681719ab09"
+              "uuid": "46f200d2-ce15-53a2-bac9-130df3bc3d25"
             },
             {
-              "component-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+              "component-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
               "description": "Portal Edge Cache implements ia-5.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "3ab7795d-432a-501f-a89c-ce0d01c46682"
+              "uuid": "71524544-0d69-5cc1-93aa-3e72cc0e582c"
             }
           ],
           "control-id": "ia-5",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "5ad27167-62c1-5c92-9526-2aef5253816a"
+          "uuid": "354402df-e1f7-58e8-bfcd-913abb1eacae"
         },
         {
           "by-components": [
             {
-              "component-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+              "component-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
               "description": "Portal Edge Cache implements sc-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "66e088aa-9eeb-562e-8d8d-9e4effadc4bb"
+              "uuid": "cb378214-b3b9-505b-b40f-d9dd0e66ead2"
             },
             {
-              "component-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+              "component-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
               "description": "Portal Web Tier implements sc-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "d6d05377-8b93-5532-995d-5e713ad95c2b"
+              "uuid": "8bfb2203-2617-570d-8b42-53d7de3e40ed"
             }
           ],
           "control-id": "sc-7",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "50c21afd-8084-53aa-a684-bcf75cc66589"
+          "uuid": "2c12b2b9-3830-5904-92c7-fb4d6e6d4a52"
         },
         {
           "by-components": [
             {
-              "component-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+              "component-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
               "description": "Portal Web Tier implements sc-28.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "d8690ab8-626c-52c1-bf22-b76352002e6d"
+              "uuid": "12d0afa3-fcf8-503f-a81f-e6d967de43fd"
             },
             {
-              "component-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+              "component-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
               "description": "Portal API implements sc-28.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "909782e7-7d3f-518f-8aba-66d5ba9dad88"
+              "uuid": "68a5cb50-5859-585d-90bb-48354943692e"
             }
           ],
           "control-id": "sc-28",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "cd27602e-39fb-5560-bb74-6818b2eb56db"
+          "uuid": "e6493dc6-513d-5002-b83e-89e0db422bd8"
         },
         {
           "by-components": [
             {
-              "component-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+              "component-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
               "description": "Portal API implements si-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "2474ede6-9571-5b58-b299-ed32e1ff7839"
+              "uuid": "fe7a406d-f079-5bcc-ab9c-0f69fb810c1c"
             },
             {
-              "component-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+              "component-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
               "description": "Portal Edge Cache implements si-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "2553f09c-04b5-501c-b5e1-30d9845ccb2b"
+              "uuid": "4ece6751-9b25-574f-9a34-2d94fcf83e30"
             }
           ],
           "control-id": "si-4",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "12782514-58da-5693-a9ab-1a3b9c901335"
+          "uuid": "adcd691d-fb75-5e59-b369-bf017cf06e72"
         },
         {
           "by-components": [
             {
-              "component-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+              "component-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
               "description": "Portal Edge Cache implements si-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "8f6b8117-3274-5703-8372-93fc10b14a9e"
+              "uuid": "bda6e7dc-a2be-5a0c-81ea-5e9983175d77"
             },
             {
-              "component-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+              "component-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
               "description": "Portal Web Tier implements si-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "837b441b-09ba-5a49-ac94-9b0aacd732b1"
+              "uuid": "bfecfbfb-8392-5a08-9cea-f0b626a50788"
             }
           ],
           "control-id": "si-7",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "71365c24-a1bc-5ccf-8e86-9348ab09d188"
+          "uuid": "70fcbafd-21e9-5bcf-a935-1d2bc4cb16e6"
         }
       ]
     },
     "import-profile": {
-      "href": "#02db532b-5963-5617-a8bb-6f883ed54422"
+      "href": "#1605aa04-f147-5497-b05c-6bc161fb226f"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -443,75 +443,75 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "Office of Digital Services",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "ODS",
           "type": "organization",
-          "uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          "uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
         },
         {
           "member-of-organizations": [
-            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
           ],
           "name": "PORTAL Authorizing Official",
           "type": "person",
-          "uuid": "dbe515c9-1658-5b38-91a7-8c9eebfb6682"
+          "uuid": "377df8c6-c8fa-5217-a2ff-445247a7b7c5"
         },
         {
           "member-of-organizations": [
-            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
           ],
           "name": "PORTAL System Owner",
           "type": "person",
-          "uuid": "420c7493-0d54-5ed9-8edb-3a8b3cf8ed5d"
+          "uuid": "f935a0b4-4974-5aec-a8ed-590328a8fa6d"
         },
         {
           "member-of-organizations": [
-            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
           ],
           "name": "PORTAL Information System Security Officer",
           "type": "person",
-          "uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc"
+          "uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
         }
       ],
       "props": [
         {
           "name": "node-type",
-          "ns": "https://risk-sentinel.org/ns/sparc",
+          "ns": "https://sparc.risk-sentinel.org/ns",
           "value": "boundary"
         },
         {
           "name": "parent-uuid",
-          "ns": "https://risk-sentinel.org/ns/sparc",
-          "value": "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          "ns": "https://sparc.risk-sentinel.org/ns",
+          "value": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
         },
         {
           "name": "next-decision-date",
-          "ns": "https://risk-sentinel.org/ns/sparc",
+          "ns": "https://sparc.risk-sentinel.org/ns",
           "value": "2026-10-11"
         },
         {
           "name": "fips-199",
-          "ns": "https://risk-sentinel.org/ns/sparc",
+          "ns": "https://sparc.risk-sentinel.org/ns",
           "value": "moderate"
         }
       ],
@@ -519,19 +519,19 @@
       "responsible-parties": [
         {
           "party-uuids": [
-            "dbe515c9-1658-5b38-91a7-8c9eebfb6682"
+            "377df8c6-c8fa-5217-a2ff-445247a7b7c5"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "420c7493-0d54-5ed9-8edb-3a8b3cf8ed5d"
+            "f935a0b4-4974-5aec-a8ed-590328a8fa6d"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "5bdb4241-1f40-55d2-9101-3a51722669cc"
+            "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -571,11 +571,11 @@
       "system-ids": [
         {
           "id": "ods-portal",
-          "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+          "identifier-type": "https://sparc.risk-sentinel.org/ns/slug"
         },
         {
           "id": "1",
-          "identifier-type": "https://risk-sentinel.org/ns/sparc/id"
+          "identifier-type": "https://sparc.risk-sentinel.org/ns/id"
         }
       ],
       "system-information": {
@@ -592,7 +592,7 @@
               "base": "fips-199-moderate"
             },
             "title": "Public Portal operational records",
-            "uuid": "e5c77ca7-78ec-552f-8a2c-33c830097b87"
+            "uuid": "638f4ee3-788e-5fd6-8230-4be2410da51c"
           }
         ]
       },
@@ -607,7 +607,7 @@
           "responsible-roles": [
             {
               "party-uuids": [
-                "420c7493-0d54-5ed9-8edb-3a8b3cf8ed5d"
+                "f935a0b4-4974-5aec-a8ed-590328a8fa6d"
               ],
               "role-id": "system-owner"
             }
@@ -617,7 +617,7 @@
           },
           "title": "Portal Web Tier",
           "type": "software",
-          "uuid": "ca29743c-5835-5051-8624-b90e4003dc60"
+          "uuid": "78d2ee1e-5677-502e-910d-aad763832309"
         },
         {
           "description": "Application interface behind the web tier.",
@@ -625,7 +625,7 @@
           "responsible-roles": [
             {
               "party-uuids": [
-                "420c7493-0d54-5ed9-8edb-3a8b3cf8ed5d"
+                "f935a0b4-4974-5aec-a8ed-590328a8fa6d"
               ],
               "role-id": "system-owner"
             }
@@ -635,7 +635,7 @@
           },
           "title": "Portal API",
           "type": "software",
-          "uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62"
+          "uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e"
         },
         {
           "description": "Caches static assets at the edge.",
@@ -643,7 +643,7 @@
           "responsible-roles": [
             {
               "party-uuids": [
-                "420c7493-0d54-5ed9-8edb-3a8b3cf8ed5d"
+                "f935a0b4-4974-5aec-a8ed-590328a8fa6d"
               ],
               "role-id": "system-owner"
             }
@@ -653,7 +653,7 @@
           },
           "title": "Portal Edge Cache",
           "type": "service",
-          "uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0"
+          "uuid": "193c0b92-191f-51ae-8155-18c027ae2d92"
         },
         {
           "description": "Inherited platform service, assessed by the provider against AWS Security Hub controls.",
@@ -678,7 +678,7 @@
           },
           "title": "AWS Certificate Manager",
           "type": "service",
-          "uuid": "c7e2f3b5-0f73-57aa-bb5c-a942ba127739"
+          "uuid": "f0e2786f-8374-5c9b-9231-5d8acd3f4f43"
         }
       ],
       "inventory-items": [
@@ -686,7 +686,7 @@
           "description": "Portal Web Tier inventory record.",
           "implemented-components": [
             {
-              "component-uuid": "ca29743c-5835-5051-8624-b90e4003dc60"
+              "component-uuid": "78d2ee1e-5677-502e-910d-aad763832309"
             }
           ],
           "props": [
@@ -695,13 +695,13 @@
               "value": "ods-portal/portal-web"
             }
           ],
-          "uuid": "4738f08e-b7c9-5bdd-b9b0-3cbe0ddde98e"
+          "uuid": "243f33df-c596-56ee-bd91-4623e9192a49"
         },
         {
           "description": "Portal API inventory record.",
           "implemented-components": [
             {
-              "component-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62"
+              "component-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e"
             }
           ],
           "props": [
@@ -710,13 +710,13 @@
               "value": "ods-portal/portal-api"
             }
           ],
-          "uuid": "7093f281-b7cd-51e7-8ce9-2a4784e88545"
+          "uuid": "507020a9-111f-572f-9ce1-2ff40be504d7"
         },
         {
           "description": "Portal Edge Cache inventory record.",
           "implemented-components": [
             {
-              "component-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0"
+              "component-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92"
             }
           ],
           "props": [
@@ -725,7 +725,7 @@
               "value": "ods-portal/portal-cdn"
             }
           ],
-          "uuid": "562cdd71-01b7-5760-85ab-7b1b3c0b426e"
+          "uuid": "56165a15-86e3-5c9b-9816-eb6f7d7f280f"
         }
       ],
       "leveraged-authorizations": [
@@ -733,17 +733,17 @@
           "date-authorized": "2026-03-02",
           "links": [
             {
-              "href": "#f20b0311-6cb6-5588-9349-ff24440f6674",
+              "href": "#52176fd3-10ad-5df7-bbb4-c69a930223a8",
               "rel": "leveraged-authorization"
             }
           ],
-          "party-uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707",
+          "party-uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
           "remarks": "The reverse-inheritance index behind blast radius is built from this link.",
           "title": "Identity Services",
-          "uuid": "695c64a3-c45e-5687-9756-83b6d4e9de81"
+          "uuid": "144c5d6c-8e51-5828-85bf-839835c8f575"
         }
       ]
     },
-    "uuid": "0db913d7-c382-536f-8c67-b4b52b4e67e6"
+    "uuid": "f7de308a-5555-5e35-be6a-029ad885320e"
   }
 }

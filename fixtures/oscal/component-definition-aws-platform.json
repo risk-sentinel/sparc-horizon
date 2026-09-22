@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "8bae2b922084046e6a4cb238338703289470d12f3323107ab98956316e2a7887"
+                  "value": "a94eaf1c623001e93b4c6e1a2f2c34f42806d84ff3d76151a8c2e614b27606f0"
                 }
               ],
               "href": "./catalog-aws-security-hub-subset.json",
@@ -17,7 +17,7 @@
             }
           ],
           "title": "Fixture subset of AWS Security Hub controls",
-          "uuid": "70e7b144-47b0-57f2-ab8c-528e9a8d4f19"
+          "uuid": "d577757e-e80b-5a37-8762-c3005979aff6"
         }
       ]
     },
@@ -30,26 +30,26 @@
               {
                 "control-id": "ACM.1",
                 "description": "The platform service is assessed against ACM.1 by the provider's continuous monitoring.",
-                "uuid": "17224a91-09fd-5eca-808d-7845a55e996b"
+                "uuid": "364fd99c-b9cc-5758-afa4-b953f4f368c0"
               },
               {
                 "control-id": "IAM.4",
                 "description": "The platform service is assessed against IAM.4 by the provider's continuous monitoring.",
-                "uuid": "2fba0f32-bab4-58ed-bc68-07775b85656f"
+                "uuid": "af9309c2-d10b-5789-a0fe-cc8189ade671"
               },
               {
                 "control-id": "S3.5",
                 "description": "The platform service is assessed against S3.5 by the provider's continuous monitoring.",
-                "uuid": "1896ca38-921e-5454-82c8-8d53349917d4"
+                "uuid": "9e7296fa-3f7d-510b-8719-fac5b53824b9"
               },
               {
                 "control-id": "EC2.2",
                 "description": "The platform service is assessed against EC2.2 by the provider's continuous monitoring.",
-                "uuid": "082e05a6-2099-54b8-9b77-0020bf3dbc7c"
+                "uuid": "30f49312-0b47-5904-b326-a3bb9d1968df"
               }
             ],
-            "source": "#70e7b144-47b0-57f2-ab8c-528e9a8d4f19",
-            "uuid": "44393569-9b9e-5882-b78d-988dd1056031"
+            "source": "#d577757e-e80b-5a37-8762-c3005979aff6",
+            "uuid": "f44cd941-cbaf-50e8-a0c1-576c523a48db"
           }
         ],
         "description": "Inherited platform service. Leveraged by every boundary in the fixture federation.",
@@ -72,7 +72,7 @@
         "purpose": "Issues and renews the certificates the boundaries' public endpoints present.",
         "title": "AWS Certificate Manager",
         "type": "service",
-        "uuid": "1a255560-c677-53aa-83d6-4fd5910ba37e"
+        "uuid": "c4e6aa1d-cc90-583c-9694-a37aac3b66a9"
       }
     ],
     "metadata": {
@@ -83,6 +83,6 @@
       "title": "Inherited AWS platform components",
       "version": "1.0.0"
     },
-    "uuid": "2ded1436-6892-520c-b4fe-234db3e5772f"
+    "uuid": "b2445bc5-1ae3-592a-83b4-8aa943b9a347"
   }
 }

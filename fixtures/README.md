@@ -18,21 +18,24 @@ A hand edit is lost on the next run and fails the regeneration check before that
 | `oscal/` | 25 | Catalogs, the profile, the inherited component definition, and one SSP, assessment-results and POA&M per boundary |
 | `evidence/` | 14 | The artifacts the back-matter resources hash. Synthetic content; the digests are of these bytes |
 | `sparc/` | 5 | SPARC's relational addressing — numeric ids and slugs — carrying the OSCAL UUID on every row |
-| `key-vectors.v1.json` | 1 | Test vectors for the UUIDv5 key grammar, for the Ruby and Python ports (`sparc#1161`) |
 
-## Every UUID here is provisional
+## The identifiers are final
 
-The federation namespace UUID is not registered yet (`sparc#1155`). These
-fixtures derive under a placeholder:
+Every UUID here derives under the **registered** federation namespace
+(`sparc#1155`, decided 2026-09-21):
 
 ```
-namespace = uuidv5(url-namespace, "https://risk-sentinel.org/ns/sparc")
-          = d051648c-1ae1-569e-8569-b679a9aaf142
+namespace = uuidv5(url-namespace, "https://sparc.risk-sentinel.org/ns")
+          = 9f434272-f796-589b-b972-954790395630
 ```
 
-When the real namespace lands, every identifier below changes and the fixtures
-are regenerated. **P0's exit criterion is not closed by their existence** — the
-regeneration check measures stability, not finality.
+Derived rather than invented, so any peer recomputes it from the published URI
+instead of copying a constant. These fixtures were regenerated when it landed;
+the provisional identifiers that preceded them are gone.
+
+The key grammar itself, its field lists and the vectors all three runtimes assert
+against live in `sparc:lib/federation/key-grammar.v1.json` (`sparc#1161`).
+Horizon consumes that file rather than publishing its own.
 
 ## Two identifier schemes, deliberately
 

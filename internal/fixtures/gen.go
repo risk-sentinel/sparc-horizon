@@ -200,14 +200,6 @@ func (g *Generator) Generate() (Tree, error) {
 		}
 	}
 
-	vectors, err := keys.Vectors(g.ns)
-	if err != nil {
-		return nil, err
-	}
-	if _, err := add(pathKeyVectors, vectors); err != nil {
-		return nil, err
-	}
-
 	tree[pathREADME] = g.readme(tree)
 	return tree, nil
 }

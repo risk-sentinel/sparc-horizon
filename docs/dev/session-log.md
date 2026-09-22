@@ -44,6 +44,59 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-22 — #54 — `feature/54_registered_namespace`
+
+**In flight:** nothing.
+
+**`sparc#1155` and `sparc#1161` both landed, and the namespace is not the one we asked about.**
+The issue asked SPARC to confirm Horizon's placeholder or name the real one; the answer was
+neither. SPARC had already registered `https://sparc.risk-sentinel.org/ns` in its own #1106 —
+different host *and* path — so the change belonged here. The federation UUID
+`9f434272-f796-589b-b972-954790395630` is **derived** from that URI rather than random, which is
+the same construction `ProvisionalNamespace()` used, so adopting it was a constant rather than a
+rework.
+
+**The conformance check passed before any of this was written.** Our Go, pointed at the
+registered namespace, reproduced all 26 of SPARC's regenerated vectors. That was worth running
+first: it meant the reconciliation below was about rules, not about arithmetic.
+
+**Reading their type rules found five divergences that no vector catches.** Four are acceptance
+mismatches — period forms, decision dates, control-id prefix length and enhancement depth,
+family-id length — and fail loudly. The fifth does not: the contract lowercases `family-id`
+unconditionally, so `ACM` under an opaque vocabulary derives one identifier there and another
+here, with neither side erroring. **UUID agreement over a fixed corpus is a weak check**; it
+only exercises what somebody thought to write a vector for. The conformance test now drives the
+contract's own regexes against our canonicalisers instead.
+
+**Four adopted, one held.** We are no longer stricter than the shared grammar, because being
+stricter means refusing to ingest an object a peer has already derived an identifier for — which
+is why `DecisionDate` now accepts `2026-13-01`, matching a contract that types the field as
+`^\d{4}-\d{2}-\d{2}$` and nothing more. The held one is `family-id`: lowercasing a foreign
+authority's family is the defect #37 removed from control ids, and
+[`sparc-family-id-normalisation.md`](sparc-family-id-normalisation.md) is written and waiting on
+the owner, with the looseness above raised as a second, minor point.
+
+**I had the divergence UUIDs wrong in the issue and in the first draft of that document** —
+computed under the provisional namespace, before the adoption they were describing. Running the
+reproducer rather than trusting what I had written caught it; #54 carries the correction. The
+lesson is the one the `go-oscal` report already applied: a quoted value that was never executed
+is a guess with good formatting.
+
+**Every identifier in `fixtures/` changed** — 0 of 61 UUIDs in `ssp-ods-portal.json` survived,
+which is the check worth running, because a survivor would have meant something was not deriving
+under the namespace at all. The 18 AO decisions also moved off the quarter onto the day they
+were decided, which is why this could not be split into "adopt the namespace" and "reconcile
+later": freezing first would have frozen identifiers the contract calls malformed.
+
+**Attestations were deliberately left alone.** They are dated records bound to a hash, so the
+namespace change is a staleness trigger rather than an edit — #31 folds it into the P0-exit
+checkpoint, which is now the next thing after the API freeze.
+
+**Next:** **freeze API v0 and stand up the mock server**, the last P0 task. Then the P0-exit
+checkpoint: the exit criterion is reachable for the first time, since the identifiers are final.
+
+---
+
 ## 2026-09-21 — #49 — `feature/49_oscal_roundtrip_probe`
 
 **In flight:** nothing.

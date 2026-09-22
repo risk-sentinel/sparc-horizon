@@ -37,8 +37,13 @@ const Separator = "\x1f"
 var ErrSeparatorInField = errors.New("canonical: field contains the unit separator")
 
 var (
-	// YYYY | YYYY-Qn | YYYY-MM | YYYY-MM-DD, zero-padded throughout.
-	periodRe = regexp.MustCompile(`^[0-9]{4}(-(Q[1-4]|(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01]))?))?$`)
+	// YYYY-Qn | YYYY-MM, zero-padded. Narrowed to SPARC's shared contract
+	// (lib/federation/key-grammar.v1.json, type "period"), which does not
+	// carry a bare year or a full date. A date belongs to a decision, and has
+	// its own form below.
+	periodRe = regexp.MustCompile(`^[0-9]{4}-(Q[1-4]|(0[1-9]|1[0-2]))$`)
+	// YYYY-MM-DD, the contract's "decision-date".
+	decisionDateRe = regexp.MustCompile(`^[0-9]{4}-[0-9]{2}-[0-9]{2}$`)
 	// RFC 9562 §4 textual form, case-insensitive on input.
 	uuidRe = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
 )
@@ -68,12 +73,32 @@ func Join(fields ...string) (string, error) {
 	return strings.Join(fields, Separator), nil
 }
 
-// Period canonicalises a period label. Quarters are "2026-Q3", never "2026Q3"
-// or "Q3-2026", and every numeric part is zero-padded, so "2026-1" is not a
-// spelling of "2026-01" but a rejection.
+// Period canonicalises a period label: a quarter or a month. Quarters are
+// "2026-Q3", never "2026Q3" or "Q3-2026", and every numeric part is
+// zero-padded, so "2026-1" is not a spelling of "2026-01" but a rejection.
+//
+// This is narrower than docs/03-data-model.md first stated. SPARC's shared
+// key-grammar contract admits only these two forms, and the two
+// implementations have to agree on what a period is or they derive different
+// identifiers from the same object. Narrower is the safer direction to move
+// in: a rejected key is loud, and a divergent one is silent.
 func Period(v string) (string, error) {
 	if !periodRe.MatchString(v) {
-		return "", fmt.Errorf("canonical: %q is not a period label", v)
+		return "", fmt.Errorf("canonical: %q is not a period label (want YYYY-Qn or YYYY-MM)", v)
+	}
+	return v, nil
+}
+
+// DecisionDate canonicalises the day an authorizing official decided
+// something.
+//
+// It is its own form rather than a period because a decision happens on a day,
+// and the value has to line up with the `next-decision-date` prop the HUD
+// counts down to. A decision keyed on a quarter cannot be matched against a
+// calendar.
+func DecisionDate(v string) (string, error) {
+	if !decisionDateRe.MatchString(v) {
+		return "", fmt.Errorf("canonical: %q is not a decision date (want YYYY-MM-DD)", v)
 	}
 	return v, nil
 }

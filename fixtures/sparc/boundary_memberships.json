@@ -10,8 +10,8 @@
       "organization_slug": "ods",
       "authorization_boundary_id": 1,
       "authorization_boundary_slug": "ods-portal",
-      "oscal_parent_party_uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707",
-      "oscal_ssp_uuid": "0db913d7-c382-536f-8c67-b4b52b4e67e6"
+      "oscal_parent_party_uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
+      "oscal_ssp_uuid": "f7de308a-5555-5e35-be6a-029ad885320e"
     },
     {
       "id": 2,
@@ -19,8 +19,8 @@
       "organization_slug": "ods",
       "authorization_boundary_id": 2,
       "authorization_boundary_slug": "ods-identity",
-      "oscal_parent_party_uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707",
-      "oscal_ssp_uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+      "oscal_parent_party_uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
+      "oscal_ssp_uuid": "52176fd3-10ad-5df7-bbb4-c69a930223a8"
     },
     {
       "id": 3,
@@ -28,8 +28,8 @@
       "organization_slug": "bgm",
       "authorization_boundary_id": 3,
       "authorization_boundary_slug": "bgm-grants",
-      "oscal_parent_party_uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0",
-      "oscal_ssp_uuid": "93bb33d1-a2ad-5eee-ac9e-2894f09162f2"
+      "oscal_parent_party_uuid": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211",
+      "oscal_ssp_uuid": "a8a226ff-c477-5c42-abdb-a46e356db5d8"
     },
     {
       "id": 4,
@@ -37,8 +37,8 @@
       "organization_slug": "bgm",
       "authorization_boundary_id": 4,
       "authorization_boundary_slug": "bgm-payments",
-      "oscal_parent_party_uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0",
-      "oscal_ssp_uuid": "01605f49-bb0e-5020-a245-b9f01c6ec078"
+      "oscal_parent_party_uuid": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211",
+      "oscal_ssp_uuid": "15781999-2cd0-51a4-ad7a-3c65a478d3d3"
     },
     {
       "id": 5,
@@ -46,8 +46,8 @@
       "organization_slug": "ndi",
       "authorization_boundary_id": 5,
       "authorization_boundary_slug": "ndi-datalake",
-      "oscal_parent_party_uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96",
-      "oscal_ssp_uuid": "e69b2d2b-2f73-530d-a2ce-460f15fce279"
+      "oscal_parent_party_uuid": "bd4969d2-d748-5a13-889f-636f6d3322df",
+      "oscal_ssp_uuid": "f47d858e-7af8-5990-a4de-7365abd272d8"
     },
     {
       "id": 6,
@@ -55,8 +55,8 @@
       "organization_slug": "ndi",
       "authorization_boundary_id": 6,
       "authorization_boundary_slug": "ndi-analytics",
-      "oscal_parent_party_uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96",
-      "oscal_ssp_uuid": "ac72c68e-fa06-5948-9aba-c323c96f6164"
+      "oscal_parent_party_uuid": "bd4969d2-d748-5a13-889f-636f6d3322df",
+      "oscal_ssp_uuid": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520"
     },
     {
       "id": 7,
@@ -64,8 +64,8 @@
       "organization_slug": "coa",
       "authorization_boundary_id": 7,
       "authorization_boundary_slug": "coa-fieldops",
-      "oscal_parent_party_uuid": "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f",
-      "oscal_ssp_uuid": "6c6f0631-051a-5412-9e5c-d1772725f170"
+      "oscal_parent_party_uuid": "019cb43f-7468-5184-8780-be8a71a340dc",
+      "oscal_ssp_uuid": "1942d11b-584d-580b-91cb-0ad94254c560"
     }
   ]
 }

@@ -7,13 +7,13 @@
           "props": [
             {
               "name": "evidence-kind",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "hdf-results"
             },
             {
               "name": "signed-by",
-              "ns": "https://risk-sentinel.org/ns/sparc",
-              "value": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "ede17861-8582-5239-b66e-cde0b634932f"
             }
           ],
           "rlinks": [
@@ -29,20 +29,20 @@
             }
           ],
           "title": "Field Operations normalised scan results 2026-Q3",
-          "uuid": "1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+          "uuid": "bd0fe153-818f-57bc-9288-4437f11952ef"
         },
         {
           "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
           "props": [
             {
               "name": "evidence-kind",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "manual-attestation"
             },
             {
               "name": "signed-by",
-              "ns": "https://risk-sentinel.org/ns/sparc",
-              "value": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "ede17861-8582-5239-b66e-cde0b634932f"
             }
           ],
           "rlinks": [
@@ -58,7 +58,7 @@
             }
           ],
           "title": "Field Operations manual attestation 2026-Q3",
-          "uuid": "16e248b9-1c7a-515b-b73e-4e130257bea9"
+          "uuid": "70d9efa8-0f9b-5b88-ae53-8fc3d6c81059"
         },
         {
           "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
@@ -67,7 +67,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "391ef5a6d538dc9ce916f67227ebba4fc6eddbf9dc246f36169775f42790819b"
+                  "value": "2bf7bf99ae6b7317a533b8085c6d6c0ff07b6c38acb9b55d44236b4856e46dcc"
                 }
               ],
               "href": "./ssp-coa-fieldops.json",
@@ -75,7 +75,7 @@
             }
           ],
           "title": "Field Operations system security plan",
-          "uuid": "6c6f0631-051a-5412-9e5c-d1772725f170"
+          "uuid": "1942d11b-584d-580b-91cb-0ad94254c560"
         },
         {
           "citation": {
@@ -83,12 +83,12 @@
           },
           "description": "Cited rather than modelled: these fixtures carry no assessment-plan document.",
           "title": "Field Operations continuous monitoring plan",
-          "uuid": "cb6172d1-4a50-5d0e-842f-29e33e067e32"
+          "uuid": "0707a97e-c0c5-5338-ab94-a1561801e1b4"
         }
       ]
     },
     "import-ap": {
-      "href": "#cb6172d1-4a50-5d0e-842f-29e33e067e32"
+      "href": "#0707a97e-c0c5-5338-ab94-a1561801e1b4"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -99,73 +99,73 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "Coastal Operations Agency",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "COA",
           "type": "organization",
-          "uuid": "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+          "uuid": "019cb43f-7468-5184-8780-be8a71a340dc"
         },
         {
           "member-of-organizations": [
-            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+            "019cb43f-7468-5184-8780-be8a71a340dc"
           ],
           "name": "FIELDOPS Authorizing Official",
           "type": "person",
-          "uuid": "871a0b35-c244-5eab-96af-0787fe21717b"
+          "uuid": "92a463cb-c2b1-5a81-909d-c7b5b463bf03"
         },
         {
           "member-of-organizations": [
-            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+            "019cb43f-7468-5184-8780-be8a71a340dc"
           ],
           "name": "FIELDOPS System Owner",
           "type": "person",
-          "uuid": "e303760c-e28d-5fc0-841e-ee0f19a4b31e"
+          "uuid": "46d94c6d-28db-57f9-8579-86ed5253279c"
         },
         {
           "member-of-organizations": [
-            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+            "019cb43f-7468-5184-8780-be8a71a340dc"
           ],
           "name": "FIELDOPS Information System Security Officer",
           "type": "person",
-          "uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+          "uuid": "ede17861-8582-5239-b66e-cde0b634932f"
         }
       ],
       "published": "2026-09-15T00:00:00Z",
       "responsible-parties": [
         {
           "party-uuids": [
-            "871a0b35-c244-5eab-96af-0787fe21717b"
+            "92a463cb-c2b1-5a81-909d-c7b5b463bf03"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "e303760c-e28d-5fc0-841e-ee0f19a4b31e"
+            "46d94c6d-28db-57f9-8579-86ed5253279c"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+            "ede17861-8582-5239-b66e-cde0b634932f"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -197,20 +197,20 @@
                 "name": "asset",
                 "prose": "The Information System Security Officer attests that cp-4 is implemented for Field Operations in 2026-Q3.",
                 "title": "Attestation for cp-4",
-                "uuid": "274b791e-ef41-5d5a-8348-d314a31f4b81"
+                "uuid": "64e23894-73de-5421-a1bc-0ed8caefcdc1"
               },
               {
                 "class": "ia-5",
                 "name": "asset",
                 "prose": "The Information System Security Officer attests that ia-5 is implemented for Field Operations in 2026-Q3.",
                 "title": "Attestation for ia-5",
-                "uuid": "009476a3-653a-58d7-bdfd-d7cace48ed6b"
+                "uuid": "dbb79a15-8ed5-56f2-9570-84e62e890eff"
               }
             ],
             "responsible-parties": [
               {
                 "party-uuids": [
-                  "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                  "ede17861-8582-5239-b66e-cde0b634932f"
                 ],
                 "role-id": "information-system-security-officer"
               }
@@ -226,7 +226,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -235,12 +235,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "d4d5dd84-9edb-50c3-98cd-0d27756a6248"
+                "observation-uuid": "2e248b87-7e07-5cd7-a5a6-e35a916450ea"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "6f5477ce-0424-5a30-98a3-7e0d0cfffae7"
+                "risk-uuid": "9da7ef55-eaca-5f3f-8dd3-ce762fa9e2a4"
               }
             ],
             "target": {
@@ -252,7 +252,7 @@
               "type": "objective-id"
             },
             "title": "au-6.1 is not satisfied on FIELDOPS",
-            "uuid": "9f17a4ec-1661-584d-96a3-9478dfecf78b"
+            "uuid": "9128d404-b84f-5043-9e9b-4fc056bc2c1f"
           },
           {
             "description": "The assessment of sc-7 did not satisfy the control objective.",
@@ -260,7 +260,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -269,12 +269,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "c12e633b-f147-5d33-8bef-9e4ebb6deef4"
+                "observation-uuid": "50deaa33-2936-58d7-8ee6-6fe1f5a5df7e"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "ce75b1db-0b76-5d7f-a125-1a5ef439f96b"
+                "risk-uuid": "512f847c-cd67-5c67-a99f-f2b9d453476b"
               }
             ],
             "target": {
@@ -286,7 +286,7 @@
               "type": "objective-id"
             },
             "title": "sc-7 is not satisfied on FIELDOPS",
-            "uuid": "3ebbc6ba-adb3-57f4-bd4d-d8c2fe6d5992"
+            "uuid": "6502cf81-c8fc-59b5-8ee0-f9117581094f"
           }
         ],
         "observations": [
@@ -296,7 +296,7 @@
             "expires": "2027-04-06T00:00:00Z",
             "links": [
               {
-                "href": "#30cb119e-7ad7-5111-ab76-089d1b00dd9a",
+                "href": "#ac0b4edd-1f04-50ff-8383-bf6f2afa216d",
                 "rel": "assessed-control",
                 "resource-fragment": "ac-2",
                 "text": "Implemented requirement for ac-2"
@@ -309,7 +309,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -319,12 +319,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "subject-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
                 "type": "component"
               }
             ],
@@ -332,7 +332,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "48233123-5b6e-51a8-8360-2515ad534000"
+            "uuid": "97777e54-4fa8-5295-87ea-bb4f5021a759"
           },
           {
             "collected": "2026-09-01T00:00:00Z",
@@ -340,7 +340,7 @@
             "expires": "2027-01-31T00:00:00Z",
             "links": [
               {
-                "href": "#a38c7953-421b-5835-b1d6-9f9b2b71f9b7",
+                "href": "#54728e14-e557-50bd-a6a2-1073838c1905",
                 "rel": "assessed-control",
                 "resource-fragment": "ac-2.1",
                 "text": "Implemented requirement for ac-2.1"
@@ -353,7 +353,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -363,12 +363,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "subject-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
                 "type": "component"
               }
             ],
@@ -376,7 +376,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "683de7d5-c9d6-535b-8f08-97568bf54722"
+            "uuid": "1313499f-9c94-5a73-8797-13021d51c764"
           },
           {
             "collected": "2026-08-31T00:00:00Z",
@@ -384,7 +384,7 @@
             "expires": "2027-10-18T00:00:00Z",
             "links": [
               {
-                "href": "#235574dd-8e01-56c5-96c9-102827b43a69",
+                "href": "#b45a96b7-538f-52fa-8512-b72d6ec0955b",
                 "rel": "assessed-control",
                 "resource-fragment": "au-6",
                 "text": "Implemented requirement for au-6"
@@ -397,7 +397,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -407,12 +407,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "subject-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
                 "type": "component"
               }
             ],
@@ -420,7 +420,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "58a42d25-63d2-507f-b85d-14e538160f51"
+            "uuid": "be3c8ee6-b898-5761-88f7-84e4b0b65d5e"
           },
           {
             "collected": "2026-09-13T00:00:00Z",
@@ -428,7 +428,7 @@
             "expires": "2026-11-16T00:00:00Z",
             "links": [
               {
-                "href": "#0542eb5a-6f7a-520b-a15e-503a305edba4",
+                "href": "#3be512ca-df2e-55f1-913c-8980b77b8556",
                 "rel": "assessed-control",
                 "resource-fragment": "au-6.1",
                 "text": "Implemented requirement for au-6.1"
@@ -441,7 +441,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -451,12 +451,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "subject-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
                 "type": "component"
               }
             ],
@@ -464,7 +464,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "d4d5dd84-9edb-50c3-98cd-0d27756a6248"
+            "uuid": "2e248b87-7e07-5cd7-a5a6-e35a916450ea"
           },
           {
             "collected": "2026-09-01T00:00:00Z",
@@ -472,7 +472,7 @@
             "expires": "2026-09-19T00:00:00Z",
             "links": [
               {
-                "href": "#ea874aea-1c3f-5048-a978-b04090675c16",
+                "href": "#596751c9-9e1d-5fbd-823f-0a72a22797bc",
                 "rel": "assessed-control",
                 "resource-fragment": "cp-4",
                 "text": "Implemented requirement for cp-4"
@@ -485,7 +485,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -495,12 +495,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations manual attestation 2026-Q3",
-                "href": "#16e248b9-1c7a-515b-b73e-4e130257bea9"
+                "href": "#70d9efa8-0f9b-5b88-ae53-8fc3d6c81059"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "subject-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
                 "type": "component"
               }
             ],
@@ -508,7 +508,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "410093f4-6683-582a-8251-0eba41e972b4"
+            "uuid": "7006b838-074e-5147-b903-734eb55da82b"
           },
           {
             "collected": "2026-08-26T00:00:00Z",
@@ -516,7 +516,7 @@
             "expires": "2027-05-12T00:00:00Z",
             "links": [
               {
-                "href": "#b90fedb6-0d29-59b1-86ec-465a00a5582d",
+                "href": "#e2556b36-1d9d-5c65-bfb3-1a02e59700cb",
                 "rel": "assessed-control",
                 "resource-fragment": "cp-9",
                 "text": "Implemented requirement for cp-9"
@@ -529,7 +529,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -539,12 +539,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "subject-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
                 "type": "component"
               }
             ],
@@ -552,7 +552,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "6ee94d0f-8d61-5300-8873-8bf3b2abac90"
+            "uuid": "21a8d1df-0ed4-5864-81bb-e9c2017c37af"
           },
           {
             "collected": "2026-08-30T00:00:00Z",
@@ -560,7 +560,7 @@
             "expires": "2027-03-25T00:00:00Z",
             "links": [
               {
-                "href": "#a5064b8d-63de-57a8-beef-3a3ebf6fd4c3",
+                "href": "#0158a214-613d-5fe2-93b5-a5727aae2132",
                 "rel": "assessed-control",
                 "resource-fragment": "ia-2",
                 "text": "Implemented requirement for ia-2"
@@ -573,7 +573,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -583,12 +583,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "subject-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
                 "type": "component"
               }
             ],
@@ -596,7 +596,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "b50dc072-e4c9-585f-b716-60d67ac853c8"
+            "uuid": "0590dcfb-c4a5-5444-a4a9-6ad56bb7cdde"
           },
           {
             "collected": "2026-08-25T00:00:00Z",
@@ -604,7 +604,7 @@
             "expires": "2027-04-09T00:00:00Z",
             "links": [
               {
-                "href": "#1d46748d-9fc1-5f82-90b9-3fd118e81dbc",
+                "href": "#ee1f927b-527b-5b31-9537-304b1d8e8c3d",
                 "rel": "assessed-control",
                 "resource-fragment": "ia-5",
                 "text": "Implemented requirement for ia-5"
@@ -617,7 +617,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -627,12 +627,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations manual attestation 2026-Q3",
-                "href": "#16e248b9-1c7a-515b-b73e-4e130257bea9"
+                "href": "#70d9efa8-0f9b-5b88-ae53-8fc3d6c81059"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "subject-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
                 "type": "component"
               }
             ],
@@ -640,7 +640,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "958fc19d-9bf5-571a-866a-6df536803283"
+            "uuid": "8f77e90a-06d1-5d3b-bc2e-114cd1027690"
           },
           {
             "collected": "2026-09-13T00:00:00Z",
@@ -648,7 +648,7 @@
             "expires": "2026-10-31T00:00:00Z",
             "links": [
               {
-                "href": "#0f4f8b73-716e-5f97-820c-6bf96cd1897f",
+                "href": "#96d37a5a-8be9-51e6-a1ae-6a18a2485cbb",
                 "rel": "assessed-control",
                 "resource-fragment": "sc-7",
                 "text": "Implemented requirement for sc-7"
@@ -661,7 +661,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -671,12 +671,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "subject-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
                 "type": "component"
               }
             ],
@@ -684,7 +684,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "c12e633b-f147-5d33-8bef-9e4ebb6deef4"
+            "uuid": "50deaa33-2936-58d7-8ee6-6fe1f5a5df7e"
           },
           {
             "collected": "2026-08-30T00:00:00Z",
@@ -692,7 +692,7 @@
             "expires": "2027-08-19T00:00:00Z",
             "links": [
               {
-                "href": "#3a853096-ee5f-564c-b06b-d519d7500e1e",
+                "href": "#13294de6-3d44-543b-aa4c-86059ad97d57",
                 "rel": "assessed-control",
                 "resource-fragment": "sc-28",
                 "text": "Implemented requirement for sc-28"
@@ -705,7 +705,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -715,12 +715,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "subject-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
                 "type": "component"
               }
             ],
@@ -728,7 +728,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "1ed77c7c-618f-5192-a62f-962c9125ef1c"
+            "uuid": "5de32d87-4f76-502a-a708-6ae76cf41044"
           },
           {
             "collected": "2026-08-29T00:00:00Z",
@@ -736,7 +736,7 @@
             "expires": "2026-09-24T00:00:00Z",
             "links": [
               {
-                "href": "#444d3645-7b7b-521f-b148-ed85e30f37cb",
+                "href": "#ff203036-3128-55f2-824f-3f5c2fa8dde2",
                 "rel": "assessed-control",
                 "resource-fragment": "si-4",
                 "text": "Implemented requirement for si-4"
@@ -749,7 +749,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -759,12 +759,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+                "subject-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
                 "type": "component"
               }
             ],
@@ -772,7 +772,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "65785b35-b5c5-5a73-8a6f-b37eb183cc26"
+            "uuid": "64e644b5-35fa-5b3a-bb6a-f249f51ea3d9"
           },
           {
             "collected": "2026-08-25T00:00:00Z",
@@ -780,7 +780,7 @@
             "expires": "2027-09-24T00:00:00Z",
             "links": [
               {
-                "href": "#e9d6f181-552f-5da2-a901-30200325fd41",
+                "href": "#427ed96b-cae2-581d-a16f-ce3ea1ba4814",
                 "rel": "assessed-control",
                 "resource-fragment": "si-7",
                 "text": "Implemented requirement for si-7"
@@ -793,7 +793,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -803,12 +803,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+                "subject-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
                 "type": "component"
               }
             ],
@@ -816,7 +816,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "73c0e8d4-85c5-5a49-9c09-7fe77408230b"
+            "uuid": "1d9406d0-a554-5f04-9238-8967589e02b9"
           },
           {
             "collected": "2026-09-12T00:00:00Z",
@@ -824,7 +824,7 @@
             "expires": "2027-05-20T00:00:00Z",
             "links": [
               {
-                "href": "#17224a91-09fd-5eca-808d-7845a55e996b",
+                "href": "#364fd99c-b9cc-5758-afa4-b953f4f368c0",
                 "rel": "assessed-control",
                 "resource-fragment": "ACM.1",
                 "text": "Implemented requirement for ACM.1"
@@ -837,7 +837,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -847,12 +847,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "6dcfeb85-7b70-5c40-ad3c-c77b59992a9b",
+                "subject-uuid": "08f7790b-ddde-5aa8-84aa-a0df3b9c581d",
                 "type": "component"
               }
             ],
@@ -860,7 +860,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "9b447164-7369-5eae-95be-f36bb36eaede"
+            "uuid": "ebd12a7b-43d8-53c8-94b3-7fe8f51caf2d"
           },
           {
             "collected": "2026-08-29T00:00:00Z",
@@ -868,7 +868,7 @@
             "expires": "2027-04-29T00:00:00Z",
             "links": [
               {
-                "href": "#2fba0f32-bab4-58ed-bc68-07775b85656f",
+                "href": "#af9309c2-d10b-5789-a0fe-cc8189ade671",
                 "rel": "assessed-control",
                 "resource-fragment": "IAM.4",
                 "text": "Implemented requirement for IAM.4"
@@ -881,7 +881,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -891,12 +891,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "6dcfeb85-7b70-5c40-ad3c-c77b59992a9b",
+                "subject-uuid": "08f7790b-ddde-5aa8-84aa-a0df3b9c581d",
                 "type": "component"
               }
             ],
@@ -904,7 +904,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "0d60ab66-3129-584a-b42b-c76b3c0ca561"
+            "uuid": "dc7e1608-2c8b-54c1-b702-28eb8c9a2516"
           },
           {
             "collected": "2026-09-08T00:00:00Z",
@@ -912,7 +912,7 @@
             "expires": "2027-07-08T00:00:00Z",
             "links": [
               {
-                "href": "#1896ca38-921e-5454-82c8-8d53349917d4",
+                "href": "#9e7296fa-3f7d-510b-8719-fac5b53824b9",
                 "rel": "assessed-control",
                 "resource-fragment": "S3.5",
                 "text": "Implemented requirement for S3.5"
@@ -925,7 +925,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -935,12 +935,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "6dcfeb85-7b70-5c40-ad3c-c77b59992a9b",
+                "subject-uuid": "08f7790b-ddde-5aa8-84aa-a0df3b9c581d",
                 "type": "component"
               }
             ],
@@ -948,7 +948,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "aa9ec06f-e07f-5dfe-a906-6c575fc2a128"
+            "uuid": "8e3cd623-52aa-5282-86a8-c2a0315b90e2"
           },
           {
             "collected": "2026-09-14T00:00:00Z",
@@ -956,7 +956,7 @@
             "expires": "2027-07-17T00:00:00Z",
             "links": [
               {
-                "href": "#082e05a6-2099-54b8-9b77-0020bf3dbc7c",
+                "href": "#30f49312-0b47-5904-b326-a3bb9d1968df",
                 "rel": "assessed-control",
                 "resource-fragment": "EC2.2",
                 "text": "Implemented requirement for EC2.2"
@@ -969,7 +969,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -979,12 +979,12 @@
             "relevant-evidence": [
               {
                 "description": "Field Operations normalised scan results 2026-Q3",
-                "href": "#1ed26deb-13b6-5ad3-a262-7d26f5c6a8c2"
+                "href": "#bd0fe153-818f-57bc-9288-4437f11952ef"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "6dcfeb85-7b70-5c40-ad3c-c77b59992a9b",
+                "subject-uuid": "08f7790b-ddde-5aa8-84aa-a0df3b9c581d",
                 "type": "component"
               }
             ],
@@ -992,7 +992,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "3615f07e-4e0e-52cf-8682-c7fa6456ed21"
+            "uuid": "4ad3639d-6959-517a-82ac-4a45b0f5d615"
           }
         ],
         "reviewed-controls": {
@@ -1059,7 +1059,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1069,19 +1069,19 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "true"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "d4d5dd84-9edb-50c3-98cd-0d27756a6248"
+                "observation-uuid": "2e248b87-7e07-5cd7-a5a6-e35a916450ea"
               }
             ],
             "statement": "Until au-6.1 is satisfied, Field Operations carries this exposure.",
             "status": "open",
             "title": "au-6.1 shortfall on FIELDOPS",
-            "uuid": "6f5477ce-0424-5a30-98a3-7e0d0cfffae7"
+            "uuid": "9da7ef55-eaca-5f3f-8dd3-ce762fa9e2a4"
           },
           {
             "description": "Residual risk from the sc-7 finding.",
@@ -1089,7 +1089,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01",
+                    "actor-uuid": "ede17861-8582-5239-b66e-cde0b634932f",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1099,23 +1099,23 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "false"
               },
               {
                 "name": "condition-expires",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "2026-12-30"
               },
               {
                 "name": "trigger",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "score<0.85"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "c12e633b-f147-5d33-8bef-9e4ebb6deef4"
+                "observation-uuid": "50deaa33-2936-58d7-8ee6-6fe1f5a5df7e"
               }
             ],
             "risk-log": {
@@ -1124,28 +1124,28 @@
                   "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
                   "logged-by": [
                     {
-                      "party-uuid": "871a0b35-c244-5eab-96af-0787fe21717b",
+                      "party-uuid": "92a463cb-c2b1-5a81-909d-c7b5b463bf03",
                       "role-id": "authorizing-official"
                     }
                   ],
                   "start": "2026-09-08T00:00:00Z",
                   "status-change": "deviation-approved",
                   "title": "Risk accepted with conditions",
-                  "uuid": "52976014-ae58-5df0-86ba-e2a0003c3fa1"
+                  "uuid": "feee2a1e-4672-5c4c-918c-7fedc124f53e"
                 }
               ]
             },
             "statement": "Until sc-7 is satisfied, Field Operations carries this exposure.",
             "status": "deviation-approved",
             "title": "sc-7 shortfall on FIELDOPS",
-            "uuid": "ce75b1db-0b76-5d7f-a125-1a5ef439f96b"
+            "uuid": "512f847c-cd67-5c67-a99f-f2b9d453476b"
           }
         ],
         "start": "2026-08-25T00:00:00Z",
         "title": "Field Operations assessment 2026-Q3",
-        "uuid": "8f576876-8ad0-5442-860f-312c891b3cab"
+        "uuid": "25a43fc6-c705-5aa4-8ab9-ff6fa2f040f9"
       }
     ],
-    "uuid": "c7b05e16-9caf-5003-9986-a958f53cabd6"
+    "uuid": "181dcaae-edfd-5466-a9a3-deafb4475b8e"
   }
 }

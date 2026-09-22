@@ -11,6 +11,11 @@ func TestNISTSpellingsConverge(t *testing.T) {
 		"ac-2":   {"AC-2", "ac-2", "AC-02", "aC-2"},
 		"ac-2.1": {"AC-2(1)", "AC-2 (1)", "AC-2.1", "ac-2.1", "AC-02(01)"},
 		"si-4":   {"SI-4", "si-04"},
+		// Three-letter prefixes and nested enhancements, both admitted by
+		// SPARC's shared contract (#54). Being stricter than the shared
+		// grammar means rejecting keys a peer legitimately derives.
+		"sar-5":    {"SAR-5", "sar-05"},
+		"ac-2.1.3": {"ac-2.1.3", "AC-2(1)(3)", "AC-2.1(3)"},
 	}
 	for want, spellings := range groups {
 		for _, in := range spellings {
@@ -29,11 +34,10 @@ func TestNISTSpellingsConverge(t *testing.T) {
 func TestNISTRejectsWhatIsNotAControlID(t *testing.T) {
 	for _, in := range []string{
 		"ac-2_smt.a", // a statement, not a control
-		"ac-2.1.3",   // no third level exists
 		"AC2",        // the hyphen is not optional
 		"ACM.1",      // an AWS Security Hub id, under the wrong vocabulary
 		"a-2",
-		"abc-2",
+		"abcd-2", // the contract allows two or three letters, not four
 		"ac-0",   // no control is numbered zero
 		"ac-2.0", // nor any enhancement
 		"ac-",
@@ -92,10 +96,22 @@ func TestFamilyID(t *testing.T) {
 			t.Errorf("FamilyID(%q) = %q, want %q", in, got, want)
 		}
 	}
-	for _, in := range []string{"ac-2", "A", "ACM", "", "a1"} {
+	for _, in := range []string{"ac-2", "A", "ABCD", "", "a1"} {
 		if got, err := FamilyID(VocabNIST80053, in); err == nil {
 			t.Errorf("FamilyID(%q) = %q, want an error", in, got)
 		}
+	}
+	// Three letters are a family under the contract.
+	if got, err := FamilyID(VocabNIST80053, "SAR"); err != nil || got != "sar" {
+		t.Errorf("FamilyID(nist, \"SAR\") = %q, %v", got, err)
+	}
+	// And the held divergence: under an OPAQUE vocabulary a family is carried
+	// as issued. SPARC's contract lowercases unconditionally, which is the
+	// defect #37 removed from control ids — an AWS Security Hub family is
+	// "ACM", and "acm" names nothing. See
+	// docs/dev/sparc-family-id-normalisation.md.
+	if got, err := FamilyID(VocabOpaque, "ACM"); err != nil || got != "ACM" {
+		t.Errorf("FamilyID(opaque, \"ACM\") = %q, %v; want it carried as issued", got, err)
 	}
 	if got, err := FamilyID(VocabOpaque, "Effective Permissions"); err != nil || got != "Effective Permissions" {
 		t.Errorf("FamilyID(opaque) = %q, %v", got, err)

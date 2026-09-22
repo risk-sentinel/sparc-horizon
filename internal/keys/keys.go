@@ -37,9 +37,11 @@ import (
 // that document, never an edit to v1.
 const GrammarVersion = "v1"
 
-// PlaceholderNamespaceURI is the namespace URI docs/03-data-model.md still
-// carries. sparc#1155 has not registered the real one.
-const PlaceholderNamespaceURI = "https://risk-sentinel.org/ns/sparc"
+// NamespaceURI is the registered SPARC namespace URI (sparc#1155, decided
+// 2026-09-21). Horizon adopted SPARC's rather than the placeholder it carried:
+// a namespace identifies an authority's vocabulary, so it has to be the same
+// string in every deployment and in every runtime.
+const NamespaceURI = "https://sparc.risk-sentinel.org/ns"
 
 // Kind is the object-kind token that sits second in every key. The tokens are
 // fixed lowercase ASCII from the field-list table, not free text.
@@ -93,17 +95,17 @@ func (s Source) canonical() (string, error) {
 	return canonical.UUID(s.UUID)
 }
 
-// ProvisionalNamespace is the namespace to derive under until sparc#1155
-// registers the real one.
+// Namespace is the registered federation namespace every object identity in
+// the estate derives under: 9f434272-f796-589b-b972-954790395630.
 //
-// It is uuidv5 of the placeholder namespace URI under the standard URL
-// namespace, so any implementation in any language reaches the same value from
-// the same published string rather than from a magic constant someone has to
-// copy correctly. Everything derived under it is provisional: when the real
-// namespace lands, every fixture UUID changes and the fixtures are
-// regenerated. That is the whole reason the fixtures are not frozen yet.
-func ProvisionalNamespace() uuid.UUID {
-	return uuid.NewSHA1(uuid.NameSpaceURL, []byte(PlaceholderNamespaceURI))
+// It is derived rather than invented — uuidv5 of the namespace URI under the
+// standard URL namespace — so any peer recomputes it from the published URI
+// instead of being told a constant it has to copy correctly, and can verify it
+// provably belongs to that namespace. SPARC registered it the same way
+// (sparc#1155), and `sparc:lib/federation/key-grammar.v1.json` publishes both
+// the value and the derivation.
+func Namespace() uuid.UUID {
+	return uuid.NewSHA1(uuid.NameSpaceURL, []byte(NamespaceURI))
 }
 
 // Key is a derived identifier together with the exact canonical fields it was
@@ -225,9 +227,12 @@ func (d Deriver) EvidenceResource(parentSSP, sha256Hex string) (Key, error) {
 }
 
 // AODecision identifies an authorizing official's decision. It is keyed on the
-// risk it decides and the period it was taken in, and takes no source-uuid for
+// risk it decides and the **day** it was taken, and takes no source-uuid for
 // the same reason the risk's own key already carries one.
-func (d Deriver) AODecision(parentSSP, riskUUID, period string) (Key, error) {
+//
+// A day rather than a period: a decision happens on a date, and the value has
+// to line up with the `next-decision-date` prop the HUD counts down to.
+func (d Deriver) AODecision(parentSSP, riskUUID, decisionDate string) (Key, error) {
 	ssp, err := canonical.UUID(parentSSP)
 	if err != nil {
 		return Key{}, fmt.Errorf("parent ssp: %w", err)
@@ -236,11 +241,11 @@ func (d Deriver) AODecision(parentSSP, riskUUID, period string) (Key, error) {
 	if err != nil {
 		return Key{}, fmt.Errorf("risk: %w", err)
 	}
-	p, err := canonical.Period(period)
+	day, err := canonical.DecisionDate(decisionDate)
 	if err != nil {
 		return Key{}, err
 	}
-	return d.derive(KindDecision, ssp, string(KindDecision), risk, p)
+	return d.derive(KindDecision, ssp, string(KindDecision), risk, day)
 }
 
 // Responsibility identifies one half of an inherited control: the provider's

@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "683a8c16ece1974d76d9cf0ad0021228c5b36d4116b1a1ced98af06ab975078c"
+                  "value": "770eb6d28fe36846eba1bb77d29fa487e18e93ccdfec4cd317a0433a86881678"
                 }
               ],
               "href": "./catalog-nist-800-53-subset.json",
@@ -17,13 +17,13 @@
             }
           ],
           "title": "Fixture subset of NIST SP 800-53 Revision 5",
-          "uuid": "fbe288de-b7bc-5ca2-88ff-4da7560175c8"
+          "uuid": "623b68a5-8d2a-576b-a5e3-50239cfe6213"
         }
       ]
     },
     "imports": [
       {
-        "href": "#fbe288de-b7bc-5ca2-88ff-4da7560175c8",
+        "href": "#623b68a5-8d2a-576b-a5e3-50239cfe6213",
         "include-controls": [
           {
             "with-ids": [
@@ -52,6 +52,6 @@
       "title": "Fixture moderate baseline",
       "version": "1.0.0"
     },
-    "uuid": "02db532b-5963-5617-a8bb-6f883ed54422"
+    "uuid": "1605aa04-f147-5497-b05c-6bc161fb226f"
   }
 }

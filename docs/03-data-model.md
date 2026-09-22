@@ -19,8 +19,12 @@ Because the same organization party UUID appears in every SSP beneath it, the tr
 
 Defined in [`schemas/sparc-namespace-props.v1.schema.json`](../schemas/sparc-namespace-props.v1.schema.json) and enforced by `sparc-validate`. Changes within `v1` are additive only.
 
+The namespace is **`https://sparc.risk-sentinel.org/ns`**, registered by SPARC and adopted here
+in #54. Horizon carried a placeholder of its own until `sparc#1155` settled it; a namespace
+identifies an authority's vocabulary, so there is one string and SPARC owns it.
+
 **The schema is a selective validator, not a whole-document one.** It applies to props whose
-`ns` is `https://risk-sentinel.org/ns/sparc`, and to every one of them. Applying it to every
+`ns` is `https://sparc.risk-sentinel.org/ns`, and to every one of them. Applying it to every
 prop regardless of `ns` rejects valid OSCAL, because `ns` is **optional** in OSCAL and an absent
 one means the default NIST namespace rather than this one. `ns` stays required *within* the
 schema for exactly that reason: it is what stops a prop claiming one of these nine names from
@@ -46,7 +50,7 @@ rather than assumption:
 
 | Namespace | Seen in | Note |
 |---|---|---|
-| `https://risk-sentinel.org/ns/sparc` | This estate | The nine props above. Closed enum, additive only |
+| `https://sparc.risk-sentinel.org/ns` | This estate | The nine props above. Closed enum, additive only. Registered in `sparc#1155` |
 | `http://aws.amazon.com/ns/oscal` | AWS Labs' catalog and its 231 service component definitions | 1809 props across five names. **CamelCase** — `SeverityLabel`, `TriggerType`, `EvaluatedServices`, `TechnicalControlId` |
 | *absent* | The same component definitions | OSCAL makes `ns` **optional**; an absent one means the default NIST namespace |
 | `http://fedramp.gov/ns/oscal` | FedRAMP extensions | |
@@ -75,10 +79,10 @@ Roles come from the documents, not an admin screen. When an AO changes, the SSP 
 ```json
 "metadata": {
   "props": [
-    {"name": "node-type", "ns": "https://risk-sentinel.org/ns/sparc", "value": "boundary"},
-    {"name": "parent-uuid", "ns": "https://risk-sentinel.org/ns/sparc", "value": "<org-party-uuid>"},
-    {"name": "next-decision-date", "ns": "https://risk-sentinel.org/ns/sparc", "value": "2026-10-11"},
-    {"name": "fips-199", "ns": "https://risk-sentinel.org/ns/sparc", "value": "moderate"}
+    {"name": "node-type", "ns": "https://sparc.risk-sentinel.org/ns", "value": "boundary"},
+    {"name": "parent-uuid", "ns": "https://sparc.risk-sentinel.org/ns", "value": "<org-party-uuid>"},
+    {"name": "next-decision-date", "ns": "https://sparc.risk-sentinel.org/ns", "value": "2026-10-11"},
+    {"name": "fips-199", "ns": "https://sparc.risk-sentinel.org/ns", "value": "moderate"}
   ],
   "responsible-parties": [
     {"role-id": "authorizing-official", "party-uuids": ["<ao-uuid>"]},
@@ -97,8 +101,8 @@ Back-matter resource → observation → finding → risk → POA&M item. The ob
   "uuid": "<uuid5>",
   "title": "CP-4 tabletop report FY26",
   "props": [
-    {"name": "evidence-kind", "ns": "https://risk-sentinel.org/ns/sparc", "value": "manual-attestation"},
-    {"name": "signed-by", "ns": "https://risk-sentinel.org/ns/sparc", "value": "<iso-uuid>"}
+    {"name": "evidence-kind", "ns": "https://sparc.risk-sentinel.org/ns", "value": "manual-attestation"},
+    {"name": "signed-by", "ns": "https://sparc.risk-sentinel.org/ns", "value": "<iso-uuid>"}
   ],
   "rlinks": [
     {"href": "s3://evidence/portal/cp-4/2026-09.pdf", "media-type": "application/pdf",
@@ -161,16 +165,17 @@ uuid(obj)  = uuidv5(namespace, grammar + "\x1f" + join(fields(obj), "\x1f"))
 
 `uuidv5` is SHA-1 based (`uuid.NewSHA1` in Go), per RFC 9562 §5.5.
 
-**Until the federation namespace UUID is registered, derivation uses a provisional one**, and
-it is derived rather than invented so every implementation reaches the same value from the same
-published string:
+**The federation namespace is registered** (`sparc#1155`, 2026-09-21), and derived rather than
+invented so every implementation reaches the same value from the same published string instead
+of copying a constant:
 
 ```
-namespace = uuidv5(url-namespace, "https://risk-sentinel.org/ns/sparc")   // provisional
+namespace = uuidv5(url-namespace, "https://sparc.risk-sentinel.org/ns")
+          = 9f434272-f796-589b-b972-954790395630
 ```
 
-`keys.ProvisionalNamespace()` is the one line that changes when `sparc#1155` lands. Everything
-derived under it — including every identifier in `fixtures/` — is regenerated at that point.
+`keys.Namespace()` recomputes it. Any peer can do the same and verify it provably belongs to
+that URI. The identifiers in `fixtures/` derive under it and are final.
 
 **The separator is `\x1f` (ASCII unit separator), not `|`.** A printable delimiter is
 ambiguous: with `|`, `("a|b", "c")` and `("a", "b|c")` produce the same input and therefore the
@@ -183,17 +188,17 @@ identifier derived under it, which is as breaking as changing the namespace. Bum
 makes that visible and keeps old and new identifiers from being mistaken for each other. A
 grammar change is a v2 of this document, never an edit to v1.
 
-> **`source-uuid` was added to v1 rather than producing a v2** (#37). That rule exists so old
-> and new identifiers cannot be mistaken for one another, and it was checked rather than waived:
-> **no identifier anywhere derives from v1's field lists.** The derivation requires the
-> federation namespace UUID, which `sparc#1155` has not registered — the placeholder is still a
-> literal in this document — so nothing could have been derived under it. The 70 deterministic
-> UUIDs in this repository come from the separate repo-level scheme in
-> `docs/compliance/README.md`, and `sparc` has no implementation of these field lists. With no
-> v1-derived identifiers in existence there is nothing for a v2 to distinguish itself from.
+> **`source-uuid` was added to v1 rather than producing a v2** (#37), and **the namespace URI
+> changed within v1 for the same reason** (#54). The rule exists so old and new identifiers
+> cannot be mistaken for one another, and both times it was checked rather than waived: nothing
+> durable derived from the earlier form. When #37 landed, no implementation of these field lists
+> existed anywhere. When #54 landed, the only identifiers deriving from them were this
+> repository's own fixtures — explicitly provisional pending the registration, and regenerated
+> by that change — while `sparc-validate`'s rules were unwritten and `sparc` derived no live
+> identifiers.
 >
-> This is a one-time exception justified by a verifiable fact, not a precedent. Once fixtures
-> exist, any further change is a v2.
+> These are exceptions justified by verifiable facts, not a precedent. Now that the namespace is
+> registered and the fixtures are final, any further change is a v2.
 
 ### Canonical forms
 
@@ -202,9 +207,11 @@ normalised before it is joined.
 
 | Field kind | Canonical form |
 |---|---|
-| Control id | **Within the NIST SP 800-53 vocabulary only:** OSCAL's lowercase dotted form, `ac-2.1`, never `AC-2(1)`. Enhancements use `.`, not parentheses. Resolve through SPARC's mapping documents before deriving. A control identifier from **any other catalog is carried exactly as that catalog issues it** — see below |
+| Control id | **Within the NIST SP 800-53 vocabulary only:** OSCAL's lowercase dotted form, `ac-2.1`, never `AC-2(1)`. Enhancements use `.`, not parentheses, and nest — the canonical value matches `^[a-z]{2,3}-\d+(\.\d+)*$`. Resolve through SPARC's mapping documents before deriving. A control identifier from **any other catalog is carried exactly as that catalog issues it** — see below |
+| Family id | **Within the NIST vocabulary:** lowercase, two or three letters. From any other authority, carried as issued — see the disagreement noted below |
 | UUID | Lowercase hex with hyphens, RFC 9562 §4 |
-| Period | `YYYY` \| `YYYY-Qn` \| `YYYY-MM` \| `YYYY-MM-DD`, zero-padded. Quarters are `2026-Q3`, never `2026Q3` or `Q3-2026` |
+| Period | `YYYY-Qn` \| `YYYY-MM`, zero-padded. Quarters are `2026-Q3`, never `2026Q3` or `Q3-2026`. **Narrowed in #54** to SPARC's shared contract, which carries neither a bare year nor a full date |
+| Decision date | `YYYY-MM-DD`. An AO decision is keyed on the day it was taken, so the value lines up with the `next-decision-date` prop the HUD counts down to |
 | Object-kind token | Fixed lowercase ASCII from the table below. Not free text |
 | Any other string | Unicode **NFC**, no trimming, no case folding — if a field needs case folding to match, it is the wrong field |
 
@@ -335,7 +342,7 @@ would name nothing in any catalog.
 Regenerating from the same source documents yields the same UUID, which is the property the
 P0 exit criterion measures: identical UUIDs across two independent regenerations.
 
-### Reference implementation and test vectors
+### Reference implementation and the shared contract
 
 The Go reference implementation is [`internal/keys`](../internal/keys), over the field
 normalisation in [`internal/canonical`](../internal/canonical). It has no exported way to derive
@@ -343,18 +350,33 @@ from raw strings: every entry point canonicalises its own fields and rejects wha
 because an identifier minted from a value another implementation would have normalised
 differently is exactly the divergence this grammar exists to prevent.
 
-The published vectors are [`fixtures/key-vectors.v1.json`](../fixtures/key-vectors.v1.json) —
-one vector per object type with its canonical field list and UUID, the equivalences and
-distinctions that must hold, the `("a|b","c")` join case, and the inputs a conforming
-implementation must refuse. The Ruby and Python ports (`sparc#1161`) are written against that
-file rather than against this prose: three implementations of a hashing grammar disagree
-eventually, and a shared vector file is the only thing that catches it.
+**The vectors are no longer published from here.** `sparc#1161` made
+`sparc:lib/federation/key-grammar.v1.json` the source of truth — the field lists, the type
+rules, the vectors and the dedup rule, in one file the Ruby, Python and Go implementations all
+assert against. Horizon vendors it into `internal/keys/testdata/` with its provenance and
+conforms to it. The file began life here, as `fixtures/key-vectors.v1.json`, and was regenerated
+upstream under the registered namespace.
+
+**Conformance is checked on more than the vectors.** Every vector agreed on the day Horizon
+adopted the contract, and reading its *type rules* still found five disagreements — none of
+which any vector exercised. The test therefore drives the contract's own regexes against this
+implementation's canonicalisers, rather than comparing a fixed corpus of UUIDs.
+
+**One rule is not adopted, and the disagreement is live.** The contract normalises `family-id`
+by lowercasing it unconditionally. Under a non-NIST vocabulary that is the defect this document
+removed from control identifiers: an AWS Security Hub family is `ACM`, and `acm` names nothing.
+Horizon carries a foreign family as issued, so the two implementations derive **different
+identifiers for the same projection cell** — `ACM` under an opaque source gives
+`b9691843-…` here and `f2a38fbf-…` there, with neither side erroring. Until it is settled, do
+not derive a cell identifier for a foreign-vocabulary family against a peer. The write-up is
+[`docs/dev/sparc-family-id-normalisation.md`](dev/sparc-family-id-normalisation.md).
 
 ### Status
 
-The federation namespace UUID is **not yet registered** — `sparc#1155`. Until it is, identifiers
-derived under the placeholder are provisional and fixtures built from them must be regenerated.
-The grammar itself does not depend on that registration and is fixed by this document.
+The federation namespace UUID **is registered** — `9f434272-f796-589b-b972-954790395630`
+(`sparc#1155`, adopted here in #54). Identifiers derived under it are final, and the fixtures
+that were built against the earlier placeholder have been regenerated. The grammar itself never
+depended on that registration and is fixed by this document.
 
 ## Inheritance and hybrid controls
 

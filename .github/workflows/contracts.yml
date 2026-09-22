@@ -63,27 +63,27 @@ jobs:
           mkdir -p /tmp/props
           cat > /tmp/props/valid.json <<'JSON'
           [
-            {"name":"node-type","ns":"https://risk-sentinel.org/ns/sparc","value":"boundary"},
-            {"name":"parent-uuid","ns":"https://risk-sentinel.org/ns/sparc","value":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},
-            {"name":"next-decision-date","ns":"https://risk-sentinel.org/ns/sparc","value":"2026-10-11"},
-            {"name":"fips-199","ns":"https://risk-sentinel.org/ns/sparc","value":"high"},
-            {"name":"blocks-ato","ns":"https://risk-sentinel.org/ns/sparc","value":"true"},
-            {"name":"evidence-kind","ns":"https://risk-sentinel.org/ns/sparc","value":"manual-attestation"},
-            {"name":"signed-by","ns":"https://risk-sentinel.org/ns/sparc","value":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},
-            {"name":"condition-expires","ns":"https://risk-sentinel.org/ns/sparc","value":"2026-11-01"},
-            {"name":"trigger","ns":"https://risk-sentinel.org/ns/sparc","value":"score<0.85"}
+            {"name":"node-type","ns":"https://sparc.risk-sentinel.org/ns","value":"boundary"},
+            {"name":"parent-uuid","ns":"https://sparc.risk-sentinel.org/ns","value":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},
+            {"name":"next-decision-date","ns":"https://sparc.risk-sentinel.org/ns","value":"2026-10-11"},
+            {"name":"fips-199","ns":"https://sparc.risk-sentinel.org/ns","value":"high"},
+            {"name":"blocks-ato","ns":"https://sparc.risk-sentinel.org/ns","value":"true"},
+            {"name":"evidence-kind","ns":"https://sparc.risk-sentinel.org/ns","value":"manual-attestation"},
+            {"name":"signed-by","ns":"https://sparc.risk-sentinel.org/ns","value":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},
+            {"name":"condition-expires","ns":"https://sparc.risk-sentinel.org/ns","value":"2026-11-01"},
+            {"name":"trigger","ns":"https://sparc.risk-sentinel.org/ns","value":"score<0.85"}
           ]
           JSON
           # Must REJECT these — a schema that accepts everything validates nothing.
           cat > /tmp/props/invalid.json <<'JSON'
           [
-            {"name":"node-type","ns":"https://risk-sentinel.org/ns/sparc","value":"agency"},
-            {"name":"fips-199","ns":"https://risk-sentinel.org/ns/sparc","value":"critical"},
-            {"name":"blocks-ato","ns":"https://risk-sentinel.org/ns/sparc","value":"yes"},
-            {"name":"next-decision-date","ns":"https://risk-sentinel.org/ns/sparc","value":"11-10-2026"},
-            {"name":"parent-uuid","ns":"https://risk-sentinel.org/ns/sparc","value":"not-a-uuid"},
-            {"name":"trigger","ns":"https://risk-sentinel.org/ns/sparc","value":"score is low"},
-            {"name":"unknown-prop","ns":"https://risk-sentinel.org/ns/sparc","value":"x"},
+            {"name":"node-type","ns":"https://sparc.risk-sentinel.org/ns","value":"agency"},
+            {"name":"fips-199","ns":"https://sparc.risk-sentinel.org/ns","value":"critical"},
+            {"name":"blocks-ato","ns":"https://sparc.risk-sentinel.org/ns","value":"yes"},
+            {"name":"next-decision-date","ns":"https://sparc.risk-sentinel.org/ns","value":"11-10-2026"},
+            {"name":"parent-uuid","ns":"https://sparc.risk-sentinel.org/ns","value":"not-a-uuid"},
+            {"name":"trigger","ns":"https://sparc.risk-sentinel.org/ns","value":"score is low"},
+            {"name":"unknown-prop","ns":"https://sparc.risk-sentinel.org/ns","value":"x"},
             {"name":"node-type","ns":"https://example.com/ns/other","value":"boundary"}
           ]
           JSON
@@ -131,7 +131,7 @@ jobs:
           # repository, and it is labelled as a proxy rather than as the P0
           # exit criterion being met.
           S=schemas/sparc-namespace-props.v1.schema.json
-          NS="https://risk-sentinel.org/ns/sparc"
+          NS="https://sparc.risk-sentinel.org/ns"
 
           jq -s --arg ns "$NS" '[.. | objects | select(has("props")) | .props[] | select(.ns == $ns)]' \
             fixtures/oscal/*.json > /tmp/sparc-props.json
@@ -157,9 +157,9 @@ jobs:
           cat > /tmp/fixture-props.schema.json <<'JSON'
           {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "$id": "https://risk-sentinel.org/ns/sparc/v1/fixture-props.schema.json",
+            "$id": "https://sparc.risk-sentinel.org/ns/v1/fixture-props.schema.json",
             "type": "array",
-            "items": { "$ref": "https://risk-sentinel.org/ns/sparc/v1/props.schema.json" }
+            "items": { "$ref": "https://sparc.risk-sentinel.org/ns/v1/props.schema.json" }
           }
           JSON
 
@@ -183,7 +183,7 @@ jobs:
           set -euo pipefail
           # A wrapper schema that resolved its $ref to nothing would validate
           # an array of anything and report green over 150 unchecked props.
-          jq '. + [{"name":"fips-199","ns":"https://risk-sentinel.org/ns/sparc","value":"catastrophic"}]' \
+          jq '. + [{"name":"fips-199","ns":"https://sparc.risk-sentinel.org/ns","value":"catastrophic"}]' \
             /tmp/sparc-props.json > /tmp/sparc-props-planted.json
 
           if /tmp/ajv/node_modules/.bin/ajv validate \
@@ -201,7 +201,7 @@ jobs:
           # CamelCase intact, and a prop with no ns at all. Both exist so the
           # selective-validator rule above is exercised rather than asserted;
           # losing them would make the job above pass while proving less.
-          FOREIGN=$(jq -s '[.. | objects | select(has("props")) | .props[] | select(.ns != null and (.ns | startswith("https://risk-sentinel.org/ns/sparc") | not))] | length' fixtures/oscal/*.json)
+          FOREIGN=$(jq -s '[.. | objects | select(has("props")) | .props[] | select(.ns != null and (.ns | startswith("https://sparc.risk-sentinel.org/ns") | not))] | length' fixtures/oscal/*.json)
           ABSENT=$(jq -s '[.. | objects | select(has("props")) | .props[] | select(has("ns") | not)] | length' fixtures/oscal/*.json)
           echo "Foreign-namespace props: ${FOREIGN}; props with no ns: ${ABSENT}."
           if [ "${FOREIGN:-0}" -lt 1 ] || [ "${ABSENT:-0}" -lt 1 ]; then

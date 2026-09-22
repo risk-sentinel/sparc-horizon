@@ -44,6 +44,39 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-22 — #59 — `feature/59_record_upstream_filings`
+
+**In flight:** nothing. **Merge note:** #56 merged first, so both entries sit at the top of this
+file; kept in date order per the rule above, this one newer because it records filings made after
+that consolidation.
+
+**Three filed upstream, and one of them existed because this table was wrong.**
+`sparc#1175` carries the `family-id` disagreement; `sparc-iac#753` carries Horizon's ECS Fargate
+runtime; `sparc#1154` got a comment saying the namespace schema it points at moved under it in
+#55, and that `fixtures/sparc/` now gives its API-confirmation part something concrete to check.
+
+**`sparc-iac#715` carried two asks and closed on one.** It covered the evidence boundary *and*
+the Fargate deployment. The boundary was delivered and proven, the issue closed, and S2-3 went
+with it — untracked for three days while the cross-repo table said in bold that nothing was
+waiting on an unfiled ask. Nothing was blocked, because there is no image to deploy until S1.
+The defect is the assertion, not the delay.
+
+**The pattern worth keeping: a closed issue that carried more than one ask.** The closure is
+legitimate, the remainder is invisible, and nothing in the row records that it ever had two
+halves. Re-verifying against live issue state rather than against the table is what found it,
+and that is now what the claim says it rests on.
+
+**`sparc#1154` has had no response since 2026-09-19.** Not blocking — P0 closed without it — but
+its three parts are what P1's client and the axis swap need, so it is watched rather than
+assumed.
+
+**Still unfiled, deliberately:** the `go-oscal` report. Third-party, owner's call, unchanged.
+
+**Next:** unchanged — **freeze API v0 and stand up the mock server**, the last P0 task, then the
+P0-exit checkpoint that #31 defers the threat-model staleness ledger to.
+
+---
+
 ## 2026-09-22 — #56 — `feature/56_dependabot_consolidation`
 
 **In flight:** nothing.

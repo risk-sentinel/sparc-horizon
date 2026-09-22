@@ -1,6 +1,6 @@
 # `go-oscal` collapses OSCAL's four `local-definitions` assemblies
 
-**Status: written, not filed.** This is a defect in a third-party library
+**Status: written, not filed** (as of 2026-09-22). This is a defect in a third-party library
 ([`defenseunicorns/go-oscal`](https://github.com/defenseunicorns/go-oscal)), not in this estate.
 Filing it upstream is the repository owner's call, so it is recorded here with its evidence
 rather than sitting in someone's notes. Everything below the line is written to be filed as-is.

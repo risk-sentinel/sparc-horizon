@@ -1,8 +1,10 @@
 # `key-grammar.v1.json` lowercases `family-id` outside its vocabulary
 
-**Status: written, not filed.** A disagreement with a sibling repository's contract
-(`risk-sentinel/sparc`, `lib/federation/key-grammar.v1.json`), raised here with its evidence.
-Filing it is the repository owner's call. Everything below the line is written to be filed as-is.
+**Status: filed 2026-09-22 as [`sparc#1175`](https://github.com/risk-sentinel/sparc/issues/1175).**
+A disagreement with a sibling repository's contract (`risk-sentinel/sparc`,
+`lib/federation/key-grammar.v1.json`). This is the source text; the issue carries everything
+below the line. It stays here because the test that pins the divergence lives here too — if the
+disagreement is settled in SPARC's favour, Horizon adopts the rule and both go.
 
 Found while adopting the registered namespace and reconciling Horizon's Go reference with the
 shared contract (#54). The consequence — that two implementations derive different identifiers

@@ -44,6 +44,33 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-22 — #56 — `feature/56_dependabot_consolidation`
+
+**In flight:** nothing.
+
+**Three Dependabot PRs consolidated into one, and one of them cannot be taken.**
+`golang.org/x/text` v0.42.0 declares `go 1.26.0`; this module pins 1.25.0, `ci.yml` installs
+1.25.x and `docs/08` ships `golang:1.25`. Taking it moves the module's Go line, the CI toolchain
+and the shipped image together, which is a deployment decision. Closed with that reason and
+**no `ignore:` entry** — Dependabot re-raising it weekly is honest, because the bump really is
+available and really is blocked on a decision nobody has made, and an ignore entry would hide it
+at the moment the Go line finally moves. No security pressure behind it either way: 1.25.13
+already carries the fixes #49 found missing in 1.25.0.
+
+**The pin comment beside `setup-go` had been wrong, and Dependabot would have propagated it.**
+The SHA labelled `# v6.0.0` is v6.5.0. Dependabot resolves the SHA rather than reading the
+comment — its title said "from 6.5.0" — and its diff then carried our wrong comment onto the
+v7.0.0 SHA, so merging it unchanged would have pinned v7 while claiming v6.0.0. The comment is
+the only human-readable half of a SHA pin, and SA-10's claim that "a bumped pin is a reviewed
+diff" rests on it. Audited all five pinned actions: this was the only one lying. Guard filed as
+**#57** rather than built here — it needs a token and API calls, which is more than a dependency
+PR should carry.
+
+**Next:** unchanged — **freeze API v0 and stand up the mock server**, the last P0 task, then the
+P0-exit checkpoint. #55 (the namespace adoption) is open and waiting on review.
+
+---
+
 ## 2026-09-22 — #54 — `feature/54_registered_namespace`
 
 **In flight:** nothing.

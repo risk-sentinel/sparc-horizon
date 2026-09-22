@@ -7,13 +7,13 @@
           "props": [
             {
               "name": "evidence-kind",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "hdf-results"
             },
             {
               "name": "signed-by",
-              "ns": "https://risk-sentinel.org/ns/sparc",
-              "value": "5bdb4241-1f40-55d2-9101-3a51722669cc"
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
             }
           ],
           "rlinks": [
@@ -29,20 +29,20 @@
             }
           ],
           "title": "Public Portal normalised scan results 2026-Q3",
-          "uuid": "26d196d8-1815-540e-99f5-0cc19bf1861a"
+          "uuid": "f5d86538-4d5a-5dc4-99ae-720f07b49b98"
         },
         {
           "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
           "props": [
             {
               "name": "evidence-kind",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "manual-attestation"
             },
             {
               "name": "signed-by",
-              "ns": "https://risk-sentinel.org/ns/sparc",
-              "value": "5bdb4241-1f40-55d2-9101-3a51722669cc"
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
             }
           ],
           "rlinks": [
@@ -58,7 +58,7 @@
             }
           ],
           "title": "Public Portal manual attestation 2026-Q3",
-          "uuid": "85303cc2-bd77-51d4-89dc-9b374832fdc7"
+          "uuid": "c8fad48f-05bb-53c8-b6a2-d485a70ab71c"
         },
         {
           "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
@@ -67,7 +67,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "e2f853241a073797091a2270b93116472450b3d053c683b3b214585218b8edbe"
+                  "value": "9d40304af8df17548132e4363dee7484bcab32c0d7e05aa6b73d6131dff99798"
                 }
               ],
               "href": "./ssp-ods-portal.json",
@@ -75,7 +75,7 @@
             }
           ],
           "title": "Public Portal system security plan",
-          "uuid": "0db913d7-c382-536f-8c67-b4b52b4e67e6"
+          "uuid": "f7de308a-5555-5e35-be6a-029ad885320e"
         },
         {
           "citation": {
@@ -83,12 +83,12 @@
           },
           "description": "Cited rather than modelled: these fixtures carry no assessment-plan document.",
           "title": "Public Portal continuous monitoring plan",
-          "uuid": "f0375e1e-fb4e-5f82-aefb-314494c10cb2"
+          "uuid": "dc621d9a-c8b6-50e9-862e-9b19c4d041cc"
         }
       ]
     },
     "import-ap": {
-      "href": "#f0375e1e-fb4e-5f82-aefb-314494c10cb2"
+      "href": "#dc621d9a-c8b6-50e9-862e-9b19c4d041cc"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -99,73 +99,73 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "Office of Digital Services",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "ODS",
           "type": "organization",
-          "uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707"
+          "uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
         },
         {
           "member-of-organizations": [
-            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
           ],
           "name": "PORTAL Authorizing Official",
           "type": "person",
-          "uuid": "dbe515c9-1658-5b38-91a7-8c9eebfb6682"
+          "uuid": "377df8c6-c8fa-5217-a2ff-445247a7b7c5"
         },
         {
           "member-of-organizations": [
-            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
           ],
           "name": "PORTAL System Owner",
           "type": "person",
-          "uuid": "420c7493-0d54-5ed9-8edb-3a8b3cf8ed5d"
+          "uuid": "f935a0b4-4974-5aec-a8ed-590328a8fa6d"
         },
         {
           "member-of-organizations": [
-            "9a9eb954-166e-559f-b23a-1c3e5d078707"
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
           ],
           "name": "PORTAL Information System Security Officer",
           "type": "person",
-          "uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc"
+          "uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
         }
       ],
       "published": "2026-09-15T00:00:00Z",
       "responsible-parties": [
         {
           "party-uuids": [
-            "dbe515c9-1658-5b38-91a7-8c9eebfb6682"
+            "377df8c6-c8fa-5217-a2ff-445247a7b7c5"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "420c7493-0d54-5ed9-8edb-3a8b3cf8ed5d"
+            "f935a0b4-4974-5aec-a8ed-590328a8fa6d"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "5bdb4241-1f40-55d2-9101-3a51722669cc"
+            "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -197,20 +197,20 @@
                 "name": "asset",
                 "prose": "The Information System Security Officer attests that cp-4 is implemented for Public Portal in 2026-Q3.",
                 "title": "Attestation for cp-4",
-                "uuid": "f40d7e37-299d-5f4a-af41-125840c7eff3"
+                "uuid": "7edb087d-bc05-558d-a85d-712ecf071a09"
               },
               {
                 "class": "ia-5",
                 "name": "asset",
                 "prose": "The Information System Security Officer attests that ia-5 is implemented for Public Portal in 2026-Q3.",
                 "title": "Attestation for ia-5",
-                "uuid": "3674062e-e439-561d-8cfe-a735879bea79"
+                "uuid": "5c2a7af9-ec6e-5ba9-941b-905d7224c12e"
               }
             ],
             "responsible-parties": [
               {
                 "party-uuids": [
-                  "5bdb4241-1f40-55d2-9101-3a51722669cc"
+                  "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
                 ],
                 "role-id": "information-system-security-officer"
               }
@@ -226,7 +226,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -235,12 +235,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "550e4f3b-1f6c-510a-ad08-8622cb75fd34"
+                "observation-uuid": "f069243e-0531-5bcc-8971-97608b8c1537"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "4126be8e-eb72-5349-9338-fc2a20ba4382"
+                "risk-uuid": "3d02f2bc-e842-582d-9e01-06e59b363738"
               }
             ],
             "target": {
@@ -252,7 +252,7 @@
               "type": "objective-id"
             },
             "title": "EC2.2 is not satisfied on PORTAL",
-            "uuid": "b4183c0a-8e90-5bd6-b663-22f5568b62a5"
+            "uuid": "5ac81c74-bfbf-59a2-9b6a-db890db80ec2"
           }
         ],
         "observations": [
@@ -262,7 +262,7 @@
             "expires": "2027-04-05T00:00:00Z",
             "links": [
               {
-                "href": "#1727cb33-e16a-584c-a2ea-3612ed0d9491",
+                "href": "#03ad19ed-f143-530d-bbb1-a2e671fc978c",
                 "rel": "assessed-control",
                 "resource-fragment": "ac-2",
                 "text": "Implemented requirement for ac-2"
@@ -275,7 +275,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -285,12 +285,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+                "subject-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
                 "type": "component"
               }
             ],
@@ -298,7 +298,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "fcf23c73-f2a0-5ed0-96c1-bdca7eed4eca"
+            "uuid": "f8de9f97-c4bd-5c96-8429-18bfdd5e05d9"
           },
           {
             "collected": "2026-08-26T00:00:00Z",
@@ -306,7 +306,7 @@
             "expires": "2027-05-16T00:00:00Z",
             "links": [
               {
-                "href": "#dcd296b4-c387-5cbd-9dbb-08b1c04abfe3",
+                "href": "#326d739a-bac7-5597-85d3-d7f695bb9fa0",
                 "rel": "assessed-control",
                 "resource-fragment": "ac-2.1",
                 "text": "Implemented requirement for ac-2.1"
@@ -319,7 +319,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -329,12 +329,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+                "subject-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
                 "type": "component"
               }
             ],
@@ -342,7 +342,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "c3a12cca-bfdb-5cff-9faa-796c1683bed7"
+            "uuid": "f69938d7-1873-52a5-b901-f9d696882841"
           },
           {
             "collected": "2026-09-02T00:00:00Z",
@@ -350,7 +350,7 @@
             "expires": "2027-02-17T00:00:00Z",
             "links": [
               {
-                "href": "#f248286e-18ca-5a9d-a9ea-4c9b891de61d",
+                "href": "#5c7084e4-387b-5cad-a2e3-bffa5f71fdca",
                 "rel": "assessed-control",
                 "resource-fragment": "au-6",
                 "text": "Implemented requirement for au-6"
@@ -363,7 +363,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -373,12 +373,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+                "subject-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
                 "type": "component"
               }
             ],
@@ -386,7 +386,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "82cb2ff6-d6cc-52bb-86fe-14895d0da58c"
+            "uuid": "4b3b8d50-09a7-5209-9f01-cb89730e0e8e"
           },
           {
             "collected": "2026-09-09T00:00:00Z",
@@ -394,7 +394,7 @@
             "expires": "2027-02-05T00:00:00Z",
             "links": [
               {
-                "href": "#461c1afd-6a19-5421-82eb-bcbd98057c70",
+                "href": "#ada209c0-1ed8-5d76-bcfe-581ba6348058",
                 "rel": "assessed-control",
                 "resource-fragment": "au-6.1",
                 "text": "Implemented requirement for au-6.1"
@@ -407,7 +407,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -417,12 +417,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+                "subject-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
                 "type": "component"
               }
             ],
@@ -430,7 +430,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "e4615b95-159c-5bfb-86f4-96b59e823eb8"
+            "uuid": "03502da9-ef8b-5879-8e2f-6f3018737da8"
           },
           {
             "collected": "2026-08-30T00:00:00Z",
@@ -438,7 +438,7 @@
             "expires": "2027-04-09T00:00:00Z",
             "links": [
               {
-                "href": "#25f96b16-40d1-59df-9a4d-3778b2d957bb",
+                "href": "#37845d5e-b197-5a0f-9cff-825e3657113a",
                 "rel": "assessed-control",
                 "resource-fragment": "cp-4",
                 "text": "Implemented requirement for cp-4"
@@ -451,7 +451,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -461,12 +461,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal manual attestation 2026-Q3",
-                "href": "#85303cc2-bd77-51d4-89dc-9b374832fdc7"
+                "href": "#c8fad48f-05bb-53c8-b6a2-d485a70ab71c"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+                "subject-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
                 "type": "component"
               }
             ],
@@ -474,7 +474,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "20d7eebc-7e60-566a-b84d-06707bc88dcc"
+            "uuid": "61a9aa34-1dcb-5702-a186-72c65854c4a4"
           },
           {
             "collected": "2026-09-10T00:00:00Z",
@@ -482,7 +482,7 @@
             "expires": "2027-09-29T00:00:00Z",
             "links": [
               {
-                "href": "#89f0852e-a5ee-5d6c-aa3a-90b6c5c3b4a7",
+                "href": "#debb8397-7b59-5411-8bba-8cef00600a92",
                 "rel": "assessed-control",
                 "resource-fragment": "cp-9",
                 "text": "Implemented requirement for cp-9"
@@ -495,7 +495,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -505,12 +505,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+                "subject-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
                 "type": "component"
               }
             ],
@@ -518,7 +518,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "1e6bdd8c-357b-57f7-8920-7a2020a85160"
+            "uuid": "481347ed-ce1d-5cd4-ae81-0027ed377f8e"
           },
           {
             "collected": "2026-09-08T00:00:00Z",
@@ -526,7 +526,7 @@
             "expires": "2027-08-04T00:00:00Z",
             "links": [
               {
-                "href": "#78b070ca-c1ba-5065-a02b-e6994558c6e4",
+                "href": "#905fa709-2a1d-5720-86e3-4ad180d38cf6",
                 "rel": "assessed-control",
                 "resource-fragment": "ia-2",
                 "text": "Implemented requirement for ia-2"
@@ -539,7 +539,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -549,12 +549,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+                "subject-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
                 "type": "component"
               }
             ],
@@ -562,7 +562,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "256e526e-3719-5069-b733-e27bec731e95"
+            "uuid": "031dcbfb-dd9b-532e-b227-ef260011cfd6"
           },
           {
             "collected": "2026-09-02T00:00:00Z",
@@ -570,7 +570,7 @@
             "expires": "2027-03-01T00:00:00Z",
             "links": [
               {
-                "href": "#5ad27167-62c1-5c92-9526-2aef5253816a",
+                "href": "#354402df-e1f7-58e8-bfcd-913abb1eacae",
                 "rel": "assessed-control",
                 "resource-fragment": "ia-5",
                 "text": "Implemented requirement for ia-5"
@@ -583,7 +583,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -593,12 +593,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal manual attestation 2026-Q3",
-                "href": "#85303cc2-bd77-51d4-89dc-9b374832fdc7"
+                "href": "#c8fad48f-05bb-53c8-b6a2-d485a70ab71c"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+                "subject-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
                 "type": "component"
               }
             ],
@@ -606,7 +606,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "ddc12c08-8665-52ea-9d39-975500e2ae27"
+            "uuid": "fa1e1075-6e88-50c7-b857-989aaf5612d0"
           },
           {
             "collected": "2026-09-09T00:00:00Z",
@@ -614,7 +614,7 @@
             "expires": "2027-09-11T00:00:00Z",
             "links": [
               {
-                "href": "#50c21afd-8084-53aa-a684-bcf75cc66589",
+                "href": "#2c12b2b9-3830-5904-92c7-fb4d6e6d4a52",
                 "rel": "assessed-control",
                 "resource-fragment": "sc-7",
                 "text": "Implemented requirement for sc-7"
@@ -627,7 +627,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -637,12 +637,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+                "subject-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
                 "type": "component"
               }
             ],
@@ -650,7 +650,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "0ee47cac-2868-5ffb-81b8-aea069bbc61d"
+            "uuid": "89467c37-9880-5340-a523-1904ff684689"
           },
           {
             "collected": "2026-09-05T00:00:00Z",
@@ -658,7 +658,7 @@
             "expires": "2027-10-19T00:00:00Z",
             "links": [
               {
-                "href": "#cd27602e-39fb-5560-bb74-6818b2eb56db",
+                "href": "#e6493dc6-513d-5002-b83e-89e0db422bd8",
                 "rel": "assessed-control",
                 "resource-fragment": "sc-28",
                 "text": "Implemented requirement for sc-28"
@@ -671,7 +671,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -681,12 +681,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "ca29743c-5835-5051-8624-b90e4003dc60",
+                "subject-uuid": "78d2ee1e-5677-502e-910d-aad763832309",
                 "type": "component"
               }
             ],
@@ -694,7 +694,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "95710002-92b5-59b2-bf03-aa22fefb2aee"
+            "uuid": "81a05692-7388-5d85-936b-670e5a09cb33"
           },
           {
             "collected": "2026-09-07T00:00:00Z",
@@ -702,7 +702,7 @@
             "expires": "2026-09-19T00:00:00Z",
             "links": [
               {
-                "href": "#12782514-58da-5693-a9ab-1a3b9c901335",
+                "href": "#adcd691d-fb75-5e59-b369-bf017cf06e72",
                 "rel": "assessed-control",
                 "resource-fragment": "si-4",
                 "text": "Implemented requirement for si-4"
@@ -715,7 +715,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -725,12 +725,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "dc3176b7-29ff-5a4c-8214-1ec2d6518f62",
+                "subject-uuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
                 "type": "component"
               }
             ],
@@ -738,7 +738,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "594c1850-84cf-5b44-8232-39afb98f01b3"
+            "uuid": "f0e4a6e0-ecbe-5023-b3dd-2a2508f9c682"
           },
           {
             "collected": "2026-08-25T00:00:00Z",
@@ -746,7 +746,7 @@
             "expires": "2027-04-26T00:00:00Z",
             "links": [
               {
-                "href": "#71365c24-a1bc-5ccf-8e86-9348ab09d188",
+                "href": "#70fcbafd-21e9-5bcf-a935-1d2bc4cb16e6",
                 "rel": "assessed-control",
                 "resource-fragment": "si-7",
                 "text": "Implemented requirement for si-7"
@@ -759,7 +759,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -769,12 +769,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "fa86ba43-0f75-563f-964a-c34651ddabb0",
+                "subject-uuid": "193c0b92-191f-51ae-8155-18c027ae2d92",
                 "type": "component"
               }
             ],
@@ -782,7 +782,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "066d6547-a052-589c-9e2a-4cbe878adf09"
+            "uuid": "2db8d246-252d-5bfa-a6bd-d0054087d13b"
           },
           {
             "collected": "2026-09-11T00:00:00Z",
@@ -790,7 +790,7 @@
             "expires": "2027-05-15T00:00:00Z",
             "links": [
               {
-                "href": "#17224a91-09fd-5eca-808d-7845a55e996b",
+                "href": "#364fd99c-b9cc-5758-afa4-b953f4f368c0",
                 "rel": "assessed-control",
                 "resource-fragment": "ACM.1",
                 "text": "Implemented requirement for ACM.1"
@@ -803,7 +803,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -813,12 +813,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "c7e2f3b5-0f73-57aa-bb5c-a942ba127739",
+                "subject-uuid": "f0e2786f-8374-5c9b-9231-5d8acd3f4f43",
                 "type": "component"
               }
             ],
@@ -826,7 +826,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "5510421e-6a28-50d9-82e1-7eb3db65d811"
+            "uuid": "8819e3e6-445a-5a47-bb68-4fea8bca48bc"
           },
           {
             "collected": "2026-09-04T00:00:00Z",
@@ -834,7 +834,7 @@
             "expires": "2027-08-24T00:00:00Z",
             "links": [
               {
-                "href": "#2fba0f32-bab4-58ed-bc68-07775b85656f",
+                "href": "#af9309c2-d10b-5789-a0fe-cc8189ade671",
                 "rel": "assessed-control",
                 "resource-fragment": "IAM.4",
                 "text": "Implemented requirement for IAM.4"
@@ -847,7 +847,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -857,12 +857,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "c7e2f3b5-0f73-57aa-bb5c-a942ba127739",
+                "subject-uuid": "f0e2786f-8374-5c9b-9231-5d8acd3f4f43",
                 "type": "component"
               }
             ],
@@ -870,7 +870,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "f022362d-a08b-5487-9d41-31b261517cc5"
+            "uuid": "d89808cf-090b-5bfe-8be0-f6c75bfebd36"
           },
           {
             "collected": "2026-09-14T00:00:00Z",
@@ -878,7 +878,7 @@
             "expires": "2027-09-12T00:00:00Z",
             "links": [
               {
-                "href": "#1896ca38-921e-5454-82c8-8d53349917d4",
+                "href": "#9e7296fa-3f7d-510b-8719-fac5b53824b9",
                 "rel": "assessed-control",
                 "resource-fragment": "S3.5",
                 "text": "Implemented requirement for S3.5"
@@ -891,7 +891,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -901,12 +901,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "c7e2f3b5-0f73-57aa-bb5c-a942ba127739",
+                "subject-uuid": "f0e2786f-8374-5c9b-9231-5d8acd3f4f43",
                 "type": "component"
               }
             ],
@@ -914,7 +914,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "7c30da4e-4c4d-50d8-b17a-88b4ba67e680"
+            "uuid": "90be0dc9-a749-5b9f-9350-3f92e9f93ff8"
           },
           {
             "collected": "2026-08-29T00:00:00Z",
@@ -922,7 +922,7 @@
             "expires": "2026-11-26T00:00:00Z",
             "links": [
               {
-                "href": "#082e05a6-2099-54b8-9b77-0020bf3dbc7c",
+                "href": "#30f49312-0b47-5904-b326-a3bb9d1968df",
                 "rel": "assessed-control",
                 "resource-fragment": "EC2.2",
                 "text": "Implemented requirement for EC2.2"
@@ -935,7 +935,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -945,12 +945,12 @@
             "relevant-evidence": [
               {
                 "description": "Public Portal normalised scan results 2026-Q3",
-                "href": "#26d196d8-1815-540e-99f5-0cc19bf1861a"
+                "href": "#f5d86538-4d5a-5dc4-99ae-720f07b49b98"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "c7e2f3b5-0f73-57aa-bb5c-a942ba127739",
+                "subject-uuid": "f0e2786f-8374-5c9b-9231-5d8acd3f4f43",
                 "type": "component"
               }
             ],
@@ -958,7 +958,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "550e4f3b-1f6c-510a-ad08-8622cb75fd34"
+            "uuid": "f069243e-0531-5bcc-8971-97608b8c1537"
           }
         ],
         "reviewed-controls": {
@@ -1025,7 +1025,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "5bdb4241-1f40-55d2-9101-3a51722669cc",
+                    "actor-uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1035,26 +1035,26 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "false"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "550e4f3b-1f6c-510a-ad08-8622cb75fd34"
+                "observation-uuid": "f069243e-0531-5bcc-8971-97608b8c1537"
               }
             ],
             "statement": "Until EC2.2 is satisfied, Public Portal carries this exposure.",
             "status": "open",
             "title": "EC2.2 shortfall on PORTAL",
-            "uuid": "4126be8e-eb72-5349-9338-fc2a20ba4382"
+            "uuid": "3d02f2bc-e842-582d-9e01-06e59b363738"
           }
         ],
         "start": "2026-08-25T00:00:00Z",
         "title": "Public Portal assessment 2026-Q3",
-        "uuid": "7af8aa7c-0f08-55d2-bb2c-e727a8fa243d"
+        "uuid": "25d5d5e1-f1ff-5ce9-8f98-729bf3dcc3ba"
       }
     ],
-    "uuid": "86394b82-3e4d-513f-9b1f-35022d696aa8"
+    "uuid": "abfc9594-52c9-5779-83a5-223c600c0676"
   }
 }

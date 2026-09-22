@@ -31,7 +31,7 @@
           ]
         }
       ],
-      "remarks": "Component and resource UUIDs are deterministic UUIDv5 over a natural key, under the namespace uuidv5(URL, https://risk-sentinel.org/ns/sparc). The document UUID changes per revision. See docs/compliance/README.md."
+      "remarks": "Component and resource UUIDs are deterministic UUIDv5 over a natural key, under the namespace uuidv5(URL, https://sparc.risk-sentinel.org/ns). The document UUID changes per revision. See docs/compliance/README.md."
     },
     "import-component-definitions": [
       {
@@ -49,7 +49,7 @@
           {
             "name": "evidence-kind",
             "value": "hdf-results",
-            "ns": "https://risk-sentinel.org/ns/sparc"
+            "ns": "https://sparc.risk-sentinel.org/ns"
           }
         ],
         "links": [
@@ -548,7 +548,7 @@
           {
             "name": "evidence-kind",
             "value": "manual-attestation",
-            "ns": "https://risk-sentinel.org/ns/sparc"
+            "ns": "https://sparc.risk-sentinel.org/ns"
           }
         ],
         "control-implementations": [

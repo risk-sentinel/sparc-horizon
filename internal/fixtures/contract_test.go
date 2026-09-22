@@ -101,7 +101,7 @@ func localRequirements(t *testing.T, ssp *oscal.SystemSecurityPlan) map[string]r
 // resolves to.
 func TestObservationIdentifiersRecomputeFromTheDocuments(t *testing.T) {
 	tree := generate(t)
-	d := keys.New(keys.ProvisionalNamespace())
+	d := keys.New(keys.Namespace())
 
 	vocab := controlVocabularies(t, tree)
 	if want := len(NISTControls) + len(SecurityHubControls); len(vocab) != want {
@@ -323,7 +323,7 @@ type boundaryRow struct {
 // every row carries the OSCAL UUID the documents join on.
 func TestSPARCRowsCarryTheOSCALUUIDs(t *testing.T) {
 	tree := generate(t)
-	g := New(keys.ProvisionalNamespace())
+	g := New(keys.Namespace())
 
 	var rows struct {
 		Count int           `json:"count"`

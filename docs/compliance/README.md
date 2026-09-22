@@ -111,7 +111,7 @@ deduplicate without coordinating — the same rule the product applies to its ow
 documents (`docs/03-data-model.md`).
 
 ```
-namespace = uuidv5(URL_NAMESPACE, "https://risk-sentinel.org/ns/sparc")
+namespace = uuidv5(URL_NAMESPACE, "https://sparc.risk-sentinel.org/ns")
           = d051648c-1ae1-569e-8569-b679a9aaf142
 component  = uuidv5(namespace, "component:horizon-ledger")
 resource   = uuidv5(namespace, "resource:nist-sp800-53-rev5-catalog")
@@ -121,7 +121,7 @@ Document-level UUIDs are the exception: they change per revision, because a revi
 a different document.
 
 Custom properties are **not** invented here. The nine props under
-`https://risk-sentinel.org/ns/sparc` are enumerated and constrained by
+`https://sparc.risk-sentinel.org/ns` are enumerated and constrained by
 `schemas/sparc-namespace-props.v1.schema.json`, and v1 changes are additive only — a new
 prop name means extending both the `enum` and the matching `allOf` branch. Where OSCAL
 already has somewhere to put something, it goes there: `links` for references,

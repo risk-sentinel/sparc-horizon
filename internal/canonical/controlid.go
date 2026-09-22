@@ -65,9 +65,18 @@ func ParseVocabulary(s string) (Vocabulary, error) {
 // both been observed to issue: "AC-2", "ac-2", "AC-02", "AC-2.1", "AC-2(1)"
 // and "AC-2 (1)". Leading zeros are absorbed here rather than stripped later,
 // so "AC-02" and "AC-2" cannot take different paths through the parser.
-var nistControl = regexp.MustCompile(`^([A-Za-z]{2})-0*([1-9][0-9]{0,2})(?:\.0*([1-9][0-9]{0,2})|[ ]?\(0*([1-9][0-9]{0,2})\))?$`)
+//
+// The prefix is two or three letters and enhancements nest, because SPARC's
+// shared contract canonicalises to `^[a-z]{2,3}-\d+(\.\d+)*$` and an
+// implementation stricter than the shared grammar rejects keys a peer
+// legitimately derives.
+var nistControl = regexp.MustCompile(`^([A-Za-z]{2,3})-0*([1-9][0-9]{0,2})((?:\.0*[1-9][0-9]{0,2}|[ ]?\(0*[1-9][0-9]{0,2}\))*)$`)
 
-var nistFamily = regexp.MustCompile(`^[A-Za-z]{2}$`)
+// nistEnhancement pulls each level out of the tail nistControl captured, in
+// whichever of the two spellings it arrived in.
+var nistEnhancement = regexp.MustCompile(`\.0*([1-9][0-9]{0,2})|\(0*([1-9][0-9]{0,2})\)`)
+
+var nistFamily = regexp.MustCompile(`^[A-Za-z]{2,3}$`)
 
 // ControlID canonicalises a control identifier within its issuing vocabulary.
 //
@@ -99,13 +108,15 @@ func ControlID(v Vocabulary, id string) (string, error) {
 			return "", fmt.Errorf("canonical: %q is not an SP 800-53 control id", id)
 		}
 		out := strings.ToLower(m[1]) + "-" + m[2]
-		// Group 3 is the dotted enhancement, group 4 the parenthesised one.
-		// The pattern permits only one of them.
-		if m[3] != "" {
-			return out + "." + m[3], nil
-		}
-		if m[4] != "" {
-			return out + "." + m[4], nil
+		// m[3] is the whole enhancement tail, in either spelling and to any
+		// depth. Each level is emitted dotted, which is the form OSCAL's
+		// TokenDatatype accepts.
+		for _, e := range nistEnhancement.FindAllStringSubmatch(m[3], -1) {
+			level := e[1]
+			if level == "" {
+				level = e[2]
+			}
+			out += "." + level
 		}
 		return out, nil
 	case VocabOpaque:

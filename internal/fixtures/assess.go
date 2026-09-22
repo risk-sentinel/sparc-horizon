@@ -277,7 +277,11 @@ func (g *Generator) assess(b Boundary, artifacts []evidenceArtifact, sspBytes []
 				sparcProp(PropConditionExpires, days(90+g.rng.intn(120)).Format("2006-01-02")),
 				sparcProp(PropTrigger, "score<0.85"),
 			)
-			decision, err := g.keys.AODecision(ssp, risk.UUID.String(), Period)
+			// Keyed on the day the decision was taken, not the quarter it
+			// fell in: an AO decision happens on a date, and the value has to
+			// line up with the next-decision-date prop.
+			decided := days(-7)
+			decision, err := g.keys.AODecision(ssp, risk.UUID.String(), decided.Format("2006-01-02"))
 			if err != nil {
 				return assessed{}, err
 			}
@@ -285,7 +289,7 @@ func (g *Generator) assess(b Boundary, artifacts []evidenceArtifact, sspBytes []
 				UUID:         decision.UUID.String(),
 				Title:        "Risk accepted with conditions",
 				Description:  "The Authorizing Official accepted this risk for " + Period + ", subject to the recorded condition.",
-				Start:        days(-7),
+				Start:        decided,
 				StatusChange: status,
 				LoggedBy: &[]oscal.LoggedBy{{
 					PartyUuid: ao,

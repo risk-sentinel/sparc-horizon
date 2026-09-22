@@ -17,7 +17,7 @@ const committedDir = "../../fixtures"
 
 func generate(t *testing.T) Tree {
 	t.Helper()
-	tree, err := New(keys.ProvisionalNamespace()).Generate()
+	tree, err := New(keys.Namespace()).Generate()
 	if err != nil {
 		t.Fatalf("Generate: %v", err)
 	}
@@ -52,7 +52,7 @@ func TestRegenerationIsStable(t *testing.T) {
 func TestWriteRoundTripsThroughTheFilesystem(t *testing.T) {
 	tree := generate(t)
 	dir := t.TempDir()
-	if err := New(keys.ProvisionalNamespace()).Write(dir); err != nil {
+	if err := New(keys.Namespace()).Write(dir); err != nil {
 		t.Fatalf("Write: %v", err)
 	}
 	written := os.DirFS(dir)

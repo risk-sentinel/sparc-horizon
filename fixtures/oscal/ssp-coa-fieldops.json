@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "e0a64373ff12749523dffa42589aa35ed03ffcf1cda80c38caa2ef64c0fe7719"
+                  "value": "b4f80988f26ea0a980a38c30d763cf7ae8c1e783555652b11129ae5f324d482f"
                 }
               ],
               "href": "./profile-moderate.json",
@@ -17,7 +17,7 @@
             }
           ],
           "title": "Fixture moderate baseline",
-          "uuid": "02db532b-5963-5617-a8bb-6f883ed54422"
+          "uuid": "1605aa04-f147-5497-b05c-6bc161fb226f"
         },
         {
           "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
@@ -26,7 +26,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "db91ee161b692afcc7fc34d3b61b23b2996a353c33a8b2c45a9571d05267bb8e"
+                  "value": "9759f28a638e4791813fc5eb17e5c95731ae77263930c1985068727e55cc3977"
                 }
               ],
               "href": "./ssp-ods-identity.json",
@@ -34,7 +34,7 @@
             }
           ],
           "title": "Identity Services system security plan",
-          "uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+          "uuid": "52176fd3-10ad-5df7-bbb4-c69a930223a8"
         }
       ]
     },
@@ -44,187 +44,187 @@
         {
           "by-components": [
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements ac-2.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "abae3a22-89a3-5b9a-977a-6f912d513ca0"
+              "uuid": "26911487-38df-577c-a719-87377649f10e"
             },
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements ac-2.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "c7708c30-f5f4-5a5d-aceb-f432675ccc50"
+              "uuid": "cbb0865a-84c2-54ee-9770-a83ad97c9aa2"
             }
           ],
           "control-id": "ac-2",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "30cb119e-7ad7-5111-ab76-089d1b00dd9a"
+          "uuid": "ac0b4edd-1f04-50ff-8383-bf6f2afa216d"
         },
         {
           "by-components": [
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements ac-2.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "956e83a9-cc85-58a2-869e-f83b3f2df8bf"
+              "uuid": "4c4c69fa-ffb9-5398-a919-7f38078cc073"
             },
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements ac-2.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "93b8b698-9924-5141-97c1-74f81ff0a996"
+              "uuid": "1b21a50a-27f1-5632-8dfc-080945b49e4b"
             }
           ],
           "control-id": "ac-2.1",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "a38c7953-421b-5835-b1d6-9f9b2b71f9b7"
+          "uuid": "54728e14-e557-50bd-a6a2-1073838c1905"
         },
         {
           "by-components": [
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements au-6.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "a776f086-bed9-56f5-9af1-358fde67a9d5"
+              "uuid": "ecfaeab0-6b66-5e5a-8629-f9b0a950ab83"
             },
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements au-6.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "476e18b0-9983-55b9-b398-427b364fda81"
+              "uuid": "ea07e07d-05ba-5d07-9cb9-c9fb38b6be22"
             }
           ],
           "control-id": "au-6",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "235574dd-8e01-56c5-96c9-102827b43a69"
+          "uuid": "b45a96b7-538f-52fa-8512-b72d6ec0955b"
         },
         {
           "by-components": [
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements au-6.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "5169c120-4d78-5717-8414-6fd95acd1905"
+              "uuid": "8661e2bb-6f21-510f-a396-193d7d8dfddd"
             },
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements au-6.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "598c3ff8-76aa-57fe-846b-8adbd4c928b0"
+              "uuid": "2ebdf720-a7b7-5af0-aaa8-921b71bbed7e"
             }
           ],
           "control-id": "au-6.1",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "0542eb5a-6f7a-520b-a15e-503a305edba4"
+          "uuid": "3be512ca-df2e-55f1-913c-8980b77b8556"
         },
         {
           "by-components": [
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements cp-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "099a1f88-3bd4-50e1-bbe8-6a5b9dbce407"
+              "uuid": "1a92522a-f9a1-53d9-96f2-80c84785a3a4"
             },
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements cp-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "bf48582f-1182-5ed5-9968-e27551c2922b"
+              "uuid": "07514a1b-82e9-5100-818d-97c7e843ec4c"
             }
           ],
           "control-id": "cp-4",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "ea874aea-1c3f-5048-a978-b04090675c16"
+          "uuid": "596751c9-9e1d-5fbd-823f-0a72a22797bc"
         },
         {
           "by-components": [
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements cp-9.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "611d87ac-dd6f-543e-9159-a483c6bb5cc6"
+              "uuid": "eb8ffe05-6dad-5bb6-8e7b-9018e23c8c3c"
             },
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements cp-9.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "9ca916b8-1148-5a24-b72c-40a6e246cef9"
+              "uuid": "86796e3f-9bf6-5b11-835b-a09d48947520"
             }
           ],
           "control-id": "cp-9",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "b90fedb6-0d29-59b1-86ec-465a00a5582d"
+          "uuid": "e2556b36-1d9d-5c65-bfb3-1a02e59700cb"
         },
         {
           "by-components": [
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements ia-2.",
               "implementation-status": {
                 "state": "implemented"
@@ -232,43 +232,43 @@
               "inherited": [
                 {
                   "description": "Inherited from Identity Services.",
-                  "provided-uuid": "724d525c-fc55-5d8a-828e-f40a65da02b9",
-                  "uuid": "2e96fb44-006e-5aae-b1b5-4427435073cd"
+                  "provided-uuid": "4b48f9ad-0c28-59f1-88fd-d3cd2253df68",
+                  "uuid": "9197157b-1055-522a-8757-7a1c079b95a0"
                 }
               ],
               "satisfied": [
                 {
                   "description": "Boundary-side configuration answering the provider's stated responsibility.",
-                  "responsibility-uuid": "8cdb9c79-1168-5433-b17e-0219baac249a",
-                  "uuid": "f4576482-a199-58f3-a14e-a721ae6547bd"
+                  "responsibility-uuid": "c1d209ee-b2e8-5ae6-b257-90365a4bf836",
+                  "uuid": "f812e6ed-f172-54b2-86ce-eabaf3ca32b1"
                 }
               ],
-              "uuid": "6b2db5e2-f0df-5a6d-a07e-883b432c480b"
+              "uuid": "30bcfb16-64d2-5a6a-ad0f-44bf45410580"
             },
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements ia-2.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "3ab5d52e-4401-59fb-a9b5-c52fcd8aa3bf"
+              "uuid": "2dd7ea0c-0608-5e09-877e-9b9b55e90ab9"
             }
           ],
           "control-id": "ia-2",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "a5064b8d-63de-57a8-beef-3a3ebf6fd4c3"
+          "uuid": "0158a214-613d-5fe2-93b5-a5727aae2132"
         },
         {
           "by-components": [
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements ia-5.",
               "implementation-status": {
                 "state": "implemented"
@@ -276,163 +276,163 @@
               "inherited": [
                 {
                   "description": "Inherited from Identity Services.",
-                  "provided-uuid": "b5c46ed0-ea2e-54b0-a76e-bbe4f2dd6cac",
-                  "uuid": "263abe4e-7f70-5827-9d7a-500cc7053e3d"
+                  "provided-uuid": "c4785d8d-f45f-5485-b823-6ae450ce4a27",
+                  "uuid": "b8cad78b-82cf-5576-8dce-c951042b7a81"
                 }
               ],
               "satisfied": [
                 {
                   "description": "Boundary-side configuration answering the provider's stated responsibility.",
-                  "responsibility-uuid": "9abc3f63-4a89-5de3-9dab-a84480338794",
-                  "uuid": "2b77cf05-1835-59ee-b48d-40ad4e8c3c06"
+                  "responsibility-uuid": "0a6106cf-5fb3-52c4-957e-8fa7de3a2746",
+                  "uuid": "96c9844b-09cb-5d42-a092-0397f642f136"
                 }
               ],
-              "uuid": "54b56789-65b5-5885-9568-7f46624e9251"
+              "uuid": "3cbc9d49-22f2-5cd0-9788-07b09b39d5e3"
             },
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements ia-5.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "36c1fa1c-e2a3-58d5-b844-165436ff4b94"
+              "uuid": "6394a2f6-34e0-5e97-8dd3-e6c4bcb40c12"
             }
           ],
           "control-id": "ia-5",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "1d46748d-9fc1-5f82-90b9-3fd118e81dbc"
+          "uuid": "ee1f927b-527b-5b31-9537-304b1d8e8c3d"
         },
         {
           "by-components": [
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements sc-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "f72d2ee6-ebbb-5cef-bf1e-a1a7d2e769e7"
+              "uuid": "449cf99f-facb-5931-836a-68848c552ed9"
             },
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements sc-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "7c0f48e0-2d0d-5788-903f-47a0eae27530"
+              "uuid": "d8ff8e1d-5b4a-5d23-9fbd-0cd85e95c75f"
             }
           ],
           "control-id": "sc-7",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "0f4f8b73-716e-5f97-820c-6bf96cd1897f"
+          "uuid": "96d37a5a-8be9-51e6-a1ae-6a18a2485cbb"
         },
         {
           "by-components": [
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements sc-28.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "184ce7c2-3db7-55d7-9908-ff96ad317781"
+              "uuid": "6826285d-7573-5370-98cb-5f9347a091d3"
             },
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements sc-28.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "57b56094-dd13-5490-8395-96aabb2773a9"
+              "uuid": "18a173f3-9681-599a-8636-867498450c69"
             }
           ],
           "control-id": "sc-28",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "3a853096-ee5f-564c-b06b-d519d7500e1e"
+          "uuid": "13294de6-3d44-543b-aa4c-86059ad97d57"
         },
         {
           "by-components": [
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements si-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "247869e1-c002-5b13-90f8-9e07afb7e3c3"
+              "uuid": "c1dc78c1-cc42-5e89-ab2c-49e5d78d78ef"
             },
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements si-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "517449ba-b45f-5a45-958d-cd75b896a073"
+              "uuid": "a718b4ca-ba43-5d54-a073-b56b534aebd7"
             }
           ],
           "control-id": "si-4",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "444d3645-7b7b-521f-b148-ed85e30f37cb"
+          "uuid": "ff203036-3128-55f2-824f-3f5c2fa8dde2"
         },
         {
           "by-components": [
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442",
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd",
               "description": "Sync Service implements si-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "f1e80fd3-adf9-5b09-aef0-3a003190dd6c"
+              "uuid": "b4ecf4fc-3e48-586e-862b-8bc69a9387f3"
             },
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76",
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499",
               "description": "Field Mobile Application implements si-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "242fde9a-b3d9-52c0-9676-74e7fc4ea338"
+              "uuid": "f39b66c3-93ec-51d8-a65c-e200594c8fd5"
             }
           ],
           "control-id": "si-7",
           "responsible-roles": [
             {
               "party-uuids": [
-                "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+                "ede17861-8582-5239-b66e-cde0b634932f"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "e9d6f181-552f-5da2-a901-30200325fd41"
+          "uuid": "427ed96b-cae2-581d-a16f-ce3ea1ba4814"
         }
       ]
     },
     "import-profile": {
-      "href": "#02db532b-5963-5617-a8bb-6f883ed54422"
+      "href": "#1605aa04-f147-5497-b05c-6bc161fb226f"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -443,75 +443,75 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "Coastal Operations Agency",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "COA",
           "type": "organization",
-          "uuid": "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+          "uuid": "019cb43f-7468-5184-8780-be8a71a340dc"
         },
         {
           "member-of-organizations": [
-            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+            "019cb43f-7468-5184-8780-be8a71a340dc"
           ],
           "name": "FIELDOPS Authorizing Official",
           "type": "person",
-          "uuid": "871a0b35-c244-5eab-96af-0787fe21717b"
+          "uuid": "92a463cb-c2b1-5a81-909d-c7b5b463bf03"
         },
         {
           "member-of-organizations": [
-            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+            "019cb43f-7468-5184-8780-be8a71a340dc"
           ],
           "name": "FIELDOPS System Owner",
           "type": "person",
-          "uuid": "e303760c-e28d-5fc0-841e-ee0f19a4b31e"
+          "uuid": "46d94c6d-28db-57f9-8579-86ed5253279c"
         },
         {
           "member-of-organizations": [
-            "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+            "019cb43f-7468-5184-8780-be8a71a340dc"
           ],
           "name": "FIELDOPS Information System Security Officer",
           "type": "person",
-          "uuid": "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+          "uuid": "ede17861-8582-5239-b66e-cde0b634932f"
         }
       ],
       "props": [
         {
           "name": "node-type",
-          "ns": "https://risk-sentinel.org/ns/sparc",
+          "ns": "https://sparc.risk-sentinel.org/ns",
           "value": "boundary"
         },
         {
           "name": "parent-uuid",
-          "ns": "https://risk-sentinel.org/ns/sparc",
-          "value": "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+          "ns": "https://sparc.risk-sentinel.org/ns",
+          "value": "019cb43f-7468-5184-8780-be8a71a340dc"
         },
         {
           "name": "next-decision-date",
-          "ns": "https://risk-sentinel.org/ns/sparc",
+          "ns": "https://sparc.risk-sentinel.org/ns",
           "value": "2026-10-30"
         },
         {
           "name": "fips-199",
-          "ns": "https://risk-sentinel.org/ns/sparc",
+          "ns": "https://sparc.risk-sentinel.org/ns",
           "value": "moderate"
         }
       ],
@@ -519,19 +519,19 @@
       "responsible-parties": [
         {
           "party-uuids": [
-            "871a0b35-c244-5eab-96af-0787fe21717b"
+            "92a463cb-c2b1-5a81-909d-c7b5b463bf03"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "e303760c-e28d-5fc0-841e-ee0f19a4b31e"
+            "46d94c6d-28db-57f9-8579-86ed5253279c"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "5544d9c9-7f80-53ef-a8e4-3da778ad8d01"
+            "ede17861-8582-5239-b66e-cde0b634932f"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -571,11 +571,11 @@
       "system-ids": [
         {
           "id": "coa-fieldops",
-          "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+          "identifier-type": "https://sparc.risk-sentinel.org/ns/slug"
         },
         {
           "id": "7",
-          "identifier-type": "https://risk-sentinel.org/ns/sparc/id"
+          "identifier-type": "https://sparc.risk-sentinel.org/ns/id"
         }
       ],
       "system-information": {
@@ -592,7 +592,7 @@
               "base": "fips-199-moderate"
             },
             "title": "Field Operations operational records",
-            "uuid": "9eeaba94-2409-5857-a3f3-80565f0af9e9"
+            "uuid": "8e9d45db-23c8-5e5a-b3ff-66fd5765f61c"
           }
         ]
       },
@@ -607,7 +607,7 @@
           "responsible-roles": [
             {
               "party-uuids": [
-                "e303760c-e28d-5fc0-841e-ee0f19a4b31e"
+                "46d94c6d-28db-57f9-8579-86ed5253279c"
               ],
               "role-id": "system-owner"
             }
@@ -617,7 +617,7 @@
           },
           "title": "Field Mobile Application",
           "type": "software",
-          "uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76"
+          "uuid": "f9fb135d-3445-5fbc-8375-4322788e7499"
         },
         {
           "description": "Reconciles field captures with the record.",
@@ -625,7 +625,7 @@
           "responsible-roles": [
             {
               "party-uuids": [
-                "e303760c-e28d-5fc0-841e-ee0f19a4b31e"
+                "46d94c6d-28db-57f9-8579-86ed5253279c"
               ],
               "role-id": "system-owner"
             }
@@ -635,7 +635,7 @@
           },
           "title": "Sync Service",
           "type": "software",
-          "uuid": "73facb63-2510-5027-b609-b1157e18a442"
+          "uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd"
         },
         {
           "description": "Inherited platform service, assessed by the provider against AWS Security Hub controls.",
@@ -660,7 +660,7 @@
           },
           "title": "AWS Certificate Manager",
           "type": "service",
-          "uuid": "6dcfeb85-7b70-5c40-ad3c-c77b59992a9b"
+          "uuid": "08f7790b-ddde-5aa8-84aa-a0df3b9c581d"
         }
       ],
       "inventory-items": [
@@ -668,7 +668,7 @@
           "description": "Field Mobile Application inventory record.",
           "implemented-components": [
             {
-              "component-uuid": "2715ca02-9e4b-5956-930d-752b0bb69d76"
+              "component-uuid": "f9fb135d-3445-5fbc-8375-4322788e7499"
             }
           ],
           "props": [
@@ -677,13 +677,13 @@
               "value": "coa-fieldops/field-mobile"
             }
           ],
-          "uuid": "62486ab8-82c0-552e-a4b3-ea1f1c608a52"
+          "uuid": "a3d95efc-a642-528a-85fc-84e80e5fa36a"
         },
         {
           "description": "Sync Service inventory record.",
           "implemented-components": [
             {
-              "component-uuid": "73facb63-2510-5027-b609-b1157e18a442"
+              "component-uuid": "a4dfcc72-f78d-568e-9908-b5364a677acd"
             }
           ],
           "props": [
@@ -692,7 +692,7 @@
               "value": "coa-fieldops/field-sync"
             }
           ],
-          "uuid": "a6d78afc-6157-5a77-9b6a-c5c7e497f039"
+          "uuid": "73489cf6-b1ca-53d8-bc9c-c58812622e67"
         }
       ],
       "leveraged-authorizations": [
@@ -700,17 +700,17 @@
           "date-authorized": "2026-03-02",
           "links": [
             {
-              "href": "#f20b0311-6cb6-5588-9349-ff24440f6674",
+              "href": "#52176fd3-10ad-5df7-bbb4-c69a930223a8",
               "rel": "leveraged-authorization"
             }
           ],
-          "party-uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707",
+          "party-uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
           "remarks": "The reverse-inheritance index behind blast radius is built from this link.",
           "title": "Identity Services",
-          "uuid": "7492e1a3-5b29-5a8e-b434-7817113ab338"
+          "uuid": "5c74bc42-fdd0-54da-9a89-3462c62445e3"
         }
       ]
     },
-    "uuid": "6c6f0631-051a-5412-9e5c-d1772725f170"
+    "uuid": "1942d11b-584d-580b-91cb-0ad94254c560"
   }
 }

@@ -12,7 +12,7 @@
       "organization_slug": "ods",
       "fips_199": "moderate",
       "next_decision_date": "2026-10-11",
-      "oscal_ssp_uuid": "0db913d7-c382-536f-8c67-b4b52b4e67e6"
+      "oscal_ssp_uuid": "f7de308a-5555-5e35-be6a-029ad885320e"
     },
     {
       "id": 2,
@@ -22,7 +22,7 @@
       "organization_slug": "ods",
       "fips_199": "high",
       "next_decision_date": "2026-11-02",
-      "oscal_ssp_uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+      "oscal_ssp_uuid": "52176fd3-10ad-5df7-bbb4-c69a930223a8"
     },
     {
       "id": 3,
@@ -32,7 +32,7 @@
       "organization_slug": "bgm",
       "fips_199": "high",
       "next_decision_date": "2026-10-24",
-      "oscal_ssp_uuid": "93bb33d1-a2ad-5eee-ac9e-2894f09162f2"
+      "oscal_ssp_uuid": "a8a226ff-c477-5c42-abdb-a46e356db5d8"
     },
     {
       "id": 4,
@@ -42,7 +42,7 @@
       "organization_slug": "bgm",
       "fips_199": "high",
       "next_decision_date": "2026-12-01",
-      "oscal_ssp_uuid": "01605f49-bb0e-5020-a245-b9f01c6ec078"
+      "oscal_ssp_uuid": "15781999-2cd0-51a4-ad7a-3c65a478d3d3"
     },
     {
       "id": 5,
@@ -52,7 +52,7 @@
       "organization_slug": "ndi",
       "fips_199": "moderate",
       "next_decision_date": "2027-01-15",
-      "oscal_ssp_uuid": "e69b2d2b-2f73-530d-a2ce-460f15fce279"
+      "oscal_ssp_uuid": "f47d858e-7af8-5990-a4de-7365abd272d8"
     },
     {
       "id": 6,
@@ -62,7 +62,7 @@
       "organization_slug": "ndi",
       "fips_199": "low",
       "next_decision_date": "2027-02-20",
-      "oscal_ssp_uuid": "ac72c68e-fa06-5948-9aba-c323c96f6164"
+      "oscal_ssp_uuid": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520"
     },
     {
       "id": 7,
@@ -72,7 +72,7 @@
       "organization_slug": "coa",
       "fips_199": "moderate",
       "next_decision_date": "2026-10-30",
-      "oscal_ssp_uuid": "6c6f0631-051a-5412-9e5c-d1772725f170"
+      "oscal_ssp_uuid": "1942d11b-584d-580b-91cb-0ad94254c560"
     }
   ]
 }

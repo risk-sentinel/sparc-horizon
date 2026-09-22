@@ -7,13 +7,13 @@
           "props": [
             {
               "name": "evidence-kind",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "hdf-results"
             },
             {
               "name": "signed-by",
-              "ns": "https://risk-sentinel.org/ns/sparc",
-              "value": "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "2ee39e09-fc22-50f9-ad38-ff397563e967"
             }
           ],
           "rlinks": [
@@ -29,20 +29,20 @@
             }
           ],
           "title": "Grants Platform normalised scan results 2026-Q3",
-          "uuid": "30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+          "uuid": "ae65133b-b696-56b0-94dd-f103bc3d7587"
         },
         {
           "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
           "props": [
             {
               "name": "evidence-kind",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "manual-attestation"
             },
             {
               "name": "signed-by",
-              "ns": "https://risk-sentinel.org/ns/sparc",
-              "value": "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "2ee39e09-fc22-50f9-ad38-ff397563e967"
             }
           ],
           "rlinks": [
@@ -58,7 +58,7 @@
             }
           ],
           "title": "Grants Platform manual attestation 2026-Q3",
-          "uuid": "76a3f2b1-cfec-5964-bae2-09127eb0cbd9"
+          "uuid": "6396ac7b-6c0b-5fa6-9877-a6b6169b4886"
         },
         {
           "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
@@ -67,7 +67,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "999c52ef2ae46e8ef7e4d8ed9d973f9bf415fcd6be8215bada6681af2a17b744"
+                  "value": "10db97bf5b6d1db9db6772c9e5bdb1b1fe15a2a89f8cdf6fab31d2742a212c80"
                 }
               ],
               "href": "./ssp-bgm-grants.json",
@@ -75,7 +75,7 @@
             }
           ],
           "title": "Grants Platform system security plan",
-          "uuid": "93bb33d1-a2ad-5eee-ac9e-2894f09162f2"
+          "uuid": "a8a226ff-c477-5c42-abdb-a46e356db5d8"
         },
         {
           "citation": {
@@ -83,12 +83,12 @@
           },
           "description": "Cited rather than modelled: these fixtures carry no assessment-plan document.",
           "title": "Grants Platform continuous monitoring plan",
-          "uuid": "2aa32cf8-86c9-5cde-9353-9c403085e294"
+          "uuid": "9dd83288-8bc9-5714-aa87-a83b97f7e7d0"
         }
       ]
     },
     "import-ap": {
-      "href": "#2aa32cf8-86c9-5cde-9353-9c403085e294"
+      "href": "#9dd83288-8bc9-5714-aa87-a83b97f7e7d0"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -99,73 +99,73 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "Bureau of Grants Management",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "BGM",
           "type": "organization",
-          "uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+          "uuid": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
         },
         {
           "member-of-organizations": [
-            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
           ],
           "name": "GRANTS Authorizing Official",
           "type": "person",
-          "uuid": "51cc5630-99e7-5bdb-8736-aae06b692619"
+          "uuid": "d525eea8-a8b6-595e-9bd9-84ae9ba7ba01"
         },
         {
           "member-of-organizations": [
-            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
           ],
           "name": "GRANTS System Owner",
           "type": "person",
-          "uuid": "846dbdd0-44b5-534e-9af3-8bc400b03534"
+          "uuid": "ca3593e0-7813-5676-a0ee-012cc44e8fb8"
         },
         {
           "member-of-organizations": [
-            "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
           ],
           "name": "GRANTS Information System Security Officer",
           "type": "person",
-          "uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+          "uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967"
         }
       ],
       "published": "2026-09-15T00:00:00Z",
       "responsible-parties": [
         {
           "party-uuids": [
-            "51cc5630-99e7-5bdb-8736-aae06b692619"
+            "d525eea8-a8b6-595e-9bd9-84ae9ba7ba01"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "846dbdd0-44b5-534e-9af3-8bc400b03534"
+            "ca3593e0-7813-5676-a0ee-012cc44e8fb8"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+            "2ee39e09-fc22-50f9-ad38-ff397563e967"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -197,13 +197,13 @@
                 "name": "asset",
                 "prose": "The Information System Security Officer attests that ia-5 is implemented for Grants Platform in 2026-Q3.",
                 "title": "Attestation for ia-5",
-                "uuid": "d52d9ba5-fff0-5fa7-b9c3-5b58c16b56b1"
+                "uuid": "b8f7e529-ad63-5f5c-a048-e8d75070f7b8"
               }
             ],
             "responsible-parties": [
               {
                 "party-uuids": [
-                  "de88e75b-b4a9-559b-b15e-dc725c60ee89"
+                  "2ee39e09-fc22-50f9-ad38-ff397563e967"
                 ],
                 "role-id": "information-system-security-officer"
               }
@@ -219,7 +219,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -228,12 +228,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "b3f66165-cfd2-5027-81f1-b595aad6900f"
+                "observation-uuid": "b306e111-f287-5a87-9a8e-e7ee15e070d4"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "7571fd9a-e8cf-5e88-9fe7-ff9e911eb8b3"
+                "risk-uuid": "7cf250f5-d148-5d30-bdba-1d2b90fc311a"
               }
             ],
             "target": {
@@ -245,7 +245,7 @@
               "type": "objective-id"
             },
             "title": "au-6.1 is not satisfied on GRANTS",
-            "uuid": "e003537f-1469-5e98-bbba-e27a258dcd83"
+            "uuid": "92054b49-ddb3-5e86-965b-2e3e208c0138"
           },
           {
             "description": "The assessment of cp-4 did not satisfy the control objective.",
@@ -253,7 +253,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -262,12 +262,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "1f38f7b4-cc52-56ba-bd66-bb0801c5701a"
+                "observation-uuid": "f388760b-d831-57a3-bae5-fbfe49c1a720"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "ade1ca31-bf13-56a5-8703-d33163475f18"
+                "risk-uuid": "42bf9c9a-6e7a-5881-8a19-ea1e5a90d271"
               }
             ],
             "target": {
@@ -279,7 +279,7 @@
               "type": "objective-id"
             },
             "title": "cp-4 is not satisfied on GRANTS",
-            "uuid": "e27eec46-595c-5812-a067-4152e702f9fa"
+            "uuid": "66694cb6-87bb-595f-ba6e-885ca72e232c"
           },
           {
             "description": "The assessment of sc-28 did not satisfy the control objective.",
@@ -287,7 +287,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -296,12 +296,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "316ad834-84ec-5034-ac02-a48844292bbe"
+                "observation-uuid": "308c80e9-d73b-5102-9fc0-12aa4e4fc877"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "786d700a-a98f-5143-8bae-e17599c163b4"
+                "risk-uuid": "725a072d-f698-54a2-8fbc-75a6cf27b054"
               }
             ],
             "target": {
@@ -313,7 +313,7 @@
               "type": "objective-id"
             },
             "title": "sc-28 is not satisfied on GRANTS",
-            "uuid": "48f75f8e-3a94-521f-a491-67c72eb3f9f2"
+            "uuid": "67e948a3-49e1-52b3-aa85-f658b1ed7605"
           },
           {
             "description": "The assessment of IAM.4 did not satisfy the control objective.",
@@ -321,7 +321,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -330,12 +330,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "86f50285-8a33-5c6d-b121-14095e0d4d95"
+                "observation-uuid": "97e6c2b4-c123-5ce2-a8e9-9d4b814da650"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "4671adbc-fd3a-55bb-bb14-8cbb6db53f48"
+                "risk-uuid": "91f8fe60-790a-53b3-8248-98c9d5e75a79"
               }
             ],
             "target": {
@@ -347,7 +347,7 @@
               "type": "objective-id"
             },
             "title": "IAM.4 is not satisfied on GRANTS",
-            "uuid": "089af37f-3218-5a78-9417-1d50a85f3ae9"
+            "uuid": "7dd93f54-79a8-55cf-b218-904e308e641f"
           },
           {
             "description": "The assessment of EC2.2 did not satisfy the control objective.",
@@ -355,7 +355,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -364,12 +364,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "5f2ab399-94af-5132-b6f3-950936a9240e"
+                "observation-uuid": "61bc1995-17eb-5521-a916-33924de5c88a"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "28a5aa43-3d06-59fc-a3c7-4e53ec7e0486"
+                "risk-uuid": "14cdd367-6569-5600-a783-ee43cb39564c"
               }
             ],
             "target": {
@@ -381,7 +381,7 @@
               "type": "objective-id"
             },
             "title": "EC2.2 is not satisfied on GRANTS",
-            "uuid": "1be96308-9a2e-5890-ac55-ccae0788134c"
+            "uuid": "114cd3f1-e7d9-523c-97a6-1cd8dd6c6be8"
           }
         ],
         "observations": [
@@ -391,7 +391,7 @@
             "expires": "2027-10-18T00:00:00Z",
             "links": [
               {
-                "href": "#75e6d319-0cad-5551-a4b6-fe687c7fa657",
+                "href": "#c41a8206-fced-5e15-9cb5-6cd6adec894c",
                 "rel": "assessed-control",
                 "resource-fragment": "ac-2",
                 "text": "Implemented requirement for ac-2"
@@ -404,7 +404,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -414,12 +414,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+                "subject-uuid": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
                 "type": "component"
               }
             ],
@@ -427,7 +427,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "19e1d23c-0d9d-58fe-a0c6-948f46056823"
+            "uuid": "d7156c42-98ec-563d-9b70-99fdc982a76a"
           },
           {
             "collected": "2026-09-12T00:00:00Z",
@@ -435,7 +435,7 @@
             "expires": "2027-10-19T00:00:00Z",
             "links": [
               {
-                "href": "#3a2bcb62-08a7-51e7-bff4-9bed51e9be67",
+                "href": "#f2a4f19c-dc7e-5116-ba21-4b584f1f46dd",
                 "rel": "assessed-control",
                 "resource-fragment": "ac-2.1",
                 "text": "Implemented requirement for ac-2.1"
@@ -448,7 +448,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -458,12 +458,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+                "subject-uuid": "1e0d3586-ddd0-59bd-97f9-19eaad9c6aea",
                 "type": "component"
               }
             ],
@@ -471,7 +471,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "32812d8f-05df-596e-b999-998f1da1fe91"
+            "uuid": "5d0fbd67-f92c-5752-bcb3-bf0cf480c206"
           },
           {
             "collected": "2026-09-03T00:00:00Z",
@@ -479,7 +479,7 @@
             "expires": "2027-02-24T00:00:00Z",
             "links": [
               {
-                "href": "#57c47b59-d6c2-59e8-80a4-1c33f4e9b76f",
+                "href": "#c387a3f2-bb63-58a3-9d03-862abf451670",
                 "rel": "assessed-control",
                 "resource-fragment": "au-6",
                 "text": "Implemented requirement for au-6"
@@ -492,7 +492,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -502,12 +502,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+                "subject-uuid": "5c5fbbf2-e794-5470-89ba-d59e04b2b856",
                 "type": "component"
               }
             ],
@@ -515,7 +515,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "4b4a8201-dd96-5867-88ce-ce690ac6630c"
+            "uuid": "7cc348f1-28a4-57b5-be48-e3d66fcd6267"
           },
           {
             "collected": "2026-09-10T00:00:00Z",
@@ -523,7 +523,7 @@
             "expires": "2026-12-10T00:00:00Z",
             "links": [
               {
-                "href": "#e2e293bc-6fc8-53cf-b3f2-4ee2b4b2f563",
+                "href": "#40630fdb-bab1-59d4-861e-d35e47c694e5",
                 "rel": "assessed-control",
                 "resource-fragment": "au-6.1",
                 "text": "Implemented requirement for au-6.1"
@@ -536,7 +536,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -546,12 +546,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+                "subject-uuid": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
                 "type": "component"
               }
             ],
@@ -559,7 +559,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "b3f66165-cfd2-5027-81f1-b595aad6900f"
+            "uuid": "b306e111-f287-5a87-9a8e-e7ee15e070d4"
           },
           {
             "collected": "2026-08-28T00:00:00Z",
@@ -567,7 +567,7 @@
             "expires": "2026-12-07T00:00:00Z",
             "links": [
               {
-                "href": "#8ad2d01d-e004-55ef-8119-44d40f2b571c",
+                "href": "#6a6537f0-8ff7-5405-997e-eac753c071c1",
                 "rel": "assessed-control",
                 "resource-fragment": "cp-4",
                 "text": "Implemented requirement for cp-4"
@@ -580,7 +580,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -590,12 +590,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform manual attestation 2026-Q3",
-                "href": "#76a3f2b1-cfec-5964-bae2-09127eb0cbd9"
+                "href": "#6396ac7b-6c0b-5fa6-9877-a6b6169b4886"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+                "subject-uuid": "1e0d3586-ddd0-59bd-97f9-19eaad9c6aea",
                 "type": "component"
               }
             ],
@@ -603,7 +603,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "1f38f7b4-cc52-56ba-bd66-bb0801c5701a"
+            "uuid": "f388760b-d831-57a3-bae5-fbfe49c1a720"
           },
           {
             "collected": "2026-09-07T00:00:00Z",
@@ -611,7 +611,7 @@
             "expires": "2027-09-04T00:00:00Z",
             "links": [
               {
-                "href": "#e54567d3-ea66-54d0-918a-7e63e5ddf253",
+                "href": "#ca3cc765-3a6b-564b-aead-c581eac03995",
                 "rel": "assessed-control",
                 "resource-fragment": "cp-9",
                 "text": "Implemented requirement for cp-9"
@@ -624,7 +624,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -634,12 +634,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+                "subject-uuid": "5c5fbbf2-e794-5470-89ba-d59e04b2b856",
                 "type": "component"
               }
             ],
@@ -647,7 +647,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "159c2d73-a5cc-5458-9764-1f45282dc39a"
+            "uuid": "8e0c9791-35fb-5a19-840e-125348cef661"
           },
           {
             "collected": "2026-08-30T00:00:00Z",
@@ -655,7 +655,7 @@
             "expires": "2026-09-28T00:00:00Z",
             "links": [
               {
-                "href": "#1eda2738-01f5-54c3-861b-1903322982e6",
+                "href": "#e788fca4-e10c-5ce9-8d3a-de75bf39cbc1",
                 "rel": "assessed-control",
                 "resource-fragment": "ia-2",
                 "text": "Implemented requirement for ia-2"
@@ -668,7 +668,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -678,12 +678,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+                "subject-uuid": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
                 "type": "component"
               }
             ],
@@ -691,7 +691,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "8e4d08b3-11c0-55c4-ad1c-556b52a23c11"
+            "uuid": "46b5f149-6391-5ace-801c-b6b5f9ba9e4b"
           },
           {
             "collected": "2026-09-13T00:00:00Z",
@@ -699,7 +699,7 @@
             "expires": "2027-07-22T00:00:00Z",
             "links": [
               {
-                "href": "#5896a374-0cb5-58a0-80c7-f90bbe8385da",
+                "href": "#c1b006fa-40f2-5b86-86c5-9017c95069c0",
                 "rel": "assessed-control",
                 "resource-fragment": "ia-5",
                 "text": "Implemented requirement for ia-5"
@@ -712,7 +712,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -722,12 +722,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform manual attestation 2026-Q3",
-                "href": "#76a3f2b1-cfec-5964-bae2-09127eb0cbd9"
+                "href": "#6396ac7b-6c0b-5fa6-9877-a6b6169b4886"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+                "subject-uuid": "1e0d3586-ddd0-59bd-97f9-19eaad9c6aea",
                 "type": "component"
               }
             ],
@@ -735,7 +735,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "db5b8080-2ffd-5190-8b48-a89845745d47"
+            "uuid": "f3905ebc-ee2e-58ea-8331-e00c69abb732"
           },
           {
             "collected": "2026-09-07T00:00:00Z",
@@ -743,7 +743,7 @@
             "expires": "2027-09-24T00:00:00Z",
             "links": [
               {
-                "href": "#c550a2a4-3219-5245-85f8-f62eb4f75960",
+                "href": "#24d3d9ae-726b-5992-b09c-871ec342986e",
                 "rel": "assessed-control",
                 "resource-fragment": "sc-7",
                 "text": "Implemented requirement for sc-7"
@@ -756,7 +756,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -766,12 +766,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+                "subject-uuid": "5c5fbbf2-e794-5470-89ba-d59e04b2b856",
                 "type": "component"
               }
             ],
@@ -779,7 +779,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "6208dfaf-754c-5cbd-8486-9dc29da85081"
+            "uuid": "be7ca42c-eb5b-5c0e-8f35-cf5db73c314c"
           },
           {
             "collected": "2026-09-14T00:00:00Z",
@@ -787,7 +787,7 @@
             "expires": "2026-12-04T00:00:00Z",
             "links": [
               {
-                "href": "#44940e83-fe67-50ad-8e40-1f5c6460efb8",
+                "href": "#dcf43a13-5251-5001-bddb-efffe1802b65",
                 "rel": "assessed-control",
                 "resource-fragment": "sc-28",
                 "text": "Implemented requirement for sc-28"
@@ -800,7 +800,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -810,12 +810,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "30a2fd8e-1079-59e6-8cac-77162b5f1010",
+                "subject-uuid": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
                 "type": "component"
               }
             ],
@@ -823,7 +823,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "316ad834-84ec-5034-ac02-a48844292bbe"
+            "uuid": "308c80e9-d73b-5102-9fc0-12aa4e4fc877"
           },
           {
             "collected": "2026-09-13T00:00:00Z",
@@ -831,7 +831,7 @@
             "expires": "2027-09-23T00:00:00Z",
             "links": [
               {
-                "href": "#c4d37c1c-9512-513c-bcf8-b8a57fe627fd",
+                "href": "#f2e11afd-c5a5-50e6-925b-159fa3e92c87",
                 "rel": "assessed-control",
                 "resource-fragment": "si-4",
                 "text": "Implemented requirement for si-4"
@@ -844,7 +844,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -854,12 +854,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "68160173-27c8-5f63-b19a-e4cfc20641f0",
+                "subject-uuid": "1e0d3586-ddd0-59bd-97f9-19eaad9c6aea",
                 "type": "component"
               }
             ],
@@ -867,7 +867,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "f1f786b9-217e-5fc6-b77e-9f17bd86c900"
+            "uuid": "dd87c202-16e4-5d45-86ec-55183807342a"
           },
           {
             "collected": "2026-08-25T00:00:00Z",
@@ -875,7 +875,7 @@
             "expires": "2027-08-12T00:00:00Z",
             "links": [
               {
-                "href": "#d4f4c799-5179-5f0a-8855-5345652b3259",
+                "href": "#771ea4f1-78f8-5140-97d2-2fdd2f0e65c6",
                 "rel": "assessed-control",
                 "resource-fragment": "si-7",
                 "text": "Implemented requirement for si-7"
@@ -888,7 +888,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -898,12 +898,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "7456dba1-c177-5750-97c0-7655439f9242",
+                "subject-uuid": "5c5fbbf2-e794-5470-89ba-d59e04b2b856",
                 "type": "component"
               }
             ],
@@ -911,7 +911,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "7e9b720d-0cb9-534c-9a73-4744dfb9c35a"
+            "uuid": "2f5e0f64-d091-5be6-bb0f-cfe30c2e95db"
           },
           {
             "collected": "2026-08-31T00:00:00Z",
@@ -919,7 +919,7 @@
             "expires": "2027-01-27T00:00:00Z",
             "links": [
               {
-                "href": "#17224a91-09fd-5eca-808d-7845a55e996b",
+                "href": "#364fd99c-b9cc-5758-afa4-b953f4f368c0",
                 "rel": "assessed-control",
                 "resource-fragment": "ACM.1",
                 "text": "Implemented requirement for ACM.1"
@@ -932,7 +932,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -942,12 +942,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "91957c8e-276c-55e6-a142-beaf32c46655",
+                "subject-uuid": "8967efc0-8521-518b-884f-933e8e387993",
                 "type": "component"
               }
             ],
@@ -955,7 +955,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "9d1f676f-b113-5056-9c98-3afbcf3dc46c"
+            "uuid": "ce475c13-9971-58f0-b8ae-1ee11d2e7e9d"
           },
           {
             "collected": "2026-09-12T00:00:00Z",
@@ -963,7 +963,7 @@
             "expires": "2026-11-20T00:00:00Z",
             "links": [
               {
-                "href": "#2fba0f32-bab4-58ed-bc68-07775b85656f",
+                "href": "#af9309c2-d10b-5789-a0fe-cc8189ade671",
                 "rel": "assessed-control",
                 "resource-fragment": "IAM.4",
                 "text": "Implemented requirement for IAM.4"
@@ -976,7 +976,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -986,12 +986,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "91957c8e-276c-55e6-a142-beaf32c46655",
+                "subject-uuid": "8967efc0-8521-518b-884f-933e8e387993",
                 "type": "component"
               }
             ],
@@ -999,7 +999,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "86f50285-8a33-5c6d-b121-14095e0d4d95"
+            "uuid": "97e6c2b4-c123-5ce2-a8e9-9d4b814da650"
           },
           {
             "collected": "2026-09-13T00:00:00Z",
@@ -1007,7 +1007,7 @@
             "expires": "2027-01-17T00:00:00Z",
             "links": [
               {
-                "href": "#1896ca38-921e-5454-82c8-8d53349917d4",
+                "href": "#9e7296fa-3f7d-510b-8719-fac5b53824b9",
                 "rel": "assessed-control",
                 "resource-fragment": "S3.5",
                 "text": "Implemented requirement for S3.5"
@@ -1020,7 +1020,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1030,12 +1030,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "91957c8e-276c-55e6-a142-beaf32c46655",
+                "subject-uuid": "8967efc0-8521-518b-884f-933e8e387993",
                 "type": "component"
               }
             ],
@@ -1043,7 +1043,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "52802dc3-104a-58c0-a749-7f8dd9b10b76"
+            "uuid": "d2574314-1d3e-5b4c-98a2-6b04405b0300"
           },
           {
             "collected": "2026-08-29T00:00:00Z",
@@ -1051,7 +1051,7 @@
             "expires": "2026-11-03T00:00:00Z",
             "links": [
               {
-                "href": "#082e05a6-2099-54b8-9b77-0020bf3dbc7c",
+                "href": "#30f49312-0b47-5904-b326-a3bb9d1968df",
                 "rel": "assessed-control",
                 "resource-fragment": "EC2.2",
                 "text": "Implemented requirement for EC2.2"
@@ -1064,7 +1064,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1074,12 +1074,12 @@
             "relevant-evidence": [
               {
                 "description": "Grants Platform normalised scan results 2026-Q3",
-                "href": "#30fb1d66-b5dc-5a8e-9139-cfd8b741be43"
+                "href": "#ae65133b-b696-56b0-94dd-f103bc3d7587"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "91957c8e-276c-55e6-a142-beaf32c46655",
+                "subject-uuid": "8967efc0-8521-518b-884f-933e8e387993",
                 "type": "component"
               }
             ],
@@ -1087,7 +1087,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "5f2ab399-94af-5132-b6f3-950936a9240e"
+            "uuid": "61bc1995-17eb-5521-a916-33924de5c88a"
           }
         ],
         "reviewed-controls": {
@@ -1154,7 +1154,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1164,19 +1164,19 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "true"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "b3f66165-cfd2-5027-81f1-b595aad6900f"
+                "observation-uuid": "b306e111-f287-5a87-9a8e-e7ee15e070d4"
               }
             ],
             "statement": "Until au-6.1 is satisfied, Grants Platform carries this exposure.",
             "status": "open",
             "title": "au-6.1 shortfall on GRANTS",
-            "uuid": "7571fd9a-e8cf-5e88-9fe7-ff9e911eb8b3"
+            "uuid": "7cf250f5-d148-5d30-bdba-1d2b90fc311a"
           },
           {
             "description": "Residual risk from the cp-4 finding.",
@@ -1184,7 +1184,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1194,19 +1194,19 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "true"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "1f38f7b4-cc52-56ba-bd66-bb0801c5701a"
+                "observation-uuid": "f388760b-d831-57a3-bae5-fbfe49c1a720"
               }
             ],
             "statement": "Until cp-4 is satisfied, Grants Platform carries this exposure.",
             "status": "open",
             "title": "cp-4 shortfall on GRANTS",
-            "uuid": "ade1ca31-bf13-56a5-8703-d33163475f18"
+            "uuid": "42bf9c9a-6e7a-5881-8a19-ea1e5a90d271"
           },
           {
             "description": "Residual risk from the sc-28 finding.",
@@ -1214,7 +1214,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1224,19 +1224,19 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "true"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "316ad834-84ec-5034-ac02-a48844292bbe"
+                "observation-uuid": "308c80e9-d73b-5102-9fc0-12aa4e4fc877"
               }
             ],
             "statement": "Until sc-28 is satisfied, Grants Platform carries this exposure.",
             "status": "open",
             "title": "sc-28 shortfall on GRANTS",
-            "uuid": "786d700a-a98f-5143-8bae-e17599c163b4"
+            "uuid": "725a072d-f698-54a2-8fbc-75a6cf27b054"
           },
           {
             "description": "Residual risk from the IAM.4 finding.",
@@ -1244,7 +1244,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1254,23 +1254,23 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "false"
               },
               {
                 "name": "condition-expires",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "2027-01-25"
               },
               {
                 "name": "trigger",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "score<0.85"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "86f50285-8a33-5c6d-b121-14095e0d4d95"
+                "observation-uuid": "97e6c2b4-c123-5ce2-a8e9-9d4b814da650"
               }
             ],
             "risk-log": {
@@ -1279,21 +1279,21 @@
                   "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
                   "logged-by": [
                     {
-                      "party-uuid": "51cc5630-99e7-5bdb-8736-aae06b692619",
+                      "party-uuid": "d525eea8-a8b6-595e-9bd9-84ae9ba7ba01",
                       "role-id": "authorizing-official"
                     }
                   ],
                   "start": "2026-09-08T00:00:00Z",
                   "status-change": "deviation-approved",
                   "title": "Risk accepted with conditions",
-                  "uuid": "81906f37-3b35-5498-8b93-ce0d936b41d8"
+                  "uuid": "bd054be9-3e15-5aa9-aa3d-9533359cbfb5"
                 }
               ]
             },
             "statement": "Until IAM.4 is satisfied, Grants Platform carries this exposure.",
             "status": "deviation-approved",
             "title": "IAM.4 shortfall on GRANTS",
-            "uuid": "4671adbc-fd3a-55bb-bb14-8cbb6db53f48"
+            "uuid": "91f8fe60-790a-53b3-8248-98c9d5e75a79"
           },
           {
             "description": "Residual risk from the EC2.2 finding.",
@@ -1301,7 +1301,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "de88e75b-b4a9-559b-b15e-dc725c60ee89",
+                    "actor-uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1311,26 +1311,26 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "true"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "5f2ab399-94af-5132-b6f3-950936a9240e"
+                "observation-uuid": "61bc1995-17eb-5521-a916-33924de5c88a"
               }
             ],
             "statement": "Until EC2.2 is satisfied, Grants Platform carries this exposure.",
             "status": "open",
             "title": "EC2.2 shortfall on GRANTS",
-            "uuid": "28a5aa43-3d06-59fc-a3c7-4e53ec7e0486"
+            "uuid": "14cdd367-6569-5600-a783-ee43cb39564c"
           }
         ],
         "start": "2026-08-25T00:00:00Z",
         "title": "Grants Platform assessment 2026-Q3",
-        "uuid": "0ae4e5b6-e8e3-5b81-9269-6e38ee491962"
+        "uuid": "a22c1167-c7a2-566f-8a71-65394f7db377"
       }
     ],
-    "uuid": "de7f0206-113c-5857-952a-7592bb870db3"
+    "uuid": "8911f058-a07c-534c-9e67-76fa920ead45"
   }
 }

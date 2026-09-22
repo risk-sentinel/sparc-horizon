@@ -9,7 +9,7 @@
       "slug": "ods-portal-ssp",
       "title": "Public Portal system security plan",
       "authorization_boundary_id": 1,
-      "oscal_uuid": "0db913d7-c382-536f-8c67-b4b52b4e67e6",
+      "oscal_uuid": "f7de308a-5555-5e35-be6a-029ad885320e",
       "oscal_version": "1.2.2",
       "export_path": "../oscal/ssp-ods-portal.json"
     },
@@ -18,7 +18,7 @@
       "slug": "ods-identity-ssp",
       "title": "Identity Services system security plan",
       "authorization_boundary_id": 2,
-      "oscal_uuid": "f20b0311-6cb6-5588-9349-ff24440f6674",
+      "oscal_uuid": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
       "oscal_version": "1.2.2",
       "export_path": "../oscal/ssp-ods-identity.json"
     },
@@ -27,7 +27,7 @@
       "slug": "bgm-grants-ssp",
       "title": "Grants Platform system security plan",
       "authorization_boundary_id": 3,
-      "oscal_uuid": "93bb33d1-a2ad-5eee-ac9e-2894f09162f2",
+      "oscal_uuid": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
       "oscal_version": "1.2.2",
       "export_path": "../oscal/ssp-bgm-grants.json"
     },
@@ -36,7 +36,7 @@
       "slug": "bgm-payments-ssp",
       "title": "Payments Gateway system security plan",
       "authorization_boundary_id": 4,
-      "oscal_uuid": "01605f49-bb0e-5020-a245-b9f01c6ec078",
+      "oscal_uuid": "15781999-2cd0-51a4-ad7a-3c65a478d3d3",
       "oscal_version": "1.2.2",
       "export_path": "../oscal/ssp-bgm-payments.json"
     },
@@ -45,7 +45,7 @@
       "slug": "ndi-datalake-ssp",
       "title": "Research Data Lake system security plan",
       "authorization_boundary_id": 5,
-      "oscal_uuid": "e69b2d2b-2f73-530d-a2ce-460f15fce279",
+      "oscal_uuid": "f47d858e-7af8-5990-a4de-7365abd272d8",
       "oscal_version": "1.2.2",
       "export_path": "../oscal/ssp-ndi-datalake.json"
     },
@@ -54,7 +54,7 @@
       "slug": "ndi-analytics-ssp",
       "title": "Analytics Workbench system security plan",
       "authorization_boundary_id": 6,
-      "oscal_uuid": "ac72c68e-fa06-5948-9aba-c323c96f6164",
+      "oscal_uuid": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520",
       "oscal_version": "1.2.2",
       "export_path": "../oscal/ssp-ndi-analytics.json"
     },
@@ -63,7 +63,7 @@
       "slug": "coa-fieldops-ssp",
       "title": "Field Operations system security plan",
       "authorization_boundary_id": 7,
-      "oscal_uuid": "6c6f0631-051a-5412-9e5c-d1772725f170",
+      "oscal_uuid": "1942d11b-584d-580b-91cb-0ad94254c560",
       "oscal_version": "1.2.2",
       "export_path": "../oscal/ssp-coa-fieldops.json"
     }

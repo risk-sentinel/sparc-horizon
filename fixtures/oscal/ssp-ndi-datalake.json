@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "e0a64373ff12749523dffa42589aa35ed03ffcf1cda80c38caa2ef64c0fe7719"
+                  "value": "b4f80988f26ea0a980a38c30d763cf7ae8c1e783555652b11129ae5f324d482f"
                 }
               ],
               "href": "./profile-moderate.json",
@@ -17,7 +17,7 @@
             }
           ],
           "title": "Fixture moderate baseline",
-          "uuid": "02db532b-5963-5617-a8bb-6f883ed54422"
+          "uuid": "1605aa04-f147-5497-b05c-6bc161fb226f"
         },
         {
           "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
@@ -26,7 +26,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "db91ee161b692afcc7fc34d3b61b23b2996a353c33a8b2c45a9571d05267bb8e"
+                  "value": "9759f28a638e4791813fc5eb17e5c95731ae77263930c1985068727e55cc3977"
                 }
               ],
               "href": "./ssp-ods-identity.json",
@@ -34,7 +34,7 @@
             }
           ],
           "title": "Identity Services system security plan",
-          "uuid": "f20b0311-6cb6-5588-9349-ff24440f6674"
+          "uuid": "52176fd3-10ad-5df7-bbb4-c69a930223a8"
         }
       ]
     },
@@ -44,187 +44,187 @@
         {
           "by-components": [
             {
-              "component-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+              "component-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
               "description": "Object Store implements ac-2.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "180b6364-33a8-5c79-be31-4cf0d628d51b"
+              "uuid": "e90386f0-ad83-5c14-9917-1cbaf4312694"
             },
             {
-              "component-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+              "component-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
               "description": "Data Catalog implements ac-2.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "01ee6f3a-0955-5f64-95bb-c52288bef582"
+              "uuid": "033056ba-a265-5cc6-865f-bbcce25be816"
             }
           ],
           "control-id": "ac-2",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "e98723f9-860a-56cc-98b1-5975990965fb"
+          "uuid": "434a4d01-fd7d-576e-982a-80f3d9ee52df"
         },
         {
           "by-components": [
             {
-              "component-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+              "component-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
               "description": "Data Catalog implements ac-2.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "37ce68fa-e604-577c-92fd-25c8b4a94ec7"
+              "uuid": "9ad5ad39-fec3-5d26-981b-c11277436dd6"
             },
             {
-              "component-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+              "component-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
               "description": "Ingest Pipeline implements ac-2.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "e68d2a2c-6caa-5ed4-9585-c7aaeef5a25c"
+              "uuid": "c90aacbb-bf9f-5a19-a5ac-a29816fbc7e5"
             }
           ],
           "control-id": "ac-2.1",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "b85090a2-9aa0-5d8b-908e-32bc7a2d5125"
+          "uuid": "b180855d-0be1-504f-b2f4-96464a0c1d15"
         },
         {
           "by-components": [
             {
-              "component-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+              "component-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
               "description": "Ingest Pipeline implements au-6.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "a2640a62-20ee-56ad-b293-8aa8853bff05"
+              "uuid": "0a3e0263-7064-5a52-8227-3c307b75eb46"
             },
             {
-              "component-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+              "component-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
               "description": "Object Store implements au-6.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "e482da5b-aa8f-5a71-94f5-81099fda4b9b"
+              "uuid": "bcee8a13-424f-589a-adf6-517aaf70b694"
             }
           ],
           "control-id": "au-6",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "a8800913-2885-5876-b681-a0b56a69c035"
+          "uuid": "8c7160c8-f767-52b3-8539-e48405fd10d8"
         },
         {
           "by-components": [
             {
-              "component-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+              "component-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
               "description": "Object Store implements au-6.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "e5310546-b7d9-572f-9b36-035c9b6999df"
+              "uuid": "a6380e7e-9154-5254-9635-b3035119a97c"
             },
             {
-              "component-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+              "component-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
               "description": "Data Catalog implements au-6.1.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "5ac1c93a-9cb7-5e78-abd1-1f779cf57c50"
+              "uuid": "3c0035c8-29a6-5d8d-8860-cb07baf2e54a"
             }
           ],
           "control-id": "au-6.1",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "128c0720-4af1-5548-8e36-fd8412761ce8"
+          "uuid": "11692739-d323-525e-950a-e1ac34e9b3f9"
         },
         {
           "by-components": [
             {
-              "component-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+              "component-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
               "description": "Data Catalog implements cp-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "c3646c54-efdf-56b4-8fff-0caa6873c108"
+              "uuid": "1bfb02bd-95f9-555a-bb03-488587aabbfb"
             },
             {
-              "component-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+              "component-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
               "description": "Ingest Pipeline implements cp-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "4e8e00a0-e8b3-5be6-a7ba-7f5f9c353624"
+              "uuid": "7b72d6fb-99d2-556d-9756-c73e136bde8d"
             }
           ],
           "control-id": "cp-4",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "87ba5133-6255-58d6-84fc-d02f20c440f1"
+          "uuid": "a26791ca-56c5-50f0-b12e-6a9faaab7bfc"
         },
         {
           "by-components": [
             {
-              "component-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+              "component-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
               "description": "Ingest Pipeline implements cp-9.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "1572bc41-6543-5a05-a239-fc8b572716fd"
+              "uuid": "8ab772b7-5e03-5dbb-86b9-89cfe9af8aad"
             },
             {
-              "component-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+              "component-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
               "description": "Object Store implements cp-9.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "92a07b36-861a-5b45-98ac-aee462fd52cd"
+              "uuid": "dddd8de5-ef73-5459-a4bd-259d29130222"
             }
           ],
           "control-id": "cp-9",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "c79208d1-d80b-5c9b-b9d3-86bc3cba3714"
+          "uuid": "b7ff98ce-5108-5e57-a8fe-446caa30c7f3"
         },
         {
           "by-components": [
             {
-              "component-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+              "component-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
               "description": "Object Store implements ia-2.",
               "implementation-status": {
                 "state": "implemented"
@@ -232,43 +232,43 @@
               "inherited": [
                 {
                   "description": "Inherited from Identity Services.",
-                  "provided-uuid": "724d525c-fc55-5d8a-828e-f40a65da02b9",
-                  "uuid": "594a24c5-3491-5bdc-901f-a727fa36290c"
+                  "provided-uuid": "4b48f9ad-0c28-59f1-88fd-d3cd2253df68",
+                  "uuid": "1136820c-9e1e-5970-a60f-b087d8da9caa"
                 }
               ],
               "satisfied": [
                 {
                   "description": "Boundary-side configuration answering the provider's stated responsibility.",
-                  "responsibility-uuid": "8cdb9c79-1168-5433-b17e-0219baac249a",
-                  "uuid": "42e248b7-8f19-5c97-89f6-075bb73f575e"
+                  "responsibility-uuid": "c1d209ee-b2e8-5ae6-b257-90365a4bf836",
+                  "uuid": "61c4dedd-0307-513a-a116-64690ac6afd2"
                 }
               ],
-              "uuid": "190ee77c-45a1-57f9-8b17-f4a73f5559cc"
+              "uuid": "188426c9-843c-54e3-a67e-2195296c7976"
             },
             {
-              "component-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+              "component-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
               "description": "Data Catalog implements ia-2.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "d725ca4e-d47f-5fb4-ac58-947e25c98fd3"
+              "uuid": "3308e7a8-a3e9-514c-b6ff-ed767fee6aed"
             }
           ],
           "control-id": "ia-2",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "ab0cd159-039c-5d47-86ca-ecd8375e5172"
+          "uuid": "180f9b72-b566-596d-b65b-37b872314085"
         },
         {
           "by-components": [
             {
-              "component-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+              "component-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
               "description": "Data Catalog implements ia-5.",
               "implementation-status": {
                 "state": "implemented"
@@ -276,163 +276,163 @@
               "inherited": [
                 {
                   "description": "Inherited from Identity Services.",
-                  "provided-uuid": "b5c46ed0-ea2e-54b0-a76e-bbe4f2dd6cac",
-                  "uuid": "e823884d-e550-54a3-abcd-6083032d1b83"
+                  "provided-uuid": "c4785d8d-f45f-5485-b823-6ae450ce4a27",
+                  "uuid": "50869ef3-7e1e-5145-a399-98e7ecd3fa99"
                 }
               ],
               "satisfied": [
                 {
                   "description": "Boundary-side configuration answering the provider's stated responsibility.",
-                  "responsibility-uuid": "9abc3f63-4a89-5de3-9dab-a84480338794",
-                  "uuid": "783b9890-458d-57c9-8f4c-b586fe1f9b37"
+                  "responsibility-uuid": "0a6106cf-5fb3-52c4-957e-8fa7de3a2746",
+                  "uuid": "0e13c2da-b611-5fff-9485-68aa0faa7005"
                 }
               ],
-              "uuid": "26a9568c-0ddf-5ab5-b50e-b8f94a391c72"
+              "uuid": "3fd3eeac-166c-5113-a998-7e3d8d2a26f4"
             },
             {
-              "component-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+              "component-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
               "description": "Ingest Pipeline implements ia-5.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "f692b8c1-23e7-59c6-8ac4-966a50998def"
+              "uuid": "91c62ed3-4749-5681-8862-0a9b62ae24a9"
             }
           ],
           "control-id": "ia-5",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "9b6874b7-5440-50e8-ba60-d3467b937a65"
+          "uuid": "e0cc8a7c-202a-5df6-8d61-3bc89b7eb756"
         },
         {
           "by-components": [
             {
-              "component-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+              "component-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
               "description": "Ingest Pipeline implements sc-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "5f1b3121-cc3f-5381-b3f0-cb076141fc96"
+              "uuid": "2a384e9d-8590-5704-a574-7a4b748a5dfd"
             },
             {
-              "component-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+              "component-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
               "description": "Object Store implements sc-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "01b27de3-cfae-51f7-83ef-5ddd0f28ca62"
+              "uuid": "064cb53d-e6b3-5442-8b3e-c8ee11c85d0d"
             }
           ],
           "control-id": "sc-7",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "7e05aa41-62b4-5de1-8278-ff9a238ee220"
+          "uuid": "d99ec929-2a7d-5894-84c5-82157922f77e"
         },
         {
           "by-components": [
             {
-              "component-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+              "component-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
               "description": "Object Store implements sc-28.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "7ed5f03f-56ee-5db6-882f-6f06b8ac496e"
+              "uuid": "9065e4fe-a0da-5d43-8f71-842a91737521"
             },
             {
-              "component-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+              "component-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
               "description": "Data Catalog implements sc-28.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "2f7d63f4-7cd9-5e0b-99e6-0f8b80008ce0"
+              "uuid": "f5e1b1e3-b559-5b78-8455-9e147f667138"
             }
           ],
           "control-id": "sc-28",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "c37a3041-f02a-5ea7-aa4d-51a05ab06554"
+          "uuid": "36f04119-f758-5a88-a1aa-179edaa290b1"
         },
         {
           "by-components": [
             {
-              "component-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+              "component-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
               "description": "Data Catalog implements si-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "142b4480-ef05-583b-8396-4f01b0261c65"
+              "uuid": "4211ff2c-70b3-53d8-b679-996b74afefe4"
             },
             {
-              "component-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+              "component-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
               "description": "Ingest Pipeline implements si-4.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "61aac203-b8d4-5a0e-a0c5-823879a4c90c"
+              "uuid": "ce45fce6-d7f5-534c-a750-d0565fa90ba6"
             }
           ],
           "control-id": "si-4",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "67a2daf6-8b02-5a1c-9f7b-4af5bc236a4f"
+          "uuid": "b9ae95cc-5dc2-5209-b5c1-91ae334352d0"
         },
         {
           "by-components": [
             {
-              "component-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+              "component-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
               "description": "Ingest Pipeline implements si-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "4beeb5b1-fcc4-5cc3-9b01-ea0f2a28f2b2"
+              "uuid": "fec9cdc9-9ff3-51ec-8028-879942dd9c3a"
             },
             {
-              "component-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+              "component-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
               "description": "Object Store implements si-7.",
               "implementation-status": {
                 "state": "implemented"
               },
-              "uuid": "97b742cc-cda3-5161-825c-2d1fa2dd0726"
+              "uuid": "0046b21e-6e54-50ec-91cb-a8a2931e9c06"
             }
           ],
           "control-id": "si-7",
           "responsible-roles": [
             {
               "party-uuids": [
-                "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                "adf4b1da-b23e-5cba-afdf-892af5fe622a"
               ],
               "role-id": "information-system-security-officer"
             }
           ],
-          "uuid": "a28ee5e3-4d40-5f7a-af20-29414300acc3"
+          "uuid": "b25f512a-9ca5-56a7-aa3b-f130be07f531"
         }
       ]
     },
     "import-profile": {
-      "href": "#02db532b-5963-5617-a8bb-6f883ed54422"
+      "href": "#1605aa04-f147-5497-b05c-6bc161fb226f"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -443,75 +443,75 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "National Data Institute",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "NDI",
           "type": "organization",
-          "uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          "uuid": "bd4969d2-d748-5a13-889f-636f6d3322df"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "DATALAKE Authorizing Official",
           "type": "person",
-          "uuid": "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d"
+          "uuid": "27ccf06a-fb31-5a67-adb8-baf35c2920e4"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "DATALAKE System Owner",
           "type": "person",
-          "uuid": "249617f4-640c-5698-b060-8e48e6bb7737"
+          "uuid": "2f1c7108-5359-56ef-80c3-f5fadacf0b70"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "DATALAKE Information System Security Officer",
           "type": "person",
-          "uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+          "uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a"
         }
       ],
       "props": [
         {
           "name": "node-type",
-          "ns": "https://risk-sentinel.org/ns/sparc",
+          "ns": "https://sparc.risk-sentinel.org/ns",
           "value": "boundary"
         },
         {
           "name": "parent-uuid",
-          "ns": "https://risk-sentinel.org/ns/sparc",
-          "value": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          "ns": "https://sparc.risk-sentinel.org/ns",
+          "value": "bd4969d2-d748-5a13-889f-636f6d3322df"
         },
         {
           "name": "next-decision-date",
-          "ns": "https://risk-sentinel.org/ns/sparc",
+          "ns": "https://sparc.risk-sentinel.org/ns",
           "value": "2027-01-15"
         },
         {
           "name": "fips-199",
-          "ns": "https://risk-sentinel.org/ns/sparc",
+          "ns": "https://sparc.risk-sentinel.org/ns",
           "value": "moderate"
         }
       ],
@@ -519,19 +519,19 @@
       "responsible-parties": [
         {
           "party-uuids": [
-            "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d"
+            "27ccf06a-fb31-5a67-adb8-baf35c2920e4"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "249617f4-640c-5698-b060-8e48e6bb7737"
+            "2f1c7108-5359-56ef-80c3-f5fadacf0b70"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+            "adf4b1da-b23e-5cba-afdf-892af5fe622a"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -571,11 +571,11 @@
       "system-ids": [
         {
           "id": "ndi-datalake",
-          "identifier-type": "https://risk-sentinel.org/ns/sparc/slug"
+          "identifier-type": "https://sparc.risk-sentinel.org/ns/slug"
         },
         {
           "id": "5",
-          "identifier-type": "https://risk-sentinel.org/ns/sparc/id"
+          "identifier-type": "https://sparc.risk-sentinel.org/ns/id"
         }
       ],
       "system-information": {
@@ -592,7 +592,7 @@
               "base": "fips-199-moderate"
             },
             "title": "Research Data Lake operational records",
-            "uuid": "ffca038b-94c8-5c9d-8c13-159f02f06a93"
+            "uuid": "4e21fdab-5864-5de5-bbcc-f81933819bb0"
           }
         ]
       },
@@ -607,7 +607,7 @@
           "responsible-roles": [
             {
               "party-uuids": [
-                "249617f4-640c-5698-b060-8e48e6bb7737"
+                "2f1c7108-5359-56ef-80c3-f5fadacf0b70"
               ],
               "role-id": "system-owner"
             }
@@ -617,7 +617,7 @@
           },
           "title": "Object Store",
           "type": "service",
-          "uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97"
+          "uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3"
         },
         {
           "description": "Indexes datasets and their provenance.",
@@ -625,7 +625,7 @@
           "responsible-roles": [
             {
               "party-uuids": [
-                "249617f4-640c-5698-b060-8e48e6bb7737"
+                "2f1c7108-5359-56ef-80c3-f5fadacf0b70"
               ],
               "role-id": "system-owner"
             }
@@ -635,7 +635,7 @@
           },
           "title": "Data Catalog",
           "type": "software",
-          "uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0"
+          "uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe"
         },
         {
           "description": "Validates and loads submitted datasets.",
@@ -643,7 +643,7 @@
           "responsible-roles": [
             {
               "party-uuids": [
-                "249617f4-640c-5698-b060-8e48e6bb7737"
+                "2f1c7108-5359-56ef-80c3-f5fadacf0b70"
               ],
               "role-id": "system-owner"
             }
@@ -653,7 +653,7 @@
           },
           "title": "Ingest Pipeline",
           "type": "software",
-          "uuid": "5b388127-72ec-5611-b0fc-87b56b930f90"
+          "uuid": "cb83790f-db31-590b-a921-0161a7b1a12d"
         },
         {
           "description": "Inherited platform service, assessed by the provider against AWS Security Hub controls.",
@@ -678,7 +678,7 @@
           },
           "title": "AWS Certificate Manager",
           "type": "service",
-          "uuid": "38c949f6-6e56-577e-98cb-246c5029818b"
+          "uuid": "5b7bc8c0-3856-5e02-876f-6aba0747d550"
         }
       ],
       "inventory-items": [
@@ -686,7 +686,7 @@
           "description": "Object Store inventory record.",
           "implemented-components": [
             {
-              "component-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97"
+              "component-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3"
             }
           ],
           "props": [
@@ -695,13 +695,13 @@
               "value": "ndi-datalake/lake-store"
             }
           ],
-          "uuid": "a7ee581a-87e6-5075-aa33-66412c681a33"
+          "uuid": "c0007932-9de2-5f63-87ba-553e0d1b8918"
         },
         {
           "description": "Data Catalog inventory record.",
           "implemented-components": [
             {
-              "component-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0"
+              "component-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe"
             }
           ],
           "props": [
@@ -710,13 +710,13 @@
               "value": "ndi-datalake/lake-catalog"
             }
           ],
-          "uuid": "95b9be91-24dd-59b5-a926-728fccec761b"
+          "uuid": "5553ef4a-7bef-5325-9f29-d3caa434efb6"
         },
         {
           "description": "Ingest Pipeline inventory record.",
           "implemented-components": [
             {
-              "component-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90"
+              "component-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d"
             }
           ],
           "props": [
@@ -725,7 +725,7 @@
               "value": "ndi-datalake/lake-ingest"
             }
           ],
-          "uuid": "c76621c8-529f-5179-847b-afc3935cec37"
+          "uuid": "506e42df-b68a-5916-8a5e-241cbf17496c"
         }
       ],
       "leveraged-authorizations": [
@@ -733,17 +733,17 @@
           "date-authorized": "2026-03-02",
           "links": [
             {
-              "href": "#f20b0311-6cb6-5588-9349-ff24440f6674",
+              "href": "#52176fd3-10ad-5df7-bbb4-c69a930223a8",
               "rel": "leveraged-authorization"
             }
           ],
-          "party-uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707",
+          "party-uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
           "remarks": "The reverse-inheritance index behind blast radius is built from this link.",
           "title": "Identity Services",
-          "uuid": "33136137-e5ca-554d-a0a5-f75c25ad03be"
+          "uuid": "d8e147b7-dada-5e4f-bfa5-7000e15b9e06"
         }
       ]
     },
-    "uuid": "e69b2d2b-2f73-530d-a2ce-460f15fce279"
+    "uuid": "f47d858e-7af8-5990-a4de-7365abd272d8"
   }
 }

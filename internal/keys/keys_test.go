@@ -37,7 +37,7 @@ func keyer(t *testing.T) func(Key, error) Key {
 // UUID.
 func TestGrammarVersionLeadsEveryKey(t *testing.T) {
 	must := keyer(t)
-	d := New(ProvisionalNamespace())
+	d := New(Namespace())
 	k := must(d.Attestation(testSSP, nist(), "cp-4", testComponent, "2026-Q3"))
 
 	if k.Fields[0] != GrammarVersion {
@@ -60,7 +60,7 @@ func TestGrammarVersionLeadsEveryKey(t *testing.T) {
 // The worked example in docs/03-data-model.md, field for field.
 func TestWorkedExampleFieldOrder(t *testing.T) {
 	must := keyer(t)
-	d := New(ProvisionalNamespace())
+	d := New(Namespace())
 	k := must(d.Attestation(testSSP, nist(), "CP-4", testComponent, "2026-Q3"))
 
 	want := []string{GrammarVersion, testSSP, "attestation", testCatalog, "cp-4", testComponent, "2026-Q3"}
@@ -78,7 +78,7 @@ func TestWorkedExampleFieldOrder(t *testing.T) {
 // the only thing outside the field list that changes an identifier.
 func TestNamespaceChangesEveryIdentifier(t *testing.T) {
 	must := keyer(t)
-	a := New(ProvisionalNamespace())
+	a := New(Namespace())
 	b := New(uuid.MustParse("00000000-0000-5000-8000-000000000001"))
 
 	ka := must(a.Observation(testSSP, nist(), "cp-4", testComponent, "2026-Q3"))
@@ -90,26 +90,30 @@ func TestNamespaceChangesEveryIdentifier(t *testing.T) {
 	if ka.UUID == kb.UUID {
 		t.Error("two namespaces derived the same identifier")
 	}
-	if a.Namespace() != ProvisionalNamespace() {
+	if a.Namespace() != Namespace() {
 		t.Error("Namespace() does not report the namespace it derives under")
 	}
 }
 
-// The provisional namespace is reachable from the published URI alone, so a
-// port never has to copy a magic constant correctly.
-func TestProvisionalNamespaceIsDerivedFromThePublishedURI(t *testing.T) {
-	want := uuid.NewSHA1(uuid.NameSpaceURL, []byte(PlaceholderNamespaceURI))
-	if got := ProvisionalNamespace(); got != want {
-		t.Errorf("ProvisionalNamespace() = %s, want %s", got, want)
+// The registered namespace is reachable from the published URI alone, so a
+// port never has to copy a magic constant correctly — which is the property
+// sparc#1155 chose a derived UUID for.
+func TestNamespaceIsDerivedFromThePublishedURI(t *testing.T) {
+	want := uuid.NewSHA1(uuid.NameSpaceURL, []byte(NamespaceURI))
+	if got := Namespace(); got != want {
+		t.Errorf("Namespace() = %s, want %s", got, want)
 	}
-	if ProvisionalNamespace().Version() != 5 {
+	if Namespace().Version() != 5 {
 		t.Error("the namespace must itself be a UUIDv5")
+	}
+	if got := Namespace().String(); got != "9f434272-f796-589b-b972-954790395630" {
+		t.Errorf("Namespace() = %s, want the value registered in sparc#1155", got)
 	}
 }
 
 func TestDerivationIsIdempotent(t *testing.T) {
 	must := keyer(t)
-	d := New(ProvisionalNamespace())
+	d := New(Namespace())
 	first := must(d.Risk(testSSP, nist(), "sc-7", testComponent, "2026-Q3"))
 	second := must(d.Risk(testSSP, nist(), "sc-7", testComponent, "2026-Q3"))
 	if first.UUID != second.UUID {
@@ -119,7 +123,7 @@ func TestDerivationIsIdempotent(t *testing.T) {
 
 func TestEvidenceResourceIsKeyedOnContent(t *testing.T) {
 	must := keyer(t)
-	d := New(ProvisionalNamespace())
+	d := New(Namespace())
 	const digest = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 
 	lower := must(d.EvidenceResource(testSSP, digest))
@@ -141,7 +145,7 @@ func TestEvidenceResourceIsKeyedOnContent(t *testing.T) {
 }
 
 func TestSourceUUIDIsRequiredRatherThanEmpty(t *testing.T) {
-	d := New(ProvisionalNamespace())
+	d := New(Namespace())
 	unresolved := Source{Vocabulary: canonical.VocabNIST80053}
 
 	for name, fn := range map[string]func() (Key, error){
@@ -160,7 +164,7 @@ func TestSourceUUIDIsRequiredRatherThanEmpty(t *testing.T) {
 }
 
 func TestMalformedFieldsAreRejected(t *testing.T) {
-	d := New(ProvisionalNamespace())
+	d := New(Namespace())
 	src := nist()
 
 	cases := map[string]func() (Key, error){
@@ -187,6 +191,9 @@ func TestMalformedFieldsAreRejected(t *testing.T) {
 		},
 		"decision period is malformed": func() (Key, error) {
 			return d.AODecision(testSSP, testComponent, "11-10-2026")
+		},
+		"decision keyed on a quarter rather than a day": func() (Key, error) {
+			return d.AODecision(testSSP, testComponent, "2026-Q4")
 		},
 		"responsibility half is invented": func() (Key, error) {
 			return d.Responsibility(testSSP, src, "ia-2", testComponent, Half("owner"))
@@ -222,7 +229,7 @@ func TestMalformedFieldsAreRejected(t *testing.T) {
 
 func TestResponsibilityHalvesAndCellAxesDoNotCollide(t *testing.T) {
 	must := keyer(t)
-	d := New(ProvisionalNamespace())
+	d := New(Namespace())
 	src := nist()
 
 	provider := must(d.Responsibility(testSSP, src, "ia-2", testComponent, HalfProvider))
@@ -254,9 +261,21 @@ func TestBuckets(t *testing.T) {
 	if got != Bucket("2026-10-11") {
 		t.Errorf("BucketOnDate = %q", got)
 	}
-	for _, bad := range []string{"2026-10", "2026-Q4", "11-10-2026", "tomorrow", "2026-13-01", ""} {
+	for _, bad := range []string{"2026-10", "2026-Q4", "11-10-2026", "tomorrow", ""} {
 		if _, err := BucketOnDate(bad); err == nil {
 			t.Errorf("BucketOnDate accepted %q", bad)
+		}
+	}
+
+	// A calendar-impossible date is accepted, because SPARC's shared contract
+	// types a decision date as ^\d{4}-\d{2}-\d{2}$ and nothing more. Being
+	// stricter here would mean refusing to ingest an object a peer derived an
+	// identifier for, which is the failure this grammar exists to prevent —
+	// so the looseness is conformance, not an oversight. Raised upstream in
+	// docs/dev/sparc-family-id-normalisation.md.
+	for _, impossible := range []string{"2026-13-01", "2026-02-31", "2026-00-00"} {
+		if _, err := BucketOnDate(impossible); err != nil {
+			t.Errorf("BucketOnDate rejected %q; the shared contract accepts it", impossible)
 		}
 	}
 }

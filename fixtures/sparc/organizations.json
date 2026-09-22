@@ -10,7 +10,7 @@
       "name": "Office of Digital Services",
       "short_name": "ODS",
       "federation_slug": "cascade",
-      "oscal_party_uuid": "9a9eb954-166e-559f-b23a-1c3e5d078707"
+      "oscal_party_uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
     },
     {
       "id": 2,
@@ -18,7 +18,7 @@
       "name": "Bureau of Grants Management",
       "short_name": "BGM",
       "federation_slug": "cascade",
-      "oscal_party_uuid": "5ba1fbfa-ada3-55c3-bcaa-5fb4375c5cd0"
+      "oscal_party_uuid": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
     },
     {
       "id": 3,
@@ -26,7 +26,7 @@
       "name": "National Data Institute",
       "short_name": "NDI",
       "federation_slug": "cascade",
-      "oscal_party_uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+      "oscal_party_uuid": "bd4969d2-d748-5a13-889f-636f6d3322df"
     },
     {
       "id": 4,
@@ -34,7 +34,7 @@
       "name": "Coastal Operations Agency",
       "short_name": "COA",
       "federation_slug": "cascade",
-      "oscal_party_uuid": "4f1a950b-79c9-5ee4-a9fd-ffdb6bb8810f"
+      "oscal_party_uuid": "019cb43f-7468-5184-8780-be8a71a340dc"
     }
   ]
 }

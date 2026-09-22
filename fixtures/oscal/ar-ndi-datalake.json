@@ -7,13 +7,13 @@
           "props": [
             {
               "name": "evidence-kind",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "hdf-results"
             },
             {
               "name": "signed-by",
-              "ns": "https://risk-sentinel.org/ns/sparc",
-              "value": "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "adf4b1da-b23e-5cba-afdf-892af5fe622a"
             }
           ],
           "rlinks": [
@@ -29,20 +29,20 @@
             }
           ],
           "title": "Research Data Lake normalised scan results 2026-Q3",
-          "uuid": "e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+          "uuid": "b62ef3a2-41fb-580a-8275-294cb8d5a27f"
         },
         {
           "description": "Evidence artifact, hashed. Synthetic content; the digest is of the file as emitted.",
           "props": [
             {
               "name": "evidence-kind",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "manual-attestation"
             },
             {
               "name": "signed-by",
-              "ns": "https://risk-sentinel.org/ns/sparc",
-              "value": "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "adf4b1da-b23e-5cba-afdf-892af5fe622a"
             }
           ],
           "rlinks": [
@@ -58,7 +58,7 @@
             }
           ],
           "title": "Research Data Lake manual attestation 2026-Q3",
-          "uuid": "22d706b0-2afc-5a08-8aad-a5ef7c64c86f"
+          "uuid": "08177dcf-1ed3-521b-a15c-4123463317e4"
         },
         {
           "description": "Referenced document; the resource UUID is the referenced document's own UUID so the reference is stable across every document that makes it.",
@@ -67,7 +67,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "678816f95c653d1c5d60d691186498e158f7ab2b0346944e08915c22c55c0d7c"
+                  "value": "f169d9e097fb42b287835e089580fd6eebd9809ab4914f504439488750689865"
                 }
               ],
               "href": "./ssp-ndi-datalake.json",
@@ -75,7 +75,7 @@
             }
           ],
           "title": "Research Data Lake system security plan",
-          "uuid": "e69b2d2b-2f73-530d-a2ce-460f15fce279"
+          "uuid": "f47d858e-7af8-5990-a4de-7365abd272d8"
         },
         {
           "citation": {
@@ -83,12 +83,12 @@
           },
           "description": "Cited rather than modelled: these fixtures carry no assessment-plan document.",
           "title": "Research Data Lake continuous monitoring plan",
-          "uuid": "06454e6a-92a4-5e87-81d1-c0d5a76ddc76"
+          "uuid": "6fae03d1-146f-55f1-a428-e3b1d3a5131c"
         }
       ]
     },
     "import-ap": {
-      "href": "#06454e6a-92a4-5e87-81d1-c0d5a76ddc76"
+      "href": "#6fae03d1-146f-55f1-a428-e3b1d3a5131c"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -99,73 +99,73 @@
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "federation"
             }
           ],
           "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
           "short-name": "CASCADE",
           "type": "organization",
-          "uuid": "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
         },
         {
           "member-of-organizations": [
-            "115eafc8-d2fe-5dae-98c1-6675a77b3b16"
+            "77187569-aef0-5983-8528-3571a71f997b"
           ],
           "name": "National Data Institute",
           "props": [
             {
               "name": "node-type",
-              "ns": "https://risk-sentinel.org/ns/sparc",
+              "ns": "https://sparc.risk-sentinel.org/ns",
               "value": "organization"
             }
           ],
           "short-name": "NDI",
           "type": "organization",
-          "uuid": "833e3923-38f8-5851-804c-e8ad3bbccd96"
+          "uuid": "bd4969d2-d748-5a13-889f-636f6d3322df"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "DATALAKE Authorizing Official",
           "type": "person",
-          "uuid": "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d"
+          "uuid": "27ccf06a-fb31-5a67-adb8-baf35c2920e4"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "DATALAKE System Owner",
           "type": "person",
-          "uuid": "249617f4-640c-5698-b060-8e48e6bb7737"
+          "uuid": "2f1c7108-5359-56ef-80c3-f5fadacf0b70"
         },
         {
           "member-of-organizations": [
-            "833e3923-38f8-5851-804c-e8ad3bbccd96"
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
           ],
           "name": "DATALAKE Information System Security Officer",
           "type": "person",
-          "uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+          "uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a"
         }
       ],
       "published": "2026-09-15T00:00:00Z",
       "responsible-parties": [
         {
           "party-uuids": [
-            "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d"
+            "27ccf06a-fb31-5a67-adb8-baf35c2920e4"
           ],
           "role-id": "authorizing-official"
         },
         {
           "party-uuids": [
-            "249617f4-640c-5698-b060-8e48e6bb7737"
+            "2f1c7108-5359-56ef-80c3-f5fadacf0b70"
           ],
           "role-id": "system-owner"
         },
         {
           "party-uuids": [
-            "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+            "adf4b1da-b23e-5cba-afdf-892af5fe622a"
           ],
           "role-id": "information-system-security-officer"
         }
@@ -197,13 +197,13 @@
                 "name": "asset",
                 "prose": "The Information System Security Officer attests that cp-4 is implemented for Research Data Lake in 2026-Q3.",
                 "title": "Attestation for cp-4",
-                "uuid": "d9a4b773-92f4-5327-a307-b5fd1f946f73"
+                "uuid": "666329d5-2fbb-5c24-9715-a225884f6a66"
               }
             ],
             "responsible-parties": [
               {
                 "party-uuids": [
-                  "904b5abe-fded-5e38-9a0a-b954c7c379b5"
+                  "adf4b1da-b23e-5cba-afdf-892af5fe622a"
                 ],
                 "role-id": "information-system-security-officer"
               }
@@ -219,7 +219,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -228,12 +228,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "95ee269e-6cba-579b-92a4-4881d276d6e4"
+                "observation-uuid": "dfaeec66-8595-5436-9fbb-203d13c4de66"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "d5b3842a-a6c5-59d3-a806-efe69fa3e292"
+                "risk-uuid": "3ed97b0d-6669-5f55-a3eb-119b36ce48a5"
               }
             ],
             "target": {
@@ -245,7 +245,7 @@
               "type": "objective-id"
             },
             "title": "ac-2 is not satisfied on DATALAKE",
-            "uuid": "ce709653-1c8a-5695-8c72-493481aa5cff"
+            "uuid": "cd763269-3b1f-5212-956c-91a312bdbca0"
           },
           {
             "description": "The assessment of cp-9 did not satisfy the control objective.",
@@ -253,7 +253,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -262,12 +262,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "eff22b80-c129-5243-b56e-096c94b7f7a0"
+                "observation-uuid": "4c9caae3-468a-58aa-af04-32e907bb6e23"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "2b7e846c-850c-5b97-8d8f-c2d78dee6ad0"
+                "risk-uuid": "b63c171b-ef7b-5acb-a55c-1da0688a2a0b"
               }
             ],
             "target": {
@@ -279,7 +279,7 @@
               "type": "objective-id"
             },
             "title": "cp-9 is not satisfied on DATALAKE",
-            "uuid": "921c14a2-5d85-5bfd-8814-a5fe7f35c694"
+            "uuid": "cf800390-c645-5803-a798-6feafcc031a8"
           },
           {
             "description": "The assessment of ia-5 did not satisfy the control objective.",
@@ -287,7 +287,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -296,12 +296,12 @@
             ],
             "related-observations": [
               {
-                "observation-uuid": "5dd31d14-5f3b-5417-9ebf-873d82631ce7"
+                "observation-uuid": "e672c7f5-ba59-5c8b-860f-ab9ae51d5fd4"
               }
             ],
             "related-risks": [
               {
-                "risk-uuid": "eea2d20e-6a53-5d9e-8402-bcf5086ff88f"
+                "risk-uuid": "d4c26bd1-ecfa-581c-9675-2194083a963e"
               }
             ],
             "target": {
@@ -313,7 +313,7 @@
               "type": "objective-id"
             },
             "title": "ia-5 is not satisfied on DATALAKE",
-            "uuid": "a7a03ce4-d3f5-5079-8725-4f31f76d8c28"
+            "uuid": "a5ca40c1-47a5-5cb0-bad9-7f9f7a9c8f41"
           }
         ],
         "observations": [
@@ -323,7 +323,7 @@
             "expires": "2026-11-25T00:00:00Z",
             "links": [
               {
-                "href": "#e98723f9-860a-56cc-98b1-5975990965fb",
+                "href": "#434a4d01-fd7d-576e-982a-80f3d9ee52df",
                 "rel": "assessed-control",
                 "resource-fragment": "ac-2",
                 "text": "Implemented requirement for ac-2"
@@ -336,7 +336,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -346,12 +346,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+                "subject-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
                 "type": "component"
               }
             ],
@@ -359,7 +359,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "95ee269e-6cba-579b-92a4-4881d276d6e4"
+            "uuid": "dfaeec66-8595-5436-9fbb-203d13c4de66"
           },
           {
             "collected": "2026-09-05T00:00:00Z",
@@ -367,7 +367,7 @@
             "expires": "2027-07-31T00:00:00Z",
             "links": [
               {
-                "href": "#b85090a2-9aa0-5d8b-908e-32bc7a2d5125",
+                "href": "#b180855d-0be1-504f-b2f4-96464a0c1d15",
                 "rel": "assessed-control",
                 "resource-fragment": "ac-2.1",
                 "text": "Implemented requirement for ac-2.1"
@@ -380,7 +380,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -390,12 +390,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+                "subject-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
                 "type": "component"
               }
             ],
@@ -403,7 +403,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "6e5898b4-f5f9-50f9-b825-45b8b89525ce"
+            "uuid": "287efddd-8540-5781-a3d6-eeb2e6b76ecb"
           },
           {
             "collected": "2026-08-25T00:00:00Z",
@@ -411,7 +411,7 @@
             "expires": "2027-04-24T00:00:00Z",
             "links": [
               {
-                "href": "#a8800913-2885-5876-b681-a0b56a69c035",
+                "href": "#8c7160c8-f767-52b3-8539-e48405fd10d8",
                 "rel": "assessed-control",
                 "resource-fragment": "au-6",
                 "text": "Implemented requirement for au-6"
@@ -424,7 +424,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -434,12 +434,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+                "subject-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
                 "type": "component"
               }
             ],
@@ -447,7 +447,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "f5704d17-fc7a-5c17-8298-4d4f49d71b8c"
+            "uuid": "e627e6c0-4d65-5eb5-a8df-7582cce432de"
           },
           {
             "collected": "2026-08-30T00:00:00Z",
@@ -455,7 +455,7 @@
             "expires": "2027-08-17T00:00:00Z",
             "links": [
               {
-                "href": "#128c0720-4af1-5548-8e36-fd8412761ce8",
+                "href": "#11692739-d323-525e-950a-e1ac34e9b3f9",
                 "rel": "assessed-control",
                 "resource-fragment": "au-6.1",
                 "text": "Implemented requirement for au-6.1"
@@ -468,7 +468,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -478,12 +478,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+                "subject-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
                 "type": "component"
               }
             ],
@@ -491,7 +491,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "92b27296-2ed7-5f3b-b11e-419fedc70e38"
+            "uuid": "82b35766-cd8e-5720-a9ab-1c0762f20bbd"
           },
           {
             "collected": "2026-09-10T00:00:00Z",
@@ -499,7 +499,7 @@
             "expires": "2027-07-04T00:00:00Z",
             "links": [
               {
-                "href": "#87ba5133-6255-58d6-84fc-d02f20c440f1",
+                "href": "#a26791ca-56c5-50f0-b12e-6a9faaab7bfc",
                 "rel": "assessed-control",
                 "resource-fragment": "cp-4",
                 "text": "Implemented requirement for cp-4"
@@ -512,7 +512,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -522,12 +522,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake manual attestation 2026-Q3",
-                "href": "#22d706b0-2afc-5a08-8aad-a5ef7c64c86f"
+                "href": "#08177dcf-1ed3-521b-a15c-4123463317e4"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+                "subject-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
                 "type": "component"
               }
             ],
@@ -535,7 +535,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "e52d1455-b178-561b-ada5-73c98378eb50"
+            "uuid": "37ebc4fc-94ca-504c-b3cf-9c6d36a8b7ee"
           },
           {
             "collected": "2026-09-01T00:00:00Z",
@@ -543,7 +543,7 @@
             "expires": "2026-11-09T00:00:00Z",
             "links": [
               {
-                "href": "#c79208d1-d80b-5c9b-b9d3-86bc3cba3714",
+                "href": "#b7ff98ce-5108-5e57-a8fe-446caa30c7f3",
                 "rel": "assessed-control",
                 "resource-fragment": "cp-9",
                 "text": "Implemented requirement for cp-9"
@@ -556,7 +556,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -566,12 +566,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+                "subject-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
                 "type": "component"
               }
             ],
@@ -579,7 +579,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "eff22b80-c129-5243-b56e-096c94b7f7a0"
+            "uuid": "4c9caae3-468a-58aa-af04-32e907bb6e23"
           },
           {
             "collected": "2026-09-11T00:00:00Z",
@@ -587,7 +587,7 @@
             "expires": "2027-04-22T00:00:00Z",
             "links": [
               {
-                "href": "#ab0cd159-039c-5d47-86ca-ecd8375e5172",
+                "href": "#180f9b72-b566-596d-b65b-37b872314085",
                 "rel": "assessed-control",
                 "resource-fragment": "ia-2",
                 "text": "Implemented requirement for ia-2"
@@ -600,7 +600,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -610,12 +610,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+                "subject-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
                 "type": "component"
               }
             ],
@@ -623,7 +623,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "00136e32-8103-5d83-8394-077e3dd41d69"
+            "uuid": "85a3bf12-417a-56a0-b554-7448fe7b2030"
           },
           {
             "collected": "2026-08-25T00:00:00Z",
@@ -631,7 +631,7 @@
             "expires": "2026-10-17T00:00:00Z",
             "links": [
               {
-                "href": "#9b6874b7-5440-50e8-ba60-d3467b937a65",
+                "href": "#e0cc8a7c-202a-5df6-8d61-3bc89b7eb756",
                 "rel": "assessed-control",
                 "resource-fragment": "ia-5",
                 "text": "Implemented requirement for ia-5"
@@ -644,7 +644,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -654,12 +654,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake manual attestation 2026-Q3",
-                "href": "#22d706b0-2afc-5a08-8aad-a5ef7c64c86f"
+                "href": "#08177dcf-1ed3-521b-a15c-4123463317e4"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+                "subject-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
                 "type": "component"
               }
             ],
@@ -667,7 +667,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "5dd31d14-5f3b-5417-9ebf-873d82631ce7"
+            "uuid": "e672c7f5-ba59-5c8b-860f-ab9ae51d5fd4"
           },
           {
             "collected": "2026-09-12T00:00:00Z",
@@ -675,7 +675,7 @@
             "expires": "2027-10-11T00:00:00Z",
             "links": [
               {
-                "href": "#7e05aa41-62b4-5de1-8278-ff9a238ee220",
+                "href": "#d99ec929-2a7d-5894-84c5-82157922f77e",
                 "rel": "assessed-control",
                 "resource-fragment": "sc-7",
                 "text": "Implemented requirement for sc-7"
@@ -688,7 +688,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -698,12 +698,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+                "subject-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
                 "type": "component"
               }
             ],
@@ -711,7 +711,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "dea8ff80-182c-5543-8ed9-ee0f2ff951cf"
+            "uuid": "44839542-f4ab-5fa5-92d6-679a8ab06b14"
           },
           {
             "collected": "2026-08-31T00:00:00Z",
@@ -719,7 +719,7 @@
             "expires": "2027-09-13T00:00:00Z",
             "links": [
               {
-                "href": "#c37a3041-f02a-5ea7-aa4d-51a05ab06554",
+                "href": "#36f04119-f758-5a88-a1aa-179edaa290b1",
                 "rel": "assessed-control",
                 "resource-fragment": "sc-28",
                 "text": "Implemented requirement for sc-28"
@@ -732,7 +732,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -742,12 +742,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "8684e94e-475d-5e94-b6b1-ef35b32abd97",
+                "subject-uuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
                 "type": "component"
               }
             ],
@@ -755,7 +755,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "39e811f7-1339-55af-bf42-08b1c47788b0"
+            "uuid": "c2de9268-17b5-5ed6-854e-2f2798542f76"
           },
           {
             "collected": "2026-09-08T00:00:00Z",
@@ -763,7 +763,7 @@
             "expires": "2027-06-23T00:00:00Z",
             "links": [
               {
-                "href": "#67a2daf6-8b02-5a1c-9f7b-4af5bc236a4f",
+                "href": "#b9ae95cc-5dc2-5209-b5c1-91ae334352d0",
                 "rel": "assessed-control",
                 "resource-fragment": "si-4",
                 "text": "Implemented requirement for si-4"
@@ -776,7 +776,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -786,12 +786,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "d62034c1-1f73-5afd-adcf-2cc0f2e30ef0",
+                "subject-uuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
                 "type": "component"
               }
             ],
@@ -799,7 +799,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "fb1d7efb-64b2-5fb9-af97-dbfa53617217"
+            "uuid": "593d6cf9-9e49-5d17-a64f-8ad8f1aab990"
           },
           {
             "collected": "2026-09-02T00:00:00Z",
@@ -807,7 +807,7 @@
             "expires": "2026-09-30T00:00:00Z",
             "links": [
               {
-                "href": "#a28ee5e3-4d40-5f7a-af20-29414300acc3",
+                "href": "#b25f512a-9ca5-56a7-aa3b-f130be07f531",
                 "rel": "assessed-control",
                 "resource-fragment": "si-7",
                 "text": "Implemented requirement for si-7"
@@ -820,7 +820,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -830,12 +830,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "5b388127-72ec-5611-b0fc-87b56b930f90",
+                "subject-uuid": "cb83790f-db31-590b-a921-0161a7b1a12d",
                 "type": "component"
               }
             ],
@@ -843,7 +843,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "3bbddce6-5b8c-5dbe-9c93-be1a9d6473e8"
+            "uuid": "6b391c5e-5812-55d6-ad16-af6352ce245f"
           },
           {
             "collected": "2026-09-11T00:00:00Z",
@@ -851,7 +851,7 @@
             "expires": "2027-09-08T00:00:00Z",
             "links": [
               {
-                "href": "#17224a91-09fd-5eca-808d-7845a55e996b",
+                "href": "#364fd99c-b9cc-5758-afa4-b953f4f368c0",
                 "rel": "assessed-control",
                 "resource-fragment": "ACM.1",
                 "text": "Implemented requirement for ACM.1"
@@ -864,7 +864,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -874,12 +874,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "38c949f6-6e56-577e-98cb-246c5029818b",
+                "subject-uuid": "5b7bc8c0-3856-5e02-876f-6aba0747d550",
                 "type": "component"
               }
             ],
@@ -887,7 +887,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "41a9a10f-07f5-5189-b56c-0d4416149a97"
+            "uuid": "4d3bd8fa-255d-522d-bbd9-d9f76047cc6b"
           },
           {
             "collected": "2026-08-30T00:00:00Z",
@@ -895,7 +895,7 @@
             "expires": "2027-10-18T00:00:00Z",
             "links": [
               {
-                "href": "#2fba0f32-bab4-58ed-bc68-07775b85656f",
+                "href": "#af9309c2-d10b-5789-a0fe-cc8189ade671",
                 "rel": "assessed-control",
                 "resource-fragment": "IAM.4",
                 "text": "Implemented requirement for IAM.4"
@@ -908,7 +908,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -918,12 +918,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "38c949f6-6e56-577e-98cb-246c5029818b",
+                "subject-uuid": "5b7bc8c0-3856-5e02-876f-6aba0747d550",
                 "type": "component"
               }
             ],
@@ -931,7 +931,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "e5e698ba-e0a9-5238-8ead-2fc84acf6287"
+            "uuid": "cccafe77-0c92-51e4-886a-ba58b4809fc4"
           },
           {
             "collected": "2026-08-30T00:00:00Z",
@@ -939,7 +939,7 @@
             "expires": "2026-09-20T00:00:00Z",
             "links": [
               {
-                "href": "#1896ca38-921e-5454-82c8-8d53349917d4",
+                "href": "#9e7296fa-3f7d-510b-8719-fac5b53824b9",
                 "rel": "assessed-control",
                 "resource-fragment": "S3.5",
                 "text": "Implemented requirement for S3.5"
@@ -952,7 +952,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -962,12 +962,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "38c949f6-6e56-577e-98cb-246c5029818b",
+                "subject-uuid": "5b7bc8c0-3856-5e02-876f-6aba0747d550",
                 "type": "component"
               }
             ],
@@ -975,7 +975,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "e98a522c-be12-5c4a-a118-2b100d5a59d4"
+            "uuid": "d8479cce-d6c6-5048-9118-96270d957c85"
           },
           {
             "collected": "2026-08-27T00:00:00Z",
@@ -983,7 +983,7 @@
             "expires": "2027-02-12T00:00:00Z",
             "links": [
               {
-                "href": "#082e05a6-2099-54b8-9b77-0020bf3dbc7c",
+                "href": "#30f49312-0b47-5904-b326-a3bb9d1968df",
                 "rel": "assessed-control",
                 "resource-fragment": "EC2.2",
                 "text": "Implemented requirement for EC2.2"
@@ -996,7 +996,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1006,12 +1006,12 @@
             "relevant-evidence": [
               {
                 "description": "Research Data Lake normalised scan results 2026-Q3",
-                "href": "#e4a68644-3c4b-5f5a-9e58-c4ba0545e52c"
+                "href": "#b62ef3a2-41fb-580a-8275-294cb8d5a27f"
               }
             ],
             "subjects": [
               {
-                "subject-uuid": "38c949f6-6e56-577e-98cb-246c5029818b",
+                "subject-uuid": "5b7bc8c0-3856-5e02-876f-6aba0747d550",
                 "type": "component"
               }
             ],
@@ -1019,7 +1019,7 @@
             "types": [
               "control-objective"
             ],
-            "uuid": "e20791b5-021a-5a03-aedf-43c32a13eb22"
+            "uuid": "1143b8d6-4a9d-5e9b-bf65-90156aa36a05"
           }
         ],
         "reviewed-controls": {
@@ -1086,7 +1086,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1096,23 +1096,23 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "false"
               },
               {
                 "name": "condition-expires",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "2027-03-26"
               },
               {
                 "name": "trigger",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "score<0.85"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "95ee269e-6cba-579b-92a4-4881d276d6e4"
+                "observation-uuid": "dfaeec66-8595-5436-9fbb-203d13c4de66"
               }
             ],
             "risk-log": {
@@ -1121,21 +1121,21 @@
                   "description": "The Authorizing Official accepted this risk for 2026-Q3, subject to the recorded condition.",
                   "logged-by": [
                     {
-                      "party-uuid": "ca2207c1-1ad9-50fc-8ed0-9cfdeb5a7b5d",
+                      "party-uuid": "27ccf06a-fb31-5a67-adb8-baf35c2920e4",
                       "role-id": "authorizing-official"
                     }
                   ],
                   "start": "2026-09-08T00:00:00Z",
                   "status-change": "deviation-approved",
                   "title": "Risk accepted with conditions",
-                  "uuid": "0c95001a-91fd-55ce-b09b-65adf05c1ef8"
+                  "uuid": "553b4a7f-8155-5a0e-94ee-c38b5b95ef3e"
                 }
               ]
             },
             "statement": "Until ac-2 is satisfied, Research Data Lake carries this exposure.",
             "status": "deviation-approved",
             "title": "ac-2 shortfall on DATALAKE",
-            "uuid": "d5b3842a-a6c5-59d3-a806-efe69fa3e292"
+            "uuid": "3ed97b0d-6669-5f55-a3eb-119b36ce48a5"
           },
           {
             "description": "Residual risk from the cp-9 finding.",
@@ -1143,7 +1143,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1153,19 +1153,19 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "false"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "eff22b80-c129-5243-b56e-096c94b7f7a0"
+                "observation-uuid": "4c9caae3-468a-58aa-af04-32e907bb6e23"
               }
             ],
             "statement": "Until cp-9 is satisfied, Research Data Lake carries this exposure.",
             "status": "open",
             "title": "cp-9 shortfall on DATALAKE",
-            "uuid": "2b7e846c-850c-5b97-8d8f-c2d78dee6ad0"
+            "uuid": "b63c171b-ef7b-5acb-a55c-1da0688a2a0b"
           },
           {
             "description": "Residual risk from the ia-5 finding.",
@@ -1173,7 +1173,7 @@
               {
                 "actors": [
                   {
-                    "actor-uuid": "904b5abe-fded-5e38-9a0a-b954c7c379b5",
+                    "actor-uuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a",
                     "role-id": "information-system-security-officer",
                     "type": "party"
                   }
@@ -1183,26 +1183,26 @@
             "props": [
               {
                 "name": "blocks-ato",
-                "ns": "https://risk-sentinel.org/ns/sparc",
+                "ns": "https://sparc.risk-sentinel.org/ns",
                 "value": "true"
               }
             ],
             "related-observations": [
               {
-                "observation-uuid": "5dd31d14-5f3b-5417-9ebf-873d82631ce7"
+                "observation-uuid": "e672c7f5-ba59-5c8b-860f-ab9ae51d5fd4"
               }
             ],
             "statement": "Until ia-5 is satisfied, Research Data Lake carries this exposure.",
             "status": "open",
             "title": "ia-5 shortfall on DATALAKE",
-            "uuid": "eea2d20e-6a53-5d9e-8402-bcf5086ff88f"
+            "uuid": "d4c26bd1-ecfa-581c-9675-2194083a963e"
           }
         ],
         "start": "2026-08-25T00:00:00Z",
         "title": "Research Data Lake assessment 2026-Q3",
-        "uuid": "1bea4078-55fc-5410-bd25-57a11ad82910"
+        "uuid": "967c2d56-5a93-5f66-9b49-7beebe2e48e6"
       }
     ],
-    "uuid": "2fa099f5-66f7-5d98-a463-4184ceaaa1f6"
+    "uuid": "287b0390-5fba-5072-a79e-b550f843a186"
   }
 }

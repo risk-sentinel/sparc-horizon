@@ -11,7 +11,11 @@ package fixtures
 // Namespaces. Horizon owns the first and only validates the first; the others
 // are preserved exactly as issued, CamelCase included.
 const (
-	NamespaceSPARC = "https://risk-sentinel.org/ns/sparc"
+	// NamespaceSPARC is the registered namespace URI (sparc#1155). Horizon
+	// adopted SPARC's rather than the placeholder it carried: a namespace
+	// identifies an authority's vocabulary, so it is the same string in every
+	// deployment.
+	NamespaceSPARC = "https://sparc.risk-sentinel.org/ns"
 
 	// NamespaceAWS is an OSCAL prop namespace, which is an opaque identifier
 	// rather than an endpoint. Nothing dereferences it, no request is made to

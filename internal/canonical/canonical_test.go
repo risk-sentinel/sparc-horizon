@@ -47,14 +47,20 @@ func TestJoinOrderIsSignificant(t *testing.T) {
 }
 
 func TestPeriod(t *testing.T) {
-	valid := []string{"2026", "2026-Q1", "2026-Q4", "2026-01", "2026-12", "2026-09-20", "2026-02-29"}
+	// A quarter or a month, and nothing else. Narrowed to SPARC's shared
+	// contract (#54): a bare year and a full date were accepted here first,
+	// and two implementations disagreeing about what a period is derive two
+	// identifiers for one object. A date belongs to a decision — see
+	// TestDecisionDate.
+	valid := []string{"2026-Q1", "2026-Q4", "2026-01", "2026-12"}
 	for _, v := range valid {
 		if got, err := Period(v); err != nil || got != v {
 			t.Errorf("Period(%q) = %q, %v; want it accepted unchanged", v, got, err)
 		}
 	}
 	invalid := []string{"2026Q3", "Q3-2026", "2026-1", "2026-1-5", "2026-13", "2026-Q0", "2026-Q5",
-		"2026-00", "2026-01-32", "26-01", "", "2026-01-", "2026-W01"}
+		"2026-00", "2026-01-32", "26-01", "", "2026-01-", "2026-W01",
+		"2026", "2026-09-20", "2026-02-29"}
 	for _, v := range invalid {
 		if _, err := Period(v); err == nil {
 			t.Errorf("Period(%q) accepted; want rejected", v)
@@ -99,5 +105,32 @@ func TestStringNormalisesToNFCWithoutFoldingOrTrimming(t *testing.T) {
 	}
 	if String("MixedCase") != "MixedCase" {
 		t.Error("String must not case-fold")
+	}
+}
+
+// A decision is keyed on the day it was taken, so that the value lines up with
+// the next-decision-date prop the HUD counts down to. A quarter cannot be
+// matched against a calendar.
+func TestDecisionDate(t *testing.T) {
+	for _, v := range []string{"2026-10-11", "2026-01-01", "2026-12-31"} {
+		if got, err := DecisionDate(v); err != nil || got != v {
+			t.Errorf("DecisionDate(%q) = %q, %v; want it accepted unchanged", v, got, err)
+		}
+	}
+	for _, v := range []string{"2026-Q4", "2026-10", "2026", "11-10-2026", "", "2026-1-1"} {
+		if _, err := DecisionDate(v); err == nil {
+			t.Errorf("DecisionDate(%q) accepted; want rejected", v)
+		}
+	}
+
+	// Calendar-impossible dates pass, because the shared contract types this
+	// as ^\d{4}-\d{2}-\d{2}$ and nothing more. Rejecting them here would
+	// mean refusing to ingest an object a peer has already derived an
+	// identifier for, which is the failure the shared grammar exists to
+	// prevent. Raised upstream rather than fixed unilaterally.
+	for _, v := range []string{"2026-13-01", "2026-02-31"} {
+		if _, err := DecisionDate(v); err != nil {
+			t.Errorf("DecisionDate(%q) rejected; the shared contract accepts it", v)
+		}
 	}
 }

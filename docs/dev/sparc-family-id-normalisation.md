@@ -1,15 +1,39 @@
 # `key-grammar.v1.json` lowercases `family-id` outside its vocabulary
 
-**Status: filed 2026-09-22 as [`sparc#1175`](https://github.com/risk-sentinel/sparc/issues/1175).**
-A disagreement with a sibling repository's contract (`risk-sentinel/sparc`,
-`lib/federation/key-grammar.v1.json`). This is the source text; the issue carries everything
-below the line. It stays here because the test that pins the divergence lives here too — if the
-disagreement is settled in SPARC's favour, Horizon adopts the rule and both go.
+**Status: RESOLVED 2026-09-23. Filed 2026-09-22 as
+[`sparc#1175`](https://github.com/risk-sentinel/sparc/issues/1175); accepted and merged upstream
+as `1cb999b1`, *fix(federation): scope family-id normalisation to its vocabulary*.**
+
+**The disagreement was settled in Horizon's favour.** `vocabulary-normalisers` is now keyed by
+vocabulary **and** identifier kind — `opaque` carries `family-id: none` — and the `family-id` type
+rule became vocabulary-aware, because otherwise `ACM` would normalise correctly and then fail
+validation. Upstream added two vectors, `cell-for-foreign-family` and its lowercased twin,
+carrying `b9691843-8d7e-5b3e-a58a-4a56414e4dba` and `f2a38fbf-bed3-5e41-b95e-c6b8c88a0c00` —
+**exactly the identifiers Horizon already derived**. No existing UUID moved, so nothing needed
+regenerating anywhere.
+
+Horizon re-vendored the contract at `1cb999b1` in **#68**. `internal/canonical.FamilyID` needed no
+change: it validated `^[A-Za-z]{2,3}$` and then lowercased, which is equivalent to the contract's
+"validate `^[a-z]{2,3}$` after lowercasing". The test that pinned the divergence,
+`TestFamilyIDNormalisationDivergesFromTheContract`, became
+`TestFamilyIDNormalisationIsScopedToItsVocabulary` — asserting agreement where it used to assert
+disagreement.
+
+**One thing this cost, worth keeping.** That test **passed** for a day after upstream resolved it,
+because it asserted against the *vendored* copy of the contract and nothing checked the copy was
+current. `TestVendoredContractMatchesItsProvenance` proves the file is unmodified, which is not the
+same property. The gap is closed by
+[`vendored-contract-freshness.yml`](../../.github/workflows/vendored-contract-freshness.yml), a
+scheduled job that compares the vendored digest against upstream and files an issue when they
+part — off the PR path, so the gate still needs no network.
+
+This document is kept rather than deleted: it is the source text the upstream issue was filed
+from, and the reasoning is what made the case. Everything below the line is that original text.
 
 Found while adopting the registered namespace and reconciling Horizon's Go reference with the
 shared contract (#54). The consequence — that two implementations derive different identifiers
-for one projection cell — is recorded in [`docs/03-data-model.md`](../03-data-model.md) and
-pinned by a test in `internal/keys`, so it cannot quietly resolve or widen.
+for one projection cell — was recorded in [`docs/03-data-model.md`](../03-data-model.md) and
+pinned by a test in `internal/keys`, so it could not quietly resolve or widen.
 
 ---
 

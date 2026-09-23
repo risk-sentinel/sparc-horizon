@@ -362,13 +362,19 @@ adopted the contract, and reading its *type rules* still found five disagreement
 which any vector exercised. The test therefore drives the contract's own regexes against this
 implementation's canonicalisers, rather than comparing a fixed corpus of UUIDs.
 
-**One rule is not adopted, and the disagreement is live.** The contract normalises `family-id`
-by lowercasing it unconditionally. Under a non-NIST vocabulary that is the defect this document
-removed from control identifiers: an AWS Security Hub family is `ACM`, and `acm` names nothing.
-Horizon carries a foreign family as issued, so the two implementations derive **different
-identifiers for the same projection cell** — `ACM` under an opaque source gives
-`b9691843-…` here and `f2a38fbf-…` there, with neither side erroring. Until it is settled, do
-not derive a cell identifier for a foreign-vocabulary family against a peer. The write-up is
+**One rule was not adopted; it is now settled, in Horizon's favour.** The contract used to
+normalise `family-id` by lowercasing it unconditionally. Under a non-NIST vocabulary that is the
+defect this document removed from control identifiers: an AWS Security Hub family is `ACM`, and
+`acm` names nothing. Horizon carried a foreign family as issued, so the two implementations
+derived **different identifiers for the same projection cell** — `ACM` under an opaque source
+gave `b9691843-…` here and `f2a38fbf-…` there, with neither side erroring.
+
+`sparc#1175` fixed it upstream (`1cb999b1`): `vocabulary-normalisers` is keyed by vocabulary
+**and** identifier kind, so an opaque family is carried as issued, and the contract gained two
+vectors holding exactly the identifiers Horizon already derived. **No UUID moved.** Horizon
+re-vendored at that commit in #68, and the restriction that followed from the disagreement —
+do not derive a cell identifier for a foreign-vocabulary family against a peer — is **lifted**.
+The write-up, with the resolution, is
 [`docs/dev/sparc-family-id-normalisation.md`](dev/sparc-family-id-normalisation.md).
 
 ### Status

@@ -1,0 +1,180 @@
+name: Vendored contract freshness
+
+# Notices when SPARC's shared key-grammar contract moves and Horizon is still
+# vendoring the old one.
+#
+# ---- Why this is not a PR check -------------------------------------------
+#
+# internal/keys/testdata/key-grammar.v1.json is vendored precisely so the
+# conformance test runs WITHOUT a network. TestVendoredContractMatchesItsProvenance
+# recomputes its digest, so nobody can edit the copy to make a test pass.
+#
+# That proves the copy is UNMODIFIED. It does not prove it is CURRENT, and the
+# two are easy to confuse. sparc#1175 resolved a family-id divergence in
+# Horizon's favour and this repository carried the superseded contract for a day
+# with every check green — found by reading `sparc` by hand, which is not a
+# process (#68).
+#
+# Putting the freshness check in a required job would make the gate depend on
+# the network and on a sibling repository's availability, which is the reason
+# the file is vendored in the first place. So it runs on a schedule, off the PR
+# path, and files an issue. A scheduled job that only fails is one nobody sees.
+#
+# `sparc` is PUBLIC, so this needs no credential beyond the default token, which
+# is used only to open the issue in THIS repository. Nothing here writes to a
+# sibling repo — see CLAUDE.md.
+
+on:
+  schedule:
+    # Mondays, 07:00 UTC. The contract changes at the pace of upstream design
+    # decisions, not commits, so daily would be noise.
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  UPSTREAM_REPO: risk-sentinel/sparc
+  UPSTREAM_PATH: lib/federation/key-grammar.v1.json
+  PROVENANCE: internal/keys/testdata/PROVENANCE.json
+  MARKER: '<!-- vendored-contract-freshness:key-grammar -->'
+
+jobs:
+  freshness:
+    name: Is the vendored key grammar current?
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Compare the vendored digest against upstream default branch
+        id: compare
+        run: |
+          set -euo pipefail
+          have="$(jq -r '.file.sha256' "${PROVENANCE}")"
+          pinned="$(jq -r '.upstream.commit' "${PROVENANCE}")"
+          if [ -z "${have}" ] || [ "${have}" = "null" ]; then
+            echo "::error::${PROVENANCE} carries no file.sha256 to compare against."
+            exit 1
+          fi
+
+          # Resolve upstream's default branch rather than assuming it is 'main'.
+          branch="$(curl -sSfL --proto '=https' --proto-redir '=https' --tlsv1.2 \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            "https://api.github.com/repos/${UPSTREAM_REPO}" | jq -r '.default_branch')"
+          sha="$(curl -sSfL --proto '=https' --proto-redir '=https' --tlsv1.2 \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            "https://api.github.com/repos/${UPSTREAM_REPO}/commits/${branch}" | jq -r '.sha')"
+
+          curl -sSfL --proto '=https' --proto-redir '=https' --tlsv1.2 \
+            "https://raw.githubusercontent.com/${UPSTREAM_REPO}/${sha}/${UPSTREAM_PATH}" \
+            -o upstream.json
+          # An empty or error body would hash to something stable and wrong, so
+          # assert it is the document we expect before comparing digests.
+          jq -e 'has("vectors") and has("field-lists")' upstream.json >/dev/null \
+            || { echo "::error::Fetched ${UPSTREAM_PATH} does not look like the grammar contract."; exit 1; }
+
+          want="$(sha256sum upstream.json | cut -d' ' -f1)"
+          echo "vendored  ${have}  (pinned at ${pinned})"
+          echo "upstream  ${want}  (${branch} at ${sha})"
+
+          {
+            echo "upstream_sha=${sha}"
+            echo "upstream_branch=${branch}"
+            echo "vendored_digest=${have}"
+            echo "upstream_digest=${want}"
+            echo "pinned_commit=${pinned}"
+          } >> "$GITHUB_OUTPUT"
+
+          if [ "${have}" = "${want}" ]; then
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+            echo "PASS — the vendored contract matches upstream."
+          else
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::The vendored key-grammar contract is behind upstream."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Open an issue if it is stale
+        if: steps.compare.outputs.stale == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          S: ${{ steps.compare.outputs.upstream_sha }}
+          B: ${{ steps.compare.outputs.upstream_branch }}
+          HAVE: ${{ steps.compare.outputs.vendored_digest }}
+          WANT: ${{ steps.compare.outputs.upstream_digest }}
+          PINNED: ${{ steps.compare.outputs.pinned_commit }}
+        run: |
+          set -euo pipefail
+          # One open issue at a time. A weekly job that opens a duplicate every
+          # Monday trains everyone to ignore it.
+          existing="$(gh issue list --state open --search "${MARKER} in:body" \
+            --json number -q '.[0].number' || true)"
+          if [ -n "${existing}" ]; then
+            echo "Issue #${existing} is already open for this. Not filing another."
+            exit 0
+          fi
+
+          # The markdown lives in a template file, not in this script. Backticks
+          # inside a shell string are either a shellcheck SC2016 report or a
+          # command substitution waiting to happen, and neither belongs in a job
+          # whose whole output is a markdown document.
+          sed -e "s|@MARKER@|${MARKER}|g" \
+              -e "s|@PROVENANCE@|${PROVENANCE}|g" \
+              -e "s|@UPSTREAM_PATH@|${UPSTREAM_PATH}|g" \
+              -e "s|@UPSTREAM_REPO@|${UPSTREAM_REPO}|g" \
+              -e "s|@PINNED@|${PINNED}|g" \
+              -e "s|@BRANCH@|${B}|g" \
+              -e "s|@SHA@|${S}|g" \
+              -e "s|@HAVE@|${HAVE}|g" \
+              -e "s|@WANT@|${WANT}|g" \
+              .github/issue-templates/vendored-contract-stale.md > body.md
+
+          # A template that silently failed to render would file an issue full of
+          # placeholders, which reads as a broken job rather than a real finding.
+          if grep -q '@[A-Z_]*@' body.md; then
+            echo "::error::The issue template still contains unrendered placeholders."
+            grep -n '@[A-Z_]*@' body.md
+            exit 1
+          fi
+
+          gh issue create \
+            --title "The vendored key-grammar contract is behind ${UPSTREAM_REPO}" \
+            --label bug \
+            --body-file body.md
+
+      - name: Summarise
+        if: always()
+        env:
+          STALE: ${{ steps.compare.outputs.stale }}
+          HAVE: ${{ steps.compare.outputs.vendored_digest }}
+          WANT: ${{ steps.compare.outputs.upstream_digest }}
+          S: ${{ steps.compare.outputs.upstream_sha }}
+          REPO: ${{ env.UPSTREAM_REPO }}
+        run: |
+          set -euo pipefail
+          # Three states, not two. If the compare step failed, STALE is empty —
+          # and reporting "current" there would be a false reassurance produced
+          # by a job that never finished comparing.
+          {
+            echo "## Vendored key-grammar contract"
+            echo
+            case "${STALE:-}" in
+              true)
+                echo "**Behind upstream.** Vendored \`${HAVE}\`, upstream \`${WANT}\` at \`${S}\`."
+                echo
+                echo "An issue has been filed, unless one was already open."
+                ;;
+              false)
+                echo "**Current.** The vendored digest matches \`${REPO}\` at \`${S}\`."
+                ;;
+              *)
+                echo "**Not determined.** The comparison did not complete, so this run says nothing"
+                echo "about whether the vendored contract is current. Read the job log."
+                ;;
+            esac
+          } >> "$GITHUB_STEP_SUMMARY"

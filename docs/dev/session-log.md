@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-23 (#63). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-23 (#68). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,66 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-23 — #68 — `feature/68_revendor_key_grammar`
+
+**In flight:** nothing.
+
+**SPARC accepted the `family-id` challenge, and Horizon did not notice for a day.** `sparc#1175`
+merged as `1cb999b1`: `vocabulary-normalisers` is keyed by vocabulary **and** identifier kind, so
+an opaque family is carried as issued. The contract gained two vectors holding
+`b9691843-…` and `f2a38fbf-…` — **exactly the identifiers `internal/keys` already derived**, so the
+divergence is closed rather than re-specified, and no UUID moved anywhere.
+`internal/canonical.FamilyID` needed **no change**: it validated `^[A-Za-z]{2,3}$` then lowercased,
+which is equivalent to the contract's "validate `^[a-z]{2,3}$` after lowercasing". Measured, not
+assumed — a probe over `AC`/`ac`/`Ac`/`ACM`/`acm` under both vocabularies.
+
+**The real finding is that nothing here could have noticed.**
+`TestFamilyIDNormalisationDivergesFromTheContract` kept passing after the disagreement was
+settled, because it asserts against the **vendored** copy. Its own failure message anticipated
+this — *"either the rule changed here, or the disagreement is resolved and
+`docs/dev/sparc-family-id-normalisation.md` is stale"* — and it was the second case, silently.
+`TestVendoredContractMatchesItsProvenance` recomputes the digest, so nobody can edit the copy to
+make a test pass; that proves it is **unmodified**, not **current**, and the two are easy to
+conflate. It surfaced only because I read `sparc` by hand, which is not a process.
+
+**The fix is a scheduled job, deliberately not a required check.** The contract is vendored so the
+conformance suite needs no network; putting freshness in the gate would make every PR depend on a
+sibling repository being reachable, which is the opposite of the reason for vendoring. So
+`vendored-contract-freshness.yml` runs weekly, compares the vendored digest against upstream's
+default branch, and **files an issue** — a scheduled job that only fails is one nobody sees. It
+dedupes on a marker in the body, because a weekly duplicate trains everyone to ignore it. `sparc`
+is **public**, so this needs no credential beyond the default token, used only to open an issue in
+*this* repository; nothing writes to a sibling repo. It compares the **file digest, not the
+commit**, so unrelated upstream commits do not cry wolf — verified live: upstream `main` has moved
+to `bb82c75f` since `1cb999b1` without touching the file, and the check reports current.
+
+**Rejected:** a `shellcheck disable=SC2016` for the markdown backticks in the issue body. The
+suppression bar in `issue_rules.md` is high and this did not need to reach it — the body moved to
+`.github/issue-templates/vendored-contract-stale.md` and is rendered with `sed`, so there are no
+backticks in shell at all, plus an assertion that no `@PLACEHOLDER@` survived rendering. A
+template that silently failed to render would file an issue full of placeholders, which reads as
+a broken job rather than a real finding.
+
+**Mutation-checked rather than assumed.** Restoring the pre-`1175` behaviour — unconditional
+lowercase on an opaque family — turns **three** tests red across two packages, and the one that
+catches it in `TestContractVectorsReproduce` is the new `cell-for-foreign-family` vector. Before
+the re-vendor every vector used a NIST family, where lowercasing and the scoped rule agree, so
+that mutation would have passed the whole vector set. That is the concrete value of re-vendoring,
+and it is also exactly how the defect got into the shared contract in the first place.
+
+**Added a floor, not just a non-empty check.** `TestContractVectorsReproduce` asserted only that
+the contract carried *some* vectors, so a re-vendor that silently pulled a shorter set would still
+report green against whatever remained — the same shape as `ci.yml`'s `MIN_TESTED_PACKAGES`. It
+now requires at least 28.
+
+**Next:** **P1** (#16) — SPARC client and tree builder, first Go code, carries S1's scanners, and
+inherits TM-11 and #49's measured `go-oscal` limitation. It reads this grammar, which is why this
+went first. Otherwise the cleanups: #48 (five `npx` call sites in two required checks), #57 (pin
+comments nothing verifies), #42 (Sonar configuration — #63 added that `_test.go` files are held to
+a reduced rule set).
 
 ---
 

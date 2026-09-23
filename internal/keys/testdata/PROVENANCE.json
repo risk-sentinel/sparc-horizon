@@ -5,18 +5,19 @@
     "The file originated here, as fixtures/key-vectors.v1.json, and was regenerated upstream under",
     "the registered namespace before SPARC extended it with field lists, type rules and the dedup rule.",
     "TestVendoredContractMatchesItsProvenance recomputes the digest: a vendored contract nobody can",
-    "check is indistinguishable from one somebody edited to make a test pass."
+    "check is indistinguishable from one somebody edited to make a test pass. That proves the copy is",
+    "UNMODIFIED, not that it is CURRENT \u2014 vendored-contract-freshness.yml is what notices upstream moving."
   ],
   "upstream": {
     "repository": "risk-sentinel/sparc",
     "path": "lib/federation/key-grammar.v1.json",
-    "commit": "33a25b3bf76ea1960f1fa1a7a372108fd64fee28",
-    "retrieved": "2026-09-22",
-    "issues": "sparc#1155 (namespace registration), sparc#1161 (ports and shared vectors)"
+    "commit": "1cb999b1707f99b03d4b0c12a37f7bb6a6cf0959",
+    "retrieved": "2026-09-23",
+    "issues": "sparc#1155 (namespace registration), sparc#1161 (ports and shared vectors), sparc#1175 (family-id scoped to its vocabulary)"
   },
   "file": {
     "name": "key-grammar.v1.json",
-    "sha256": "a65a7a9daf5065f0433a7bf09e864102000643bb0334c79bcedeb2fa9e12878f",
-    "bytes": 38733
+    "sha256": "73508a1bb56a7736cf26626bd5c4abb843567a85d7ad2e87e622076520d33d04",
+    "bytes": 41068
   }
 }

@@ -91,42 +91,23 @@ func loadSpecSchemas(t *testing.T) (*jsonschema.Compiler, map[string]any) {
 
 func TestGoldensValidateAgainstTheFrozenContract(t *testing.T) {
 	tree := generate(t)
-	compiler, schemas := loadSpecSchemas(t)
-
-	compiled := map[string]*jsonschema.Schema{}
-	for name := range schemas {
-		s, err := compiler.Compile("spec.json#/components/schemas/" + name)
-		if err != nil {
-			t.Fatalf("compiling schema %s: %v", name, err)
-		}
-		compiled[name] = s
-	}
+	compiled := compileSpecSchemas(t)
 
 	validated, skipped := 0, 0
 	for _, path := range tree.Paths() {
 		if !strings.HasPrefix(path, "api/") {
 			continue
 		}
-		name := schemaFor(path)
-		if name == "" {
+		switch name := schemaFor(path); name {
+		case "":
 			skipped++
-			continue
-		}
-		if name == "unmapped" {
+		case "unmapped":
 			t.Errorf("%s: no schema mapped for this golden. Either the spec gained an endpoint without a golden, or a golden was added without saying what it is", path)
-			continue
+		default:
+			if validateGolden(t, compiled[name], name, path, tree[path]) {
+				validated++
+			}
 		}
-
-		var doc any
-		if err := json.Unmarshal(tree[path], &doc); err != nil {
-			t.Errorf("%s: %v", path, err)
-			continue
-		}
-		if err := compiled[name].Validate(doc); err != nil {
-			t.Errorf("%s does not satisfy %s:\n%v", path, name, err)
-			continue
-		}
-		validated++
 	}
 
 	// A loop over nothing validates nothing and exits clean.
@@ -134,6 +115,37 @@ func TestGoldensValidateAgainstTheFrozenContract(t *testing.T) {
 		t.Errorf("validated %d goldens; the mock serves far more than that, so the matcher is not matching", validated)
 	}
 	t.Logf("validated %d goldens against the frozen contract (%d scaffolding files skipped)", validated, skipped)
+}
+
+// compileSpecSchemas compiles every component schema the frozen spec declares.
+func compileSpecSchemas(t *testing.T) map[string]*jsonschema.Schema {
+	t.Helper()
+
+	compiler, schemas := loadSpecSchemas(t)
+	out := map[string]*jsonschema.Schema{}
+	for name := range schemas {
+		s, err := compiler.Compile("spec.json#/components/schemas/" + name)
+		if err != nil {
+			t.Fatalf("compiling schema %s: %v", name, err)
+		}
+		out[name] = s
+	}
+	return out
+}
+
+func validateGolden(t *testing.T, schema *jsonschema.Schema, name, path string, body []byte) bool {
+	t.Helper()
+
+	var doc any
+	if err := json.Unmarshal(body, &doc); err != nil {
+		t.Errorf("%s: %v", path, err)
+		return false
+	}
+	if err := schema.Validate(doc); err != nil {
+		t.Errorf("%s does not satisfy %s:\n%v", path, name, err)
+		return false
+	}
+	return true
 }
 
 // Both directions: the spec cannot declare an endpoint the mock cannot answer,

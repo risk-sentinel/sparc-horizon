@@ -12,6 +12,12 @@ import (
 
 func pathAPI(parts ...string) string { return "api/" + strings.Join(parts, "/") }
 
+// dateLayout is the one date format every response carries: the OSCAL date
+// form, which is also what the namespace props use.
+const dateLayout = "2006-01-02"
+
+func horizonDate() string { return Horizon.Format(dateLayout) }
+
 // apiResponses builds every golden the mock serves.
 func (g *Generator) apiResponses(tree Tree) (map[string]any, error) {
 	assessed := map[string][]assessment{}
@@ -138,38 +144,11 @@ func (g *Generator) boundaryNode(b Boundary, role string) APINode {
 // column order. docs/04-api.md's own example has five columns and two cells,
 // and says to keep cell payloads small; details come from the cell and chain
 // endpoints.
+// heatFor draws one node's heatmap: rows are its children, columns are
+// families. The column order is blockers descending then pass ratio ascending,
+// and nominal columns collapse — management by exception, so green is quiet.
 func (g *Generator) heatFor(node heatNode, assessed map[string][]assessment) (APIHeat, error) {
-	type rowData struct {
-		id, name string
-		byFamily map[string][]assessment
-		weight   float64
-	}
-
-	var data []rowData
-	collect := func(id, name string, as []assessment, weight float64) {
-		byFamily := map[string][]assessment{}
-		for _, a := range onAxis(as) {
-			byFamily[a.family] = append(byFamily[a.family], a)
-		}
-		data = append(data, rowData{id: id, name: name, byFamily: byFamily, weight: weight})
-	}
-
-	switch node.nodeType {
-	case "organization":
-		for _, b := range node.children {
-			collect(g.sspUUID(b), b.Name, assessed[b.Slug], project.FIPSWeight(b.FIPS))
-		}
-	default:
-		b := *node.boundary
-		byComponent := map[string][]assessment{}
-		for _, a := range assessed[b.Slug] {
-			byComponent[a.component] = append(byComponent[a.component], a)
-		}
-		for _, s := range b.Systems {
-			id := g.componentUUID(b, s.Slug)
-			collect(id, s.Name, byComponent[id], project.FIPSWeight(b.FIPS))
-		}
-	}
+	data := g.rowsOf(node, assessed)
 
 	// Column aggregates first, because the order and the collapsing decide
 	// which cells a row emits at all.
@@ -184,29 +163,71 @@ func (g *Generator) heatFor(node heatNode, assessed map[string][]assessment) (AP
 
 	rows := make([]APIRow, 0, len(data))
 	for _, r := range data {
-		row := APIRow{ID: r.id, Name: r.name, Cells: []APICell{}}
-		for _, col := range columns {
-			as, ok := r.byFamily[col]
-			if !ok {
-				// Nothing assessed in this family for this row. Omitted
-				// rather than rendered as passing: they are not the same
-				// claim, and the HUD draws a gap.
-				continue
-			}
-			_, cell := aggregate(as, r.weight)
-			row.Cells = append(row.Cells, cell)
-		}
-		rows = append(rows, row)
+		rows = append(rows, r.render(columns))
 	}
 
 	return APIHeat{
 		Node:      node.id,
-		Horizon:   Horizon.Format("2006-01-02"),
+		Horizon:   horizonDate(),
 		Axis:      "800-53",
 		Columns:   columns,
 		Collapsed: collapsed,
 		Rows:      rows,
 	}, nil
+}
+
+// rowData is one heat row before the columns are known.
+type rowData struct {
+	id, name string
+	byFamily map[string][]assessment
+	weight   float64
+}
+
+// render emits cells for the columns that survived collapsing, in column
+// order. A family the row has nothing in is omitted rather than drawn as
+// passing: they are not the same claim, and the HUD draws a gap.
+func (r rowData) render(columns []string) APIRow {
+	row := APIRow{ID: r.id, Name: r.name, Cells: []APICell{}}
+	for _, col := range columns {
+		as, ok := r.byFamily[col]
+		if !ok {
+			continue
+		}
+		_, cell := aggregate(as, r.weight)
+		row.Cells = append(row.Cells, cell)
+	}
+	return row
+}
+
+// rowsOf gathers a node's children as rows: an organization's rows are its
+// boundaries, a boundary's rows are its systems.
+func (g *Generator) rowsOf(node heatNode, assessed map[string][]assessment) []rowData {
+	collect := func(id, name string, as []assessment, weight float64) rowData {
+		byFamily := map[string][]assessment{}
+		for _, a := range onAxis(as) {
+			byFamily[a.family] = append(byFamily[a.family], a)
+		}
+		return rowData{id: id, name: name, byFamily: byFamily, weight: weight}
+	}
+
+	var data []rowData
+	if node.nodeType == "organization" {
+		for _, b := range node.children {
+			data = append(data, collect(g.sspUUID(b), b.Name, assessed[b.Slug], project.FIPSWeight(b.FIPS)))
+		}
+		return data
+	}
+
+	b := *node.boundary
+	byComponent := map[string][]assessment{}
+	for _, a := range assessed[b.Slug] {
+		byComponent[a.component] = append(byComponent[a.component], a)
+	}
+	for _, s := range b.Systems {
+		id := g.componentUUID(b, s.Slug)
+		data = append(data, collect(id, s.Name, byComponent[id], project.FIPSWeight(b.FIPS)))
+	}
+	return data
 }
 
 // onAxis keeps the controls the 800-53 column axis can actually render.
@@ -286,7 +307,7 @@ func ratio(a project.Agg) float64 {
 }
 
 func (g *Generator) cellFor(node heatNode, col string, assessed map[string][]assessment) APICellDetail {
-	detail := APICellDetail{Node: node.id, Col: col, Horizon: Horizon.Format("2006-01-02")}
+	detail := APICellDetail{Node: node.id, Col: col, Horizon: horizonDate()}
 
 	var pool []assessment
 	if node.nodeType == "organization" {
@@ -310,7 +331,7 @@ func (g *Generator) cellFor(node heatNode, col string, assessed map[string][]ass
 			Component: a.component,
 			State:     string(project.StateOf(project.Agg{Total: 1, Blockers: boolInt(st.Blocks)})),
 			Reason:    reasonFor(a),
-			Expires:   a.expires.Format("2006-01-02"),
+			Expires:   a.expires.Format(dateLayout),
 			BlocksATO: a.blocksATO,
 			Chain:     a.requirement,
 		})
@@ -333,7 +354,7 @@ func reasonFor(a assessment) string {
 	case a.failing:
 		return "Not satisfied at the assessment."
 	case !a.expires.After(Horizon):
-		return fmt.Sprintf("Evidence expires %s, before the %s horizon.", a.expires.Format("2006-01-02"), Horizon.Format("2006-01-02"))
+		return fmt.Sprintf("Evidence expires %s, before the %s horizon.", a.expires.Format(dateLayout), horizonDate())
 	default:
 		return "Down at the horizon."
 	}
@@ -346,7 +367,7 @@ func chainOf(a assessment) APIChain {
 		Component:   a.component,
 		Resource:    a.resource,
 		Observation: a.observation,
-		Expires:     a.expires.Format("2006-01-02"),
+		Expires:     a.expires.Format(dateLayout),
 		Finding:     a.finding,
 		Risk:        a.risk,
 		BlocksATO:   a.blocksATO,
@@ -373,8 +394,8 @@ func (g *Generator) nextActionFor(p Persona, visible []Boundary, assessed map[st
 	if best == nil {
 		return APINextAction{
 			Node: p.NodeUUID, Title: "Nothing is down at this horizon.",
-			Consequence: "No control in view fails, expires or has an open milestone before " + Horizon.Format("2006-01-02") + ".",
-			Horizon:     Horizon.Format("2006-01-02"),
+			Consequence: "No control in view fails, expires or has an open milestone before " + horizonDate() + ".",
+			Horizon:     horizonDate(),
 		}
 	}
 	consequence := "The control is down at the horizon."
@@ -387,7 +408,7 @@ func (g *Generator) nextActionFor(p Persona, visible []Boundary, assessed map[st
 		Consequence: consequence,
 		ControlID:   best.controlID,
 		Chain:       best.requirement,
-		Horizon:     Horizon.Format("2006-01-02"),
+		Horizon:     horizonDate(),
 	}
 }
 
@@ -444,7 +465,7 @@ func apiReadme(personas []Persona) string {
 		"",
 		"## Horizon",
 		"",
-		"Computed once, for **"+Horizon.Format("2006-01-02")+"**. The `horizon` query parameter is",
+		"Computed once, for **"+horizonDate()+"**. The `horizon` query parameter is",
 		"accepted and ignored by the mock; a real service projects to the date it is asked for.",
 		"",
 		"## Personas",

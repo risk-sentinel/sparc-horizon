@@ -184,8 +184,13 @@ func (g *Generator) Personas() []Persona {
 	}
 }
 
-// assessmentsFor recovers every control's projected state for a boundary, from
-// the SSP and assessment-results this run emitted.
+// assessmentsFor recovers every control's projected state for a boundary,
+// from the SSP, assessment-results and POA&M this run emitted.
+//
+// Split into the four passes the evidence chain itself has — observations,
+// then findings, then risks, then POA&M items — because that is the order
+// docs/03-data-model.md fixes and reading it any other way makes the joins
+// hard to follow.
 func (g *Generator) assessmentsFor(tree Tree, b Boundary) ([]assessment, error) {
 	var ssp oscal.OscalCompleteSchema
 	if err := json.Unmarshal(tree[pathSSP(b)], &ssp); err != nil {
@@ -195,11 +200,42 @@ func (g *Generator) assessmentsFor(tree Tree, b Boundary) ([]assessment, error) 
 	if err := json.Unmarshal(tree[pathAssessmentResults(b)], &ar); err != nil {
 		return nil, fmt.Errorf("%s ar: %w", b.Slug, err)
 	}
+	var poam oscal.OscalCompleteSchema
+	if err := json.Unmarshal(tree[pathPOAM(b)], &poam); err != nil {
+		return nil, fmt.Errorf("%s poam: %w", b.Slug, err)
+	}
 
-	// Which requirement each observation assessed, and the chain hanging off
-	// it — the same link the recompute test in internal/oscal follows.
 	result := ar.AssessmentResults.Results[0]
-	byRequirement := map[string]*assessment{}
+	byRequirement := observationsOf(b, result)
+
+	// The observation is the hinge: everything below joins back through it.
+	obsToReq := map[string]string{}
+	for req, a := range byRequirement {
+		obsToReq[a.observation] = req
+	}
+
+	applyFindings(byRequirement, obsToReq, deref(result.Findings))
+	applyRisks(byRequirement, obsToReq, deref(result.Risks))
+	applyPoamItems(byRequirement, obsToReq, poam.PlanOfActionAndMilestones.PoamItems)
+	applySSPFacts(byRequirement, ssp.SystemSecurityPlan.ControlImplementation.ImplementedRequirements)
+
+	out := make([]assessment, 0, len(byRequirement))
+	for _, a := range byRequirement {
+		out = append(out, *a)
+	}
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].controlID != out[j].controlID {
+			return out[i].controlID < out[j].controlID
+		}
+		return out[i].component < out[j].component
+	})
+	return out, nil
+}
+
+// observationsOf starts an assessment per observation, keyed by the
+// implemented requirement the observation names.
+func observationsOf(b Boundary, result oscal.Result) map[string]*assessment {
+	out := map[string]*assessment{}
 	for _, obs := range *result.Observations {
 		req := strings.TrimPrefix((*obs.Links)[0].Href, "#")
 		controlID := (*obs.Links)[0].ResourceFragment
@@ -215,15 +251,14 @@ func (g *Generator) assessmentsFor(tree Tree, b Boundary) ([]assessment, error) 
 		if obs.Expires != nil {
 			a.expires = *obs.Expires
 		}
-		byRequirement[req] = a
+		out[req] = a
 	}
+	return out
+}
 
-	// Findings and risks mark what is down and what blocks.
-	obsToReq := map[string]string{}
-	for req, a := range byRequirement {
-		obsToReq[a.observation] = req
-	}
-	for _, f := range deref(result.Findings) {
+// applyFindings marks what did not satisfy its control objective.
+func applyFindings(byRequirement map[string]*assessment, obsToReq map[string]string, findings []oscal.Finding) {
+	for _, f := range findings {
 		req, ok := obsToReq[(*f.RelatedObservations)[0].ObservationUuid]
 		if !ok {
 			continue
@@ -234,7 +269,12 @@ func (g *Generator) assessmentsFor(tree Tree, b Boundary) ([]assessment, error) 
 			byRequirement[req].risk = (*f.RelatedRisks)[0].RiskUuid
 		}
 	}
-	for _, r := range deref(result.Risks) {
+}
+
+// applyRisks reads the blocks-ato prop, which is what turns a down control
+// into a red cell rather than an amber one.
+func applyRisks(byRequirement map[string]*assessment, obsToReq map[string]string, risks []oscal.Risk) {
+	for _, r := range risks {
 		req, ok := obsToReq[(*r.RelatedObservations)[0].ObservationUuid]
 		if !ok || r.Props == nil {
 			continue
@@ -245,13 +285,10 @@ func (g *Generator) assessmentsFor(tree Tree, b Boundary) ([]assessment, error) 
 			}
 		}
 	}
+}
 
-	// POA&M items, and which requirements are inherited.
-	var poam oscal.OscalCompleteSchema
-	if err := json.Unmarshal(tree[pathPOAM(b)], &poam); err != nil {
-		return nil, fmt.Errorf("%s poam: %w", b.Slug, err)
-	}
-	for _, item := range poam.PlanOfActionAndMilestones.PoamItems {
+func applyPoamItems(byRequirement map[string]*assessment, obsToReq map[string]string, items []oscal.PoamItem) {
+	for _, item := range items {
 		if item.RelatedObservations == nil {
 			continue
 		}
@@ -259,13 +296,17 @@ func (g *Generator) assessmentsFor(tree Tree, b Boundary) ([]assessment, error) 
 			byRequirement[req].poamItem = item.UUID
 		}
 	}
-	for _, ir := range ssp.SystemSecurityPlan.ControlImplementation.ImplementedRequirements {
+}
+
+// applySSPFacts records what only the SSP knows: that a requirement is the
+// boundary's own — so `source-uuid` resolves through import-profile to the
+// 800-53 baseline — and whether it is implemented through inheritance.
+func applySSPFacts(byRequirement map[string]*assessment, requirements []oscal.ImplementedRequirement) {
+	for _, ir := range requirements {
 		a, ok := byRequirement[ir.UUID]
 		if !ok {
 			continue
 		}
-		// Present in this SSP's own control-implementation, so `source-uuid`
-		// resolves through import-profile to the 800-53 baseline.
 		a.nist = true
 		for _, bc := range *ir.ByComponents {
 			if bc.Inherited != nil {
@@ -273,18 +314,6 @@ func (g *Generator) assessmentsFor(tree Tree, b Boundary) ([]assessment, error) 
 			}
 		}
 	}
-
-	out := make([]assessment, 0, len(byRequirement))
-	for _, a := range byRequirement {
-		out = append(out, *a)
-	}
-	sort.Slice(out, func(i, j int) bool {
-		if out[i].controlID != out[j].controlID {
-			return out[i].controlID < out[j].controlID
-		}
-		return out[i].component < out[j].component
-	})
-	return out, nil
 }
 
 func familyOf(controlID string) string {

@@ -87,7 +87,7 @@ func (g *Generator) readme(tree Tree) []byte {
 		"## Determinism",
 		"",
 		"Nothing reads the clock, the environment, or a system random source. Dates are",
-		"offsets from `"+BaseDate.Format("2006-01-02")+"`, and every choice comes from a splitmix64",
+		"offsets from `"+BaseDate.Format(dateLayout)+"`, and every choice comes from a splitmix64",
 		"sequence with a constant seed, consumed in a fixed order. Regenerating into two",
 		"directories and diffing them must produce no output; `TestRegenerationIsStable`",
 		"and `TestCommittedFixturesMatch` assert both.",

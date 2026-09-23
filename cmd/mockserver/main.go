@@ -33,7 +33,11 @@ import (
 	"strings"
 )
 
-const personaHeader = "X-Horizon-Persona"
+const (
+	personaHeader = "X-Horizon-Persona"
+	contentType   = "Content-Type"
+	mediaJSON     = "application/json"
+)
 
 type persona struct {
 	ID       string `json:"id"`
@@ -156,7 +160,7 @@ func (s *server) serve(w http.ResponseWriter, name string) {
 		notFound(w)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set(contentType, mediaJSON)
 	_, _ = w.Write(b)
 }
 
@@ -166,7 +170,7 @@ func notFound(w http.ResponseWriter) {
 }
 
 func writeError(w http.ResponseWriter, code int, err, detail string) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set(contentType, mediaJSON)
 	w.WriteHeader(code)
 	_ = json.NewEncoder(w).Encode(map[string]string{"error": err, "detail": detail})
 }
@@ -273,7 +277,7 @@ func (s *server) export(w http.ResponseWriter, r *http.Request) {
 		notFound(w)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set(contentType, mediaJSON)
 	_ = json.NewEncoder(w).Encode(map[string]any{"boundary": boundary, "documents": docs})
 }
 

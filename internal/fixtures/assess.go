@@ -274,14 +274,14 @@ func (g *Generator) assess(b Boundary, artifacts []evidenceArtifact, sspBytes []
 			// acceptance expires by itself rather than by someone remembering.
 			status = "deviation-approved"
 			props = append(props,
-				sparcProp(PropConditionExpires, days(90+g.rng.intn(120)).Format("2006-01-02")),
+				sparcProp(PropConditionExpires, days(90+g.rng.intn(120)).Format(dateLayout)),
 				sparcProp(PropTrigger, "score<0.85"),
 			)
 			// Keyed on the day the decision was taken, not the quarter it
 			// fell in: an AO decision happens on a date, and the value has to
 			// line up with the next-decision-date prop.
 			decided := days(-7)
-			decision, err := g.keys.AODecision(ssp, risk.UUID.String(), decided.Format("2006-01-02"))
+			decision, err := g.keys.AODecision(ssp, risk.UUID.String(), decided.Format(dateLayout))
 			if err != nil {
 				return assessed{}, err
 			}

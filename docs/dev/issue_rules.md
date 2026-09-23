@@ -301,6 +301,34 @@ npx @redocly/cli lint api/openapi.yaml
 npx ajv-cli compile -s schemas/sparc-namespace-props.v1.schema.json --spec=draft2020
 ```
 
+### Reading this pull request's SonarCloud findings
+
+`sonar-pr-findings.yml` fetches the findings for **this PR** as OHDF and writes them to the job
+summary, so they are readable in the PR's own checks. The full OHDF is an artifact:
+
+```bash
+gh run download <run-id>            # the run of "SonarCloud PR findings"
+```
+
+Read it rather than the dashboard. The quality gate fails on the Security Rating condition and
+little else this project hits, so **maintainability findings pass the gate** — they are reported
+here and nowhere else in the repository.
+
+It reports; it does not gate. A PR with no findings passes, and the count is never asserted:
+asserting it would make the job fail on good news. What *is* asserted is that an analysis of this
+PR's head commit existed before the fetch, because an absent analysis returns an empty result that
+converts into a clean-looking report.
+
+**A clean PR produces no artifact**, only the summary line saying so. `hdf fetch sonarqube` exits 1
+on a zero-issue result, so the fetch is skipped when SonarCloud reports nothing to convert — an
+upstream defect, written up in [`hdf-cli-empty-sonarqube-result.md`](hdf-cli-empty-sonarqube-result.md).
+The count that decides this comes from `issues/search` directly, which also gives the job a second,
+independent source for the number: if the API reports findings and the OHDF carries none, the job
+fails rather than reporting clean.
+
+The **evidence** emit (`sonarqube-hdf-emit.yml`) is a different thing and stays `main`-only. PR
+findings are a development signal; evidence is what landed on the default branch.
+
 ### Targeted runs during development are fine; the full suite gates the push
 
 A single test while iterating:

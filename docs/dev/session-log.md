@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-20 (**file created** under #33. Restores were costing a
+**Last updated:** 2026-09-23 (#63). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,87 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-22/23 — #63 — `feature/63_sonar_pr_findings`
+
+**In flight:** nothing.
+
+**`hdf fetch` scopes to a pull request, which I had wrongly inferred it could not.** I read the
+emit workflow's invocation, saw only `--url --project-key --format --organization`, and concluded
+the tool was project-scoped. The owner said otherwise; downloading the pinned binary and running
+`--help` showed **both** `--branch` and `--pull-request`. Inference from a call site is not
+measurement of a tool, and the cost of the error was proposing a worse design — raw issue JSON
+for the development loop instead of the OHDF the question actually asked for.
+
+**`--pull-request`, not `--branch`.** SonarCloud runs *pull request* analysis for these, so a
+branch-scoped fetch would look for an analysis that may not exist for a short-lived branch — and
+an absent analysis returns an empty result that converts into a clean-looking report, which is
+the failure this estate already knows by heart.
+
+**The trap that would have made this quietly useless:** on a `pull_request` event `GITHUB_SHA` is
+the **merge commit**, which SonarCloud never analysed. A wait keyed on it times out on every run,
+and the tempting fix for a wait that always times out is to delete the wait — which reintroduces
+#13. It waits on `pull_request.head.sha`.
+
+**The workflow's first run failed, and both causes were real.** It is its own first exercise, and
+that is the only verification that counts for it. What it caught:
+
+*One.* `api/project_analyses/search?…&pullRequest=<n>` **silently ignores the `pullRequest`
+parameter** and answers about the default branch. The wait polled for PR #66's head and was handed
+`f753a1f` — main's merge of #65. Not an error, not an empty result: a confident answer to a
+different question. Had the match been any looser it would have fetched **main's** findings and
+filed them as this PR's, which is #13 wearing a new hat. The endpoint that actually reports
+per-PR analyses is `api/project_pull_requests/list`, which carries `commit.sha` and
+`analysisDate`; it was checked against the live API before being trusted this time.
+
+The date-only fallback went with it. A PR entry exists from its first analysis onward, so matching
+on the date alone would have accepted an analysis of an *earlier commit on this same PR*. There is
+now no fallback: if the API stops reporting `commit.sha` the job fails loudly rather than
+attributing findings to code they were not derived from.
+
+*Two.* **`hdf fetch sonarqube` exits 1 on a clean scan** — `invalid SonarQube structure: missing
+or invalid issues field`, when the field is present and simply empty. Reproduced on the pinned
+`v3.5.1` and on `v3.7.0`, so it is not a regression. Measured side by side on this project: PR #62
+(6 issues) converts, PR #60 and #66 (0 issues) both fail. So the tool cannot be run
+unconditionally in CI, which is the only place it earns its keep, and the obvious workaround
+(`|| true`) would suppress auth failures and wrong project keys along with the good news. Written
+up in [`hdf-cli-empty-sonarqube-result.md`](hdf-cli-empty-sonarqube-result.md); **not filed** —
+third party, owner's call, same standing as the `go-oscal` report. The report also carries a
+confirmed second defect found in the same runs: rule enrichment 400s because `rules/show` is
+called without the `organization` parameter SonarCloud requires, although `--organization` was
+supplied.
+
+**Proving the reporting path cost a third measurement.** PR #66 is clean, so its own run
+exercises only the zero-finding path. Scratch PR #67 planted a `go:S1192` finding — and the first
+attempt reported nothing, because the plant went into a `_test.go` file to protect the coverage
+floor. `new_lines` was 18, so the file *was* analysed; `new_violations` was 0. This repository's
+`sonar-project.properties` sets `sonar.test.inclusions=**/*_test.go`, and SonarCloud applies a
+**reduced rule set** to test sources. Worth knowing for **#42**: test code is held to a smaller
+rule set than production code, so a finding class can be absent from `_test.go` without anything
+being wrong. Moved to a production file with a test covering it, the full path ran — fetch, one
+result rendered, artifact uploaded, and the download parses as OHDF. #67 is closed and deleted.
+
+The workaround is a skip guarded by a count read from `issues/search` directly, marked in the
+workflow for removal when the pin can move. That count is not only a guard: it is a **second,
+independent source for the number**, and the job now fails if the API reports findings while the
+OHDF carries none. The failure this workflow most needs to defeat is an empty result that reads as
+a clean report, and until now it had only one place to read that number from.
+
+**Reported, never gated.** The count is printed and never asserted: a PR with no findings is the
+normal case, and asserting a non-zero count would make the job fail on good news. What *is*
+asserted is that an analysis existed before the fetch. Whether maintainability findings should
+fail a PR is a quality-gate change in the console and stays open deliberately.
+
+**Kept off the evidence path.** A separate workflow rather than a `pull_request` trigger on the
+emit, with no `id-token` and no bucket. The emit's own header gives two reasons it never runs on
+PRs and both still hold; adding a trigger there would put a PR-scoped scan one edit from the
+evidence bucket.
+
+**Next:** the remaining cleanups — #48 (five `npx` call sites in two required checks), #57 (pin
+comments nothing verifies), #42 (Sonar configuration) — or **P1** (#16), which carries S1's
+scanners and inherits TM-11 and #49's measured `go-oscal` limitation as requirements.
 
 ---
 

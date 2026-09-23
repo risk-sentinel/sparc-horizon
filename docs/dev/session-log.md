@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-20 (**file created** under #33. Restores were costing a
+**Last updated:** 2026-09-23 (#63). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -44,7 +44,7 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
-## 2026-09-22 — #63 — `feature/63_sonar_pr_findings`
+## 2026-09-22/23 — #63 — `feature/63_sonar_pr_findings`
 
 **In flight:** nothing.
 
@@ -64,6 +64,40 @@ the failure this estate already knows by heart.
 the **merge commit**, which SonarCloud never analysed. A wait keyed on it times out on every run,
 and the tempting fix for a wait that always times out is to delete the wait — which reintroduces
 #13. It waits on `pull_request.head.sha`.
+
+**The workflow's first run failed, and both causes were real.** It is its own first exercise, and
+that is the only verification that counts for it. What it caught:
+
+*One.* `api/project_analyses/search?…&pullRequest=<n>` **silently ignores the `pullRequest`
+parameter** and answers about the default branch. The wait polled for PR #66's head and was handed
+`f753a1f` — main's merge of #65. Not an error, not an empty result: a confident answer to a
+different question. Had the match been any looser it would have fetched **main's** findings and
+filed them as this PR's, which is #13 wearing a new hat. The endpoint that actually reports
+per-PR analyses is `api/project_pull_requests/list`, which carries `commit.sha` and
+`analysisDate`; it was checked against the live API before being trusted this time.
+
+The date-only fallback went with it. A PR entry exists from its first analysis onward, so matching
+on the date alone would have accepted an analysis of an *earlier commit on this same PR*. There is
+now no fallback: if the API stops reporting `commit.sha` the job fails loudly rather than
+attributing findings to code they were not derived from.
+
+*Two.* **`hdf fetch sonarqube` exits 1 on a clean scan** — `invalid SonarQube structure: missing
+or invalid issues field`, when the field is present and simply empty. Reproduced on the pinned
+`v3.5.1` and on `v3.7.0`, so it is not a regression. Measured side by side on this project: PR #62
+(6 issues) converts, PR #60 and #66 (0 issues) both fail. So the tool cannot be run
+unconditionally in CI, which is the only place it earns its keep, and the obvious workaround
+(`|| true`) would suppress auth failures and wrong project keys along with the good news. Written
+up in [`hdf-cli-empty-sonarqube-result.md`](hdf-cli-empty-sonarqube-result.md); **not filed** —
+third party, owner's call, same standing as the `go-oscal` report. The report also carries a
+confirmed second defect found in the same runs: rule enrichment 400s because `rules/show` is
+called without the `organization` parameter SonarCloud requires, although `--organization` was
+supplied.
+
+The workaround is a skip guarded by a count read from `issues/search` directly, marked in the
+workflow for removal when the pin can move. That count is not only a guard: it is a **second,
+independent source for the number**, and the job now fails if the API reports findings while the
+OHDF carries none. The failure this workflow most needs to defeat is an empty result that reads as
+a clean report, and until now it had only one place to read that number from.
 
 **Reported, never gated.** The count is printed and never asserted: a PR with no findings is the
 normal case, and asserting a non-zero count would make the job fail on good news. What *is*

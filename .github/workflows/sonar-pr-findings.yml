@@ -81,29 +81,48 @@ jobs:
         run: |
           set -euo pipefail
           # GITHUB_SHA is the merge commit and is deliberately not used here.
+          #
+          # The endpoint is `project_pull_requests/list`, NOT
+          # `project_analyses/search?pullRequest=`. The first version of this
+          # step used the latter, and its first run failed in the instructive
+          # way: `pullRequest=66` was SILENTLY IGNORED and the API returned the
+          # analysis history of the DEFAULT BRANCH — revision f753a1f, main's
+          # merge of #65. No error, no empty result, just a confident answer to
+          # a different question. Had the match been looser it would have fetched
+          # main's findings and filed them as this PR's.
+          #
+          # `project_pull_requests/list` reports, per pull request, the analysed
+          # `commit.sha` and `analysisDate`. Measured against the live API rather
+          # than inferred, which is what the first version skipped.
           api() { curl -sS --proto '=https' --proto-redir '=https' --tlsv1.2 -u "${SONAR_TOKEN}:" "$@"; }
-          deadline=600
+          deadline=900
 
           echo "Waiting for a SonarCloud analysis of ${HEAD_SHA} on PR #${PR}..."
           while :; do
-            an="$(api "${SONAR_HOST_URL}/api/project_analyses/search?project=${SONAR_PROJECT_KEY}&pullRequest=${PR}&ps=1")"
-            a_date="$(printf '%s' "$an" | jq -r '.analyses[0].date // empty')"
-            a_rev="$(printf '%s' "$an" | jq -r '.analyses[0].revision // empty')"
-            echo "  newest_analysis=${a_date:-none} revision=${a_rev:-<not reported>} (${SECONDS}s)"
+            prs="$(api "${SONAR_HOST_URL}/api/project_pull_requests/list?project=${SONAR_PROJECT_KEY}")"
+            entry="$(printf '%s' "$prs" | jq -c --arg pr "${PR}" '.pullRequests[]? | select(.key == $pr)')"
+            a_date="$(printf '%s' "$entry" | jq -r '.analysisDate // empty')"
+            a_rev="$(printf '%s' "$entry" | jq -r '.commit.sha // empty')"
+            echo "  analysis=${a_date:-none} commit=${a_rev:-none} (${SECONDS}s)"
 
-            if [ -n "${a_rev}" ] && [ "${a_rev}" = "${HEAD_SHA}" ]; then
-              echo "PASS — analysis of ${HEAD_SHA} is present."
+            if [ "${a_rev}" = "${HEAD_SHA}" ]; then
+              echo "PASS — analysis of ${HEAD_SHA} is present (${a_date})."
+              {
+                echo "SONAR_ANALYSIS_DATE=${a_date}"
+                echo "SONAR_GATE=$(printf '%s' "$entry" | jq -r '.status.qualityGateStatus // "unknown"')"
+              } >> "$GITHUB_ENV"
               break
             fi
-            # Some deployments do not report a revision. Fall back to the date,
-            # which is weaker: it proves an analysis ran after this commit was
-            # pushed, not that it analysed this commit.
-            if [ -z "${a_rev}" ] && [ -n "${a_date}" ]; then
-              echo "PASS — analysis (${a_date}) present; revision not reported by the API."
-              break
-            fi
+
+            # There is deliberately NO date-only fallback. A PR entry exists
+            # from its first analysis onward, so matching on the date alone
+            # would accept an analysis of an EARLIER commit on this same PR and
+            # report its findings against this head — the stale attribution this
+            # step exists to prevent. If the API ever stops reporting
+            # `commit.sha`, this job fails loudly rather than reporting findings
+            # derived from code that is not the code under review.
             if [ "${SECONDS}" -ge "${deadline}" ]; then
-              echo "::error::No analysis of ${HEAD_SHA} appeared for PR #${PR} within 10 minutes. Refusing to fetch: an absent analysis returns an empty result, which converts into a clean-looking report."
+              echo "::error::No analysis of ${HEAD_SHA} appeared for PR #${PR} within $((deadline / 60)) minutes. Refusing to fetch: an absent analysis returns an empty result, which converts into a clean-looking report."
               exit 1
             fi
             sleep 15
@@ -125,7 +144,42 @@ jobs:
           install -m 0755 hdf /usr/local/bin/hdf
           hdf version
 
+      - name: Count this pull request's findings
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          # Counted from the API directly, BEFORE the converter runs, for two
+          # reasons.
+          #
+          # 1. `hdf fetch sonarqube` FAILS on a clean pull request. Measured
+          #    against v3.5.1 and v3.7.0 alike: when `issues/search` returns
+          #    `"issues": []` with `total: 0`, the converter exits 1 with
+          #    "invalid SonarQube structure: missing or invalid issues field" —
+          #    although the field is present and simply empty. A PR with no
+          #    findings is the normal case and MUST pass, so the fetch is
+          #    skipped when there is nothing to convert. This is an upstream
+          #    defect, written up in docs/dev/hdf-cli-empty-sonarqube-result.md.
+          #    Remove this guard only once that is fixed and the pin is bumped.
+          #
+          # 2. It gives an INDEPENDENT count to check the OHDF against. The
+          #    failure this workflow most needs to defeat is an empty result
+          #    that renders as a clean report; a second source for the number
+          #    is what makes that detectable rather than reassuring.
+          n="$(curl -sS --proto '=https' --proto-redir '=https' --tlsv1.2 \
+                 -u "${SONAR_TOKEN}:" \
+                 "${SONAR_HOST_URL}/api/issues/search?componentKeys=${SONAR_PROJECT_KEY}&pullRequest=${PR}&ps=1" \
+               | jq -r '.total // empty')"
+          if [ -z "${n}" ]; then
+            echo "::error::issues/search did not report a total for PR #${PR}. Refusing to continue: an unreadable count cannot be distinguished from a clean PR."
+            exit 1
+          fi
+          echo "FINDING_COUNT=${n}" >> "$GITHUB_ENV"
+          echo "SonarCloud reports ${n} issue(s) on PR #${PR}."
+
       - name: Fetch this pull request's findings as OHDF
+        if: env.FINDING_COUNT != '0'
         env:
           SONARQUBE_TOKEN: ${{ secrets.SONAR_TOKEN }}   # hdf-cli reads this name
           PR: ${{ github.event.pull_request.number }}
@@ -144,38 +198,68 @@ jobs:
           echo "Fetched $(wc -c < "${HDF_FILE}") bytes of OHDF for PR #${PR}."
 
       - name: Summarise the findings
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           # The count is REPORTED, never asserted. A pull request with no
           # findings is the normal case and must pass; asserting a non-zero
           # count would make this job fail on good news.
-          rules="$(jq '[.baselines[]?.requirements[]?] | length' "${HDF_FILE}")"
-          total="$(jq '[.baselines[]?.requirements[]?.results[]?] | length' "${HDF_FILE}")"
-
           {
             echo "## SonarCloud findings on this pull request"
             echo
+            echo "Analysis \`${SONAR_ANALYSIS_DATE}\` of \`${GITHUB_HEAD_REF}\` at"
+            echo "\`${HEAD_SHA}\` — quality gate **${SONAR_GATE}**."
+            echo
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "${FINDING_COUNT}" -eq 0 ]; then
+            {
+              echo "**No findings.** The analysis ran and reported nothing, which is not the same"
+              echo "as no analysis having run — the wait step above is what distinguishes them."
+              echo
+              echo "No OHDF artifact: the converter cannot represent an empty result set"
+              echo "(see \`docs/dev/hdf-cli-empty-sonarqube-result.md\`)."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "Reported 0 findings."
+            exit 0
+          fi
+
+          rules="$(jq '[.baselines[]?.requirements[]?] | length' "${HDF_FILE}")"
+          total="$(jq '[.baselines[]?.requirements[]?.results[]?] | length' "${HDF_FILE}")"
+
+          # The one assertion worth making, and it is narrow on purpose: the API
+          # says there ARE findings, so OHDF carrying none means the conversion
+          # silently dropped them — the exact "empty result reads as clean"
+          # failure this job exists to prevent. A count that merely DIFFERS is
+          # reported, not failed: hotspots and issues are separate endpoints and
+          # a divergence there is not evidence of loss.
+          if [ "${total}" -eq 0 ]; then
+            echo "::error::SonarCloud reports ${FINDING_COUNT} issue(s) but the OHDF carries none. Refusing to report clean."
+            exit 1
+          fi
+          if [ "${total}" -ne "${FINDING_COUNT}" ]; then
+            echo "::warning::OHDF carries ${total} result(s); the API reported ${FINDING_COUNT} issue(s)."
+          fi
+
+          {
             echo "**${total}** result(s) across **${rules}** rule(s), as OHDF."
             echo
-            if [ "${total}" -eq 0 ]; then
-              echo "No findings. The analysis ran and reported nothing — which is not the same as"
-              echo "no analysis having run, and the wait step above is what distinguishes them."
-            else
-              echo "| Rule | Impact | Where | Message |"
-              echo "|---|---|---|---|"
-              jq -r '
-                .baselines[]?.requirements[]? as $r
-                | $r.results[]?
-                | "| `\($r.id)` | \($r.impact // "-") | \(.codeDesc // "-") | \((.message // "") | gsub("\\|"; "\\\\|") | .[0:120]) |"
-              ' "${HDF_FILE}"
-              echo
-              echo "Full OHDF is attached as an artifact — \`gh run download ${GITHUB_RUN_ID}\`."
-            fi
+            echo "| Rule | Impact | Where | Message |"
+            echo "|---|---|---|---|"
+            jq -r '
+              .baselines[]?.requirements[]? as $r
+              | $r.results[]?
+              | "| `\($r.id)` | \($r.impact // "-") | \(.codeDesc // "-") | \((.message // "") | gsub("\\|"; "\\\\|") | .[0:120]) |"
+            ' "${HDF_FILE}"
+            echo
+            echo "Full OHDF is attached as an artifact — \`gh run download ${GITHUB_RUN_ID}\`."
           } >> "$GITHUB_STEP_SUMMARY"
 
           echo "Reported ${total} result(s) across ${rules} rule(s)."
 
       - name: Upload the OHDF
+        if: env.FINDING_COUNT != '0'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: sonar-pr-findings-${{ github.event.pull_request.number }}

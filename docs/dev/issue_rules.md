@@ -319,6 +319,13 @@ asserting it would make the job fail on good news. What *is* asserted is that an
 PR's head commit existed before the fetch, because an absent analysis returns an empty result that
 converts into a clean-looking report.
 
+**A clean PR produces no artifact**, only the summary line saying so. `hdf fetch sonarqube` exits 1
+on a zero-issue result, so the fetch is skipped when SonarCloud reports nothing to convert — an
+upstream defect, written up in [`hdf-cli-empty-sonarqube-result.md`](hdf-cli-empty-sonarqube-result.md).
+The count that decides this comes from `issues/search` directly, which also gives the job a second,
+independent source for the number: if the API reports findings and the OHDF carries none, the job
+fails rather than reporting clean.
+
 The **evidence** emit (`sonarqube-hdf-emit.yml`) is a different thing and stays `main`-only. PR
 findings are a development signal; evidence is what landed on the default branch.
 

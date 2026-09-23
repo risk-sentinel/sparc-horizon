@@ -44,6 +44,53 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-22 — #64 — `feature/64_p0_exit_checkpoint`
+
+**In flight:** nothing. **P0's exit checkpoint.** r4 issued, superseding r3.
+
+**The ledger r3 introduced had stopped being kept.** Five firings between r3 and this checkpoint
+went unlogged — #37 and #36 on the key grammar, #49 on the trust boundary, #54 on peer
+verification and deduplication, #61 as a judgement call — while the table read *"No firing is
+currently outstanding."* They were reconstructed from `git log --merges`, which is exactly the
+work the ledger exists to avoid. #31 chose checkpointing over per-merge re-attestation **on the
+condition** that interim staleness stayed auditable, and that condition was not met.
+
+**An empty ledger and an unmaintained one read identically.** That is the part worth keeping: the
+failure is recorded in the ledger rather than corrected quietly, the ledger is now a step-8
+obligation in `issue_rules.md`, and a checkpoint reconstructs from the log regardless rather than
+trusting the table.
+
+**Two findings added, both measured rather than reasoned.** TM-10 — two *conforming*
+implementations derive different identifiers for one object, neither erroring; every one of the
+26 shared vectors agreed and the divergence was in a type rule no vector exercises. TM-11 — a
+trusted library drops content and validation passes **before and after**, so a pipeline that
+validates at both ends sees green twice. Neither was reachable by thinking about the design; both
+came from running something against it.
+
+**The trust table gained two rows it should always have had**: the OSCAL type layer and SPARC's
+shared key-grammar contract. A threat model that does not name what it trusts is a list of
+someone else's problems, and these two were trusted silently.
+
+**A defect of mine surfaced while writing the record.** #54's namespace adoption replaced the
+namespace *string* through `docs/compliance/` and never recomputed the *derived identifiers*, so
+`compliance/README.md` paired the registered URI with the provisional UUID, and every cdef
+identifier still derived from the placeholder. Regenerating them needed the natural keys — and
+**the keys had never been written down**. Nine of eighteen fell out of the documented convention
+by brute force; the rest had to be named afresh. They are now a table in that README, because a
+deterministic identifier whose key exists only in someone's memory is not reproducible, which is
+the one property it is for.
+
+**Attestations r1–r3 are left exactly as issued**, under the placeholder namespace. They were
+correct when written, and a record edited after the fact is not evidence. Only the current
+record's hash binding matches the document, which is how a reader tells which one is current
+without consulting the table.
+
+**Next:** P0's exit criteria are all that remain — `sparc-validate` against the fixtures
+(`sparc#1154`, upstream and silent since 2026-09-19) and the OpenAPI review by both owners.
+Neither is closable from here.
+
+---
+
 ## 2026-09-22 — #61 — `feature/61_freeze_api_v0`
 
 **In flight:** nothing. **P0's last task.** Every task in #15 is now done; what remains are the

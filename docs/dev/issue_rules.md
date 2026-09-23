@@ -208,6 +208,13 @@ needs an answer that is not "a scanner was quiet that day".
      status, include Started/Completed dates, and update the cross-repo issue
      table if anything was filed
    - `docs/dev/Developer_Collision_Avoidance_Plan.md` — file lists and status
+   - **`docs/compliance/threat-model.md`'s interim staleness ledger — if the change trips an
+     early-staleness trigger.** One row: the firing, which trigger, whether it contradicted a
+     finding, and the disposition. This is cheap in the PR that caused it and expensive at a
+     checkpoint: five firings went unlogged between r3 and the P0-exit checkpoint and had to be
+     reconstructed from the git log, which is the work the ledger exists to avoid. **An empty
+     ledger and an unmaintained one read identically**, so a checkpoint reconstructs from the log
+     regardless rather than trusting the table
    - `docs/dev/session-log.md` — a new entry at the top: where unpushed work
      stopped, alternatives rejected that reached no PR body or issue, upstream
      blocker checks with the date checked, and the next slice. Only what GitHub

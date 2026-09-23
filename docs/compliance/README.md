@@ -112,13 +112,50 @@ documents (`docs/03-data-model.md`).
 
 ```
 namespace = uuidv5(URL_NAMESPACE, "https://sparc.risk-sentinel.org/ns")
-          = d051648c-1ae1-569e-8569-b679a9aaf142
+          = 9f434272-f796-589b-b972-954790395630
 component  = uuidv5(namespace, "component:horizon-ledger")
+           = d1f77072-a767-587c-8444-8045e5622e83
 resource   = uuidv5(namespace, "resource:nist-sp800-53-rev5-catalog")
 ```
 
+The namespace is the registered one (`sparc#1155`), adopted in #54. Identifiers here were
+regenerated under it at the P0-exit checkpoint (#64) — before that they derived from Horizon's
+placeholder URI and were provisional, exactly as the fixtures were.
+
 Document-level UUIDs are the exception: they change per revision, because a revision is
 a different document.
+
+### The natural keys, written down
+
+Every key, once, so no one has to reconstruct them. **They were not recorded before #64**, and
+recovering them meant brute-forcing the derivation — nine of eighteen fell out of the documented
+convention and the rest had to be named afresh. A deterministic identifier whose key exists only
+in someone's memory is not reproducible, which is the one property it is for.
+
+| Natural key | Object |
+|---|---|
+| `component:horizon-attestation` | Attestation and evidence signing |
+| `component:horizon-authz` | Node authorization |
+| `component:horizon-ledger` | Append-only hash-chained ledger |
+| `component:horizon-overlay` | What-if overlay |
+| `component:horizon-pipeline` | SPARC Horizon change-control and scanning pipeline |
+| `component:horizon-service` | SPARC Horizon service |
+| `resource:aws-cloudwatch-logs` | Amazon CloudWatch Logs — AWS component definition |
+| `resource:aws-ecr` | Amazon Elastic Container Registry — AWS component definition |
+| `resource:aws-ecs` | Amazon EC2 Container Service — AWS component definition |
+| `resource:aws-elbv2` | Elastic Load Balancing v2 — AWS component definition |
+| `resource:aws-iam` | AWS Identity and Access Management — AWS component definition |
+| `resource:aws-kms` | AWS Key Management Service — AWS component definition |
+| `resource:aws-s3` | Amazon Simple Storage Service — AWS component definition |
+| `resource:aws-secrets-manager` | AWS Secrets Manager — AWS component definition |
+| `resource:aws-service-component-definitions` | AWS service component definitions |
+| `resource:aws-sts` | AWS Security Token Service — AWS component definition |
+| `resource:horizon-design-docs` | SPARC Horizon design documents |
+| `resource:nist-sp800-53-rev5-catalog` | NIST SP 800-53 rev 5 catalog |
+
+Adding a component or a resource means adding its key here in the same change. A UUID in the
+definition with no row here cannot be checked, and an unchecked "deterministic" identifier is
+indistinguishable from a random one.
 
 Custom properties are **not** invented here. The nine props under
 `https://sparc.risk-sentinel.org/ns` are enumerated and constrained by

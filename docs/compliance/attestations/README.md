@@ -5,7 +5,8 @@ after it is signed** — a new revision supersedes it, and both files stay.
 
 | Record | Attests | State |
 |---|---|---|
-| [`threat-model-2026-09-20.oscal.json`](threat-model-2026-09-20.oscal.json) | `../threat-model.md` r3 | **Current.** Expires 2027-03-18 |
+| [`threat-model-2026-09-22.oscal.json`](threat-model-2026-09-22.oscal.json) | `../threat-model.md` r4 | **Current.** The P0-exit checkpoint. Expires 2027-03-18 |
+| [`threat-model-2026-09-20.oscal.json`](threat-model-2026-09-20.oscal.json) | `../threat-model.md` r3 | **Superseded** by r4 |
 | [`threat-model-2026-09-19-r2.oscal.json`](threat-model-2026-09-19-r2.oscal.json) | `../threat-model.md` r2 | **Superseded** by r3 |
 | [`threat-model-2026-09-19.oscal.json`](threat-model-2026-09-19.oscal.json) | `../threat-model.md` r1 | **Superseded** by r2, same day |
 
@@ -76,3 +77,18 @@ git log --show-signature -- docs/compliance/attestations/
 
 **Signing the commit is the act of attesting.** Whoever signs is asserting they performed the
 review, so the content is read before it lands.
+
+## Identifiers, and why the older records look different
+
+Every UUID in **r4** derives under the registered federation namespace,
+`9f434272-f796-589b-b972-954790395630` (`sparc#1155`, adopted in #54), over the natural keys
+recorded in [`../README.md`](../README.md).
+
+**r1 through r3 derive under Horizon's placeholder namespace** and are left exactly as issued.
+They were correct when written, the namespace they used was the one this repository had, and an
+attestation edited after the fact is not evidence of anything — which is the rule this directory
+exists to enforce. So the identifier scheme changes at r4 and the older records do not move.
+
+A reader comparing two records across that boundary should expect the party and resource UUIDs to
+differ even where they name the same thing. The hashes are what bind a record to its document,
+and those are unaffected.

@@ -1,0 +1,143 @@
+{
+  "assessment-results": {
+    "uuid": "49a575cc-3b18-4eb5-8e2b-001392dafb8c",
+    "metadata": {
+      "title": "SPARC Horizon threat model and security architecture review — attestation, revision 4",
+      "last-modified": "2026-09-22T00:00:00Z",
+      "version": "4.0.0",
+      "oscal-version": "1.2.1",
+      "roles": [
+        {
+          "id": "reviewer",
+          "title": "Security architecture reviewer"
+        },
+        {
+          "id": "attestor",
+          "title": "Attesting party"
+        }
+      ],
+      "parties": [
+        {
+          "uuid": "8f93c9c2-048d-5108-b83a-3a7bab139bb7",
+          "type": "organization",
+          "name": "Risk-Sentinel",
+          "remarks": "The reviewing individual is identified by the verified signature on the commit that introduces this record, not by a name asserted inside it."
+        }
+      ],
+      "responsible-parties": [
+        {
+          "role-id": "reviewer",
+          "party-uuids": [
+            "8f93c9c2-048d-5108-b83a-3a7bab139bb7"
+          ]
+        },
+        {
+          "role-id": "attestor",
+          "party-uuids": [
+            "8f93c9c2-048d-5108-b83a-3a7bab139bb7"
+          ]
+        }
+      ],
+      "remarks": "The P0-exit checkpoint promised by r3 and issue #31. Supersedes assessment result 755866ff-18e5-4ca6-aaf1-025eef3ed6e1 (r3, 2026-09-20). Five early-staleness trigger firings are folded in: #37 and #36 on the UUID key grammar, #49 on the trust boundary, #54 on peer verification and deduplication, and #61 recorded as a judgement call. Two findings are added, TM-10 and TM-11, both measured rather than supposed. Identifiers in this record derive under the REGISTERED federation namespace 9f434272-f796-589b-b972-954790395630 (sparc#1155); records before r4 derive under Horizon's placeholder and are left unedited, because an attestation revised in place is not evidence. The expiry is unchanged at 2027-03-18: the 180-day clock runs from the substantive review on 2026-09-19, and resetting it per revision would make a 180-day interval perpetual."
+    },
+    "import-ap": {
+      "href": "#bb7581c7-7b53-58a4-88ea-663c32d31ea6",
+      "remarks": "There is no separate assessment plan. The requirement, its scope and its evidencing method are set by docs/dev/issue_rules.md and phase item S0-17 in docs/dev/Implementation_plan.md, which is what this href names. Recorded plainly rather than inventing a plan document to satisfy the field."
+    },
+    "results": [
+      {
+        "uuid": "762f57b1-c93f-5bb0-ae23-83c1f0d486f0",
+        "title": "Threat model and security architecture review of the design of record, revision 4 — P0-exit checkpoint",
+        "description": "Re-review at P0 exit, with the contracts this document reasons about complete: the namespace schema under the registered namespace, the UUIDv5 key grammar and its Go reference, the fixture federation, and API v0 frozen. This is one review of a settled design rather than four of a moving one, which is what the checkpoint cadence was chosen to buy.\n\nTwo findings are ADDED. TM-10: two conforming implementations derive different identifiers for one object, with neither side erroring — measured in #54, where every one of the 26 shared vectors agreed and the divergence was in a type rule no vector exercises. TM-11: a trusted OSCAL library drops content and validation passes before AND after, so a pipeline that validates at both ends sees green twice — measured in #49. Neither was reachable by reasoning; both came from running something.\n\nNo finding is invalidated. TM-1 gains the refusal semantics settled in #61: an unauthorized node returns 404, indistinguishable from one that does not exist, because a 403 discloses that a boundary exists across organizations not meant to see each other. TM-6 is unchanged and TM-10 sits beside it: TM-6 is a hostile peer exploiting determinism, TM-10 is honest peers disagreeing about what the identifier is.\n\nThe inherited-trust table gains two rows it should always have had: the OSCAL type layer, now known to lose content, and SPARC's shared key-grammar contract.\n\nThis review also records a process failure. The interim staleness ledger r3 introduced was NOT MAINTAINED: five firings went unlogged for up to two days while the ledger read 'no firing outstanding', and were reconstructed from the git log at this checkpoint — which is the work the ledger exists to avoid. The ledger is now a step-8 obligation in the PR that trips the trigger, and a checkpoint reconstructs from the log regardless rather than trusting an empty table. The failure is recorded rather than quietly corrected, because a mechanism that silently stopped working is what a reader most needs to know about.",
+        "start": "2026-09-22T00:00:00Z",
+        "end": "2026-09-22T00:00:00Z",
+        "reviewed-controls": {
+          "description": "The control this activity evidences.",
+          "control-selections": [
+            {
+              "description": "Developer testing and evaluation — threat modeling and vulnerability analyses.",
+              "include-controls": [
+                {
+                  "control-id": "sa-11.2"
+                }
+              ]
+            }
+          ]
+        },
+        "observations": [
+          {
+            "uuid": "d0aefaac-315c-55cf-96ce-007d7c84244d",
+            "title": "Threat model re-reviewed and attested at P0 exit, folding in five trigger firings and adding two measured findings",
+            "description": "Eleven findings after this review, up from nine. Decisions: one deferred as an open phase-0 decision (TM-4, the chain head has no anchor outside the writer's control), one accepted and inherited (TM-8, deployment), one accepted risk within TM-5, and the rest carried as requirements on the phases that build the affected component — now including TM-10 on P6 with an open cross-repo disagreement (sparc#1175), and TM-11 on P1 and P4.\n\nThe checkpoint was due because P0's tasks are complete, not because a phase finished: building what this document requires does not invalidate it, and changing what it assumed does. What changed was the assumptions — the namespace became real, the grammar gained an implementation, and two trusted dependencies turned out to behave differently than assumed.",
+            "methods": [
+              "EXAMINE"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "collected": "2026-09-22T00:00:00Z",
+            "relevant-evidence": [
+              {
+                "href": "#2564fe68-65fc-58cd-a0fa-53825c58f310",
+                "description": "The reviewed document, hashed."
+              },
+              {
+                "href": "#415a6d67-8095-58e9-8daf-cb8d6236e529",
+                "description": "The superseded record, hashed, kept unmodified."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "2564fe68-65fc-58cd-a0fa-53825c58f310",
+          "title": "SPARC Horizon threat model, 2026-09-22 revision 4",
+          "description": "The reviewed document. Its hash binds this attestation to that exact text.",
+          "rlinks": [
+            {
+              "href": "../threat-model.md",
+              "media-type": "text/markdown",
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "e9babc25c8323edc7255024d757db01e110f3178b05b7eeb5573ad65b227fe38"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "uuid": "415a6d67-8095-58e9-8daf-cb8d6236e529",
+          "title": "Superseded attestation — threat model, 2026-09-20 revision 3",
+          "description": "Kept unmodified. An attestation quietly revised in place is not evidence of anything.",
+          "rlinks": [
+            {
+              "href": "./threat-model-2026-09-20.oscal.json",
+              "media-type": "application/oscal+json",
+              "hashes": [
+                {
+                  "algorithm": "SHA-256",
+                  "value": "c4f25d7f77fad964a9ede2652422cc1eaa5cecb89176aca2139e849d5ad50095"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "uuid": "bb7581c7-7b53-58a4-88ea-663c32d31ea6",
+          "title": "Process of record — issue_rules.md and phase item S0-17",
+          "description": "What requires this review, defines its scope, and requires it to be evidenced through the attestation path with freshness asserted.",
+          "rlinks": [
+            {
+              "href": "../../dev/issue_rules.md",
+              "media-type": "text/markdown"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

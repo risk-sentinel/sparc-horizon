@@ -150,8 +150,49 @@ func validateGolden(t *testing.T, schema *jsonschema.Schema, name, path string, 
 
 // Both directions: the spec cannot declare an endpoint the mock cannot answer,
 // and the mock cannot serve a shape the spec does not describe.
+// The endpoints the mock answers from goldens, and the marker that identifies
+// each one's files.
+var servedFromGoldens = map[string]string{
+	"/v1/tree":                   "tree.json",
+	"/v1/nodes/{id}/heat":        "/heat/",
+	"/v1/nodes/{id}/cell":        "/cell/",
+	"/v1/controls/{uuid}/chain":  "api/chain/",
+	"/v1/nodes/{id}/next-action": "next-action.json",
+}
+
+// Declared by the frozen contract and answered by the service rather than by a
+// fixture. Listed so that "no golden" is a stated position and not an
+// omission — the difference matters when the next person wonders whether the
+// mock is incomplete or the endpoint is deliberate.
+var notMocked = map[string]string{
+	"/v1/attestations":            "write path; P4 implements it",
+	"/v1/attestations/{id}/sign":  "write path; P4 implements it",
+	"/v1/decisions":               "write path; P5 implements it",
+	"/v1/whatif":                  "write path; P7 implements it",
+	"/v1/nodes/{id}/blast-radius": "P6, out of default scope",
+	"/v1/export/oscal/{boundary}": "serves the fixture OSCAL directly, not a golden",
+}
+
+// Both directions: the spec cannot declare an endpoint the mock cannot answer,
+// and the mock cannot serve a shape the spec does not describe.
 func TestEveryContractPathHasAGolden(t *testing.T) {
 	tree := generate(t)
+	paths := specPaths(t)
+
+	assertEveryPathIsAccountedFor(t, paths)
+	assertEveryGoldenHasAPath(t, paths)
+
+	counts := goldensPerEndpoint(tree)
+	for endpoint := range servedFromGoldens {
+		if counts[endpoint] == 0 {
+			t.Errorf("%s: the contract declares it and no golden answers it", endpoint)
+		}
+	}
+	t.Logf("goldens per endpoint: %s", summarise(counts))
+}
+
+func specPaths(t *testing.T) map[string]map[string]any {
+	t.Helper()
 
 	raw, err := os.ReadFile(specPath)
 	if err != nil {
@@ -163,40 +204,35 @@ func TestEveryContractPathHasAGolden(t *testing.T) {
 	if err := yaml.Unmarshal(raw, &spec); err != nil {
 		t.Fatalf("parsing the spec: %v", err)
 	}
-
-	// The endpoints the mock is expected to answer from goldens. The write
-	// endpoints and the two P6/P7 reads are declared by the frozen contract
-	// and answered by the service, not by a fixture — listed here so that
-	// "no golden" is a stated position rather than an omission.
-	servedFromGoldens := map[string]string{
-		"/v1/tree":                   "tree.json",
-		"/v1/nodes/{id}/heat":        "/heat/",
-		"/v1/nodes/{id}/cell":        "/cell/",
-		"/v1/controls/{uuid}/chain":  "api/chain/",
-		"/v1/nodes/{id}/next-action": "next-action.json",
+	if len(spec.Paths) == 0 {
+		t.Fatal("the spec declares no paths")
 	}
-	notMocked := map[string]string{
-		"/v1/attestations":            "write path; P4 implements it",
-		"/v1/attestations/{id}/sign":  "write path; P4 implements it",
-		"/v1/decisions":               "write path; P5 implements it",
-		"/v1/whatif":                  "write path; P7 implements it",
-		"/v1/nodes/{id}/blast-radius": "P6, out of default scope",
-		"/v1/export/oscal/{boundary}": "serves the fixture OSCAL directly, not a golden",
-	}
+	return spec.Paths
+}
 
-	for path := range spec.Paths {
+func assertEveryPathIsAccountedFor(t *testing.T, paths map[string]map[string]any) {
+	t.Helper()
+
+	for path := range paths {
 		_, mocked := servedFromGoldens[path]
 		_, stated := notMocked[path]
 		if !mocked && !stated {
 			t.Errorf("%s is in the frozen contract but neither has a golden nor is listed as not mocked", path)
 		}
 	}
+}
+
+func assertEveryGoldenHasAPath(t *testing.T, paths map[string]map[string]any) {
+	t.Helper()
+
 	for path := range servedFromGoldens {
-		if _, ok := spec.Paths[path]; !ok {
+		if _, ok := paths[path]; !ok {
 			t.Errorf("%s has goldens but is not in the contract", path)
 		}
 	}
+}
 
+func goldensPerEndpoint(tree Tree) map[string]int {
 	counts := map[string]int{}
 	for _, p := range tree.Paths() {
 		for endpoint, marker := range servedFromGoldens {
@@ -205,20 +241,19 @@ func TestEveryContractPathHasAGolden(t *testing.T) {
 			}
 		}
 	}
-	for endpoint := range servedFromGoldens {
-		if counts[endpoint] == 0 {
-			t.Errorf("%s: the contract declares it and no golden answers it", endpoint)
-		}
-	}
+	return counts
+}
 
+func summarise(counts map[string]int) string {
 	keys := make([]string, 0, len(counts))
 	for k := range counts {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
-	var summary []string
+
+	parts := make([]string, 0, len(keys))
 	for _, k := range keys {
-		summary = append(summary, fmt.Sprintf("%s=%d", k, counts[k]))
+		parts = append(parts, fmt.Sprintf("%s=%d", k, counts[k]))
 	}
-	t.Logf("goldens per endpoint: %s", strings.Join(summary, " "))
+	return strings.Join(parts, " ")
 }

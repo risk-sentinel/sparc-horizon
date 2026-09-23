@@ -1,78 +1,55 @@
 {
-  "collection": "authorization_boundaries",
-  "endpoint": "GET /api/v1/authorization_boundaries",
-  "note": "Boundary tier. One SSP each.",
-  "count": 7,
   "data": [
     {
       "id": 1,
       "slug": "ods-portal",
       "name": "Public Portal",
-      "organization_id": 1,
-      "organization_slug": "ods",
-      "fips_199": "moderate",
-      "next_decision_date": "2026-10-11",
-      "oscal_ssp_uuid": "f7de308a-5555-5e35-be6a-029ad885320e"
+      "description": "Public-facing service portal and its supporting API tier.",
+      "status": "active",
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-15T00:00:00Z"
     },
     {
       "id": 2,
       "slug": "ods-identity",
       "name": "Identity Services",
-      "organization_id": 1,
-      "organization_slug": "ods",
-      "fips_199": "high",
-      "next_decision_date": "2026-11-02",
-      "oscal_ssp_uuid": "52176fd3-10ad-5df7-bbb4-c69a930223a8"
+      "description": "Agency identity provider and directory, leveraged by every other boundary in the federation.",
+      "status": "active",
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-16T00:00:00Z"
     },
     {
       "id": 3,
       "slug": "bgm-grants",
       "name": "Grants Platform",
-      "organization_id": 2,
-      "organization_slug": "bgm",
-      "fips_199": "high",
-      "next_decision_date": "2026-10-24",
-      "oscal_ssp_uuid": "a8a226ff-c477-5c42-abdb-a46e356db5d8"
+      "description": "Grant application intake, review and award record.",
+      "status": "active",
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-17T00:00:00Z"
     },
     {
       "id": 4,
       "slug": "bgm-payments",
       "name": "Payments Gateway",
-      "organization_id": 2,
-      "organization_slug": "bgm",
-      "fips_199": "high",
-      "next_decision_date": "2026-12-01",
-      "oscal_ssp_uuid": "15781999-2cd0-51a4-ad7a-3c65a478d3d3"
+      "description": "Disbursement gateway and its ledger.",
+      "status": "active",
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-18T00:00:00Z"
     },
     {
       "id": 5,
       "slug": "ndi-datalake",
       "name": "Research Data Lake",
-      "organization_id": 3,
-      "organization_slug": "ndi",
-      "fips_199": "moderate",
-      "next_decision_date": "2027-01-15",
-      "oscal_ssp_uuid": "f47d858e-7af8-5990-a4de-7365abd272d8"
-    },
-    {
-      "id": 6,
-      "slug": "ndi-analytics",
-      "name": "Analytics Workbench",
-      "organization_id": 3,
-      "organization_slug": "ndi",
-      "fips_199": "low",
-      "next_decision_date": "2027-02-20",
-      "oscal_ssp_uuid": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520"
-    },
-    {
-      "id": 7,
-      "slug": "coa-fieldops",
-      "name": "Field Operations",
-      "organization_id": 4,
-      "organization_slug": "coa",
-      "fips_199": "moderate",
-      "next_decision_date": "2026-10-30",
-      "oscal_ssp_uuid": "1942d11b-584d-580b-91cb-0ad94254c560"
+      "description": "Curated research data store and its ingest path.",
+      "status": "active",
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-19T00:00:00Z"
     }
-  ]
+  ],
+  "meta": {
+    "page": 1,
+    "pages": 2,
+    "count": 7,
+    "items": 5
+  }
 }

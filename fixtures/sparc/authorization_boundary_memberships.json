@@ -1,0 +1,65 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "user_name": "PORTAL System Owner",
+      "user_email": "ods-portal-so@cascade.example",
+      "user_id": 100,
+      "role": "system_owner",
+      "role_label": "System Owner",
+      "authorization_boundary_id": 1,
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-15T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "user_name": "IDENTITY System Owner",
+      "user_email": "ods-identity-so@cascade.example",
+      "user_id": 101,
+      "role": "system_owner",
+      "role_label": "System Owner",
+      "authorization_boundary_id": 2,
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-16T00:00:00Z"
+    },
+    {
+      "id": 3,
+      "user_name": "GRANTS System Owner",
+      "user_email": "bgm-grants-so@cascade.example",
+      "user_id": 102,
+      "role": "system_owner",
+      "role_label": "System Owner",
+      "authorization_boundary_id": 3,
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-17T00:00:00Z"
+    },
+    {
+      "id": 4,
+      "user_name": "PAYMENTS System Owner",
+      "user_email": "bgm-payments-so@cascade.example",
+      "user_id": 103,
+      "role": "system_owner",
+      "role_label": "System Owner",
+      "authorization_boundary_id": 4,
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    {
+      "id": 5,
+      "user_name": "DATALAKE System Owner",
+      "user_email": "ndi-datalake-so@cascade.example",
+      "user_id": 104,
+      "role": "system_owner",
+      "role_label": "System Owner",
+      "authorization_boundary_id": 5,
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-19T00:00:00Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "pages": 2,
+    "count": 7,
+    "items": 5
+  }
+}

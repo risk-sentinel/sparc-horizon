@@ -1,40 +1,46 @@
 {
-  "collection": "organizations",
-  "endpoint": "GET /api/v1/organizations",
-  "note": "Organization tier. oscal_party_uuid is what `parent-uuid` on a boundary SSP points at.",
-  "count": 4,
   "data": [
     {
       "id": 1,
+      "uuid": "19bae8ed-2c5d-5f99-a029-3195bebfdc2b",
       "slug": "ods",
       "name": "Office of Digital Services",
-      "short_name": "ODS",
-      "federation_slug": "cascade",
-      "oscal_party_uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
+      "active": true,
+      "member_count": 3,
+      "boundary_count": 2
     },
     {
       "id": 2,
+      "uuid": "e5bc984a-fa6b-5c53-8c98-ee973680e85e",
       "slug": "bgm",
       "name": "Bureau of Grants Management",
-      "short_name": "BGM",
-      "federation_slug": "cascade",
-      "oscal_party_uuid": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
+      "active": true,
+      "member_count": 3,
+      "boundary_count": 2
     },
     {
       "id": 3,
+      "uuid": "ab708d8c-034e-5b92-9c70-4c8ab4fcc1c6",
       "slug": "ndi",
       "name": "National Data Institute",
-      "short_name": "NDI",
-      "federation_slug": "cascade",
-      "oscal_party_uuid": "bd4969d2-d748-5a13-889f-636f6d3322df"
+      "active": true,
+      "member_count": 3,
+      "boundary_count": 2
     },
     {
       "id": 4,
+      "uuid": "06b84e91-d901-5a6d-9dc5-eec16bcf7362",
       "slug": "coa",
       "name": "Coastal Operations Agency",
-      "short_name": "COA",
-      "federation_slug": "cascade",
-      "oscal_party_uuid": "019cb43f-7468-5184-8780-be8a71a340dc"
+      "active": true,
+      "member_count": 3,
+      "boundary_count": 1
     }
-  ]
+  ],
+  "meta": {
+    "page": 1,
+    "pages": 1,
+    "count": 4,
+    "items": 5
+  }
 }

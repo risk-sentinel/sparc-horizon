@@ -47,8 +47,13 @@ type contract struct {
 	} `json:"namespace"`
 	Types      map[string]string      `json:"types"`
 	FieldLists map[string][]fieldSpec `json:"field-lists"`
-	Vectors    []contractVector       `json:"vectors"`
-	JoinCases  []struct {
+	// map[string]any rather than map[string]map[string]string on purpose: before
+	// sparc#1175 this was keyed by vocabulary alone, and a stricter type would
+	// fail to DECODE an older contract rather than reporting which rule is
+	// missing. The shape is asserted where it is read.
+	VocabularyNormalisers map[string]any   `json:"vocabulary-normalisers"`
+	Vectors               []contractVector `json:"vectors"`
+	JoinCases             []struct {
 		Name   string   `json:"name"`
 		Fields []string `json:"fields"`
 		UUID   string   `json:"uuid"`
@@ -212,8 +217,13 @@ func TestContractVectorsReproduce(t *testing.T) {
 	c := loadContract(t)
 	d := New(Namespace())
 
-	if len(c.Vectors) == 0 {
-		t.Fatal("the contract carries no vectors")
+	// A floor, not just non-emptiness. The vectors are the whole proof, and a
+	// re-vendor that silently pulled a shorter set would still report green
+	// against whatever remained — the same failure shape ci.yml's
+	// MIN_TESTED_PACKAGES exists to defeat. Raise it when the contract grows.
+	const minVectors = 28
+	if len(c.Vectors) < minVectors {
+		t.Fatalf("the contract carries %d vectors; at least %d expected. If upstream removed some, that is the thing to explain", len(c.Vectors), minVectors)
 	}
 	reproduced := 0
 	for _, v := range c.Vectors {
@@ -385,51 +395,80 @@ func TestTypeRulesAgree(t *testing.T) {
 	})
 }
 
-// The one rule Horizon does not adopt, asserted as a disagreement so it cannot
-// quietly resolve, widen, or be forgotten.
+// Once the one rule Horizon did NOT adopt; now the rule it shares.
 //
-// The contract normalises `family-id` with `lowercase` unconditionally. Under
-// an opaque vocabulary that is the defect #37 removed from control ids: an AWS
-// Security Hub family is `ACM`, and `acm` names nothing. Horizon holds
-// NFC-only there. The consequence is a genuine divergence — the same input
-// derives two different identifiers, with neither side erroring — which is why
-// it is written down in docs/dev/sparc-family-id-normalisation.md rather than
-// absorbed.
-func TestFamilyIDNormalisationDivergesFromTheContract(t *testing.T) {
+// The contract used to normalise `family-id` with `lowercase` unconditionally,
+// while dispatching `control-id` on the vocabulary. Under an opaque vocabulary
+// that is the defect #37 removed from control ids: an AWS Security Hub family
+// is `ACM`, and `acm` names nothing. Horizon held NFC-only there, so the same
+// input derived two different identifiers with neither side erroring.
+//
+// sparc#1175 resolved it in Horizon's favour — `vocabulary-normalisers` is now
+// keyed by vocabulary AND identifier kind, and the contract gained the two
+// vectors below carrying exactly the UUIDs this implementation already derived.
+// Re-vendored at sparc 1cb999b1 in #68.
+//
+// This stays as a NAMED test rather than folding into TestContractVectorsReproduce,
+// which would also cover it. The divergence was expensive to find and the
+// property is easy to regress into: a future contributor who "simplifies"
+// FamilyID to an unconditional lowercase reintroduces a silent cross-
+// implementation split, and a diff that deletes a test called this is harder to
+// wave through than two rows vanishing from a vector table.
+func TestFamilyIDNormalisationIsScopedToItsVocabulary(t *testing.T) {
 	c := loadContract(t)
 
-	spec, ok := c.FieldLists["cell"]
+	if c.VocabularyNormalisers == nil {
+		t.Fatal("the contract has no vocabulary-normalisers")
+	}
+	opaque, ok := c.VocabularyNormalisers["opaque"].(map[string]any)
 	if !ok {
-		t.Fatal("the contract has no cell field list")
+		t.Fatal("vocabulary-normalisers.opaque is not keyed by identifier kind; the contract predates sparc#1175")
 	}
-	found := false
-	for _, f := range spec {
-		if len(f.OneOf) > 0 {
-			found = true
-		}
-	}
-	if !found {
-		t.Error("the cell field list no longer carries a one-of; the divergence may have moved")
+	if got := opaque["family-id"]; got != "none" {
+		t.Errorf("opaque family-id normaliser is %v, want none", got)
 	}
 
 	d := New(Namespace())
-	upper, err := d.CellForFamily("2b0b4a6c-7d31-4e08-95af-6c1e8b204d7a",
-		Source{UUID: "5d40a72c-3e18-4f9b-86d2-0c7a41b5e926", Vocabulary: canonical.VocabOpaque},
-		"ACM", BucketToday)
+	src := Source{UUID: "5d40a72c-3e18-4f9b-86d2-0c7a41b5e926", Vocabulary: canonical.VocabOpaque}
+	const node = "2b0b4a6c-7d31-4e08-95af-6c1e8b204d7a"
+
+	upper, err := d.CellForFamily(node, src, "ACM", BucketToday)
 	if err != nil {
 		t.Fatalf("opaque family ACM: %v", err)
 	}
-	lowerKey, err := d.CellForFamily("2b0b4a6c-7d31-4e08-95af-6c1e8b204d7a",
-		Source{UUID: "5d40a72c-3e18-4f9b-86d2-0c7a41b5e926", Vocabulary: canonical.VocabOpaque},
-		"acm", BucketToday)
+	lowerKey, err := d.CellForFamily(node, src, "acm", BucketToday)
 	if err != nil {
 		t.Fatalf("opaque family acm: %v", err)
 	}
 
 	if upper.UUID == lowerKey.UUID {
-		t.Error("ACM and acm now derive one identifier under an opaque vocabulary — either the rule changed here, or the disagreement is resolved and docs/dev/sparc-family-id-normalisation.md is stale")
+		t.Fatal("ACM and acm derive one identifier under an opaque vocabulary; the vocabulary scoping has been lost")
 	}
-	t.Logf("held divergence: opaque family ACM -> %s, acm -> %s; the contract would derive the second for both", upper.UUID, lowerKey.UUID)
+
+	// Pinned to the contract BY NAME, so the assertion fails loudly if upstream
+	// renames or drops these rather than silently testing nothing.
+	for name, want := range map[string]string{
+		"cell-for-foreign-family":            upper.UUID.String(),
+		"cell-for-foreign-family-lowercased": lowerKey.UUID.String(),
+	} {
+		v, ok := vectorByName(c, name)
+		if !ok {
+			t.Errorf("the contract no longer carries vector %q", name)
+			continue
+		}
+		if v.UUID != want {
+			t.Errorf("vector %s: contract says %s, we derive %s", name, v.UUID, want)
+		}
+	}
+}
+
+func vectorByName(c contract, name string) (contractVector, bool) {
+	for _, v := range c.Vectors {
+		if v.Name == name {
+			return v, true
+		}
+	}
+	return contractVector{}, false
 }
 
 func lower(s string) string {

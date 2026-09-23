@@ -44,6 +44,43 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 ---
 
+## 2026-09-22 — #63 — `feature/63_sonar_pr_findings`
+
+**In flight:** nothing.
+
+**`hdf fetch` scopes to a pull request, which I had wrongly inferred it could not.** I read the
+emit workflow's invocation, saw only `--url --project-key --format --organization`, and concluded
+the tool was project-scoped. The owner said otherwise; downloading the pinned binary and running
+`--help` showed **both** `--branch` and `--pull-request`. Inference from a call site is not
+measurement of a tool, and the cost of the error was proposing a worse design — raw issue JSON
+for the development loop instead of the OHDF the question actually asked for.
+
+**`--pull-request`, not `--branch`.** SonarCloud runs *pull request* analysis for these, so a
+branch-scoped fetch would look for an analysis that may not exist for a short-lived branch — and
+an absent analysis returns an empty result that converts into a clean-looking report, which is
+the failure this estate already knows by heart.
+
+**The trap that would have made this quietly useless:** on a `pull_request` event `GITHUB_SHA` is
+the **merge commit**, which SonarCloud never analysed. A wait keyed on it times out on every run,
+and the tempting fix for a wait that always times out is to delete the wait — which reintroduces
+#13. It waits on `pull_request.head.sha`.
+
+**Reported, never gated.** The count is printed and never asserted: a PR with no findings is the
+normal case, and asserting a non-zero count would make the job fail on good news. What *is*
+asserted is that an analysis existed before the fetch. Whether maintainability findings should
+fail a PR is a quality-gate change in the console and stays open deliberately.
+
+**Kept off the evidence path.** A separate workflow rather than a `pull_request` trigger on the
+emit, with no `id-token` and no bucket. The emit's own header gives two reasons it never runs on
+PRs and both still hold; adding a trigger there would put a PR-scoped scan one edit from the
+evidence bucket.
+
+**Next:** the remaining cleanups — #48 (five `npx` call sites in two required checks), #57 (pin
+comments nothing verifies), #42 (Sonar configuration) — or **P1** (#16), which carries S1's
+scanners and inherits TM-11 and #49's measured `go-oscal` limitation as requirements.
+
+---
+
 ## 2026-09-22 — #64 — `feature/64_p0_exit_checkpoint`
 
 **In flight:** nothing. **P0's exit checkpoint.** r4 issued, superseding r3.

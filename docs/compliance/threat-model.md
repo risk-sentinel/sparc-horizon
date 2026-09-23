@@ -1,10 +1,11 @@
 # Threat model and security architecture review
 
-**Revision:** r3, 2026-09-20.
-**Reviewed revision:** the design of record at `docs/01`–`docs/10` as of 2026-09-20, including
-the signing rule added by #27 and the normative UUIDv5 key grammar added by #30.
-**Attestation:** [`attestations/threat-model-2026-09-20.oscal.json`](attestations/threat-model-2026-09-20.oscal.json),
-which supersedes [`threat-model-2026-09-19-r2.oscal.json`](attestations/threat-model-2026-09-19-r2.oscal.json).
+**Revision:** r4, 2026-09-22 — the **P0-exit checkpoint**.
+**Reviewed revision:** the design of record at `docs/01`–`docs/10` as of 2026-09-22, with P0's
+contracts complete: the namespace schema under the registered namespace, the UUIDv5 key grammar
+and its Go reference, the fixture federation, and API v0 frozen.
+**Attestation:** [`attestations/threat-model-2026-09-22.oscal.json`](attestations/threat-model-2026-09-22.oscal.json),
+which supersedes [`threat-model-2026-09-20.oscal.json`](attestations/threat-model-2026-09-20.oscal.json).
 **Expires:** 2027-03-18 — **unchanged from r2.** The 180-day clock runs from the substantive
 review on 2026-09-19, not from this re-issue: resetting it on each revision would turn a
 180-day interval into a perpetual one. Early-staleness triggers are at the bottom of this
@@ -17,12 +18,20 @@ document.
 > UUIDv5 key grammar normative, tripping a second trigger; that firing was recorded rather than
 > re-attested, and **r2 was stale from that point**.
 >
-> r3 closes that gap and writes down the rule that stops it recurring per-merge — see
+> r3 closed that gap and wrote down the rule that stops it recurring per-merge — see
 > [Freshness](#freshness). Two firings on the first day is the mechanism working, not failing,
 > but it is also a signal about cadence during a phase whose entire purpose is to define the
 > contracts this document reasons about. The superseded records are kept unmodified rather than
 > edited, because an attestation that is quietly revised in place is not evidence of anything.
 > See [`attestations/README.md`](attestations/README.md).
+>
+> **Why there is a fourth.** r4 is the checkpoint r3 promised: P0's contracts are complete, so
+> this is one review of a settled design rather than four of a moving one. It folds in five
+> firings and adds **TM-10** and **TM-11**, both measured rather than supposed. It also records
+> that the interim ledger r3 introduced **was not maintained** — five firings went unlogged
+> while the ledger read "no firing outstanding", and were reconstructed from the git log at this
+> checkpoint. That failure is in the ledger rather than quietly corrected, because a mechanism
+> that silently stopped working is exactly what a reader needs to know about.
 
 This is the one SDLC stage `dev-sec-ops-baseline` deliberately does not automate, because
 its output is a document and a conversation. A generated threat model asserts that a
@@ -57,6 +66,8 @@ A threat model that does not state its assumptions is a list of someone else's p
 | The agency identity provider | agency | Every identity claim is void; Horizon has no independent account store to fall back to, by design |
 | AWS platform controls — task isolation, bucket policy, KMS, secret store | `sparc-iac` | See the inherited rows in [`nist-sp800-53-rev5-mapping.md`](nist-sp800-53-rev5-mapping.md) |
 | Image build, scan, SBOM and signature | `container-build-sign` | A compromised image serves correct answers from hostile code |
+| The OSCAL type layer, `go-oscal` | third party, pinned | **Known to lose content silently — see TM-11.** It is trusted to represent a document faithfully and does not, for one assembly, at every version |
+| The shared key-grammar contract, `sparc:lib/federation/key-grammar.v1.json` | `sparc` | Horizon and a peer derive different identifiers for the same object and neither errors — see TM-10 |
 
 ---
 
@@ -86,6 +97,16 @@ ordinary document maintenance.
   in the record from a content edit, so a grant is reviewable after the fact.
 - Authorization evaluates the node named in the request, never the endpoint reached. A
   handler that checks the endpoint passes for a node the caller may not read.
+
+**Folded in at the P0-exit checkpoint (#61).** Authorization answers *who may see a node*; it
+left open what a refusal discloses. API v0 now fixes that: a node the caller holds no role on
+returns **404**, indistinguishable from one that does not exist. A 403 would confirm that a
+boundary exists, that it is called something in particular, and by inference who owns it — across
+organizations that are not meant to see each other, which is the disclosure this model's trust
+boundary exists to prevent. The cost, that a mistyped node id reads the same way, is accepted and
+stated in the contract rather than left to be rediscovered as a bug.
+
+---
 
 ### TM-2 — What-if isolation is asserted, not yet enforced
 
@@ -259,6 +280,82 @@ verification, which is precisely the wrong direction.
 
 ---
 
+### TM-10 — Two conforming implementations can derive different identifiers for one object
+
+TM-6 is about a hostile peer exploiting determinism as addressing. This is the failure with no
+attacker in it: two honest implementations, both conforming, deriving **different identifiers for
+the same object**, with neither side raising an error.
+
+Measured in #54 rather than supposed. SPARC's shared key-grammar contract normalises `family-id`
+by lowercasing it unconditionally; Horizon carries a family from a non-NIST authority as issued,
+because canonicalisation is only valid inside a vocabulary — lowercasing the AWS Security Hub
+family `ACM` yields `acm`, which names nothing. So a projection cell keyed on that family derives
+`b9691843-…` here and `f2a38fbf-…` there.
+
+Both implementations pass the shared vectors. **Every one of the 26 agreed**; the divergence is
+in a *type rule* that no vector exercises, and it was found by reading the contract's rules
+against the implementation rather than by running its examples.
+
+The consequence is the inverse of TM-6's. There, one identifier is claimed by two parties and the
+receiver must not collapse them. Here, one object has two identifiers and the receiver has no way
+to know they are the same thing — so the object silently fails to deduplicate, appears twice in a
+federated view, and a control that is down in one boundary reads as two unrelated problems.
+
+Deterministic identity only works if determinism is *identical*, and agreement on a corpus of
+examples is not agreement on the rules.
+
+**Decision: requirement (P6 `internal/federate`), and an open disagreement.**
+
+- Conformance is asserted against the shared contract's **type rules**, not only its vectors.
+  `internal/keys` drives the contract's own regexes against this implementation's
+  canonicalisers; that check is what found this.
+- The divergence is **pinned by a test** rather than tolerated, so it cannot quietly resolve or
+  widen without failing the build.
+- Filed as [`sparc#1175`](https://github.com/risk-sentinel/sparc/issues/1175). **Until it is
+  settled, do not derive a projection cell identifier for a foreign-vocabulary family against a
+  peer** — `docs/03-data-model.md` carries that instruction where an implementer meets it.
+- Horizon holds its rule rather than adopting SPARC's, because adopting it would reintroduce for
+  families the defect that vocabulary scoping removed from control identifiers.
+
+---
+
+### TM-11 — A trusted library drops content, and validation passes on both sides
+
+TM-9 is a signature failing on a document nobody altered. This is the mirror: a document that is
+**altered and still passes every check**.
+
+Measured in #49. `go-oscal` generates one Go type for the four differently-shaped
+`local-definitions` assemblies OSCAL defines, because it derives type names from the schema's
+`title` and OSCAL reuses `"Local Definitions"` for three of them. A schema-valid
+assessment-results document therefore loses `results[*].local-definitions.tasks` and
+`.assessment-assets` on the way in — at **every** version from 1.1.2 to 1.2.2, and unchanged in
+the unreleased 1.2.3 types.
+
+The sharp part is what happens next: the re-serialised document **validates again**. So a
+pipeline that schema-validates its input and its output sees green twice, and has dropped the
+assessment activities and assets a result recorded. Nothing in the chain reports anything.
+
+This is a different failure from TM-3. There the input is wrong and the projection faithfully
+reflects it; here the input is right and the layer that reads it is lossy. It is also why the
+inherited-trust table now names the type layer: Horizon trusts it to represent a document
+faithfully, and for one assembly it does not.
+
+**Decision: requirement (P1 `internal/oscal`, P4 `internal/attest`).**
+
+- **Never re-emit a parsed document as though it were the original.** TM-9 already requires
+  hashing received bytes, which contains the damage for anything signed; this extends it to
+  anything re-exported, signed or not.
+- **Schema validation is not a completeness check.** A document that validates before and after
+  a round trip may still have lost content, so the audit test is recomputation from the received
+  bytes, not revalidation of the output.
+- The measurement is a **committed baseline** (`internal/oscal/testdata/measurements.json`) with
+  a test that fails when it changes, so a version bump that fixes or widens the gap is a review
+  rather than a surprise.
+- Reported to the type layer's maintainers rather than worked around —
+  `docs/dev/go-oscal-local-definitions.md` carries the report and its reproducer.
+
+---
+
 ## Decisions summary
 
 | ID | Surface | Decision | Lands in |
@@ -272,6 +369,8 @@ verification, which is precisely the wrong direction.
 | TM-7 | Silent evidence stall | Requirement | S1 |
 | TM-8 | Deployment | Accepted, inherited | `sparc-iac`, `container-build-sign` |
 | TM-9 | A signature fails on an untampered document | Requirement | P4, P6 |
+| TM-10 | Conforming implementations derive different identifiers | Requirement + open disagreement (`sparc#1175`) | P6, cross-repo |
+| TM-11 | A trusted library drops content, and validation passes | Requirement | P1, P4 |
 
 Nothing here is marked mitigated. That is the correct result for a repository with no
 application code: the design is sound on paper, and none of it is enforced yet.
@@ -333,8 +432,35 @@ how long it lasted.
 | Date | Change | Trigger | Contradicted a finding? | Disposition |
 |---|---|---|---|---|
 | 2026-09-19 | #30 — the UUIDv5 key grammar made normative | Federation change affecting peer verification, deduplication, or the UUID key grammar | **No.** It strengthens TM-6: the party-not-in-key rule and consumer-side deduplication are now normative in `docs/03-data-model.md` | **Folded into r3** (#31). r2 read as stale in this area from 2026-09-19 until 2026-09-20 |
+| 2026-09-20 | #37 — `source-uuid` added to seven field lists; control-id canonicalisation scoped to a vocabulary | Federation change affecting the UUID key grammar | **No.** It partitions the key space by catalog authority, which TM-6 assumed rather than required | **Logged late, at the P0-exit checkpoint. Folded into r4** |
+| 2026-09-21 | #36 — the Go reference implementation of the grammar, and the fixture federation | Federation change affecting the UUID key grammar | **No.** First implementation of a rule the document already carried | **Logged late. Folded into r4** |
+| 2026-09-21 | #49 — `go-oscal` measured to drop two fields from a schema-valid assessment-results document, silently, in both directions of validation | Trust boundary — what Horizon trusts | **No, it extends.** TM-9 already required hashing received bytes; nothing said a trusted dependency loses content | **Logged late. Folded into r4 as TM-11**, and the type layer added to the trust table |
+| 2026-09-21 | #54 — the registered federation namespace adopted; **every identifier in the estate changed**; a cross-implementation divergence with SPARC on `family-id` | Federation change affecting peer verification, deduplication, or the UUID key grammar | **No, it extends.** TM-6 covers a hostile peer claiming an identifier; two honest peers deriving different identifiers for one object was not considered | **Logged late. Folded into r4 as TM-10** |
+| 2026-09-22 | #61 — API v0 frozen, with an unauthorized node returning 404 rather than 403 | **Judgement call.** Not a change to who may assert into the boundary, so arguably no trigger; logged rather than argued away, because the triggers are deliberately not narrowed | **No.** It settles a disclosure question TM-1 left open | **Logged. Folded into r4** as a note on TM-1 |
 
-No firing is currently outstanding. The next checkpoint is **P0 exit** (#15).
+### What went wrong with this ledger, recorded rather than fixed quietly
+
+Between r3 and the P0-exit checkpoint, **five firings went unlogged for up to two days**, while
+the table above read *"No firing is currently outstanding."* The entries were reconstructed from
+the git log at the checkpoint — which is precisely the work the ledger exists to avoid.
+
+#31 chose checkpointing over per-merge re-attestation, and the condition it chose it on was that
+interim staleness would stay auditable. A ledger written only when someone remembers does not
+meet that condition; it is worse than no ledger, because it reads as evidence of nothing having
+happened.
+
+Two things follow, and they are process rather than design:
+
+- **The ledger is a step-8 obligation**, beside the session log and the implementation plan, in
+  the PR that trips the trigger. `docs/dev/issue_rules.md` now says so. It is cheap in the PR
+  that caused it and expensive at a checkpoint.
+- **A reader should distrust an empty ledger.** "No firing outstanding" means the same thing
+  whether it is true or unmaintained, so the checkpoint reconstructs from the log regardless
+  rather than taking the table's word for it.
+
+No firing is currently outstanding **as of r4**, and that statement was checked against
+`git log --merges` rather than against this table. The next checkpoint is **P1 exit**, or any
+trigger firing that contradicts a finding, which re-issues immediately.
 
 ## How this is attested
 

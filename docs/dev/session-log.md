@@ -93,6 +93,16 @@ confirmed second defect found in the same runs: rule enrichment 400s because `ru
 called without the `organization` parameter SonarCloud requires, although `--organization` was
 supplied.
 
+**Proving the reporting path cost a third measurement.** PR #66 is clean, so its own run
+exercises only the zero-finding path. Scratch PR #67 planted a `go:S1192` finding — and the first
+attempt reported nothing, because the plant went into a `_test.go` file to protect the coverage
+floor. `new_lines` was 18, so the file *was* analysed; `new_violations` was 0. This repository's
+`sonar-project.properties` sets `sonar.test.inclusions=**/*_test.go`, and SonarCloud applies a
+**reduced rule set** to test sources. Worth knowing for **#42**: test code is held to a smaller
+rule set than production code, so a finding class can be absent from `_test.go` without anything
+being wrong. Moved to a production file with a test covering it, the full path ran — fetch, one
+result rendered, artifact uploaded, and the download parses as OHDF. #67 is closed and deleted.
+
 The workaround is a skip guarded by a count read from `issues/search` directly, marked in the
 workflow for removal when the pin can move. That count is not only a guard: it is a **second,
 independent source for the number**, and the job now fails if the API reports findings while the

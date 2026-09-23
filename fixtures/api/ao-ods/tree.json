@@ -1,0 +1,78 @@
+{
+  "id": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
+  "name": "Office of Digital Services",
+  "nodeType": "organization",
+  "roles": [
+    "authorizing-official"
+  ],
+  "children": [
+    {
+      "id": "f7de308a-5555-5e35-be6a-029ad885320e",
+      "name": "Public Portal",
+      "nodeType": "boundary",
+      "roles": [
+        "authorizing-official"
+      ],
+      "children": [
+        {
+          "id": "78d2ee1e-5677-502e-910d-aad763832309",
+          "name": "Portal Web Tier",
+          "nodeType": "system",
+          "roles": [
+            "authorizing-official"
+          ]
+        },
+        {
+          "id": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
+          "name": "Portal API",
+          "nodeType": "system",
+          "roles": [
+            "authorizing-official"
+          ]
+        },
+        {
+          "id": "193c0b92-191f-51ae-8155-18c027ae2d92",
+          "name": "Portal Edge Cache",
+          "nodeType": "system",
+          "roles": [
+            "authorizing-official"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
+      "name": "Identity Services",
+      "nodeType": "boundary",
+      "roles": [
+        "authorizing-official"
+      ],
+      "children": [
+        {
+          "id": "c8700a65-1310-5c0c-a9c2-c90b25ef1859",
+          "name": "Agency Identity Provider",
+          "nodeType": "system",
+          "roles": [
+            "authorizing-official"
+          ]
+        },
+        {
+          "id": "60d15e42-8c2e-547d-a445-d2e29d55ec57",
+          "name": "Directory Service",
+          "nodeType": "system",
+          "roles": [
+            "authorizing-official"
+          ]
+        },
+        {
+          "id": "38cf1a62-8ac2-5e3f-be6c-1ea8f4028fb3",
+          "name": "Multi-Factor Service",
+          "nodeType": "system",
+          "roles": [
+            "authorizing-official"
+          ]
+        }
+      ]
+    }
+  ]
+}

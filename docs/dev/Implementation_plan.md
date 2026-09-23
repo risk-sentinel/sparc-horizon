@@ -68,9 +68,9 @@ carry. Step 8 updates it in the same PR as the work.
 
 | Bucket | Current state |
 |---|---|
-| Application code | **6 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `cmd/genfixtures`, `cmd/oscalprobe` (#38, #36, #49). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
+| Application code | **8 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `internal/project`, `cmd/genfixtures`, `cmd/oscalprobe`, `cmd/mockserver` (#38, #36, #49, #61). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
 | Design docs | **11** (`docs/01`–`docs/10` + `roadmap.md`) — the design of record |
-| Machine-readable contracts | **2 owned** — `api/openapi.yaml` (v0 skeleton) and `schemas/sparc-namespace-props.v1.schema.json` (v1, 9 props, namespace `https://sparc.risk-sentinel.org/ns`) — plus **1 consumed**, `sparc:lib/federation/key-grammar.v1.json`, vendored with provenance into `internal/keys/testdata/` |
+| Machine-readable contracts | **2 owned**, one of them now frozen (`api/openapi.yaml`, #61) — `api/openapi.yaml` (v0 skeleton) and `schemas/sparc-namespace-props.v1.schema.json` (v1, 9 props, namespace `https://sparc.risk-sentinel.org/ns`) — plus **1 consumed**, `sparc:lib/federation/key-grammar.v1.json`, vendored with provenance into `internal/keys/testdata/` |
 | Demos | **4** static HTML files, synthetic data, seeded PRNG, no build step |
 | CI workflows | **6** — `secret-scan.yml` (gate + fixture canary), `secret-scan-hdf-emit.yml` and `sonarqube-hdf-emit.yml` (emitters, both fail closed on an unset boundary), `pr-checklist.yml`, `contracts.yml` (OpenAPI, namespace schema, **fixture props**, actionlint, duplication drift), `ci.yml` (Go: fmt, vet, lint, race, coverage and package-count floors) |
 | Branch protection | **Active.** Ruleset on `main`: 7 required contexts, PR required with CODEOWNERS review, signed commits, no force-push, no deletion, bypass **pull request only**. Verified by a direct push being refused, not just by reading the config back |
@@ -83,7 +83,7 @@ carry. Step 8 updates it in the same PR as the work.
 | `container-build-sign` consumer list | **Not listed.** No ECR repo, no signed image, no pin-bump notifications |
 | AWS deployment | **None.** No `sparc-iac` module, no emit role, no task definition |
 | NIST control coverage (application layer) | **0 documented.** No `docs/compliance/` tree yet |
-| Highest-priority next work | **Freeze API v0 with a mock server** — the last P0 task. The round-trip probe closed in #49 and the namespace registration was adopted in #54, so the fixtures are final and **the phase exit criterion is reachable** |
+| Highest-priority next work | **The P0 exit checkpoint.** Every P0 task is done (#61 closed the last one); what remains is the phase's own exit criteria — `sparc-validate` against the fixtures, which is upstream (`sparc#1154`), and the OpenAPI review by both owners. #31's threat-model staleness ledger folds in here |
 
 ---
 
@@ -352,7 +352,7 @@ baseline and the deployment target.
 
 | Phase | Name | Effort | Depends on | Notes |
 |---|---|---|---|---|
-| P0 | Contracts and fixtures | 3 ew | **S0** | Namespace schema v1 already exists. **Landed:** the UUIDv5 key grammar (#30, #37), the `go-oscal` decision (#26) and its re-test (#49), the Go toolchain and CI (#38), and the Go reference implementation, test vectors and fixture federation (#36). **Remaining:** freeze API v0 with a mock server. The `sparc-validate` rules are filed upstream |
+| P0 | Contracts and fixtures | 3 ew | **S0** | Namespace schema v1 already exists. **Landed:** the UUIDv5 key grammar (#30, #37), the `go-oscal` decision (#26) and its re-test (#49), the Go toolchain and CI (#38), and the Go reference implementation, test vectors and fixture federation (#36). Frozen API v0 and the mock over the fixture federation (#61). **All P0 tasks are complete**; the exit criteria are what remain, and one of them is upstream. The `sparc-validate` rules are filed as `sparc#1154` |
 | P1 | SPARC client and tree builder | 4 ew | P0 | First Go code — carries **S1** with it |
 | P3 | HUD heatmap interface | 6 ew | P0 | Built against the mock; first TypeScript — also carries S1 |
 | P2 | Ledger, rollup, projection engine | 4 ew | P1, **S1** | The recompute-from-OSCAL audit test is a gate from here on |

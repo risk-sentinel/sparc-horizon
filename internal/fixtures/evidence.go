@@ -70,7 +70,7 @@ func (g *Generator) evidenceArtifacts(b Boundary) []evidenceArtifact {
 				Tool:      "sparc-horizon-fixture-scanner",
 				Boundary:  b.Slug,
 				Period:    Period,
-				Collected: days(-3).Format("2006-01-02"),
+				Collected: days(-3).Format(dateLayout),
 				Controls:  automated,
 				Synthetic: true,
 			},

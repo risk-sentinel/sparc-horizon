@@ -1,0 +1,16 @@
+{
+  "node": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+  "col": "SC",
+  "horizon": "2026-10-15",
+  "controls": [
+    {
+      "controlId": "sc-28",
+      "component": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
+      "state": "blocks",
+      "reason": "Not satisfied, and the open risk blocks the authorization.",
+      "expires": "2026-12-04",
+      "blocksAto": true,
+      "chain": "dcf43a13-5251-5001-bddb-efffe1802b65"
+    }
+  ]
+}

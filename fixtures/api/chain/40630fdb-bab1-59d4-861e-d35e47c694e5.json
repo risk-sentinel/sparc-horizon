@@ -1,0 +1,12 @@
+{
+  "requirement": "40630fdb-bab1-59d4-861e-d35e47c694e5",
+  "controlId": "au-6.1",
+  "component": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
+  "resource": "ae65133b-b696-56b0-94dd-f103bc3d7587",
+  "observation": "b306e111-f287-5a87-9a8e-e7ee15e070d4",
+  "expires": "2026-12-10",
+  "finding": "92054b49-ddb3-5e86-965b-2e3e208c0138",
+  "risk": "7cf250f5-d148-5d30-bdba-1d2b90fc311a",
+  "blocksAto": true,
+  "poamItem": "49b790a9-7c44-5b98-a291-b3e48948e74c"
+}

@@ -1,0 +1,77 @@
+{
+  "node": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+  "horizon": "2026-10-15",
+  "axis": "800-53",
+  "columns": [
+    "AU",
+    "CP",
+    "SC"
+  ],
+  "collapsed": [
+    "AC",
+    "IA",
+    "SI"
+  ],
+  "rows": [
+    {
+      "id": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
+      "name": "Grants Application",
+      "cells": [
+        {
+          "col": "AU",
+          "state": "blocks",
+          "blockers": 1,
+          "worsening": false,
+          "inherited": false
+        },
+        {
+          "col": "SC",
+          "state": "blocks",
+          "blockers": 1,
+          "worsening": false,
+          "inherited": false
+        }
+      ]
+    },
+    {
+      "id": "1e0d3586-ddd0-59bd-97f9-19eaad9c6aea",
+      "name": "Grants Database",
+      "cells": [
+        {
+          "col": "CP",
+          "state": "blocks",
+          "blockers": 1,
+          "worsening": false,
+          "inherited": false
+        }
+      ]
+    },
+    {
+      "id": "5c5fbbf2-e794-5470-89ba-d59e04b2b856",
+      "name": "Grants ETL",
+      "cells": [
+        {
+          "col": "AU",
+          "state": "nominal",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        },
+        {
+          "col": "CP",
+          "state": "nominal",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        },
+        {
+          "col": "SC",
+          "state": "nominal",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        }
+      ]
+    }
+  ]
+}

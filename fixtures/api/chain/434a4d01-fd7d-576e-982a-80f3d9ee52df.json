@@ -1,0 +1,12 @@
+{
+  "requirement": "434a4d01-fd7d-576e-982a-80f3d9ee52df",
+  "controlId": "ac-2",
+  "component": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
+  "resource": "b62ef3a2-41fb-580a-8275-294cb8d5a27f",
+  "observation": "dfaeec66-8595-5436-9fbb-203d13c4de66",
+  "expires": "2026-11-25",
+  "finding": "cd763269-3b1f-5212-956c-91a312bdbca0",
+  "risk": "3ed97b0d-6669-5f55-a3eb-119b36ce48a5",
+  "blocksAto": false,
+  "poamItem": "56ffd5d7-7fec-5e8f-b65b-e887cbf42c4e"
+}

@@ -18,6 +18,35 @@ Frozen as OpenAPI at the end of phase 0 so interface work can start on mocks. Sk
 
 All node-scoped endpoints check the caller's role on the node, not on the endpoint. See [07 Security](07-security.md).
 
+**Frozen at the end of P0.** [`api/openapi.yaml`](../api/openapi.yaml) is the contract: request
+and response schemas for all eleven paths, a shared error shape, and the refusal rule below.
+Changes after this are versioned rather than edited in place, because P1's client and P3's HUD
+are both built against it.
+
+## A refusal is a 404, never a 403
+
+A node the caller holds no role on returns **404**, identical to a node that does not exist.
+
+Horizon's tree spans organizations that are not meant to see each other. A 403 confirms that a
+boundary exists, that it is called something in particular, and by inference who owns it — a
+disclosure a federated HUD should not make. The cost is accepted and written down rather than
+left to be rediscovered: a mistyped node id is indistinguishable from one the caller may not see.
+
+The same rule applies one level down. A chain is reached by implemented-requirement UUID, and a
+requirement whose component the caller cannot see is refused the same way a node is.
+
+## The mock
+
+`go run ./cmd/mockserver` serves the contract over the fixture federation, from goldens in
+[`fixtures/api/`](../fixtures/api/README.md) that are derived by parsing the OSCAL the generator
+emitted. An `X-Horizon-Persona` header selects the caller; each persona sees a **different tree**
+rather than the same tree with parts greyed out, which is what makes the 404 rule coherent.
+
+It does not project: cell states are computed once, at generation time, for one horizon, and the
+`horizon` parameter is accepted and ignored. It answers the write endpoints with 501 rather than
+accepting a write and forgetting it. CI asserts that every golden validates against the schema
+its path declares, and that the contract declares nothing the mock cannot answer.
+
 ## Heat response
 
 ```json
@@ -37,3 +66,12 @@ All node-scoped endpoints check the caller's role on the node, not on the endpoi
 ```
 
 Cell `state` is one of `nominal`, `watch`, `degraded`, or `blocks`. Keep cell payloads this small; details come from the cell and chain endpoints.
+
+A row carries a cell only for the columns that survived collapsing, so `cells` is a subset of
+`columns` — the example above has five columns and two cells. A family a row has nothing in is
+omitted rather than drawn as passing: they are not the same claim.
+
+**The `800-53` axis carries NIST families only.** Identifiers from another authority — AWS
+Security Hub arrives through inherited component definitions — are off this axis until SPARC's
+crosswalk maps them (`sparc#1103`). Placing `ACM` beside `AC` would claim a mapping this
+repository does not own.

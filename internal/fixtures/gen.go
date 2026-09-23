@@ -200,6 +200,25 @@ func (g *Generator) Generate() (Tree, error) {
 		}
 	}
 
+	// The API v0 mock's goldens, derived by parsing the OSCAL this run just
+	// emitted rather than from the generator's own state (#61). Every number
+	// the mock serves therefore recomputes from exported documents, which is
+	// the audit claim in cheap form.
+	responses, err := g.apiResponses(tree)
+	if err != nil {
+		return nil, err
+	}
+	for path, doc := range responses {
+		// The README is markdown, not a JSON document.
+		if text, ok := doc.(string); ok {
+			tree[path] = []byte(text)
+			continue
+		}
+		if _, err := add(path, doc); err != nil {
+			return nil, err
+		}
+	}
+
 	tree[pathREADME] = g.readme(tree)
 	return tree, nil
 }

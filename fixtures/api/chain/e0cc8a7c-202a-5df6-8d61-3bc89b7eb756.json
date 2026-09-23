@@ -1,0 +1,12 @@
+{
+  "requirement": "e0cc8a7c-202a-5df6-8d61-3bc89b7eb756",
+  "controlId": "ia-5",
+  "component": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
+  "resource": "08177dcf-1ed3-521b-a15c-4123463317e4",
+  "observation": "e672c7f5-ba59-5c8b-860f-ab9ae51d5fd4",
+  "expires": "2026-10-17",
+  "finding": "a5ca40c1-47a5-5cb0-bad9-7f9f7a9c8f41",
+  "risk": "d4c26bd1-ecfa-581c-9675-2194083a963e",
+  "blocksAto": true,
+  "poamItem": "2fe76235-136b-5277-9df7-4c153bc7bcd8"
+}

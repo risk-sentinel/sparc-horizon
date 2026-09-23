@@ -1,0 +1,8 @@
+{
+  "node": "f7de308a-5555-5e35-be6a-029ad885320e",
+  "title": "Resolve si-4 on Public Portal",
+  "consequence": "The control is down at the horizon.",
+  "controlId": "si-4",
+  "chain": "adcd691d-fb75-5e59-b369-bf017cf06e72",
+  "horizon": "2026-10-15"
+}

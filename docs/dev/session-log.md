@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-24 (#57). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-24 (#42). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,53 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-24 — #42 — `fix/42_sonar_configuration`
+
+**In flight:** nothing. Last of the stack, branched from #57. Merge order: #79, #57, #42.
+
+**Three of #42's four tasks were already done** — the exclusions landed in #43 and
+`sonar-project.properties` carries them. Checked before writing anything, rather than redoing
+work. What remained was item 4 (coverage, which needs CI-based analysis, S1-4) and item 5 (the
+cancelling analysis).
+
+**Item 5's root cause is measured, and it has recurred.** The Compute Engine task for `main` says:
+*"This analysis will make your organization 'risk-sentinel' reach the maximum allowed lines limit
+of 50000. Current LOC usage is: 40718. LOC count in this analysis: 9553."* — `40718 + 9553 = 50271`,
+**over by 271**. Same ceiling recorded on this issue on 2026-09-20, hit again as the code grew.
+`main` has not been analysed since **02:44** and two merges are unanalysed.
+
+**The in-repo levers were measured and rejected by the owner.** Excluding `demo/**` (1641 web
+lines) would fit at 48,630; excluding workflows (1010 yaml) would fit at 49,261 but Sonar genuinely
+checks those. Owner chose to raise the organization subscription instead, so
+`sonar-project.properties` is untouched — the ceiling is an org setting every repo competes for,
+and excluding real source to fit under it buys weeks, not a fix.
+
+**The finding that mattered was not the one I went looking for.** The status row read
+*"HDF evidence emitted: **0 artifacts**, blocked on the `risk-sentinel/*/sparc-horizon/*` role
+(`sparc-iac#715`)"*. That issue **closed on 2026-09-19**, and `secret-scan-hdf-emit.yml` has landed
+a dated object plus the `latest/` alias on **every merge since at least 2026-09-22** —
+`upload: … s3://…/risk-sentinel/2026-09-24/sparc-horizon/trufflehog/`. The row had understated the
+estate by five days.
+
+That is the SR-3 defect from #48 in mirror image: a claim that no longer matched reality, this time
+by claiming **less**. Worth naming, because an understated row is easy to leave — nobody is
+embarrassed by it — and it is the same failure of the record either way. The row now says which
+half of the evidence stream is live and which is stalled, and CA-7 says so too.
+
+**The Sonar emit is failing correctly.** It refuses to stamp a new commit onto 02:44's findings
+rather than back-date them, which is #13's guard doing exactly its job. The gap is visible
+*because* it refuses.
+
+**Documented for #63's finding**: SonarCloud applies a reduced rule set to test sources, so
+`go:S1192` never fires in a `_test.go` file while `go:S3776` does. Recorded in
+`sonar-project.properties` rather than left to be rediscovered — the classification is right, and
+a green report over test code should not be read as the full rule set having run.
+
+**Still open on #42 after this:** item 4, coverage, which needs the move to CI-based analysis
+(S1-4) and is blocked behind analysis working at all.
 
 ---
 

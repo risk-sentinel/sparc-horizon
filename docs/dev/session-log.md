@@ -77,6 +77,24 @@ matches only where a command can begin, and is mutation-checked four ways — a 
 `$(npx …)` substitution (the shape line 38 actually had), one after a pipe, all caught; a
 commented-out one correctly ignored.
 
+**I deleted a required check and every other check went green.** Rewriting the guard step used
+`s[:start] + new`, which truncated everything after it — taking the `duplication` job
+("Duplicated copies agree") with it. `gh pr checks` then reported **10 of 10 passing** and said
+nothing about a required context that had stopped existing. Caught by noticing the count was 10
+where previous PRs had 11, not by any check.
+
+**Branch protection is what would actually have stopped it.** "Duplicated copies agree" is one of
+the seven required contexts, and a required check that never reports blocks the merge, so the PR
+could not have landed. The safety net held. What did *not* hold is the signal a reviewer looks at:
+an all-green check list is **not** evidence that every required check ran, and nothing local says
+otherwise.
+
+No new guard was added for it. The protection ruleset already covers it, and an assertion pinning
+the job set would fail on every legitimate removal — a check that cries wolf gets deleted. The
+lesson is about the edit, not the pipeline: **a slice-and-replace on a config file needs the tail
+put back, and the cheapest proof is comparing the parsed job set against `main`**, which is what
+found it and what confirmed the restore.
+
 **Next:** P1's unblocked remainder is thin. `cmd/mockserver` could be rewired onto
 `internal/authz` — deliberately left out of #76 so the mock and the implementation can disagree
 once, observably — or #57 (nothing verifies a pinned SHA matches its comment) and #42 (Sonar

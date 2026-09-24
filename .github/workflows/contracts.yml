@@ -360,3 +360,54 @@ jobs:
           done
           [ "${found}" -eq 0 ] || exit 1
           echo "PASS — no workflow resolves a tool through npx."
+
+  duplication:
+    name: Duplicated copies agree
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: docs/hud.html has not come back
+        run: |
+          set -euo pipefail
+          # docs/hud.html was a byte-identical copy of demo/hud.html, removed in #4.
+          # This guard replaces the diff that used to keep the two in step: without
+          # it nothing stops the copy being re-added, and the copy is only a problem
+          # because it is invisible once it exists.
+          if [ -e docs/hud.html ]; then
+            echo "::error::docs/hud.html is back. It was removed in #4 as a duplicate of demo/hud.html. The demos live in demo/ only; link to ../demo/hud.html from docs rather than copying it."
+            exit 1
+          fi
+          echo "PASS — no duplicate hud.html under docs/."
+
+      - name: full-plan.html carries the demo scripts
+        run: |
+          set -euo pipefail
+          # demo/full-plan.html contains verbatim copies of both demo scripts. A
+          # change to either demo that is not mirrored there is silently
+          # incomplete, and the file is 66 KB so review will not catch it.
+          fail=0
+          # Anchor on a handful of distinctive symbols from each source script.
+          for sym in "decOf" "simCount" "showCtrl" "renderDrill" "syncControls"; do
+            in_src=0
+            grep -q "$sym" demo/hud.html && in_src=1
+            grep -q "$sym" demo/planner.html && in_src=1
+            if [ "$in_src" -eq 1 ] && ! grep -q "$sym" demo/full-plan.html; then
+              echo "::error::Symbol '$sym' exists in a demo script but not in demo/full-plan.html — the verbatim copy has drifted (see docs/dev/Developer_Collision_Avoidance_Plan.md 2.1)."
+              fail=1
+            fi
+          done
+          [ "$fail" -eq 0 ] && echo "PASS — full-plan.html carries the demo script symbols."
+          exit "$fail"
+
+      - name: Roadmap phase IDs appear in both planners
+        run: |
+          set -euo pipefail
+          fail=0
+          for ph in P0 P1 P2 P3 P4 P5 P6 P7 P8; do
+            for f in demo/planner.html demo/full-plan.html; do
+              grep -q "'${ph}'" "$f" || { echo "::error::Phase ${ph} from docs/roadmap.md is missing from ${f} (three copies of the phase data — see Developer_Collision_Avoidance_Plan.md 2.3)."; fail=1; }
+            done
+          done
+          [ "$fail" -eq 0 ] && echo "PASS — all nine phases present in both planner copies."
+          exit "$fail"

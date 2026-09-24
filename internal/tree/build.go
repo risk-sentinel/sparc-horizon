@@ -13,6 +13,7 @@ type builder struct {
 	federation *Node
 	orgs       map[string]*Node
 	orgOrder   []string
+	bindings   []Binding
 	findings   []Finding
 	seenSystem map[string]string // system-id -> the SSP that claimed it first
 }
@@ -48,7 +49,8 @@ func Build(ssps []*oscal.SystemSecurityPlan) (Result, error) {
 	}
 	sortTree(b.federation)
 
-	return Result{Root: b.federation, Findings: b.findings}, nil
+	sortBindings(b.bindings)
+	return Result{Root: b.federation, Bindings: b.bindings, Findings: b.findings}, nil
 }
 
 func (b *builder) note(kind, source, format string, args ...any) {
@@ -146,4 +148,18 @@ func tiers(parties map[string]oscal.Party) (fed, org oscal.Party, err error) {
 		return fed, org, fmt.Errorf("no organization party beneath federation %s", fed.UUID)
 	}
 	return fed, org, nil
+}
+
+// bind records that a party holds a role at a node. Kept a set: a party
+// declared twice for one node is one binding, and duplicates would make the
+// golden depend on document order.
+func (b *builder) bind(n *Node, role Role, party string) {
+	for _, have := range b.bindings {
+		if have.NodeID == n.ID && have.Role == role && have.PartyUUID == party {
+			return
+		}
+	}
+	b.bindings = append(b.bindings, Binding{
+		NodeID: n.ID, NodeType: n.NodeType, Role: role, PartyUUID: party,
+	})
 }

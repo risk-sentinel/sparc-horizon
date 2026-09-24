@@ -33,62 +33,90 @@ func (b *builder) bindRoles(ssp *oscal.SystemSecurityPlan, parties map[string]os
 				continue
 			}
 			addRole(target, role)
+			b.bind(target, role, uuid)
 		}
 	}
 }
 
-// systems builds the system tier from inventory-items.
+// systems builds the system tier.
 //
-// Inventory items, NOT components: the federation's 20 systems are its 20
-// inventory items, while its 27 components include the inherited platform and
-// other implementation components. Building from components would produce a
-// tier that does not describe the systems (#74).
+// A system is a COMPONENT THAT HAS AN INVENTORY RECORD. That uses both halves
+// of what docs/03-data-model.md names — "SSP `components` and
+// `inventory-items`" — and it is the rule the frozen API contract already
+// encodes: the persona goldens in fixtures/api/ identify a system node by its
+// COMPONENT uuid and title.
+//
+// #74 built this tier from inventory items instead, keyed on the item uuid and
+// named by its `asset-id` prop. The count was right — 20 either way — so every
+// structural test passed, and the identity was wrong. It was caught by
+// internal/authz failing to reproduce goldens frozen in #61, which is the value
+// of having a consumer that was specified before the implementation.
+//
+// Excluding components with no inventory record is not a special case for the
+// inherited platform; it is the rule. The AWS component is not inventoried
+// because it is not Horizon's system to inventory, which is exactly what makes
+// it not a node.
 func (b *builder) systems(ssp *oscal.SystemSecurityPlan, src string) []*Node {
 	impl := ssp.SystemImplementation
 	components := componentIndex(impl.Components)
 
-	var out []*Node
+	// Component uuid -> the roles reached through its inventory record. An
+	// inventory item carries no responsible-parties of its own.
+	inventoried := map[string]bool{}
 	for _, item := range inventoryItems(impl) {
+		b.recordInventory(item, components, inventoried, src)
+	}
+
+	var out []*Node
+	for _, comp := range impl.Components {
+		if !inventoried[comp.UUID] {
+			continue
+		}
 		node := &Node{
-			ID:       item.UUID,
-			Name:     assetID(item),
+			ID:       comp.UUID,
+			Name:     comp.Title,
 			NodeType: System,
 			Roles:    []Role{},
 		}
-		b.systemRoles(item, components, node, src)
+		b.componentRoles(comp, node, src)
 		out = append(out, node)
 	}
 	return out
 }
 
-// systemRoles reaches the system tier's roles the only way OSCAL offers: an
-// inventory item carries no responsible-parties of its own, so the roles come
-// from the component it implements (docs/03-data-model.md, "Component
-// responsible-roles").
-func (b *builder) systemRoles(item oscal.InventoryItem, components map[string]oscal.SystemComponent, node *Node, src string) {
+// recordInventory marks the component an inventory item stands for, and
+// reports an item that stands for nothing.
+func (b *builder) recordInventory(item oscal.InventoryItem, components map[string]oscal.SystemComponent, inventoried map[string]bool, src string) {
 	impls := implementedComponents(item)
 	if len(impls) == 0 {
 		b.note(FindingOrphanInventory, src,
-			"inventory item %s implements no component, so it can carry no role", item.UUID)
+			"inventory item %s implements no component, so it names no system", item.UUID)
 		return
 	}
-
 	for _, ic := range impls {
-		comp, ok := components[ic.ComponentUuid]
-		if !ok {
+		if _, ok := components[ic.ComponentUuid]; !ok {
 			b.note(FindingOrphanInventory, src,
 				"inventory item %s implements component %s, which the document does not declare",
 				item.UUID, ic.ComponentUuid)
 			continue
 		}
-		for _, rr := range responsibleRoles(comp) {
-			if role, known := knownRole(rr.RoleId); known {
-				addRole(node, role)
-			} else {
-				b.note(FindingUnknownRole, src,
-					"component %s carries role-id %q, which the contract does not enumerate",
-					comp.UUID, rr.RoleId)
-			}
+		inventoried[ic.ComponentUuid] = true
+	}
+}
+
+// componentRoles attaches the roles the component declares. docs/03-data-model.md
+// makes component `responsible-roles` the system tier's source.
+func (b *builder) componentRoles(comp oscal.SystemComponent, node *Node, src string) {
+	for _, rr := range responsibleRoles(comp) {
+		role, known := knownRole(rr.RoleId)
+		if !known {
+			b.note(FindingUnknownRole, src,
+				"component %s carries role-id %q, which the contract does not enumerate",
+				comp.UUID, rr.RoleId)
+			continue
 		}
+		addRole(node, role)
+		// The component holds the role, so the component is the party.
+		b.bind(node, role, comp.UUID)
 	}
 }

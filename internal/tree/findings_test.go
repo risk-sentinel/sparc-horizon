@@ -108,8 +108,13 @@ func TestOrphanInventoryItemIsReported(t *testing.T) {
 	if kinds(res)[FindingOrphanInventory] == 0 {
 		t.Error("an inventory item implementing an undeclared component was not reported")
 	}
-	if got := countType(res.Root, System); got != 20 {
-		t.Errorf("%d systems, want 20 — the item was dropped rather than reported", got)
+	// 19, not 20, and that is the correct answer rather than a dropped node.
+	// A system is a component WITH an inventory record; pointing the record at
+	// a component that does not exist leaves the real component uninventoried,
+	// so it is no longer a system. The defect is visible twice: the count moves
+	// and the finding says why.
+	if got := countType(res.Root, System); got != 19 {
+		t.Errorf("%d systems, want 19 — breaking one inventory record un-inventories one component", got)
 	}
 }
 
@@ -215,6 +220,9 @@ func TestDocumentsMissingOptionalAssemblies(t *testing.T) {
 	}
 	if got := countType(res.Root, System); got != 17 {
 		t.Errorf("%d systems, want 17 — the stripped document had 3", got)
+	}
+	if kinds(res)[FindingOrphanInventory] != 0 {
+		t.Error("removing both assemblies should leave nothing to orphan")
 	}
 }
 

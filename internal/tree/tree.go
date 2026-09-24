@@ -82,8 +82,27 @@ const (
 	FindingNoFederation      = "no-federation-party"
 )
 
-// Result is the tree and everything that did not fit in it.
+// Binding is one party holding one role at one node.
+//
+// It is kept BESIDE the tree rather than on Node, because Node is the frozen
+// contract shape — `additionalProperties: false` — and a party UUID has no
+// place in it. The API answers "what roles does this node carry"; authorization
+// needs "which party holds them", and that is a different question asked by a
+// different caller (#76).
+//
+// Without this the information is simply lost: it exists while the document is
+// being read and nothing downstream can recover it, because a party that binds
+// at an organization need not appear in every document beneath it.
+type Binding struct {
+	NodeID    string   `json:"nodeId"`
+	NodeType  NodeType `json:"nodeType"`
+	Role      Role     `json:"role"`
+	PartyUUID string   `json:"partyUuid"`
+}
+
+// Result is the tree, who holds what on it, and everything that did not fit.
 type Result struct {
 	Root     *Node     `json:"root"`
+	Bindings []Binding `json:"bindings,omitempty"`
 	Findings []Finding `json:"findings,omitempty"`
 }

@@ -23,24 +23,24 @@
             ],
             "children": [
               {
-                "id": "fd443cab-de4a-5d2b-aafd-b5a014e33e06",
-                "name": "bgm-grants/grants-app",
+                "id": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
+                "name": "Grants Application",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "f8c7d01f-309d-5b5a-bd33-f75cbb933660",
-                "name": "bgm-grants/grants-db",
+                "id": "1e0d3586-ddd0-59bd-97f9-19eaad9c6aea",
+                "name": "Grants Database",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "4e74cdf8-bd23-584b-9cb2-f76076ee70ef",
-                "name": "bgm-grants/grants-etl",
+                "id": "5c5fbbf2-e794-5470-89ba-d59e04b2b856",
+                "name": "Grants ETL",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
@@ -58,24 +58,24 @@
             ],
             "children": [
               {
-                "id": "f54b31e4-1ae2-5647-a59d-29e769487f7c",
-                "name": "bgm-payments/pay-gateway",
+                "id": "4f047a0d-23f6-533b-9058-e1aed7f8fc74",
+                "name": "Payment Gateway",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "1819471d-4c93-5f10-8a1f-716a63651704",
-                "name": "bgm-payments/pay-hsm",
+                "id": "af40197d-0b9f-5272-82b1-38d05327f428",
+                "name": "Payment Ledger",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "62b06112-7955-51c2-866f-40f071ba4acc",
-                "name": "bgm-payments/pay-ledger",
+                "id": "c96da09a-8b2a-534d-a8e0-9594a01200a1",
+                "name": "Payment HSM",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
@@ -103,16 +103,16 @@
             ],
             "children": [
               {
-                "id": "a3d95efc-a642-528a-85fc-84e80e5fa36a",
-                "name": "coa-fieldops/field-mobile",
+                "id": "f9fb135d-3445-5fbc-8375-4322788e7499",
+                "name": "Field Mobile Application",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "73489cf6-b1ca-53d8-bc9c-c58812622e67",
-                "name": "coa-fieldops/field-sync",
+                "id": "a4dfcc72-f78d-568e-9908-b5364a677acd",
+                "name": "Sync Service",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
@@ -140,24 +140,24 @@
             ],
             "children": [
               {
-                "id": "23042520-7e7a-5fba-b525-37713af3d9a1",
-                "name": "ndi-analytics/wb-notebook",
+                "id": "8eedda72-1a8e-517a-b02d-b011bd8d49cd",
+                "name": "Notebook Service",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "70e17660-0172-5552-bb2b-714f0c7e2d33",
-                "name": "ndi-analytics/wb-registry",
+                "id": "da6ec359-8c87-5b80-90d7-68e5b3b7efd1",
+                "name": "Job Scheduler",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "f1fb78e3-8a22-5279-9e7c-f11c08895955",
-                "name": "ndi-analytics/wb-scheduler",
+                "id": "405038e1-edd3-5bd7-991e-db1a23dc5b62",
+                "name": "Model Registry",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
@@ -175,24 +175,24 @@
             ],
             "children": [
               {
-                "id": "5553ef4a-7bef-5325-9f29-d3caa434efb6",
-                "name": "ndi-datalake/lake-catalog",
+                "id": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
+                "name": "Object Store",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "506e42df-b68a-5916-8a5e-241cbf17496c",
-                "name": "ndi-datalake/lake-ingest",
+                "id": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
+                "name": "Data Catalog",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "c0007932-9de2-5f63-87ba-553e0d1b8918",
-                "name": "ndi-datalake/lake-store",
+                "id": "cb83790f-db31-590b-a921-0161a7b1a12d",
+                "name": "Ingest Pipeline",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
@@ -220,24 +220,24 @@
             ],
             "children": [
               {
-                "id": "ae74683c-9877-5a49-b7b6-d84c3a1cc39d",
-                "name": "ods-identity/idp",
+                "id": "c8700a65-1310-5c0c-a9c2-c90b25ef1859",
+                "name": "Agency Identity Provider",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "50cb22c0-5b70-5190-a834-81741d1e8478",
-                "name": "ods-identity/idp-dir",
+                "id": "60d15e42-8c2e-547d-a445-d2e29d55ec57",
+                "name": "Directory Service",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "0c5c888f-2e93-5539-8e66-387f7238355c",
-                "name": "ods-identity/idp-mfa",
+                "id": "38cf1a62-8ac2-5e3f-be6c-1ea8f4028fb3",
+                "name": "Multi-Factor Service",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
@@ -255,24 +255,24 @@
             ],
             "children": [
               {
-                "id": "507020a9-111f-572f-9ce1-2ff40be504d7",
-                "name": "ods-portal/portal-api",
+                "id": "78d2ee1e-5677-502e-910d-aad763832309",
+                "name": "Portal Web Tier",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "56165a15-86e3-5c9b-9816-eb6f7d7f280f",
-                "name": "ods-portal/portal-cdn",
+                "id": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
+                "name": "Portal API",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
                 ]
               },
               {
-                "id": "243f33df-c596-56ee-bd91-4623e9192a49",
-                "name": "ods-portal/portal-web",
+                "id": "193c0b92-191f-51ae-8155-18c027ae2d92",
+                "name": "Portal Edge Cache",
                 "nodeType": "system",
                 "roles": [
                   "system-owner"
@@ -283,5 +283,253 @@
         ]
       }
     ]
-  }
+  },
+  "bindings": [
+    {
+      "nodeId": "019cb43f-7468-5184-8780-be8a71a340dc",
+      "nodeType": "organization",
+      "role": "authorizing-official",
+      "partyUuid": "92a463cb-c2b1-5a81-909d-c7b5b463bf03"
+    },
+    {
+      "nodeId": "15781999-2cd0-51a4-ad7a-3c65a478d3d3",
+      "nodeType": "boundary",
+      "role": "information-system-security-officer",
+      "partyUuid": "b9d755e3-b11a-5689-8055-ed78d47138e0"
+    },
+    {
+      "nodeId": "15781999-2cd0-51a4-ad7a-3c65a478d3d3",
+      "nodeType": "boundary",
+      "role": "system-owner",
+      "partyUuid": "5ef8d6fa-f968-5b99-8c45-e0cd39aba9d3"
+    },
+    {
+      "nodeId": "193c0b92-191f-51ae-8155-18c027ae2d92",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "193c0b92-191f-51ae-8155-18c027ae2d92"
+    },
+    {
+      "nodeId": "1942d11b-584d-580b-91cb-0ad94254c560",
+      "nodeType": "boundary",
+      "role": "information-system-security-officer",
+      "partyUuid": "ede17861-8582-5239-b66e-cde0b634932f"
+    },
+    {
+      "nodeId": "1942d11b-584d-580b-91cb-0ad94254c560",
+      "nodeType": "boundary",
+      "role": "system-owner",
+      "partyUuid": "46d94c6d-28db-57f9-8579-86ed5253279c"
+    },
+    {
+      "nodeId": "1e0d3586-ddd0-59bd-97f9-19eaad9c6aea",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "1e0d3586-ddd0-59bd-97f9-19eaad9c6aea"
+    },
+    {
+      "nodeId": "38cf1a62-8ac2-5e3f-be6c-1ea8f4028fb3",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "38cf1a62-8ac2-5e3f-be6c-1ea8f4028fb3"
+    },
+    {
+      "nodeId": "3aea9512-5a7d-56ac-b6e9-7777433a19f3",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "3aea9512-5a7d-56ac-b6e9-7777433a19f3"
+    },
+    {
+      "nodeId": "405038e1-edd3-5bd7-991e-db1a23dc5b62",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "405038e1-edd3-5bd7-991e-db1a23dc5b62"
+    },
+    {
+      "nodeId": "4f047a0d-23f6-533b-9058-e1aed7f8fc74",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "4f047a0d-23f6-533b-9058-e1aed7f8fc74"
+    },
+    {
+      "nodeId": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
+      "nodeType": "boundary",
+      "role": "information-system-security-officer",
+      "partyUuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064"
+    },
+    {
+      "nodeId": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
+      "nodeType": "boundary",
+      "role": "system-owner",
+      "partyUuid": "49726dd3-5aa6-501e-9530-9b1d7a59a0a6"
+    },
+    {
+      "nodeId": "5c5fbbf2-e794-5470-89ba-d59e04b2b856",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "5c5fbbf2-e794-5470-89ba-d59e04b2b856"
+    },
+    {
+      "nodeId": "60d15e42-8c2e-547d-a445-d2e29d55ec57",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "60d15e42-8c2e-547d-a445-d2e29d55ec57"
+    },
+    {
+      "nodeId": "78d2ee1e-5677-502e-910d-aad763832309",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "78d2ee1e-5677-502e-910d-aad763832309"
+    },
+    {
+      "nodeId": "8eedda72-1a8e-517a-b02d-b011bd8d49cd",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "8eedda72-1a8e-517a-b02d-b011bd8d49cd"
+    },
+    {
+      "nodeId": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "9d88f3c3-6850-5c27-bd7c-c5b8292b5ebe"
+    },
+    {
+      "nodeId": "a4dfcc72-f78d-568e-9908-b5364a677acd",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "a4dfcc72-f78d-568e-9908-b5364a677acd"
+    },
+    {
+      "nodeId": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211",
+      "nodeType": "organization",
+      "role": "authorizing-official",
+      "partyUuid": "559ea211-238b-5a0b-aa81-5e60a62248e7"
+    },
+    {
+      "nodeId": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211",
+      "nodeType": "organization",
+      "role": "authorizing-official",
+      "partyUuid": "d525eea8-a8b6-595e-9bd9-84ae9ba7ba01"
+    },
+    {
+      "nodeId": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+      "nodeType": "boundary",
+      "role": "information-system-security-officer",
+      "partyUuid": "2ee39e09-fc22-50f9-ad38-ff397563e967"
+    },
+    {
+      "nodeId": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+      "nodeType": "boundary",
+      "role": "system-owner",
+      "partyUuid": "ca3593e0-7813-5676-a0ee-012cc44e8fb8"
+    },
+    {
+      "nodeId": "af40197d-0b9f-5272-82b1-38d05327f428",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "af40197d-0b9f-5272-82b1-38d05327f428"
+    },
+    {
+      "nodeId": "bd4969d2-d748-5a13-889f-636f6d3322df",
+      "nodeType": "organization",
+      "role": "authorizing-official",
+      "partyUuid": "27ccf06a-fb31-5a67-adb8-baf35c2920e4"
+    },
+    {
+      "nodeId": "bd4969d2-d748-5a13-889f-636f6d3322df",
+      "nodeType": "organization",
+      "role": "authorizing-official",
+      "partyUuid": "358bbd00-eecd-5a5f-9e67-350ed079c6cd"
+    },
+    {
+      "nodeId": "c8700a65-1310-5c0c-a9c2-c90b25ef1859",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "c8700a65-1310-5c0c-a9c2-c90b25ef1859"
+    },
+    {
+      "nodeId": "c96da09a-8b2a-534d-a8e0-9594a01200a1",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "c96da09a-8b2a-534d-a8e0-9594a01200a1"
+    },
+    {
+      "nodeId": "cb83790f-db31-590b-a921-0161a7b1a12d",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "cb83790f-db31-590b-a921-0161a7b1a12d"
+    },
+    {
+      "nodeId": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
+      "nodeType": "organization",
+      "role": "authorizing-official",
+      "partyUuid": "377df8c6-c8fa-5217-a2ff-445247a7b7c5"
+    },
+    {
+      "nodeId": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
+      "nodeType": "organization",
+      "role": "authorizing-official",
+      "partyUuid": "52e63fca-a9a5-52a6-8454-ba8e354cdaa0"
+    },
+    {
+      "nodeId": "da6ec359-8c87-5b80-90d7-68e5b3b7efd1",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "da6ec359-8c87-5b80-90d7-68e5b3b7efd1"
+    },
+    {
+      "nodeId": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e"
+    },
+    {
+      "nodeId": "f47d858e-7af8-5990-a4de-7365abd272d8",
+      "nodeType": "boundary",
+      "role": "information-system-security-officer",
+      "partyUuid": "adf4b1da-b23e-5cba-afdf-892af5fe622a"
+    },
+    {
+      "nodeId": "f47d858e-7af8-5990-a4de-7365abd272d8",
+      "nodeType": "boundary",
+      "role": "system-owner",
+      "partyUuid": "2f1c7108-5359-56ef-80c3-f5fadacf0b70"
+    },
+    {
+      "nodeId": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520",
+      "nodeType": "boundary",
+      "role": "information-system-security-officer",
+      "partyUuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44"
+    },
+    {
+      "nodeId": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520",
+      "nodeType": "boundary",
+      "role": "system-owner",
+      "partyUuid": "4bc67254-2a3e-50ce-9767-2704d5bb907b"
+    },
+    {
+      "nodeId": "f7de308a-5555-5e35-be6a-029ad885320e",
+      "nodeType": "boundary",
+      "role": "information-system-security-officer",
+      "partyUuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
+    },
+    {
+      "nodeId": "f7de308a-5555-5e35-be6a-029ad885320e",
+      "nodeType": "boundary",
+      "role": "system-owner",
+      "partyUuid": "f935a0b4-4974-5aec-a8ed-590328a8fa6d"
+    },
+    {
+      "nodeId": "f9fb135d-3445-5fbc-8375-4322788e7499",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "f9fb135d-3445-5fbc-8375-4322788e7499"
+    },
+    {
+      "nodeId": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
+      "nodeType": "system",
+      "role": "system-owner",
+      "partyUuid": "fe8bc53a-0299-5889-bb2a-9bba0489c833"
+    }
+  ]
 }

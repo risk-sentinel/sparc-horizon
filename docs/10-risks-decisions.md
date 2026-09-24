@@ -21,6 +21,35 @@
 ## Decisions for phase 0
 
 - Signature format: CMS detached, a Sigstore bundle, or JWS over canonical JSON. Whichever is chosen, it signs the bytes as received — see the round-trip row above
+- **How an OIDC subject maps to a party UUID is unspecified.**
+  [`docs/07-security.md`](07-security.md) asserts "Party UUIDs map to subjects, so roles come from
+  `responsible-parties` in the documents", and nothing says by what mechanism. Found in #76, which
+  needed it: the fixture parties carry **no `external-ids`, no props and no email addresses**, and
+  none of the nine namespace props covers it. Three candidates, none free:
+  **(a)** OSCAL's native `party.external-ids` (`PartyExternalIdentifier`, scheme + id), which is
+  where OSCAL already puts an external identifier and so needs no namespace change;
+  **(b)** a tenth namespace prop, which is a v1 change and must be additive — the `enum` and a
+  matching `allOf` branch — and puts identity in Horizon's namespace rather than OSCAL's;
+  **(c)** a mapping held by SPARC and fetched, which keeps identity out of the documents and makes
+  authorization depend on a service call rather than on an export, weakening the recompute property.
+  Until it is settled **`internal/authz` takes a party UUID as the caller**, so the decision can be
+  made without rewriting the decision logic
+- **Sibling order in a `Node`'s `children` is not specified by the contract, and the P0 goldens
+  encode a generator artifact.** `api/openapi.yaml` orders things explicitly where it means to —
+  heatmap columns are "ordered by blockers descending" — and `Node.children` is a plain array.
+  The persona goldens in `fixtures/api/` carry the order of the `Boundaries` table inside
+  `internal/fixtures`, which **no OSCAL document determines**: nothing says whether Public Portal
+  precedes Identity Services. `internal/tree` therefore sorts the tiers assembled across documents
+  and preserves declaration order at the system tier, where the children come from one document and
+  the order is the SSP author's. #76's comparison against the goldens is order-insensitive among
+  siblings for that reason. **Either the contract should state an order or it should say the order
+  is unspecified**; leaving it implicit means a client may come to depend on the generator's table
+- **A party bound at two disjoint nodes has no single tree to be shown.** `/v1/tree` returns one
+  `Node`, and the caller's tree is rooted at the node they hold a role on. Nothing in the fixtures
+  exercises a party holding roles in two organizations, and the contract has no shape for it. #76
+  takes the conservative direction — the highest binding roots the tree and the others are
+  unreachable, showing too little rather than too much — but that silently withholds access
+  somebody was granted, so it is a placeholder rather than an answer
 - ~~`go-oscal` versus types generated from the NIST JSON schemas~~ — **decided 2026-09-19 in #26:**
   `go-oscal`, pinned. Its 1.2.x coverage is real, the round trip is lossless apart from timestamp
   normalisation, and the "generated types" fallback turned out to be the same generator

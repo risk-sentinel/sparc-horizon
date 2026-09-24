@@ -62,13 +62,13 @@ carry. Step 8 updates it in the same PR as the work.
 
 ## Status snapshot
 
-> **Updated 2026-09-20.** Most values below are still the starting ones. The rows
-> that have moved are P0's: the Go module, the key-grammar reference, and the
-> fixture federation.
+> **Updated 2026-09-24.** Most values below are still the starting ones. The rows
+> that have moved are P0's — the Go module, the key-grammar reference, and the
+> fixture federation — and P1's first package, `internal/tree` (#74).
 
 | Bucket | Current state |
 |---|---|
-| Application code | **8 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `internal/project`, `cmd/genfixtures`, `cmd/oscalprobe`, `cmd/mockserver` (#38, #36, #49, #61). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
+| Application code | **9 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `internal/project`, `internal/tree`, `cmd/genfixtures`, `cmd/oscalprobe`, `cmd/mockserver` (#38, #36, #49, #61, #74). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
 | Design docs | **11** (`docs/01`–`docs/10` + `roadmap.md`) — the design of record |
 | Machine-readable contracts | **2 owned**, one of them now frozen (`api/openapi.yaml`, #61) — `api/openapi.yaml` (v0 skeleton) and `schemas/sparc-namespace-props.v1.schema.json` (v1, 9 props, namespace `https://sparc.risk-sentinel.org/ns`) — plus **1 consumed**, `sparc:lib/federation/key-grammar.v1.json`, vendored with provenance into `internal/keys/testdata/` |
 | Demos | **4** static HTML files, synthetic data, seeded PRNG, no build step |
@@ -83,7 +83,7 @@ carry. Step 8 updates it in the same PR as the work.
 | `container-build-sign` consumer list | **Not listed.** No ECR repo, no signed image, no pin-bump notifications |
 | AWS deployment | **None.** No `sparc-iac` module, no emit role, no task definition |
 | NIST control coverage (application layer) | **0 documented.** No `docs/compliance/` tree yet |
-| Highest-priority next work | **The P0 exit checkpoint.** Every P0 task is done (#61 closed the last one); what remains is the phase's own exit criteria — `sparc-validate` against the fixtures, which is upstream (`sparc#1154`), and the OpenAPI review by both owners. #31's threat-model staleness ledger folds in here |
+| Highest-priority next work | **P1, and it is not blocked.** P0 is task-complete; both its remaining exit criteria are other people's — `sparc-validate` against the fixtures (`sparc#1154`, upstream) and the OpenAPI review by both owners. P1's tree builder landed as #74 against the OSCAL fixtures. **P1's SPARC client is blocked** on `sparc#1181` (X-13): no OSCAL document export exists under `/api/v1` for SSP, SAP, SAR or POA&M. `internal/authz` is the next unblocked slice |
 
 ---
 

@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-24 (#72). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-24 (#74). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,66 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-24 — #74 — `feature/74_node_tree`
+
+**In flight:** nothing. First P1 slice; `internal/tree` builds and tests against the OSCAL
+fixtures, so nothing here waits on SPARC.
+
+**The frozen contract decided the slice, not me.** `Node` in `api/openapi.yaml` makes `roles`
+required, so a tree built without them is invalid by construction and splitting "tree" from
+"roles" would have produced a package whose output no handler could serve. Tasks 3, 4 (partly)
+and 5 of #16 therefore land together, and both of that epic's exit criteria are met.
+
+**Role placement comes from the tier table in `docs/03-data-model.md`, and it had to.** Every role
+holder in the fixtures is `member-of` the **organization** — AO, system owner and ISSO alike — so
+membership cannot distinguish them. The rule is by role: AO binds at the organization, SO and ISO
+at the boundary, and the system tier reads component `responsible-roles` through the inventory
+item's `implemented-components`, because an inventory item carries no responsible-parties of its
+own. Measured before writing any of it.
+
+**`inventory-items` are the system tier, not `components`.** `CLAUDE.md` says
+"`components`/`inventory-items`", which is ambiguous, and the counts settle it: 20 inventory items
+against the federation's documented 20 systems, while the 27 components include the inherited AWS
+platform. Building from components would have produced a 27-node tier that passes every structural
+test and describes something that is not the federation.
+
+**Bindings, not effective roles.** The contract calls the field "role bindings" and
+`docs/07-security.md` says roles inherit downward — so inheritance is an authorization question
+evaluated against a request, not something baked into the tree. Pre-expanding it would make the
+tree lossy about where a role was *declared*, which is what the recompute audit asks. Owner
+confirmed this reading before implementation.
+
+**A divergence from the architecture doc, resolved in the doc rather than in silence.**
+`docs/02-architecture.md` assigned "responsible-parties to node-scoped roles" to `internal/authz`,
+and the contract forces bindings into `tree`. The line now reads: `tree` carries what each node
+declares, `authz` turns it into a decision. `CLAUDE.md` is explicit that code contradicting a
+design doc is a bug in one of them, never an accepted divergence.
+
+**Five mutations, all caught.** A no-op `note()` turns the five finding tests red; binding AO at
+the boundary names the exact wrong placement; building systems from components trips the count
+test at 27 against 20; leaving `Roles` nil fails the frozen schema. That last one is the value of
+compiling `Node` out of `api/openapi.yaml` in the test rather than restating its enums in Go —
+restated enums would agree with whatever the builder believed.
+
+**Two lint findings fixed rather than suppressed.** `.golangci.yml` keeps an empty gosec exclusion
+set on purpose. G304 on `os.ReadFile` over a glob was answered by reading through an `fs.FS` rooted
+at the fixture directory, so nothing outside it is reachable by construction — the property the
+rule is actually about — and revive's unused parameter by deleting it.
+
+**Left alone deliberately:** no NIST mapping row moves off `planned`. This slice *derives* the
+bindings; it enforces nothing, and `docs/compliance/README.md` is explicit that a row with no
+evidence stays planned. AC-2, AC-3 and AC-6 move when `internal/authz` can refuse something.
+
+**Noticed, not fixed:** the status snapshot's "NIST control coverage: **0 documented**" row is
+stale — `docs/compliance/` has existed since S0. Out of scope here; flagged rather than quietly
+corrected or quietly ignored.
+
+**Next:** `internal/authz` — OIDC subjects, downward inheritance and the node-scoped 404 over this
+tree, which is TM-1's third requirement and needs nothing from SPARC either. `internal/sparc`
+stays blocked on `sparc#1181`.
 
 ---
 

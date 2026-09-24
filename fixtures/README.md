@@ -17,7 +17,7 @@ A hand edit is lost on the next run and fails the regeneration check before that
 |---|---|---|
 | `oscal/` | 25 | Catalogs, the profile, the inherited component definition, and one SSP, assessment-results and POA&M per boundary |
 | `evidence/` | 14 | The artifacts the back-matter resources hash. Synthetic content; the digests are of these bytes |
-| `sparc/` | 5 | SPARC's relational addressing — numeric ids and slugs — carrying the OSCAL UUID on every row |
+| `sparc/` | 8 | SPARC Delivery API responses, byte-shaped as the API serves them: `{data, meta}`, paginated. Discovery and addressing only — `ssp_documents[].uuid` is the single OSCAL identifier |
 
 ## The identifiers are final
 
@@ -61,7 +61,29 @@ and `TestCommittedFixturesMatch` assert both.
 ## Synthetic, and the limits of that
 
 The control text, system names, evidence artifacts and assessment verdicts are
-invented. The **structure** is not: it is what `docs/03-data-model.md` specifies,
-and the SPARC endpoint shapes in `sparc/` were written from SPARC's API
-documentation rather than from live responses. Confirm them against an instance
-before treating them as a contract.
+invented. The **structure** is not: it is what `docs/03-data-model.md` specifies.
+
+### What `sparc/` is, and what still needs confirming
+
+These files are what a client **unmarshals**: the `{data, meta}` envelope SPARC
+renders, with real pagination, and exactly the fields its serializers emit. They
+carry no annotations and no convenience keys, because a field the server never
+sends is one a client must not learn to read.
+
+They were **corrected in #70** against `risk-sentinel/sparc` `origin/main`
+(`bb82c75f`) by reading its controllers and serializers. The first version was
+written from the API documentation and was wrong in four ways that all passed
+Horizon's own tests: the wrong envelope, no pagination at all, one wrong route
+name, and an invented `oscal_party_uuid` on the organization rows. That last
+field does not exist — `Organization#uuid` is `gen_random_uuid()`, an audit
+identifier — so the tree joins on party UUIDs read from the **documents**, not
+from these rows.
+
+Reading the implementation is stronger than reading the documentation, and it is
+**still not a live response**. Confirm against an instance before treating any of
+it as a contract. `sparc#1154` part 3 carries that ask.
+
+Captured at `?items=5` so three collections span two pages. SPARC's real defaults
+are 25, and 50 for organizations, which nothing in this federation reaches — so
+single-page fixtures would let a client that ignores `meta` pass every one of
+them, and silently truncate a real federation.

@@ -77,6 +77,66 @@ attributed to current code — arriving from the opposite direction.
 
 ---
 
+## 2026-09-23 — #70 — `feature/70_correct_sparc_fixtures`
+
+**In flight:** nothing.
+
+**P1 was about to be built on a contract that does not exist.** `fixtures/sparc/` is P1's test
+oracle, and `fixtures/README.md` already warned it was written from SPARC's API *documentation*.
+Re-reading the documentation proves nothing, because that is where the fixtures came from — so
+this was measured against `risk-sentinel/sparc` `origin/main` (`bb82c75f`), reading controllers
+and serializers. Four things were wrong, and every one of them would have passed Horizon's tests:
+the envelope (`{data, meta}`, not `{collection, endpoint, note, count, data}`), **no pagination at
+all**, the route name (`authorization_boundary_memberships`), and an invented `oscal_party_uuid`.
+
+**The invented field is the one that mattered.** `Organization#uuid` is `gen_random_uuid()` — the
+model calls it "the stable audit identifier" — and the only `party_uuid` in SPARC's schema is on
+`ssp_leveraged_authorizations`. The fixtures had encoded the assumption that SPARC hands Horizon
+the join key relationally. It does not, and it should not: `ssp_documents[].uuid` is the single
+OSCAL identifier in the whole relational half, and everything else the tree needs is inside the
+document. That is `docs/03-data-model.md`'s architecture, now written down there explicitly so P1
+does not rediscover it.
+
+**Two corrections I made to myself, both from the same root cause.** I read
+`render json: JSON.parse(json_data)` in the SSP controller and concluded the API returns OSCAL;
+following the call through, `SspDocument#to_json_data` is `{document_name, controls}` — SPARC's
+internal shape. The note already in `sparcapi.go` had this right. Then the owner pointed at the
+API docs and Postman collection, which showed `?format=oscal` on `cdef_documents` — a parameter I
+had not looked for at all, and which narrowed the upstream ask from "build OSCAL export" to
+"extend a pattern that already works". **Inferring from one line instead of following the call is
+the same mistake as inferring a tool's flags from a call site**, which this log already records
+once. Twice now.
+
+**Filed `sparc#1181`** — SSP, SAP, SAR and POA&M have OSCAL export services and `download_oscal`
+web routes, but no `/api/v1` surface; the web routes need FIDO2/PIV session auth a service account
+cannot hold, and party UUIDs are built *during* export rather than stored, so they cannot be
+assembled from other endpoints. `sparc#895` is the accepted precedent for the same shape of gap.
+Recorded as X-13.
+
+**P1 is not blocked by it.** The OSCAL SSP fixtures carry the federation and organization parties
+with `member-of-organizations`, and `responsible-parties` for AO, system owner and ISSO — exactly
+P1's exit criterion. `internal/tree` and `internal/authz` can be built and tested locally; only the
+*client* waits on `sparc#1181`. That is the slice to take next, and it was worth establishing
+before writing any of it.
+
+**The fixtures are now captured at `?items=5`.** SPARC's real defaults are 25, and 50 for
+organizations, which nothing in this federation reaches — so fixtures at the default would be
+single-page, and a client that ignored `meta` would pass all of them while truncating a real
+federation. Same reasoning as the planted scanner fixtures: a check that cannot fail is not a
+check. Three collections now span two pages, and `readPages` in the contract test walks them the
+way a client must, asserting the meta adds up rather than trusting it.
+
+**Mutation-checked, both new assertions.** Emitting page 1 only turns the join test red
+(`5 rows across pages, meta.count says 7`); re-adding `oscal_party_uuid` turns the new
+invented-field test red. The old `TestSPARCRowsCarryTheOSCALUUIDs` asserted the *wrong*
+architecture — that boundary rows carry `oscal_ssp_uuid` — so it became
+`TestSPARCRowsJoinToTheDocuments`, which asserts the join SPARC can actually serve.
+
+**Next:** **P1** (#16), starting with `internal/tree` over the OSCAL fixtures — the tree builder and
+the role mapping, both of which need nothing from SPARC. The client task waits on `sparc#1181`.
+
+---
+
 ## 2026-09-23 — #68 — `feature/68_revendor_key_grammar`
 
 **In flight:** nothing.

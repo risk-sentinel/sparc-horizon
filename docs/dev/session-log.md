@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-24 (#76). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-24 (#48). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,47 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-24 — #48 — `fix/48_npx_in_required_checks`
+
+**In flight:** nothing. Chosen over more P1 code because P1's unblocked work is thin — the client
+waits on `sparc#1181` and the mapping documents on `sparc#1154` — and because this one was not
+merely a hotspot.
+
+**SR-3 claimed something that was not true of this repository.** The row in
+`nist-sp800-53-rev5-mapping.md` said Horizon installs with `--ignore-scripts` and calls binaries
+directly "in place of `npx`". That was true of `sonarqube-hdf-emit.yml` and **false of
+`contracts.yml`**, which ran five tools through `npx` inside two *required* status checks — 17
+registry resolutions per run of a gate that decides whether a pull request can merge. A pin
+constrains which package is fetched, not what its install lifecycle scripts do, so the pins that
+were there were necessary and not sufficient. The overclaim is recorded in the mapping rather than
+quietly corrected.
+
+**The fix was already written, in the same file.** `fixture-props` carried the pattern with its
+reasoning; the other five call sites had simply never been converted. One install per job replaces
+one resolution per call.
+
+**Verified by running it, not by reading it.** Installed both tool sets locally with
+`--ignore-scripts`, confirmed the binaries `@redocly/cli` actually ships (`redocly`, `openapi`,
+`js-yaml`) rather than assuming the names, and re-ran the namespace-schema job's assertions
+through the direct binary: **17 passed, 0 failed**, the same numbers CI asserts. `js-yaml` reports
+the same 11 paths.
+
+**The guard is the part worth keeping.** The fix is one line from being undone by whoever adds the
+next tool, and it would be undone inside a required check — so a step now fails the build if any
+workflow invokes `npx`. Matching prose would have been worse than nothing: the step's own name and
+error message mention npx, and a guard that trips on its explanation is one somebody disables. It
+matches only where a command can begin, and is mutation-checked four ways — a bare call, a
+`$(npx …)` substitution (the shape line 38 actually had), one after a pipe, all caught; a
+commented-out one correctly ignored.
+
+**Next:** P1's unblocked remainder is thin. `cmd/mockserver` could be rewired onto
+`internal/authz` — deliberately left out of #76 so the mock and the implementation can disagree
+once, observably — or #57 (nothing verifies a pinned SHA matches its comment) and #42 (Sonar
+configuration). Both upstream asks were checked today and are unmoved: `sparc#1154` since
+2026-09-22, `sparc#1181` since 2026-09-23.
 
 ---
 

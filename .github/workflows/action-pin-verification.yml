@@ -1,0 +1,160 @@
+name: Action pin verification
+
+# Checks that the version comment beside every pinned action SHA is true.
+#
+# The comment is the only part of a pin a human reads. #56 found
+# actions/setup-go pinned at 924ae3a1… labelled `# v6.0.0` when that SHA is
+# v6.5.0, and Dependabot's #53 diff moved the SHA to v7.0.0 while carrying the
+# stale `# v6.0.0` across unchanged. A wrong comment is therefore STICKY: the
+# tool that bumps the pin does not fix the label, and every bump makes the drift
+# look more deliberate.
+#
+# SA-10 in docs/compliance/nist-sp800-53-rev5-mapping.md claims actions are
+# pinned by SHA "not by tag" so "a bumped pin is a reviewed diff". A reviewer
+# reading `# v6.0.0` while the workflow runs v6.5.0 is reviewing something that
+# is not happening. The control is real; the thing that makes it legible had
+# quietly stopped being true.
+#
+# ---- Why this is NOT a required check ---------------------------------------
+#
+# Resolving a SHA means calling api.github.com about somebody else's
+# repository. Putting that in a required check makes every pull request in this
+# repository depend on an external service being reachable, which is the same
+# trade #68 refused for vendored-contract-freshness.yml and for the same reason.
+#
+# So it runs on a schedule, on merges that touch workflows, and on demand — and
+# it FILES AN ISSUE, because a scheduled job that only fails is one nobody sees.
+# The cost is that drift is caught shortly after a merge rather than before it.
+# That is the right way round: a stale comment is a legibility defect, not a
+# live vulnerability, and blocking every merge on GitHub's API availability to
+# catch it sooner is a worse failure than catching it an hour later.
+
+on:
+  schedule:
+    # Mondays, 07:20 UTC — twenty minutes after the vendored-contract check, so
+    # two scheduled jobs are not competing for the same rate limit.
+    - cron: '20 7 * * 1'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  # A floor, not a formality. The obvious implementation greps, loops and
+  # reports success over an empty list the first time a file is renamed or the
+  # `uses:` spelling changes. Raise it when pins are added.
+  MIN_PINS: '5'
+  MARKER: '<!-- action-pin-verification -->'
+
+jobs:
+  pins:
+    name: Pinned SHAs match their version comments
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Verify every pin against the tag it claims
+        id: verify
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # owner/repo@<40-hex> followed by a version comment. A pin with no
+          # comment is reported separately below rather than skipped.
+          pat='uses:[[:space:]]*[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+@[0-9a-f]{40}'
+          grep -rhoE "${pat}([[:space:]]*#[[:space:]]*\S+)?" .github/workflows/*.yml \
+            | sed 's/uses:[[:space:]]*//' | sort -u > pins.txt
+
+          total=$(wc -l < pins.txt | tr -d ' ')
+          echo "Pins found: ${total}"
+          if [ "${total}" -lt "${MIN_PINS}" ]; then
+            echo "::error::Found ${total} pins, expected at least ${MIN_PINS}. The matcher is not matching, so this job would pass having checked nothing."
+            exit 1
+          fi
+
+          bad=""
+          while read -r line; do
+            ref="${line%%#*}"; ref="$(printf '%s' "$ref" | tr -d '[:space:]')"
+            comment="$(printf '%s' "$line" | sed -n 's/.*#[[:space:]]*//p' | tr -d '[:space:]')"
+            repo="${ref%@*}"; sha="${ref#*@}"
+
+            if [ -z "${comment}" ]; then
+              bad="${bad}\n- \`${repo}@${sha}\` has **no version comment**, so nothing states what it is"
+              continue
+            fi
+            # A major alias moves. The comment must name the version a reviewer
+            # can check, not one that will mean something else next month.
+            case "${comment}" in
+              v[0-9]*.[0-9]*.[0-9]*) : ;;
+              *) bad="${bad}\n- \`${repo}\` is labelled \`${comment}\`, which is not a specific version" ; continue ;;
+            esac
+
+            # An API failure must not read as a pass.
+            if ! tags="$(gh api "repos/${repo}/tags" --paginate --jq '.[] | "\(.name)|\(.commit.sha)"' 2>err.txt)"; then
+              echo "::error::Could not list tags for ${repo}: $(tr -d '\n' < err.txt)"
+              exit 1
+            fi
+
+            at_sha="$(printf '%s\n' "${tags}" | awk -F'|' -v s="${sha}" '$2==s {print $1}' | paste -sd, -)"
+            if [ -z "${at_sha}" ]; then
+              bad="${bad}\n- \`${repo}@${sha:0:12}\` claims \`${comment}\` but **no tag points at that SHA**"
+            elif ! printf '%s\n' "${tags}" | awk -F'|' -v s="${sha}" '$2==s {print $1}' | grep -qxF "${comment}"; then
+              bad="${bad}\n- \`${repo}@${sha:0:12}\` claims \`${comment}\` but that SHA is \`${at_sha}\`"
+            else
+              echo "  OK  ${repo} ${comment} (tags at SHA: ${at_sha})"
+            fi
+          done < pins.txt
+
+          if [ -n "${bad}" ]; then
+            echo "::error::A pinned SHA does not match the version its comment claims."
+            printf '%b\n' "${bad}"
+            { echo "drift<<EOF"; printf '%b\n' "${bad}"; echo "EOF"; } >> "$GITHUB_OUTPUT"
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          echo "stale=false" >> "$GITHUB_OUTPUT"
+          echo "PASS — all ${total} pins match the version they claim."
+
+      - name: Open an issue if a pin is mislabelled
+        if: failure() && steps.verify.outputs.stale == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRIFT: ${{ steps.verify.outputs.drift }}
+        run: |
+          set -euo pipefail
+          existing="$(gh issue list --state open --search "${MARKER} in:body" --json number -q '.[0].number' || true)"
+          if [ -n "${existing}" ]; then
+            echo "Issue #${existing} is already open for this. Not filing another."
+            exit 0
+          fi
+          {
+            printf '%s\n\n' "${MARKER}"
+            printf 'A pinned action SHA does not match the version its comment claims.\n\n'
+            printf '%s\n\n' "${DRIFT}"
+            printf 'The comment is the only part of a pin a human reads, and SA-10 in\n'
+            printf 'docs/compliance/nist-sp800-53-rev5-mapping.md rests on it being true.\n'
+            printf 'Dependabot carries a stale comment across a bump rather than rewriting it,\n'
+            printf 'so this does not correct itself (#57).\n\n'
+            printf 'Opened by action-pin-verification.yml.\n'
+          } > body.md
+          gh issue create --title "A pinned action SHA does not match its version comment" --label bug --body-file body.md
+
+      - name: Summarise
+        if: always()
+        run: |
+          set -euo pipefail
+          {
+            echo "## Action pin verification"
+            echo
+            case "${{ steps.verify.outputs.stale }}" in
+              false) echo "**All pins match the version they claim.**" ;;
+              true)  echo "**A pin is mislabelled.** An issue has been filed, unless one was already open." ;;
+              *)     echo "**Not determined.** The check did not complete; read the job log." ;;
+            esac
+          } >> "$GITHUB_STEP_SUMMARY"

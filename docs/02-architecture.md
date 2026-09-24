@@ -55,8 +55,10 @@ from the original sketch.
   internal/fixtures/    the fixture generator
   internal/sparc/       mTLS client, ETag cache, doc fetch
   internal/oscal/       version dispatch, round-trip probe, go-oscal adapters
-  internal/tree/        federation, org, boundary, system builder
-  internal/authz/       responsible-parties to node-scoped roles, OIDC
+  internal/tree/        federation, org, boundary, system builder; the role
+                        BINDINGS each node declares
+  internal/authz/       bindings to a decision: OIDC subjects, downward
+                        inheritance, and the node-scoped 404
   internal/ledger/      append-only, hash-chained events
   internal/project/     StateAt, rollups, horizon buckets, ranking
   internal/attest/      lifecycle, evidence, signing, saf attest emit
@@ -67,6 +69,14 @@ from the original sketch.
   fixtures/             deterministic OSCAL federation, generated (#36)
   deploy/helm/  deploy/terraform/
 ```
+
+**Where roles split between `tree` and `authz`.** `Node` in `api/openapi.yaml` requires `roles`, so
+the tree cannot be built without them — it carries the bindings **declared at** each node, read
+from `responsible-parties` and component `responsible-roles`. What it does not do is decide
+anything: resolving a binding to a person, inheriting it downward, and refusing a node the caller
+holds nothing on are all `internal/authz`. Keeping the bindings in the tree is what makes the
+recompute audit possible, because where a role was declared is a property of the documents; folding
+inheritance in would lose it.
 
 ## Dependencies
 

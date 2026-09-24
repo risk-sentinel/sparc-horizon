@@ -1,0 +1,287 @@
+{
+  "root": {
+    "id": "77187569-aef0-5983-8528-3571a71f997b",
+    "name": "Cascade Federation",
+    "nodeType": "federation",
+    "roles": [],
+    "children": [
+      {
+        "id": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211",
+        "name": "Bureau of Grants Management",
+        "nodeType": "organization",
+        "roles": [
+          "authorizing-official"
+        ],
+        "children": [
+          {
+            "id": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+            "name": "Grants Platform",
+            "nodeType": "boundary",
+            "roles": [
+              "information-system-security-officer",
+              "system-owner"
+            ],
+            "children": [
+              {
+                "id": "fd443cab-de4a-5d2b-aafd-b5a014e33e06",
+                "name": "bgm-grants/grants-app",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "f8c7d01f-309d-5b5a-bd33-f75cbb933660",
+                "name": "bgm-grants/grants-db",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "4e74cdf8-bd23-584b-9cb2-f76076ee70ef",
+                "name": "bgm-grants/grants-etl",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "15781999-2cd0-51a4-ad7a-3c65a478d3d3",
+            "name": "Payments Gateway",
+            "nodeType": "boundary",
+            "roles": [
+              "information-system-security-officer",
+              "system-owner"
+            ],
+            "children": [
+              {
+                "id": "f54b31e4-1ae2-5647-a59d-29e769487f7c",
+                "name": "bgm-payments/pay-gateway",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "1819471d-4c93-5f10-8a1f-716a63651704",
+                "name": "bgm-payments/pay-hsm",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "62b06112-7955-51c2-866f-40f071ba4acc",
+                "name": "bgm-payments/pay-ledger",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "019cb43f-7468-5184-8780-be8a71a340dc",
+        "name": "Coastal Operations Agency",
+        "nodeType": "organization",
+        "roles": [
+          "authorizing-official"
+        ],
+        "children": [
+          {
+            "id": "1942d11b-584d-580b-91cb-0ad94254c560",
+            "name": "Field Operations",
+            "nodeType": "boundary",
+            "roles": [
+              "information-system-security-officer",
+              "system-owner"
+            ],
+            "children": [
+              {
+                "id": "a3d95efc-a642-528a-85fc-84e80e5fa36a",
+                "name": "coa-fieldops/field-mobile",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "73489cf6-b1ca-53d8-bc9c-c58812622e67",
+                "name": "coa-fieldops/field-sync",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "bd4969d2-d748-5a13-889f-636f6d3322df",
+        "name": "National Data Institute",
+        "nodeType": "organization",
+        "roles": [
+          "authorizing-official"
+        ],
+        "children": [
+          {
+            "id": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520",
+            "name": "Analytics Workbench",
+            "nodeType": "boundary",
+            "roles": [
+              "information-system-security-officer",
+              "system-owner"
+            ],
+            "children": [
+              {
+                "id": "23042520-7e7a-5fba-b525-37713af3d9a1",
+                "name": "ndi-analytics/wb-notebook",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "70e17660-0172-5552-bb2b-714f0c7e2d33",
+                "name": "ndi-analytics/wb-registry",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "f1fb78e3-8a22-5279-9e7c-f11c08895955",
+                "name": "ndi-analytics/wb-scheduler",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "f47d858e-7af8-5990-a4de-7365abd272d8",
+            "name": "Research Data Lake",
+            "nodeType": "boundary",
+            "roles": [
+              "information-system-security-officer",
+              "system-owner"
+            ],
+            "children": [
+              {
+                "id": "5553ef4a-7bef-5325-9f29-d3caa434efb6",
+                "name": "ndi-datalake/lake-catalog",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "506e42df-b68a-5916-8a5e-241cbf17496c",
+                "name": "ndi-datalake/lake-ingest",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "c0007932-9de2-5f63-87ba-553e0d1b8918",
+                "name": "ndi-datalake/lake-store",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a",
+        "name": "Office of Digital Services",
+        "nodeType": "organization",
+        "roles": [
+          "authorizing-official"
+        ],
+        "children": [
+          {
+            "id": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
+            "name": "Identity Services",
+            "nodeType": "boundary",
+            "roles": [
+              "information-system-security-officer",
+              "system-owner"
+            ],
+            "children": [
+              {
+                "id": "ae74683c-9877-5a49-b7b6-d84c3a1cc39d",
+                "name": "ods-identity/idp",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "50cb22c0-5b70-5190-a834-81741d1e8478",
+                "name": "ods-identity/idp-dir",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "0c5c888f-2e93-5539-8e66-387f7238355c",
+                "name": "ods-identity/idp-mfa",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "f7de308a-5555-5e35-be6a-029ad885320e",
+            "name": "Public Portal",
+            "nodeType": "boundary",
+            "roles": [
+              "information-system-security-officer",
+              "system-owner"
+            ],
+            "children": [
+              {
+                "id": "507020a9-111f-572f-9ce1-2ff40be504d7",
+                "name": "ods-portal/portal-api",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "56165a15-86e3-5c9b-9816-eb6f7d7f280f",
+                "name": "ods-portal/portal-cdn",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              },
+              {
+                "id": "243f33df-c596-56ee-bd91-4623e9192a49",
+                "name": "ods-portal/portal-web",
+                "nodeType": "system",
+                "roles": [
+                  "system-owner"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -68,7 +68,7 @@ carry. Step 8 updates it in the same PR as the work.
 
 | Bucket | Current state |
 |---|---|
-| Application code | **9 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `internal/project`, `internal/tree`, `cmd/genfixtures`, `cmd/oscalprobe`, `cmd/mockserver` (#38, #36, #49, #61, #74). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
+| Application code | **10 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `internal/project`, `internal/tree`, `internal/authz`, `cmd/genfixtures`, `cmd/oscalprobe`, `cmd/mockserver` (#38, #36, #49, #61, #74, #76). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
 | Design docs | **11** (`docs/01`–`docs/10` + `roadmap.md`) — the design of record |
 | Machine-readable contracts | **2 owned**, one of them now frozen (`api/openapi.yaml`, #61) — `api/openapi.yaml` (v0 skeleton) and `schemas/sparc-namespace-props.v1.schema.json` (v1, 9 props, namespace `https://sparc.risk-sentinel.org/ns`) — plus **1 consumed**, `sparc:lib/federation/key-grammar.v1.json`, vendored with provenance into `internal/keys/testdata/` |
 | Demos | **4** static HTML files, synthetic data, seeded PRNG, no build step |
@@ -83,7 +83,7 @@ carry. Step 8 updates it in the same PR as the work.
 | `container-build-sign` consumer list | **Not listed.** No ECR repo, no signed image, no pin-bump notifications |
 | AWS deployment | **None.** No `sparc-iac` module, no emit role, no task definition |
 | NIST control coverage (application layer) | **0 documented.** No `docs/compliance/` tree yet |
-| Highest-priority next work | **P1, and it is not blocked.** P0 is task-complete; both its remaining exit criteria are other people's — `sparc-validate` against the fixtures (`sparc#1154`, upstream) and the OpenAPI review by both owners. P1's tree builder landed as #74 against the OSCAL fixtures. **P1's SPARC client is blocked** on `sparc#1181` (X-13): no OSCAL document export exists under `/api/v1` for SSP, SAP, SAR or POA&M. `internal/authz` is the next unblocked slice |
+| Highest-priority next work | **P1, and it is not blocked.** P0 is task-complete; both its remaining exit criteria are other people's — `sparc-validate` against the fixtures (`sparc#1154`, upstream) and the OpenAPI review by both owners. P1's tree builder landed as #74 and node-scoped authorization as #76, both against the OSCAL fixtures. **P1's SPARC client is blocked** on `sparc#1181` (X-13): no OSCAL document export exists under `/api/v1` for SSP, SAP, SAR or POA&M. TM-1's remaining two requirements need a signed bundle and the ledger (P2), so the next unblocked P1 work is the control-id normalisation task |
 
 ---
 

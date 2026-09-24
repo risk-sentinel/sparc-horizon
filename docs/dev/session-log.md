@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-24 (#74). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-24 (#76). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,60 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-24 — #76 — `feature/76_node_authz`
+
+**In flight:** nothing. Second P1 slice; `internal/authz` decides visibility over #74's tree.
+
+**Building the consumer found two defects in #74, which is the whole argument for building it.**
+Both were invisible to #74's own tests and both were caught by the persona goldens frozen in #61 —
+written before either package existed.
+
+*One.* **The system tier was keyed on the wrong OSCAL element.** #74 built system nodes from
+`inventory-items`, justified by the count: 20 items against 20 documented systems. The count was
+right and the identity was wrong — the frozen goldens identify a system by its **component** uuid
+and title. The rule that actually holds is better than either reading: **a system is a component
+that has an inventory record.** That uses both halves of what `docs/03-data-model.md` names, gives
+component identity, gives exactly 20, and excludes the inherited AWS component for the right
+reason — it has no inventory record because it is not Horizon's system to inventory, which is what
+makes it not a node, rather than a special case.
+
+*Two.* **Sorting the system tier reordered it away from the contract.** `sortTree` sorted every
+tier by name. Organizations and boundaries are assembled across documents and need an ordering, or
+they follow the filesystem. Systems come from **one** document and already carry its declaration
+order, which is both stable and meaningful. Sorting them cost nothing structurally and made the
+tree disagree with the API it exists to serve.
+
+**`Node.roles` in a response is the CALLER'S roles, not every role bound there.** The goldens
+settle it — `so-ods-portal`'s boundary carries only `system-owner`, although an ISSO is bound there
+too. Right twice over: the HUD asks "what may I do here", and listing every holder would disclose
+an organization's staffing to anyone who can see the node. `internal/tree` keeps the full set
+because the documents declare it and the recompute audit needs it; they are different questions.
+
+**#74 threw away information it had.** `Node` is the frozen contract shape,
+`additionalProperties: false`, so it cannot carry a party uuid — and the binding's party was simply
+dropped after the role was attached. It is unrecoverable downstream, because a party bound at an
+organization need not appear in any document beneath it. `tree.Result` now carries `Bindings`
+beside the tree.
+
+**Three things the design does not specify, recorded rather than assumed** (`docs/10-risks-decisions.md`):
+how an OIDC subject maps to a party uuid — asserted by `docs/07-security.md`, specified nowhere,
+and not expressible against fixtures whose parties carry no `external-ids`, props or emails;
+sibling order in `children`, which the contract leaves open while the P0 goldens encode
+`internal/fixtures`' own table order, determined by no document; and what a party bound at two
+disjoint nodes should be shown, when `/v1/tree` returns exactly one `Node`.
+
+**Mutation-checked.** Making visibility by mention rather than by position turns all three persona
+goldens red plus the inheritance test; making an absent node answer differently from an
+unauthorized one turns the refusal test red on all three of its assertions. The second is the
+disclosure TM-1 is about, and it is the reason there is no `Exists` method to call.
+
+**Next:** P1's remaining unblocked task is control-id normalisation against SPARC mapping documents
+— the mappings are `sparc#1154` part 2, so only the local half is reachable. TM-1's other two
+requirements need a signed bundle and the ledger (P2). `internal/sparc` stays blocked on
+`sparc#1181`.
 
 ---
 

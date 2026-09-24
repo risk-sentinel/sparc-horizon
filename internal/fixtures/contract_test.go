@@ -333,6 +333,39 @@ type pageMetaJSON struct {
 	Items int `json:"items"`
 }
 
+// sparcPagePath is where page p of a collection lands. Page 1 keeps the plain
+// collection name; later pages carry `.pageN`, matching `?page=`.
+func sparcPagePath(collection string, p int) string {
+	if p == 1 {
+		return pathSPARC(collection)
+	}
+	return pathSPARC(collection + ".page" + strconv.Itoa(p))
+}
+
+// readSPARCPage reads one page file. It reports found=false when that page is
+// absent, which readPages turns into either a failure or the end of the walk
+// depending on where it happens.
+func readSPARCPage[T any](t *testing.T, tree map[string][]byte, collection string, p int) ([]T, pageMetaJSON, bool) {
+	t.Helper()
+
+	raw, ok := tree[sparcPagePath(collection, p)]
+	if !ok {
+		return nil, pageMetaJSON{}, false
+	}
+
+	var body struct {
+		Data []T          `json:"data"`
+		Meta pageMetaJSON `json:"meta"`
+	}
+	if err := json.Unmarshal(raw, &body); err != nil {
+		t.Fatalf("%s page %d: %v", collection, p, err)
+	}
+	if body.Meta.Page != p {
+		t.Errorf("%s page %d: meta says page %d", collection, p, body.Meta.Page)
+	}
+	return body.Data, body.Meta, true
+}
+
 // readPages walks every page of a collection the way a client must, and
 // returns the concatenated rows. It asserts the envelope is coherent rather
 // than trusting it: a client that stops after page one is the failure these
@@ -342,46 +375,33 @@ func readPages[T any](t *testing.T, tree map[string][]byte, collection string) [
 	t.Helper()
 
 	var all []T
-	var wantPages, wantCount int
+	var first pageMetaJSON
 
 	for p := 1; ; p++ {
-		path := pathSPARC(collection)
-		if p > 1 {
-			path = pathSPARC(collection + ".page" + strconv.Itoa(p))
-		}
-		raw, ok := tree[path]
-		if !ok {
+		rows, meta, found := readSPARCPage[T](t, tree, collection, p)
+		if !found {
 			if p == 1 {
 				t.Fatalf("%s: no page 1", collection)
 			}
+			t.Errorf("%s: meta promises %d pages, but page %d is missing", collection, first.Pages, p)
 			break
 		}
 
-		var body struct {
-			Data []T          `json:"data"`
-			Meta pageMetaJSON `json:"meta"`
-		}
-		if err := json.Unmarshal(raw, &body); err != nil {
-			t.Fatalf("%s page %d: %v", collection, p, err)
-		}
-		if body.Meta.Page != p {
-			t.Errorf("%s page %d: meta says page %d", collection, p, body.Meta.Page)
-		}
 		if p == 1 {
-			wantPages, wantCount = body.Meta.Pages, body.Meta.Count
-		} else if body.Meta.Pages != wantPages || body.Meta.Count != wantCount {
+			first = meta
+		} else if meta.Pages != first.Pages || meta.Count != first.Count {
 			t.Errorf("%s page %d: meta disagrees with page 1 (%d/%d vs %d/%d)",
-				collection, p, body.Meta.Pages, body.Meta.Count, wantPages, wantCount)
+				collection, p, meta.Pages, meta.Count, first.Pages, first.Count)
 		}
-		all = append(all, body.Data...)
+		all = append(all, rows...)
 
-		if p >= body.Meta.Pages {
+		if p >= meta.Pages {
 			break
 		}
 	}
 
-	if len(all) != wantCount {
-		t.Errorf("%s: %d rows across pages, meta.count says %d", collection, len(all), wantCount)
+	if len(all) != first.Count {
+		t.Errorf("%s: %d rows across pages, meta.count says %d", collection, len(all), first.Count)
 	}
 	return all
 }

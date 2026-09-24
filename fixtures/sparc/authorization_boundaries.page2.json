@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": 6,
+      "slug": "ndi-analytics",
+      "name": "Analytics Workbench",
+      "description": "Analyst notebooks and scheduled jobs over the data lake.",
+      "status": "active",
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-20T00:00:00Z"
+    },
+    {
+      "id": 7,
+      "slug": "coa-fieldops",
+      "name": "Field Operations",
+      "description": "Field data capture and its synchronisation service.",
+      "status": "active",
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-21T00:00:00Z"
+    }
+  ],
+  "meta": {
+    "page": 2,
+    "pages": 2,
+    "count": 7,
+    "items": 5
+  }
+}

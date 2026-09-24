@@ -15,6 +15,44 @@ OSCAL has no native organization or federation hierarchy, so those tiers are exp
 
 Because the same organization party UUID appears in every SSP beneath it, the tree is built by joining on UUIDs. No separate hierarchy database is needed.
 
+### What SPARC's Delivery API supplies, and what it does not
+
+Measured against `risk-sentinel/sparc` `origin/main` (`bb82c75f`) in #70, by reading its
+controllers and serializers rather than its API documentation.
+
+**The relational endpoints are discovery and addressing.** They answer *which documents exist* and
+*which boundary each belongs to*, by numeric id and slug. They do **not** carry the join key:
+
+| Collection | OSCAL identifier in the response |
+|---|---|
+| `federation_peers` | none |
+| `organizations` | none — `uuid` is Postgres `gen_random_uuid()`, an audit identifier |
+| `authorization_boundaries` | none |
+| `authorization_boundary_memberships` | none |
+| `ssp_documents` | **`uuid`** — the OSCAL document UUID |
+
+`ssp_documents[].uuid` is the only bridge between the two halves, and it is enough: it names the
+document, and everything the tree needs — the organization party UUID, `member-of-organizations`,
+`responsible-parties` — is read from inside that document. The table above is the architecture, not
+a limitation of it; a hierarchy served relationally is the thing this design refuses.
+
+Every index is paginated — `{data, meta: {page, pages, count, items}}`, default 25 and 50 for
+organizations, `?items=` up to 200. **A client that reads `data` and ignores `meta` truncates any
+federation larger than one page**, and nothing errors.
+
+**Do not read authorization from `authorization_boundary_memberships`.** It carries `role` and
+`role_label`, keyed by user email, and it is the most convenient wrong answer in the API. Those are
+SPARC's own membership roles for its own screens. Horizon's roles come from `responsible-parties`
+in the documents — see [`docs/07-security.md`](07-security.md) — because a document edit is the
+privilege grant, and reading a role from an admin table makes authorization unreviewable after the
+fact.
+
+**Open**: the OSCAL export is reachable over `/api/v1` for `cdef_documents` only
+(`?format=oscal`). SSP, SAP, SAR and POA&M have the export services but no API surface — their
+`/export` returns SPARC's internal shape. Filed as
+[`sparc#1181`](https://github.com/risk-sentinel/sparc/issues/1181). Until it lands, Horizon reads
+OSCAL from fixtures rather than from an instance.
+
 ## Namespace contract
 
 Defined in [`schemas/sparc-namespace-props.v1.schema.json`](../schemas/sparc-namespace-props.v1.schema.json) and enforced by `sparc-validate`. Changes within `v1` are additive only.

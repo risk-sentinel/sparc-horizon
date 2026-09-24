@@ -1,8 +1,10 @@
 package fixtures
 
 import (
+	"bytes"
 	"encoding/json"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -313,43 +315,163 @@ func TestForeignPropsArePreservedAsIssued(t *testing.T) {
 }
 
 type boundaryRow struct {
-	ID           int    `json:"id"`
-	Slug         string `json:"slug"`
-	OSCALSSPUUID string `json:"oscal_ssp_uuid"`
+	ID   int    `json:"id"`
+	Slug string `json:"slug"`
 }
 
-// Both addressing schemes on one object, which is what lets P1's client be
-// exercised honestly: SPARC addresses a boundary by numeric id and slug, and
-// every row carries the OSCAL UUID the documents join on.
-func TestSPARCRowsCarryTheOSCALUUIDs(t *testing.T) {
+type sspDocRow struct {
+	ID                      int    `json:"id"`
+	Slug                    string `json:"slug"`
+	UUID                    string `json:"uuid"`
+	AuthorizationBoundaryID int    `json:"authorization_boundary_id"`
+}
+
+type pageMetaJSON struct {
+	Page  int `json:"page"`
+	Pages int `json:"pages"`
+	Count int `json:"count"`
+	Items int `json:"items"`
+}
+
+// sparcPagePath is where page p of a collection lands. Page 1 keeps the plain
+// collection name; later pages carry `.pageN`, matching `?page=`.
+func sparcPagePath(collection string, p int) string {
+	if p == 1 {
+		return pathSPARC(collection)
+	}
+	return pathSPARC(collection + ".page" + strconv.Itoa(p))
+}
+
+// readSPARCPage reads one page file. It reports found=false when that page is
+// absent, which readPages turns into either a failure or the end of the walk
+// depending on where it happens.
+func readSPARCPage[T any](t *testing.T, tree map[string][]byte, collection string, p int) ([]T, pageMetaJSON, bool) {
+	t.Helper()
+
+	raw, ok := tree[sparcPagePath(collection, p)]
+	if !ok {
+		return nil, pageMetaJSON{}, false
+	}
+
+	var body struct {
+		Data []T          `json:"data"`
+		Meta pageMetaJSON `json:"meta"`
+	}
+	if err := json.Unmarshal(raw, &body); err != nil {
+		t.Fatalf("%s page %d: %v", collection, p, err)
+	}
+	if body.Meta.Page != p {
+		t.Errorf("%s page %d: meta says page %d", collection, p, body.Meta.Page)
+	}
+	return body.Data, body.Meta, true
+}
+
+// readPages walks every page of a collection the way a client must, and
+// returns the concatenated rows. It asserts the envelope is coherent rather
+// than trusting it: a client that stops after page one is the failure these
+// fixtures exist to provoke, so the fixtures have to be genuinely multi-page
+// and their meta has to add up.
+func readPages[T any](t *testing.T, tree map[string][]byte, collection string) []T {
+	t.Helper()
+
+	var all []T
+	var first pageMetaJSON
+
+	for p := 1; ; p++ {
+		rows, meta, found := readSPARCPage[T](t, tree, collection, p)
+		if !found {
+			if p == 1 {
+				t.Fatalf("%s: no page 1", collection)
+			}
+			t.Errorf("%s: meta promises %d pages, but page %d is missing", collection, first.Pages, p)
+			break
+		}
+
+		if p == 1 {
+			first = meta
+		} else if meta.Pages != first.Pages || meta.Count != first.Count {
+			t.Errorf("%s page %d: meta disagrees with page 1 (%d/%d vs %d/%d)",
+				collection, p, meta.Pages, meta.Count, first.Pages, first.Count)
+		}
+		all = append(all, rows...)
+
+		if p >= meta.Pages {
+			break
+		}
+	}
+
+	if len(all) != first.Count {
+		t.Errorf("%s: %d rows across pages, meta.count says %d", collection, len(all), first.Count)
+	}
+	return all
+}
+
+// The two halves of the seam join, and the join is the one SPARC can actually
+// serve.
+//
+// The relational endpoints are discovery and addressing: numeric id and slug.
+// The ONLY OSCAL identifier anywhere in them is `ssp_documents[].uuid`, so
+// that is the hinge — everything else about the tree is read from the
+// documents. An earlier version of this test asserted `oscal_ssp_uuid` on the
+// boundary rows, which SPARC does not send; see #70.
+func TestSPARCRowsJoinToTheDocuments(t *testing.T) {
 	tree := generate(t)
 	g := New(keys.Namespace())
 
-	var rows struct {
-		Count int           `json:"count"`
-		Data  []boundaryRow `json:"data"`
+	boundaries := readPages[boundaryRow](t, tree, "authorization_boundaries")
+	docs := readPages[sspDocRow](t, tree, "ssp_documents")
+
+	if len(boundaries) != len(Boundaries) {
+		t.Fatalf("%d boundary rows, want %d", len(boundaries), len(Boundaries))
 	}
-	if err := json.Unmarshal(tree[pathSPARC("authorization_boundaries")], &rows); err != nil {
-		t.Fatalf("authorization_boundaries: %v", err)
-	}
-	if rows.Count != len(Boundaries) || len(rows.Data) != len(Boundaries) {
-		t.Fatalf("%d rows (count says %d), want %d", len(rows.Data), rows.Count, len(Boundaries))
+	if len(docs) != len(Boundaries) {
+		t.Fatalf("%d ssp_document rows, want %d", len(docs), len(Boundaries))
 	}
 
-	for i, row := range rows.Data {
+	byBoundaryID := map[int]sspDocRow{}
+	for _, d := range docs {
+		byBoundaryID[d.AuthorizationBoundaryID] = d
+	}
+
+	for i, row := range boundaries {
 		b := Boundaries[i]
 		if row.Slug != b.Slug || row.ID != b.ID {
 			t.Errorf("row %d addresses %d/%s, want %d/%s", i, row.ID, row.Slug, b.ID, b.Slug)
 		}
+
+		doc, ok := byBoundaryID[b.ID]
+		if !ok {
+			t.Errorf("%s: no ssp_document row points at boundary %d", b.Slug, b.ID)
+			continue
+		}
+
 		ssp := decode[oscal.OscalCompleteSchema](t, tree, pathSSP(b)).SystemSecurityPlan
-		if row.OSCALSSPUUID != ssp.UUID {
-			t.Errorf("%s: row points at %s, the SSP is %s", b.Slug, row.OSCALSSPUUID, ssp.UUID)
+		if doc.UUID != ssp.UUID {
+			t.Errorf("%s: ssp_documents says %s, the document is %s", b.Slug, doc.UUID, ssp.UUID)
 		}
 		if ssp.SystemCharacteristics.SystemIds[0].ID != b.Slug {
 			t.Errorf("%s: the SSP does not carry SPARC's slug", b.Slug)
 		}
 		if got, want := metadataProp(t, ssp, PropParentUUID), g.orgPartyUUID(b.Org()); got != want {
 			t.Errorf("%s: parent-uuid is %s, want the organization party %s", b.Slug, got, want)
+		}
+	}
+}
+
+// No relational row may carry an OSCAL party UUID, because SPARC does not send
+// one and a fixture that invents it teaches the client to join on a field that
+// will never arrive (#70).
+func TestSPARCRowsDoNotInventAPartyUUID(t *testing.T) {
+	tree := generate(t)
+
+	for path, raw := range tree {
+		if !strings.HasPrefix(path, "sparc/") {
+			continue
+		}
+		for _, banned := range []string{"oscal_party_uuid", "oscal_parent_party_uuid", "oscal_ssp_uuid"} {
+			if bytes.Contains(raw, []byte(banned)) {
+				t.Errorf("%s carries %q, which SPARC's API does not send", path, banned)
+			}
 		}
 	}
 }

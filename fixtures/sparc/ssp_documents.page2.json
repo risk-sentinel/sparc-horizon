@@ -1,0 +1,44 @@
+{
+  "data": [
+    {
+      "id": 6,
+      "slug": "ndi-analytics-ssp",
+      "uuid": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520",
+      "name": "Analytics Workbench system security plan",
+      "status": "completed",
+      "lifecycle_status": "published",
+      "content_complete": true,
+      "content_completeness_gaps": [],
+      "file_type": "json",
+      "creation_method": "import",
+      "authorization_boundary_id": 6,
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-20T00:00:00Z",
+      "published": true,
+      "back_matter_resources_count": 2
+    },
+    {
+      "id": 7,
+      "slug": "coa-fieldops-ssp",
+      "uuid": "1942d11b-584d-580b-91cb-0ad94254c560",
+      "name": "Field Operations system security plan",
+      "status": "completed",
+      "lifecycle_status": "published",
+      "content_complete": true,
+      "content_completeness_gaps": [],
+      "file_type": "json",
+      "creation_method": "import",
+      "authorization_boundary_id": 7,
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-21T00:00:00Z",
+      "published": true,
+      "back_matter_resources_count": 2
+    }
+  ],
+  "meta": {
+    "page": 2,
+    "pages": 2,
+    "count": 7,
+    "items": 5
+  }
+}

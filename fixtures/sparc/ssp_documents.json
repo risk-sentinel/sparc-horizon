@@ -1,71 +1,95 @@
 {
-  "collection": "ssp_documents",
-  "endpoint": "GET /api/v1/ssp_documents",
-  "note": "GET /api/v1/ssp_documents/:slug/export returns SPARC's own shape, not OSCAL. export_path here points at the OSCAL document, which is what Horizon reads.",
-  "count": 7,
   "data": [
     {
       "id": 1,
       "slug": "ods-portal-ssp",
-      "title": "Public Portal system security plan",
+      "uuid": "f7de308a-5555-5e35-be6a-029ad885320e",
+      "name": "Public Portal system security plan",
+      "status": "completed",
+      "lifecycle_status": "published",
+      "content_complete": true,
+      "content_completeness_gaps": [],
+      "file_type": "json",
+      "creation_method": "import",
       "authorization_boundary_id": 1,
-      "oscal_uuid": "f7de308a-5555-5e35-be6a-029ad885320e",
-      "oscal_version": "1.2.2",
-      "export_path": "../oscal/ssp-ods-portal.json"
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-15T00:00:00Z",
+      "published": true,
+      "back_matter_resources_count": 2
     },
     {
       "id": 2,
       "slug": "ods-identity-ssp",
-      "title": "Identity Services system security plan",
+      "uuid": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
+      "name": "Identity Services system security plan",
+      "status": "completed",
+      "lifecycle_status": "published",
+      "content_complete": true,
+      "content_completeness_gaps": [],
+      "file_type": "json",
+      "creation_method": "import",
       "authorization_boundary_id": 2,
-      "oscal_uuid": "52176fd3-10ad-5df7-bbb4-c69a930223a8",
-      "oscal_version": "1.2.2",
-      "export_path": "../oscal/ssp-ods-identity.json"
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-16T00:00:00Z",
+      "published": true,
+      "back_matter_resources_count": 2
     },
     {
       "id": 3,
       "slug": "bgm-grants-ssp",
-      "title": "Grants Platform system security plan",
+      "uuid": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+      "name": "Grants Platform system security plan",
+      "status": "completed",
+      "lifecycle_status": "published",
+      "content_complete": true,
+      "content_completeness_gaps": [],
+      "file_type": "json",
+      "creation_method": "import",
       "authorization_boundary_id": 3,
-      "oscal_uuid": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
-      "oscal_version": "1.2.2",
-      "export_path": "../oscal/ssp-bgm-grants.json"
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-17T00:00:00Z",
+      "published": true,
+      "back_matter_resources_count": 2
     },
     {
       "id": 4,
       "slug": "bgm-payments-ssp",
-      "title": "Payments Gateway system security plan",
+      "uuid": "15781999-2cd0-51a4-ad7a-3c65a478d3d3",
+      "name": "Payments Gateway system security plan",
+      "status": "completed",
+      "lifecycle_status": "published",
+      "content_complete": true,
+      "content_completeness_gaps": [],
+      "file_type": "json",
+      "creation_method": "import",
       "authorization_boundary_id": 4,
-      "oscal_uuid": "15781999-2cd0-51a4-ad7a-3c65a478d3d3",
-      "oscal_version": "1.2.2",
-      "export_path": "../oscal/ssp-bgm-payments.json"
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-18T00:00:00Z",
+      "published": true,
+      "back_matter_resources_count": 2
     },
     {
       "id": 5,
       "slug": "ndi-datalake-ssp",
-      "title": "Research Data Lake system security plan",
+      "uuid": "f47d858e-7af8-5990-a4de-7365abd272d8",
+      "name": "Research Data Lake system security plan",
+      "status": "completed",
+      "lifecycle_status": "published",
+      "content_complete": true,
+      "content_completeness_gaps": [],
+      "file_type": "json",
+      "creation_method": "import",
       "authorization_boundary_id": 5,
-      "oscal_uuid": "f47d858e-7af8-5990-a4de-7365abd272d8",
-      "oscal_version": "1.2.2",
-      "export_path": "../oscal/ssp-ndi-datalake.json"
-    },
-    {
-      "id": 6,
-      "slug": "ndi-analytics-ssp",
-      "title": "Analytics Workbench system security plan",
-      "authorization_boundary_id": 6,
-      "oscal_uuid": "f495f200-e9d9-5985-a5fd-0f2bb3c6e520",
-      "oscal_version": "1.2.2",
-      "export_path": "../oscal/ssp-ndi-analytics.json"
-    },
-    {
-      "id": 7,
-      "slug": "coa-fieldops-ssp",
-      "title": "Field Operations system security plan",
-      "authorization_boundary_id": 7,
-      "oscal_uuid": "1942d11b-584d-580b-91cb-0ad94254c560",
-      "oscal_version": "1.2.2",
-      "export_path": "../oscal/ssp-coa-fieldops.json"
+      "created_at": "2026-09-15T00:00:00Z",
+      "updated_at": "2026-09-19T00:00:00Z",
+      "published": true,
+      "back_matter_resources_count": 2
     }
-  ]
+  ],
+  "meta": {
+    "page": 1,
+    "pages": 2,
+    "count": 7,
+    "items": 5
+  }
 }

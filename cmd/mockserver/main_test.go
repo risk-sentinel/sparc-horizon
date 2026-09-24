@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"sort"
 	"testing"
 )
 
@@ -49,7 +51,10 @@ func TestUnseenNodeAndAbsentNodeAreIndistinguishable(t *testing.T) {
 	foreign := s.personas[2].NodeUUID                // a different organization
 	absent := "00000000-0000-5000-8000-000000000000" // never existed
 
-	if s.visible[caller.ID][foreign] {
+	// Premise, asserted rather than assumed: if these two personas overlapped,
+	// the test below would pass while proving nothing. Asked of internal/authz
+	// since #79, which is the same question the server now answers with.
+	if s.authz.Visible(caller.PartyUUID, foreign) {
 		t.Fatal("premise wrong: the personas overlap, so this proves nothing")
 	}
 
@@ -121,7 +126,7 @@ func TestChainFollowsTheSameRule(t *testing.T) {
 		if err := s.read("api/chain/"+e.Name(), &c); err != nil {
 			continue
 		}
-		if s.visible[caller.ID][c.Component] {
+		if s.authz.Visible(caller.PartyUUID, c.Component) {
 			mine = c.Requirement
 		} else {
 			theirs = c.Requirement
@@ -195,5 +200,135 @@ func TestCellAndExport(t *testing.T) {
 	}
 	if w := get(t, h, caller.ID, "/v1/export/oscal/no-such-boundary"); w.Code != http.StatusNotFound {
 		t.Errorf("export of an unknown boundary returned %d, want 404", w.Code)
+	}
+}
+
+// GET /v1/tree is computed from the documents since #79, not served from a
+// file — and it must still equal the golden frozen in #61, which is what
+// cmd/mockserver promised clients before the rewire.
+//
+// Compared as data with siblings sorted: the contract leaves `children` order
+// unspecified and the goldens carry the fixture generator's table order, which
+// no document determines (docs/10-risks-decisions.md).
+func TestTreeIsComputedAndStillMatchesTheGolden(t *testing.T) {
+	s, h := testServer(t)
+
+	for _, p := range s.personas {
+		t.Run(p.ID, func(t *testing.T) {
+			raw, err := fs.ReadFile(s.fsys, "api/"+p.ID+"/tree.json")
+			if err != nil {
+				t.Fatalf("golden: %v", err)
+			}
+			var want, got any
+			if err := json.Unmarshal(raw, &want); err != nil {
+				t.Fatalf("golden: %v", err)
+			}
+
+			res := get(t, h, p.ID, "/v1/tree")
+			if res.Code != http.StatusOK {
+				t.Fatalf("GET /v1/tree returned %d", res.Code)
+			}
+			if err := json.Unmarshal(res.Body.Bytes(), &got); err != nil {
+				t.Fatalf("response: %v", err)
+			}
+
+			if !sameTree(want, got) {
+				t.Errorf("computed tree differs from the frozen golden\n got: %s\nwant: %s",
+					res.Body.String(), raw)
+			}
+		})
+	}
+}
+
+// The mock cannot answer anything without the documents, so it must refuse to
+// start rather than serve a federation in which every node is invisible —
+// which is indistinguishable from a working mock that simply denies you.
+func TestServerRefusesWithoutTheOSCALFixtures(t *testing.T) {
+	only := os.DirFS("../../fixtures/api")
+	if _, err := newServer(only); err == nil {
+		t.Error("newServer started with no SSPs; every response would be a 404 and it would look healthy")
+	}
+}
+
+func sameTree(a, b any) bool {
+	x, _ := json.Marshal(normaliseTree(a))
+	y, _ := json.Marshal(normaliseTree(b))
+	return string(x) == string(y)
+}
+
+func normaliseTree(v any) any {
+	m, ok := v.(map[string]any)
+	if !ok {
+		return v
+	}
+	kids, ok := m["children"].([]any)
+	if !ok {
+		return m
+	}
+	for i := range kids {
+		kids[i] = normaliseTree(kids[i])
+	}
+	sort.Slice(kids, func(i, j int) bool {
+		l, _ := kids[i].(map[string]any)["id"].(string)
+		r, _ := kids[j].(map[string]any)["id"].(string)
+		return l < r
+	})
+	m["children"] = kids
+	return m
+}
+
+// hideFS serves a filesystem with one path removed, so a test can prove a
+// handler does not read it.
+type hideFS struct {
+	fs.FS
+	hidden string
+}
+
+func (h hideFS) Open(name string) (fs.File, error) {
+	if name == h.hidden {
+		return nil, fs.ErrNotExist
+	}
+	return h.FS.Open(name)
+}
+
+func (h hideFS) ReadDir(name string) ([]fs.DirEntry, error) {
+	return fs.ReadDir(h.FS, name)
+}
+
+// The proof that /v1/tree is COMPUTED rather than served.
+//
+// Comparing the response to the golden cannot show this — they agree, which is
+// the point, so serving the file would pass too. Hiding the golden can: if the
+// handler still answers correctly with `api/<persona>/tree.json` unreadable,
+// it cannot have read it.
+func TestTreeIsComputedNotRead(t *testing.T) {
+	const who = "so-ods-portal"
+
+	fixtures := os.DirFS("../../fixtures")
+	raw, err := fs.ReadFile(fixtures, "api/"+who+"/tree.json")
+	if err != nil {
+		t.Fatalf("golden: %v", err)
+	}
+	var want any
+	if err := json.Unmarshal(raw, &want); err != nil {
+		t.Fatalf("golden: %v", err)
+	}
+
+	s, err := newServer(hideFS{FS: fixtures, hidden: "api/" + who + "/tree.json"})
+	if err != nil {
+		t.Fatalf("newServer: %v", err)
+	}
+
+	res := get(t, s.routes(), who, "/v1/tree")
+	if res.Code != http.StatusOK {
+		t.Fatalf("GET /v1/tree returned %d with the golden hidden — it is being read, not computed", res.Code)
+	}
+	var got any
+	if err := json.Unmarshal(res.Body.Bytes(), &got); err != nil {
+		t.Fatalf("response: %v", err)
+	}
+	if !sameTree(want, got) {
+		t.Errorf("computed tree differs from the golden it must still match\n got: %s\nwant: %s",
+			res.Body.String(), raw)
 	}
 }

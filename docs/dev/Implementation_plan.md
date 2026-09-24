@@ -68,7 +68,7 @@ carry. Step 8 updates it in the same PR as the work.
 
 | Bucket | Current state |
 |---|---|
-| Application code | **10 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `internal/project`, `internal/tree`, `internal/authz`, `cmd/genfixtures`, `cmd/oscalprobe`, `cmd/mockserver` (#38, #36, #49, #61, #74, #76). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
+| Application code | **10 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `internal/project`, `internal/tree`, `internal/authz`, `cmd/genfixtures`, `cmd/oscalprobe`, `cmd/mockserver` (#38, #36, #49, #61, #74, #76, #79). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
 | Design docs | **11** (`docs/01`–`docs/10` + `roadmap.md`) — the design of record |
 | Machine-readable contracts | **2 owned**, one of them now frozen (`api/openapi.yaml`, #61) — `api/openapi.yaml` (v0 skeleton) and `schemas/sparc-namespace-props.v1.schema.json` (v1, 9 props, namespace `https://sparc.risk-sentinel.org/ns`) — plus **1 consumed**, `sparc:lib/federation/key-grammar.v1.json`, vendored with provenance into `internal/keys/testdata/` |
 | Demos | **4** static HTML files, synthetic data, seeded PRNG, no build step |

@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-24 (#48). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-24 (#79). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,50 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-24 — #79 — `feature/79_mockserver_authz`
+
+**In flight:** nothing. First of a stack — #57 branches from here and #42 from that, so each branch
+carries its predecessors and the last PR holds the whole chain. Merge in order: #79, #57, #42.
+
+**The mock decided refusals from a file.** `newServer` flattened each persona's committed
+`tree.json` into a visibility map, so if the generator and `internal/authz` ever disagreed, the mock
+sided with the generator — and `GET /v1/tree` returned bytes, which cannot demonstrate the one
+thing the endpoint exists to show. It now builds the tree from `fixtures/oscal/ssp-*.json` and
+answers both from `internal/authz`, the packages the service will use.
+
+**#76 left this undone deliberately, and collecting on that debt was the point.** While the mock
+walked goldens and `internal/authz` computed, the two could disagree observably. That check does
+not disappear — `TestSubtreeMatchesTheFrozenPersonaGoldens` still pins the computed subtree to the
+frozen goldens on every run. What goes away is a second, weaker implementation of the same rule.
+
+**Two mutations exposed real gaps in what the tests proved, and both are now closed.**
+
+*One.* Deleting the visibility check in `s.node()` failed **nothing**. The reason is precise rather
+than alarming: each persona has its own `api/<persona>/heat/` directory, so a foreign node 404s
+because the file is absent, not because authorization refused. The endpoint where authorization is
+genuinely load-bearing is `chain`, whose goldens are **shared** across personas — and neutralising
+*that* check does fail, with "a chain outside the caller's tree returned 200, want 404". Worth
+knowing which of the two is actually protecting the response.
+
+*Two.* Making `/v1/tree` serve the golden again also failed nothing, because the computed tree and
+the golden agree — which is the whole point, so equality cannot distinguish them. `TestTreeIsComputedNotRead`
+closes it by serving a filesystem with `api/<persona>/tree.json` **hidden**: if the handler still
+answers correctly, it cannot have read it. That mutation now fails with "returned 404 with the
+golden hidden — it is being read, not computed".
+
+**The existing six tests needed two edits, both mechanical** — a `s.visible[id][node]` premise check
+and a chain selector became `s.authz.Visible(party, node)`. Same assertions, asked of the
+implementation instead of a map. The issue said an edit here would be a signal worth reading; it
+read as "these tests assert the contract, not the mechanism", which is what they should do.
+
+**The server now refuses to start without the OSCAL fixtures.** Starting anyway would make every
+node invisible and every response a 404 — indistinguishable from a healthy mock that simply denies
+you, which is the worst available failure.
+
+**Next in the stack:** #57 — nothing checks that a pinned SHA is the version its comment claims.
 
 ---
 

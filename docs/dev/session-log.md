@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-23 (#68). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-24 (#72). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,39 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-24 — #72 — `fix/72_sonar_closed_findings`
+
+**In flight:** nothing. This branches from `main`, not from #70's branch, so only one workflow PR
+is open at a time — #71 is open and green but touches no workflow. **On merge, this entry and
+#70's will both want the top of this file**; #70's is dated 2026-09-23 and belongs below this one.
+
+**The PR-findings workflow reported a finding that had already been fixed.** PR #71 carried one
+`go:S3776`, commit `3b61177` fixed it, and the next run still said `Reported 1 result(s)`. The
+cause is that `issues/search` returns CLOSED issues unless told not to, and the count query never
+said `resolved=false`. Measured on PR #71 after the fix landed: the query as written returned
+`total=1` with `status: "CLOSED"`; with `resolved=false` it returned `0`.
+
+**`hdf fetch` does not filter either**, so fixing only the count would still render stale findings
+whenever something else was open. OHDF distinguishes them, and this was measured across two real
+artifacts rather than assumed — PR #67's planted finding (Sonar OPEN) is `status: "failed"`, and
+the same rule on #71 after the fix is `status: "passed"`. So the summary now counts and renders
+`failed` only, and says out loud how many resolved results it left out.
+
+**Found by using the thing.** #63 shipped with a scratch PR proving the reporting path on a planted
+finding, which exercised the mechanism but not this: a finding going from open to closed *inside*
+one pull request. The plant was never fixed, so the state that breaks it never arose. A proof built
+from a fixture covers the path that fixture walks, and the first real use walked a different one.
+
+**Why this matters more than the size of the diff.** The workflow exists so the report can be
+believed without opening the dashboard. One listing of already-fixed findings teaches the reader to
+check the dashboard anyway, which is the habit #63 removed. It is also #13's failure — stale data
+attributed to current code — arriving from the opposite direction.
+
+**Next:** **P1** (#16), `internal/tree` over the OSCAL fixtures. The client task waits on
+`sparc#1181`; the tree builder and role mapping need nothing from SPARC.
 
 ---
 

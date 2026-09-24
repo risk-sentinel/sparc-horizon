@@ -319,6 +319,12 @@ asserting it would make the job fail on good news. What *is* asserted is that an
 PR's head commit existed before the fetch, because an absent analysis returns an empty result that
 converts into a clean-looking report.
 
+**Only findings the scan still considers open are reported.** `issues/search` returns closed
+issues too, so until #72 a pull request that *fixed* its findings kept listing them — the report
+asked for work that was already done. The count now passes `resolved=false`, and the summary
+renders only OHDF results with `status: "failed"`; anything resolved is counted out loud in the log
+and left out of the table.
+
 **A clean PR produces no artifact**, only the summary line saying so. `hdf fetch sonarqube` exits 1
 on a zero-issue result, so the fetch is skipped when SonarCloud reports nothing to convert — an
 upstream defect, written up in [`hdf-cli-empty-sonarqube-result.md`](hdf-cli-empty-sonarqube-result.md).

@@ -167,9 +167,18 @@ jobs:
           #    failure this workflow most needs to defeat is an empty result
           #    that renders as a clean report; a second source for the number
           #    is what makes that detectable rather than reassuring.
+          #
+          # `resolved=false` is load-bearing and was MISSING (#72).
+          # `issues/search` returns CLOSED issues too, so a pull request that
+          # FIXED its findings kept reporting them: on PR #71 the query
+          # returned total=1 with status CLOSED after the fix had landed,
+          # while the same query with `resolved=false` returned 0. A report
+          # that lists findings somebody already dealt with teaches the reader
+          # to go and check the dashboard, which is the habit #63 exists to
+          # remove.
           n="$(curl -sS --proto '=https' --proto-redir '=https' --tlsv1.2 \
                  -u "${SONAR_TOKEN}:" \
-                 "${SONAR_HOST_URL}/api/issues/search?componentKeys=${SONAR_PROJECT_KEY}&pullRequest=${PR}&ps=1" \
+                 "${SONAR_HOST_URL}/api/issues/search?componentKeys=${SONAR_PROJECT_KEY}&pullRequest=${PR}&resolved=false&ps=1" \
                | jq -r '.total // empty')"
           if [ -z "${n}" ]; then
             echo "::error::issues/search did not report a total for PR #${PR}. Refusing to continue: an unreadable count cannot be distinguished from a clean PR."
@@ -225,8 +234,26 @@ jobs:
             exit 0
           fi
 
-          rules="$(jq '[.baselines[]?.requirements[]?] | length' "${HDF_FILE}")"
-          total="$(jq '[.baselines[]?.requirements[]?.results[]?] | length' "${HDF_FILE}")"
+          # Count and render only results the scan still considers OPEN.
+          #
+          # `hdf fetch sonarqube` does not filter resolved issues either, so a
+          # closed finding is in the OHDF whenever anything else is open. OHDF
+          # distinguishes them in `results[].status`, measured across two real
+          # artifacts rather than assumed (#72):
+          #
+          #   PR #67, planted finding, Sonar OPEN   -> status "failed"
+          #   PR #71, the same rule after the fix   -> status "passed"
+          #
+          # A `passed` result is a finding this pull request has already dealt
+          # with. Listing it under "findings on this pull request" is wrong in
+          # the way that matters: it asks for work that is done.
+          open_results='[.baselines[]?.requirements[]?.results[]? | select(.status == "failed")]'
+          rules="$(jq '[.baselines[]?.requirements[]? | select([.results[]? | select(.status == "failed")] | length > 0)] | length' "${HDF_FILE}")"
+          total="$(jq "${open_results} | length" "${HDF_FILE}")"
+          closed="$(jq '[.baselines[]?.requirements[]?.results[]? | select(.status != "failed")] | length' "${HDF_FILE}")"
+          if [ "${closed}" -gt 0 ]; then
+            echo "${closed} result(s) in the OHDF are already resolved; not reporting them."
+          fi
 
           # The one assertion worth making, and it is narrow on purpose: the API
           # says there ARE findings, so OHDF carrying none means the conversion
@@ -250,6 +277,7 @@ jobs:
             jq -r '
               .baselines[]?.requirements[]? as $r
               | $r.results[]?
+              | select(.status == "failed")
               | "| `\($r.id)` | \($r.impact // "-") | \(.codeDesc // "-") | \((.message // "") | gsub("\\|"; "\\\\|") | .[0:120]) |"
             ' "${HDF_FILE}"
             echo

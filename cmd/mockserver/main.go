@@ -30,7 +30,13 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"sort"
 	"strings"
+
+	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-2"
+
+	"github.com/risk-sentinel/sparc-horizon/internal/authz"
+	"github.com/risk-sentinel/sparc-horizon/internal/tree"
 )
 
 const (
@@ -40,24 +46,26 @@ const (
 )
 
 type persona struct {
-	ID       string `json:"id"`
-	Role     string `json:"role"`
-	NodeUUID string `json:"node-uuid"`
-	NodeType string `json:"node-type"`
-	Name     string `json:"name"`
-}
-
-type node struct {
-	ID       string `json:"id"`
-	Children []node `json:"children"`
+	ID string `json:"id"`
+	// PartyUUID is the caller. internal/authz takes a party uuid, because how
+	// an OIDC subject maps to one is still an open decision
+	// (docs/10-risks-decisions.md); the persona header stands in for the login
+	// the mock deliberately does not perform.
+	PartyUUID string `json:"party-uuid"`
+	Role      string `json:"role"`
+	NodeUUID  string `json:"node-uuid"`
+	NodeType  string `json:"node-type"`
+	Name      string `json:"name"`
 }
 
 type server struct {
 	fsys     fs.FS
 	personas []persona
-	// visible maps a persona id to every node id in its tree, which is what
-	// the 404 rule is decided against.
-	visible map[string]map[string]bool
+	// authz decides every refusal. It was a map flattened out of the committed
+	// goldens until #79 — which meant the mock sided with the generator rather
+	// than with the rule, and could not show that a caller's tree is COMPUTED
+	// from their bindings rather than stored.
+	authz *authz.Authorizer
 }
 
 // Path components are matched rather than trusted: a UUID or a column, and
@@ -103,27 +111,75 @@ func (s *server) routes() *http.ServeMux {
 }
 
 func newServer(fsys fs.FS) (*server, error) {
-	s := &server{fsys: fsys, visible: map[string]map[string]bool{}}
+	s := &server{fsys: fsys}
 	if err := s.read("api/personas.json", &s.personas); err != nil {
 		return nil, fmt.Errorf("no personas: %w (run `go run ./cmd/genfixtures`)", err)
 	}
+
+	a, err := buildAuthz(fsys)
+	if err != nil {
+		// Starting anyway would serve a federation of nothing: every node
+		// would be invisible and every response a 404, which is exactly what
+		// a working mock with no data looks like.
+		return nil, err
+	}
+	s.authz = a
+
 	for _, p := range s.personas {
-		var root node
-		if err := s.read(path.Join("api", p.ID, "tree.json"), &root); err != nil {
-			return nil, err
+		if p.PartyUUID == "" {
+			return nil, fmt.Errorf("persona %q has no party-uuid, so it cannot be authorized", p.ID)
 		}
-		seen := map[string]bool{}
-		var walk func(node)
-		walk = func(n node) {
-			seen[n.ID] = true
-			for _, c := range n.Children {
-				walk(c)
-			}
+		if s.authz.Subtree(p.PartyUUID) == nil {
+			return nil, fmt.Errorf("persona %q holds no role anywhere in the fixture federation", p.ID)
 		}
-		walk(root)
-		s.visible[p.ID] = seen
 	}
 	return s, nil
+}
+
+// buildAuthz assembles the tree from the OSCAL the fixtures carry, then indexes
+// it for authorization — the same two packages the service will use.
+//
+// The mock reads the DOCUMENTS, not the API goldens it serves. That is the
+// property worth demonstrating: a caller's tree is derived from what the
+// documents say, so a client written against this mock is written against the
+// behaviour the service has.
+func buildAuthz(fsys fs.FS) (*authz.Authorizer, error) {
+	names, err := fs.Glob(fsys, "oscal/ssp-*.json")
+	if err != nil {
+		return nil, fmt.Errorf("looking for SSPs: %w", err)
+	}
+	if len(names) == 0 {
+		return nil, fmt.Errorf("no SSP fixtures under oscal/ (run `go run ./cmd/genfixtures`)")
+	}
+	sort.Strings(names)
+
+	ssps := make([]*oscal.SystemSecurityPlan, 0, len(names))
+	for _, n := range names {
+		b, err := fs.ReadFile(fsys, n)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", n, err)
+		}
+		var doc oscal.OscalCompleteSchema
+		if err := json.Unmarshal(b, &doc); err != nil {
+			return nil, fmt.Errorf("%s: %w", n, err)
+		}
+		if doc.SystemSecurityPlan == nil {
+			return nil, fmt.Errorf("%s is not a system-security-plan", n)
+		}
+		ssps = append(ssps, doc.SystemSecurityPlan)
+	}
+
+	res, err := tree.Build(ssps)
+	if err != nil {
+		return nil, fmt.Errorf("building the tree: %w", err)
+	}
+	// Findings are reported, not fatal: the fixtures are expected to be clean,
+	// and a mock that refused to start on one orphaned party would be useless
+	// for exactly the malformed-document work it should help with.
+	for _, f := range res.Findings {
+		log.Printf("mockserver: tree finding %s (%s): %s", f.Kind, f.Source, f.Detail)
+	}
+	return authz.New(res)
 }
 
 func (s *server) read(name string, into any) error {
@@ -192,17 +248,30 @@ func (s *server) node(w http.ResponseWriter, r *http.Request) (persona, string, 
 		return persona{}, "", false
 	}
 	id := r.PathValue("id")
-	if !uuidRe.MatchString(id) || !s.visible[p.ID][id] {
+	if !uuidRe.MatchString(id) || !s.authz.Visible(p.PartyUUID, id) {
 		notFound(w)
 		return persona{}, "", false
 	}
 	return p, id, true
 }
 
+// tree is COMPUTED, not served. Every other read endpoint returns a golden,
+// because the mock does not project; this one is the exception because the
+// caller's tree is the one thing authorization actually decides.
 func (s *server) tree(w http.ResponseWriter, r *http.Request) {
-	if p, ok := s.caller(w, r); ok {
-		s.serve(w, path.Join("api", p.ID, "tree.json"))
+	p, ok := s.caller(w, r)
+	if !ok {
+		return
 	}
+	sub := s.authz.Subtree(p.PartyUUID)
+	if sub == nil {
+		// A caller holding nothing is refused the same way a caller asking
+		// about somebody else's node is.
+		notFound(w)
+		return
+	}
+	w.Header().Set(contentType, mediaJSON)
+	_ = json.NewEncoder(w).Encode(sub)
 }
 
 func (s *server) heat(w http.ResponseWriter, r *http.Request) {
@@ -245,7 +314,9 @@ func (s *server) chain(w http.ResponseWriter, r *http.Request) {
 	var c struct {
 		Component string `json:"component"`
 	}
-	if err := s.read(path.Join("api", "chain", uuid+".json"), &c); err != nil || !s.visible[p.ID][c.Component] {
+	// The chain names the component it belongs to, and since #74 a system node
+	// IS that component — so the same visibility rule answers it.
+	if err := s.read(path.Join("api", "chain", uuid+".json"), &c); err != nil || !s.authz.Visible(p.PartyUUID, c.Component) {
 		notFound(w)
 		return
 	}

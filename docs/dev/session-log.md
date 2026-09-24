@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-24 (#79). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-24 (#57). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,42 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-24 — #57 — `fix/57_verify_pinned_shas`
+
+**In flight:** nothing. Second of the stack, branched from #79. Merge order: #79, #57, #42.
+
+**All five pins are currently correct** — measured before writing anything, by resolving each SHA
+through the GitHub API. So the check passes on today's state, which means it proves nothing until
+it is shown to fail. Five mutations do that, and the first is #56's actual defect: `setup-go`
+labelled `v6.0.0` while the SHA is `v7.0.0`. Also caught: a comment removed entirely, a major alias
+(`v7`) in place of a specific version, a SHA no tag points at, and the matcher ceasing to match.
+
+**The count floor is the one that matters.** The obvious implementation greps, loops and reports
+success over an empty list the first time a file is renamed or the `uses:` spelling changes — the
+same failure `ci.yml`'s `MIN_TESTED_PACKAGES` exists to defeat. It asserts at least five pins and
+says so when it finds fewer.
+
+**Scheduled, not required, and that is a trade rather than a preference.** Resolving a SHA means
+calling `api.github.com` about somebody else's repository. Requiring it would make every pull
+request here depend on an external service, which is exactly what #68 refused for
+`vendored-contract-freshness.yml`. The cost is that drift is caught shortly after a merge rather
+than before it. That is the right way round: a stale comment is a legibility defect, not a live
+vulnerability, and blocking every merge on GitHub's API availability to catch it an hour sooner is
+the worse failure. It runs on merges touching workflows, weekly, and on demand — twenty minutes
+after the vendored-contract check so two scheduled jobs are not competing for one rate limit.
+
+**An API error must not read as a pass.** A failed `gh api` call exits the job rather than being
+treated as "no tags found", which would have reported a mislabelled pin as an unfindable one.
+
+**SA-10 now cites the check.** The row claimed actions are pinned by SHA "so a bumped pin is a
+reviewed diff", and that rests entirely on the comment being true — which nothing verified. Same
+shape as SR-3 in #48, caught before it became an overclaim rather than after.
+
+**Next in the stack:** #42 — Sonar configuration, which #63 added a finding to: `_test.go` files
+are held to a reduced rule set.
 
 ---
 

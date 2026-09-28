@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-28 (#42). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-28 (#84). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,46 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-28 — #84 — `feature/84_sbom_sca_port`
+
+**In flight:** nothing unpushed. The PR is open. S1-6 is not required yet: it becomes a
+required check only after it has been observed reporting on `main`, and the context names are
+then read from the forge.
+
+**Why a port, and what it cost.** #83 made this repository public, and the S1-6 plan was to
+*call* `container-build-sign`'s reusables, which an internal repository no longer allows. The
+owner chose to port rather than wait for `container-build-sign#342`. Six files plus two Python
+helpers, copied from CBS `main` at `bf60405` **through the API**: the local sibling checkout was
+on a feature branch, and copying the working tree would have ported unmerged code.
+
+**Three edits the port could not avoid**, each marked `PORT(sparc-horizon)`:
+- four composite-action references made local;
+- `sca-emit-source.yml` defaulted its `bucket` input to the bucket's **name**. In a public
+  repository that is a resource identifier, so it became a secret input;
+- five `A && B || true` lines rewritten as `if` statements, because our pinned shellcheck
+  reports SC2015 where upstream's lint does not. **Rejected: an actionlint ignore rule.** That
+  is a suppression and needs owner approval; the rewrite behaves identically, because neither
+  step runs under `set -e`.
+
+**The canary was tightened after measuring it.** A floor of "2 CRITICAL" would have passed
+with only x/crypto visible: v0.30.0 alone matches eight CRITICAL advisories. The assertion is
+now a CRITICAL **per planted package**, read from the Grype report.
+
+**The drift check cannot see upstream yet.** CBS is internal and the default token cannot read
+it. Without a `CBS_READ_TOKEN` secret, the first scheduled run files an *unverifiable* issue.
+That is deliberate, not a bug.
+
+**Found, not fixed: a compiled `mockserver` binary (9 MB) is tracked at the repository root**,
+committed in `0de70ec` (#79). Local Grype attributes 19 HIGH and 8 MEDIUM Go-stdlib advisories to
+it, and none at CRITICAL, so it does not gate. The SCA evidence will carry them. It is out of
+scope here, and the owner decides.
+
+**Next:** watch the first `main` run of `SBOM + SCA`, then read back
+`risk-sentinel/<date>/sparc-horizon/sca-source/` before calling S1-6 done. Then S1-13: add the
+reported context names. S1-9 (the build-sign-publish port) goes with S1-8.
 
 ---
 

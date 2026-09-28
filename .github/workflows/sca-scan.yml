@@ -1,0 +1,563 @@
+# PORTED from risk-sentinel/container-build-sign:.github/workflows/sca-scan.yml at bf604055e70e.
+# MIT licence: .github/ported/LICENSE-container-build-sign. Provenance, digests and
+# the drift check: .github/ported/PROVENANCE.json, ported-workflow-drift.yml.
+#
+# Ported because this repository is public and container-build-sign is internal: a
+# public repository cannot call its reusable workflows or composite actions
+# (sparc-horizon#84, container-build-sign#342). Every local edit is marked
+# `PORT(sparc-horizon)`; everything else is byte-identical to upstream, so a diff
+# against the recorded commit shows only those. Change upstream first, then re-port.
+#
+name: SCA scan (Grype + Trivy fs)
+
+# Reusable workflow — see docs/dev/sbom_sca_pipeline.md for the contract.
+# Consumers call this via `uses:` with a `vX.Y.Z` tag pin, providing
+# the SBOM artifact name produced by sbom-source.yml.
+
+# Scanner binary versions — pinned and EXPLICIT (Grype otherwise floats to
+# latest; Trivy otherwise inherits the action's bundled default). Bump
+# deliberately + re-reconcile baselines (issue_rules 9e). Keep TRIVY_VERSION in
+# sync with build-sign-publish.yml. (#90)
+env:
+  TRIVY_VERSION: v0.72.0
+  # Must be able to DECODE what syft emits, not merely be recent. syft 1.51.1
+  # (via anchore/sbom-action v0.24.1) writes CycloneDX **1.7**, and grype
+  # v0.114.0 rejects that outright:
+  #   unable to decode sbom: sbom format not recognized
+  # Measured boundary: v0.114.0 rejects 1.7, v0.115.0 is the first to accept it.
+  # Pinned past the boundary rather than on it. All versions from v0.115.0 return
+  # the same 81 matches on the fixture, so this is a format-support change, not a
+  # detection change.
+  #
+  # These two pins are COUPLED and live in different places — syft's version
+  # comes from an action pin Dependabot manages, this one does not. Bumping the
+  # sbom-action without bumping this breaks the lane three jobs downstream (#265).
+  # The decode assertion in the scan step is what makes that coupling visible.
+  GRYPE_VERSION: v0.118.0
+  # Keep in sync with build-sign-publish.yml / sca-emit-images.yml /
+  # sonarqube-hdf.yml. Used only by the HDF evidence steps below (#204).
+  HDF_CLI_VERSION: v3.7.0
+
+on:
+  workflow_call:
+    inputs:
+      sbom_artifact:
+        description: 'Workflow artifact name to download (matches sbom-source.yml output)'
+        type: string
+        required: true
+      source_path:
+        description: 'Directory Trivy fs walks (should match the path the SBOM was generated from)'
+        type: string
+        default: '.'
+      severity_gate:
+        description: 'Severity at which findings fail the build (CRITICAL|HIGH|MEDIUM|LOW)'
+        type: string
+        default: 'CRITICAL'
+      allowlist_path:
+        description: 'Per-repo allow-list file (missing file = empty allow-list)'
+        type: string
+        default: '.security/sca-allowlist.yaml'
+      secondary_signal:
+        description: 'Run Trivy fs as a second signal alongside Grype'
+        type: boolean
+        default: true
+      fail_on_gating:
+        description: 'Fail the job when un-allow-listed findings are present. Set false for soft-mode introductions or fixture-based smoke tests; callers can still gate themselves on the gating_findings_count output.'
+        type: boolean
+        default: true
+      emit_evidence:
+        description: >-
+          Convert both scanners to OHDF and write a provenance record into the
+          sca-reports artifact. Evidence only — it never gates, and it never
+          fails this job. Shipping to S3 is a SEPARATE, opt-in call to
+          sca-emit-source.yml with your own role (#204).
+        type: boolean
+        default: true
+      scan_label_path:
+        description: 'Override for the scan_path label on the emitted OHDF. Empty falls back to source_path. Set it when one repo calls this workflow for several subtrees.'
+        type: string
+        default: ''
+    outputs:
+      gating_findings_count:
+        description: 'Number of findings at/above severity_gate after allow-list reconciliation'
+        value: ${{ jobs.scan.outputs.gating_findings_count }}
+      summary_path:
+        description: 'Path to the rendered markdown summary'
+        value: ${{ jobs.scan.outputs.summary_path }}
+      hdf_status:
+        description: 'ok when every enabled scanner converted, partial when some did, failed when none did, disabled when emit_evidence is false'
+        value: ${{ jobs.scan.outputs.hdf_status }}
+      provenance_path:
+        description: 'Path to the per-run provenance record inside the sca-reports artifact'
+        value: ${{ jobs.scan.outputs.provenance_path }}
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  scan:
+    name: Scan + reconcile
+    runs-on: ubuntu-latest
+    outputs:
+      gating_findings_count: ${{ steps.reconcile.outputs.count }}
+      summary_path: ${{ steps.reconcile.outputs.summary_path }}
+      # Skipped steps yield empty outputs, so emit_evidence=false surfaces as
+      # `disabled` rather than as an indistinguishable blank.
+      hdf_status: ${{ steps.evidence.outputs.rollup || 'disabled' }}
+      provenance_path: ${{ steps.evidence.outputs.provenance }}
+    steps:
+      - name: Checkout consumer source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Download SBOM artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ${{ inputs.sbom_artifact }}
+          path: sbom-input
+
+      - name: Resolve SBOM file
+        id: sbom
+        env:
+          SBOM_ARTIFACT: ${{ inputs.sbom_artifact }}
+        run: |
+          SBOM_FILE=$(find sbom-input -maxdepth 2 -name '*.json' | head -n1)
+          if [ -z "$SBOM_FILE" ]; then
+            echo "::error::No JSON SBOM found in artifact '${SBOM_ARTIFACT}'"
+            exit 1
+          fi
+          echo "path=$SBOM_FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Grype scan (primary, SBOM-driven)
+        id: grype
+        uses: anchore/scan-action@27805bf3b4e84b4a5c980df22ed233c00390a439 # v7.4.2
+        with:
+          grype-version: ${{ env.GRYPE_VERSION }}
+          sbom: ${{ steps.sbom.outputs.path }}
+          severity-cutoff: ${{ inputs.severity_gate == 'CRITICAL' && 'critical' || (inputs.severity_gate == 'HIGH' && 'high' || (inputs.severity_gate == 'MEDIUM' && 'medium' || 'low')) }}
+          output-format: json
+          fail-build: false
+          by-cve: true
+
+      - name: Trivy fs scan (secondary signal)
+        if: inputs.secondary_signal
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          scan-type: fs
+          scan-ref: ${{ inputs.source_path }}
+          format: json
+          output: trivy-fs-results.json
+          severity: ${{ inputs.severity_gate }}
+          exit-code: '0'
+          ignore-unfixed: false
+
+      # Second Trivy pass, for evidence rather than for the gate.
+      #
+      # Severity is widened past severity_gate on purpose. The JSON pass above is
+      # gate-scoped (CRITICAL by default); evidence should record more than the
+      # thing that blocks. Same gate-vs-inventory split the image lane makes.
+      #
+      # Plain Trivy JSON, converted with hdf-cli's NATIVE `trivy` source (#315).
+      # This replaced an ASFF-template detour (#207) that existed only because
+      # hdf-cli had no trivy source before 3.6.0. Native keeps CRITICAL 0.9 /
+      # HIGH 0.7 and carries the package, fixed version, CVSS, CWE and refs that
+      # the template never rendered.
+      - name: Trivy fs scan (JSON, for HDF evidence)
+        id: trivy_evidence
+        if: inputs.secondary_signal && inputs.emit_evidence
+        continue-on-error: true   # evidence only; a miss records input-missing below
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          scan-type: fs
+          scan-ref: ${{ inputs.source_path }}
+          format: json
+          output: trivy-fs-evidence.json
+          severity: 'CRITICAL,HIGH'
+          # Vulnerabilities only, the scope the retired ASFF template had. Trivy's
+          # fs default adds `secret`, and native `trivy` converts secret findings
+          # too; secrets in source are the TruffleHog lane's evidence, not this one.
+          scanners: vuln
+          exit-code: '0'
+          ignore-unfixed: false
+
+      - name: Reconcile findings against allow-list
+        id: reconcile
+        env:
+          GRYPE_OUTPUT: ${{ steps.grype.outputs.json }}
+          TRIVY_OUTPUT: trivy-fs-results.json
+          ALLOWLIST_PATH: ${{ inputs.allowlist_path }}
+          SEVERITY_GATE: ${{ inputs.severity_gate }}
+          SECONDARY_SIGNAL: ${{ inputs.secondary_signal }}
+          SUMMARY_OUT: sca-summary.md
+        run: |
+          python3 -m pip install --quiet --disable-pip-version-check --only-binary :all: 'pyyaml==6.0.2'
+          python3 <<'PY'
+          import json, os, sys
+          from datetime import date, datetime
+          import yaml
+
+          gate_order = ['UNKNOWN', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']
+          severity_gate = os.environ['SEVERITY_GATE'].upper()
+          if severity_gate not in gate_order:
+              print(f"::error::severity_gate '{severity_gate}' must be one of {gate_order[1:]}")
+              sys.exit(2)
+          gate_threshold = gate_order.index(severity_gate)
+
+          # --- Load Grype findings -----------------------------------------
+          grype_hits = []
+          grype_path = os.environ.get('GRYPE_OUTPUT', '')
+          if grype_path and os.path.exists(grype_path):
+              with open(grype_path) as f:
+                  grype = json.load(f)
+              for match in grype.get('matches', []):
+                  vuln = match.get('vulnerability', {}) or {}
+                  art = match.get('artifact', {}) or {}
+                  sev = (vuln.get('severity') or 'UNKNOWN').upper()
+                  if sev not in gate_order or gate_order.index(sev) < gate_threshold:
+                      continue
+                  fix = vuln.get('fix', {}) or {}
+                  fixed_versions = ','.join(fix.get('versions', []) or []) or '-'
+                  grype_hits.append({
+                      'scanner': 'grype',
+                      'id': vuln.get('id', '-'),
+                      'severity': sev,
+                      'pkg': art.get('name', '-'),
+                      'version': art.get('version', '-'),
+                      'fixed': fixed_versions,
+                  })
+          else:
+              print(f"::warning::Grype output not found at '{grype_path}' — primary scanner produced no report")
+
+          # --- Load Trivy findings -----------------------------------------
+          trivy_hits = []
+          secondary = os.environ.get('SECONDARY_SIGNAL', 'true').lower() == 'true'
+          trivy_path = os.environ.get('TRIVY_OUTPUT', '')
+          if secondary and trivy_path and os.path.exists(trivy_path):
+              with open(trivy_path) as f:
+                  trivy = json.load(f)
+              for result in trivy.get('Results', []) or []:
+                  for v in result.get('Vulnerabilities', []) or []:
+                      sev = (v.get('Severity') or 'UNKNOWN').upper()
+                      if sev not in gate_order or gate_order.index(sev) < gate_threshold:
+                          continue
+                      trivy_hits.append({
+                          'scanner': 'trivy',
+                          'id': v.get('VulnerabilityID', '-'),
+                          'severity': sev,
+                          'pkg': v.get('PkgName', '-'),
+                          'version': v.get('InstalledVersion', '-'),
+                          'fixed': v.get('FixedVersion') or '-',
+                      })
+
+          all_hits = grype_hits + trivy_hits
+
+          # --- Load allow-list ---------------------------------------------
+          allowed = {}
+          allowlist_path = os.environ['ALLOWLIST_PATH']
+          today = date.today()
+          if os.path.exists(allowlist_path):
+              with open(allowlist_path) as f:
+                  doc = yaml.safe_load(f) or {}
+              for entry in doc.get('cves', []) or []:
+                  cve_id = entry.get('id')
+                  if not cve_id:
+                      print(f"::warning::Allow-list entry missing 'id': {entry}")
+                      continue
+                  exp = entry.get('expires')
+                  if not exp:
+                      print(f"::warning::Allow-list entry {cve_id} missing 'expires' — finding will gate")
+                      continue
+                  if isinstance(exp, date):
+                      exp_date = exp
+                  else:
+                      try:
+                          exp_date = datetime.strptime(str(exp), '%Y-%m-%d').date()
+                      except ValueError:
+                          print(f"::warning::Allow-list entry {cve_id} has invalid 'expires' value '{exp}' — finding will gate")
+                          continue
+                  if exp_date < today:
+                      print(f"::warning::Allow-list entry {cve_id} expired {exp_date} — finding will gate")
+                      continue
+                  allowed[cve_id] = {'reason': entry.get('reason', '').strip(), 'expires': exp_date}
+          else:
+              print(f"::notice::No allow-list at '{allowlist_path}' — proceeding with empty list")
+
+          # --- Reconcile ---------------------------------------------------
+          suppressed = []
+          gating = []
+          for hit in all_hits:
+              if hit['id'] in allowed:
+                  hit['allowed_reason'] = allowed[hit['id']]['reason']
+                  hit['allowed_until'] = str(allowed[hit['id']]['expires'])
+                  suppressed.append(hit)
+              else:
+                  gating.append(hit)
+
+          # --- Render summary ----------------------------------------------
+          summary_out = os.environ['SUMMARY_OUT']
+          lines = []
+          lines.append(f"# SCA scan summary — gate `{severity_gate}`")
+          lines.append("")
+          scanners = ["Grype (SBOM-based)"]
+          if secondary:
+              scanners.append("Trivy (fs)")
+          lines.append(f"- Scanners: {', '.join(scanners)}")
+          lines.append(f"- Allow-list: `{allowlist_path}` ({len(allowed)} active entries)")
+          lines.append(f"- Findings at/above `{severity_gate}`: **{len(all_hits)}** ({len(gating)} gating, {len(suppressed)} allow-listed)")
+          lines.append("")
+          if gating:
+              lines.append(f"## Gating findings ({len(gating)})")
+              lines.append("")
+              lines.append("| Scanner | CVE | Severity | Package | Installed | Fixed |")
+              lines.append("|---|---|---|---|---|---|")
+              for h in gating:
+                  lines.append(f"| {h['scanner']} | {h['id']} | {h['severity']} | {h['pkg']} | {h['version']} | {h['fixed']} |")
+              lines.append("")
+          if suppressed:
+              lines.append("## Allow-listed (suppressed)")
+              lines.append("")
+              lines.append("| Scanner | CVE | Severity | Package | Until | Reason |")
+              lines.append("|---|---|---|---|---|---|")
+              for h in suppressed:
+                  reason = (h['allowed_reason'] or '-').replace('\n', ' ').replace('|', '\\|')
+                  lines.append(f"| {h['scanner']} | {h['id']} | {h['severity']} | {h['pkg']} | {h['allowed_until']} | {reason} |")
+              lines.append("")
+
+          rendered = "\n".join(lines) + "\n"
+          with open(summary_out, 'w') as f:
+              f.write(rendered)
+          step_summary = os.environ.get('GITHUB_STEP_SUMMARY')
+          if step_summary:
+              with open(step_summary, 'a') as f:
+                  f.write(rendered)
+
+          # --- Step outputs ------------------------------------------------
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"count={len(gating)}\n")
+              f.write(f"summary_path={summary_out}\n")
+              f.write(f"fail={'true' if gating else 'false'}\n")
+
+          print(f"Reconciled: {len(gating)} gating, {len(suppressed)} suppressed")
+          PY
+
+      # ---- HDF evidence (#204) ------------------------------------------------
+      # Placed after the reconcile so the provenance record can carry the gate
+      # outcome, and before the gate step so a gating run still leaves evidence
+      # behind. Nothing here can fail the job: every step is `if: always()` and
+      # the actions report status instead of exiting non-zero.
+      #
+      # Shipping to S3 is deliberately NOT here. A called workflow cannot request
+      # a permission its caller lacks, so adding id-token: write would break every
+      # existing consumer rather than degrade. It also keeps this reusable from
+      # holding a shared writer, which #204 asks for explicitly. Callers opt in by
+      # adding a sca-emit-source.yml job with their own role.
+      # anchore/scan-action writes its JSON to a temp dir OUTSIDE the workspace
+      # (/tmp/grype-XXXX/output), so stage it in before anything hashes it.
+      #
+      # Two reasons this is the right fix rather than relaxing the path
+      # confinement in provenance.py. It keeps that guard intact — the script
+      # still refuses to touch anything outside the working directory — and it
+      # makes `input_sha256` the digest of the file that actually ships in the
+      # artifact, so a reader can verify the hash against what they downloaded
+      # instead of against a temp path that no longer exists.
+      - name: Stage scanner reports into the workspace
+        if: always() && inputs.emit_evidence
+        env:
+          GRYPE_JSON: ${{ steps.grype.outputs.json }}
+          SBOM_PATH: ${{ steps.sbom.outputs.path }}
+        run: |
+          set -uo pipefail
+          mkdir -p sca-reports
+          # Producer/consumer compatibility, asserted rather than assumed. syft
+          # and grype are pinned in different places — syft's version rides an
+          # action pin Dependabot bumps, GRYPE_VERSION does not — so nothing
+          # otherwise notices when syft starts emitting a CycloneDX revision
+          # grype cannot read. That is #265: syft 1.51.1 moved to CycloneDX 1.7
+          # and grype v0.114.0 failed with "sbom format not recognized", three
+          # jobs downstream of the change that caused it.
+          #
+          # Checks the property we depend on (can grype decode this document?),
+          # not a version string, so it keeps working across future bumps of
+          # either side.
+          if [ -s sbom-input/cyclonedx.json ]; then
+            SPEC=$(python3 -c "import json;print(json.load(open('sbom-input/cyclonedx.json')).get('specVersion','?'))" 2>/dev/null || echo '?')
+            echo "SBOM CycloneDX specVersion: ${SPEC}"
+          fi
+
+          # Stage the CycloneDX document itself as evidence (#312).
+          #
+          # It already exists in this job — grype just scanned it — but nothing
+          # copied it into the artifact, so sca-emit-source.yml had no BOM to
+          # upload and the source lane reached the org rollup EMPTY for every
+          # consumer. The rollup merges and re-scans CycloneDX documents;
+          # provenance, HDF and a rendered summary can be neither merged nor
+          # rescanned, so a lane without a BOM contributes nothing however
+          # healthy it looks from the emit side.
+          #
+          # Fixed name, so the emit does not have to rediscover which file this
+          # was. Validated HERE, where the artifact is built — an unreadable BOM
+          # must fail at its source, not become an empty lane an aggregator
+          # reports weeks later.
+          if [ -n "${SBOM_PATH:-}" ] && [ -s "${SBOM_PATH}" ]; then
+            if jq -e 'has("specVersion")' "${SBOM_PATH}" >/dev/null 2>&1; then
+              cp "${SBOM_PATH}" sca-reports/bom.cdx.json
+              echo "staged bom.cdx.json ($(jq '(.components // []) | length' sca-reports/bom.cdx.json) components)"
+            else
+              echo "::error::${SBOM_PATH} is not a readable CycloneDX document — refusing to stage it"
+              exit 1
+            fi
+          else
+            echo "::warning::no SBOM at '${SBOM_PATH:-}' — the source lane will publish no BOM (#312)"
+          fi
+
+          # `-s` (non-empty), NOT `-f` (exists). anchore/scan-action 7.4.1 creates
+          # the output file even when grype exits non-zero — and this lane is the
+          # FIXTURE lane, seeded with vulnerable packages and run `--fail-on
+          # critical`, so a non-zero grype exit is the expected case. Under `-f`
+          # the guard passed on a 0-byte file, `cp` copied nothing, and the
+          # normaliser below died with
+          #   JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+          # On 7.4.0 the file simply did not exist and the else-branch handled
+          # it, so the bump exposed a latent bug rather than causing one.
+          if [ -n "${GRYPE_JSON}" ] && [ -s "${GRYPE_JSON}" ]; then
+            cp "${GRYPE_JSON}" sca-reports/grype-results.json
+            # hdf-cli's grype converter only accepts the IMAGE shape, where
+            # source.target is an object. Grype scanning an SBOM emits a plain
+            # string there (the path), and the converter dies with
+            #   "cannot unmarshal string into ... GrypeSource.source.target"
+            # This lane is SBOM-driven by design, so normalise the one field.
+            # Metadata only — findings are untouched. Verified against a real
+            # 81-finding report: fails before, converts clean after.
+            python3 - <<'NORM'
+          import json, sys
+          p = 'sca-reports/grype-results.json'
+          try:
+              d = json.load(open(p))
+          except (json.JSONDecodeError, OSError) as e:
+              # `-s` above rules out empty, but not truncated or partial. This
+              # lane exists to prove the scanner FIRES, so an unreadable report
+              # must say so plainly rather than raise a traceback that reads
+              # like a workflow bug.
+              print(f'::warning::grype report at {p} is not valid JSON ({e}); '
+                    'skipping normalisation, the conversion will record input-missing')
+              sys.exit(0)
+          t = (d.get('source') or {}).get('target')
+          if isinstance(t, str):
+              d['source']['target'] = {'userInput': t}
+              json.dump(d, open(p, 'w'))
+              print(f'normalised grype source.target ({t!r}) for the hdf converter')
+          NORM
+          else
+            echo "::warning::grype produced no JSON at '${GRYPE_JSON}' — the conversion below will record input-missing"
+          fi
+          if [ -f trivy-fs-evidence.json ]; then cp trivy-fs-evidence.json sca-reports/ || true; fi  # PORT(sparc-horizon): was A && B || C (SC2015)
+          ls -la sca-reports/
+
+      - name: Install hdf-cli (pinned, checksum-verified)
+        if: always() && inputs.emit_evidence
+        uses: ./.github/actions/hdf-install  # PORT(sparc-horizon): local copy; upstream pins @81ef7fd (#208)
+        with:
+          version: ${{ env.HDF_CLI_VERSION }}
+
+      - name: Grype results → labeled OHDF
+        id: hdf_grype
+        if: always() && inputs.emit_evidence
+        uses: ./.github/actions/hdf-evidence  # PORT(sparc-horizon): local copy; upstream pins @81ef7fd (#208)
+        with:
+          from: grype
+          input: sca-reports/grype-results.json
+          output: hdf/grype-source-hdf.json
+          label: 'Grype (source dependencies)'
+          # #141 locked vocabulary: the common core, plus scan_path so a monorepo
+          # caller's N otherwise-identical HDFs can be told apart, plus
+          # sbom_artifact because for Grype the scanned asset IS the SBOM, not the
+          # tree — labelling it with only a path would overstate what was examined.
+          labels: |
+            repo=${{ github.repository }}
+            commit=${{ github.sha }}
+            ref=${{ github.ref }}
+            run_id=${{ github.run_id }}
+            scanner=grype
+            scan_path=${{ inputs.scan_label_path || inputs.source_path }}
+            sbom_artifact=${{ inputs.sbom_artifact }}
+
+      - name: Trivy JSON → labeled OHDF
+        id: hdf_trivy
+        if: always() && inputs.emit_evidence && inputs.secondary_signal
+        uses: ./.github/actions/hdf-evidence  # PORT(sparc-horizon): local copy; upstream pins @81ef7fd (#208)
+        with:
+          from: trivy
+          input: sca-reports/trivy-fs-evidence.json
+          output: hdf/trivy-fs-hdf.json
+          label: 'Trivy fs (source tree)'
+          labels: |
+            repo=${{ github.repository }}
+            commit=${{ github.sha }}
+            ref=${{ github.ref }}
+            run_id=${{ github.run_id }}
+            scanner=trivy
+            scan_path=${{ inputs.scan_label_path || inputs.source_path }}
+
+      # Written on EVERY run, including clean ones and including runs where both
+      # conversions failed. This is what separates "scanned, found nothing" from
+      # "the bridge broke" — see tools/evidence/README.md.
+      #
+      # The trivy line is emitted only when secondary_signal is on; the action
+      # ignores blank lines, so the list can be built with a conditional
+      # expression rather than a second step.
+      - name: Write the provenance record
+        id: evidence
+        if: always() && inputs.emit_evidence
+        uses: ./.github/actions/evidence-provenance  # PORT(sparc-horizon): local copy; upstream pins @81ef7fd (#208)
+        with:
+          lane: sca-source
+          output: provenance.json
+          scan_path: ${{ inputs.scan_label_path || inputs.source_path }}
+          gate: severity=${{ inputs.severity_gate }},gating=${{ steps.reconcile.outputs.count || 'unknown' }}
+          # sca-scan never ships to S3 — recorded so a reader of the evidence knows
+          # the absence is by design, not a failure.
+          emit: attempted=false,reason=call sca-emit-source.yml to ship this
+          scanners: |
+            name=grype,version=${{ env.GRYPE_VERSION }},status=${{ steps.hdf_grype.outputs.status || 'skipped' }},input=sca-reports/grype-results.json,hdf=${{ steps.hdf_grype.outputs.hdf }},findings=${{ steps.hdf_grype.outputs.findings }}
+            ${{ inputs.secondary_signal && format('name=trivy,version={0},status={1},input=sca-reports/trivy-fs-evidence.json,hdf={2},findings={3}', env.TRIVY_VERSION, steps.hdf_trivy.outputs.status || 'skipped', steps.hdf_trivy.outputs.hdf, steps.hdf_trivy.outputs.findings) || '' }}
+
+      - name: Stage reports for upload
+        if: always()
+        run: |
+          mkdir -p sca-reports
+          if [ -f sca-summary.md ]; then cp sca-summary.md sca-reports/ || true; fi  # PORT(sparc-horizon): was A && B || C (SC2015)
+          if [ -f trivy-fs-results.json ]; then cp trivy-fs-results.json sca-reports/ || true; fi  # PORT(sparc-horizon): was A && B || C (SC2015)
+          # grype-results.json and trivy-fs-evidence.json are already here — the
+          # evidence steps stage them earlier so the recorded sha256 is of the
+          # file that ships. Copy them again only when evidence was disabled.
+          GRYPE_JSON='${{ steps.grype.outputs.json }}'
+          # `-s` here too, same reason as the guard above.
+          if [ ! -s sca-reports/grype-results.json ] && [ -n "$GRYPE_JSON" ] && [ -s "$GRYPE_JSON" ]; then
+            cp "$GRYPE_JSON" sca-reports/grype-results.json
+          fi
+          # provenance.json is copied whether or not the conversions worked — that
+          # record is the only thing distinguishing a clean scan from a broken
+          # bridge, so it must never be the file that goes missing.
+          if [ -f provenance.json ]; then cp provenance.json sca-reports/ || true; fi  # PORT(sparc-horizon): was A && B || C (SC2015)
+          if [ -d hdf ]; then cp -r hdf sca-reports/ || true; fi  # PORT(sparc-horizon): was A && B || C (SC2015)
+          ls -laR sca-reports/
+
+      - name: Upload scan reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sca-reports
+          path: sca-reports/
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Fail on un-allow-listed findings
+        if: steps.reconcile.outputs.fail == 'true' && inputs.fail_on_gating
+        env:
+          SEVERITY_GATE: ${{ inputs.severity_gate }}
+          FINDING_COUNT: ${{ steps.reconcile.outputs.count }}
+        run: |
+          echo "::error::SCA found ${FINDING_COUNT} un-allow-listed findings at/above ${SEVERITY_GATE}"
+          exit 1

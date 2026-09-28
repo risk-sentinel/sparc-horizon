@@ -1,0 +1,16 @@
+# SCA allow-list for sparc-horizon, read by .github/workflows/sca-scan.yml.
+#
+# EMPTY, and that is the intended steady state: every CRITICAL that Grype or
+# Trivy reports fails the build.
+#
+# An entry is a suppression, and every suppression needs the owner's explicit
+# approval BEFORE it is committed (docs/dev/issue_rules.md, "Suppressing scanner
+# findings"). Each entry carries an `expires`. The reconcile step ignores an entry
+# with no expiry, or a lapsed one, and the finding gates again.
+#
+#   cves:
+#     - id: CVE-YYYY-NNNNN
+#       reason: >-
+#         Why it is not fixed yet, who accepted it, and the tracking issue.
+#       expires: YYYY-MM-DD
+cves: []

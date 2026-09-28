@@ -1,0 +1,149 @@
+# PORTED from risk-sentinel/container-build-sign:.github/actions/hdf-evidence/action.yml at bf604055e70e.
+# MIT licence: .github/ported/LICENSE-container-build-sign. Provenance, digests and
+# the drift check: .github/ported/PROVENANCE.json, ported-workflow-drift.yml.
+#
+# Ported because this repository is public and container-build-sign is internal: a
+# public repository cannot call its reusable workflows or composite actions
+# (sparc-horizon#84, container-build-sign#342). Every local edit is marked
+# `PORT(sparc-horizon)`; everything else is byte-identical to upstream, so a diff
+# against the recorded commit shows only those. Change upstream first, then re-port.
+#
+name: Convert scanner output to labeled OHDF
+description: >-
+  Convert a scanner report to OHDF, stamp the #141 label vocabulary, validate,
+  and summarise. Records failure as data — never fails the calling job.
+
+# Evidence is never a gate (#204, pipeline_design "scan-and-sbom"). A conversion
+# that fails must leave a record saying so rather than taking the run down, so
+# this action always exits 0 and reports through `status`. The caller feeds that
+# status into provenance.py, which is what makes a clean scan distinguishable
+# from a broken bridge.
+#
+# Requires `hdf` already on PATH — see the sibling hdf-install action. Kept as a
+# separate action rather than nesting so a workflow converting three files pays
+# the install once.
+#
+# On format choice: prefer the scanner's NATIVE source (grype, trivy, kics,
+# semgrep, checkov). Interchange formats drop what compliance needs, measured in
+# #315. Only where no native source exists, prefer ASFF over SARIF: ASFF keeps
+# CRITICAL 0.9 / HIGH 0.7 / MEDIUM 0.5 / LOW 0.3 / INFORMATIONAL 0, and SARIF can
+# take severity from CVSS rather than the scanner (tools/evidence/README.md).
+
+inputs:
+  from:
+    description: 'hdf convert source format, e.g. grype, trivy, kics, semgrep, checkov (native first, #315)'
+    required: true
+  input:
+    description: 'Path to the scanner report. A missing file yields status=input-missing, not a failure.'
+    required: true
+  output:
+    description: 'Path to write the labeled OHDF to'
+    required: true
+  labels:
+    description: >-
+      Newline-separated key=value pairs for `hdf label set` (#141 locked
+      vocabulary). Empty values are dropped so an unset digest/version does not
+      stamp a blank label.
+    required: false
+    default: ''
+  label:
+    description: 'Display name for the summary heading'
+    required: false
+    default: ''
+  summary:
+    description: 'Append the summary table to $GITHUB_STEP_SUMMARY'
+    required: false
+    default: 'true'
+
+outputs:
+  status:
+    description: 'ok | convert-failed | input-missing'
+    value: ${{ steps.convert.outputs.status }}
+  findings:
+    description: 'Failed control count when status=ok, empty otherwise'
+    # From the Summarise step, not `convert` — convert never writes it, and the
+    # mismatch meant this output was ALWAYS empty, so every provenance record
+    # recorded findings: null and could not tell a clean scan from a broken one.
+    # Summarise is skipped unless status=ok, so an empty value here still means
+    # "unknown", which is the semantics the record wants.
+    value: ${{ steps.summarise.outputs.findings }}
+  hdf:
+    description: 'Path to the emitted OHDF when status=ok, empty otherwise'
+    value: ${{ steps.convert.outputs.hdf }}
+
+runs:
+  using: composite
+  steps:
+    - name: Convert, label and validate
+      id: convert
+      shell: bash
+      env:
+        FROM_FMT: ${{ inputs.from }}
+        IN_FILE: ${{ inputs.input }}
+        OUT_FILE: ${{ inputs.output }}
+        RAW_LABELS: ${{ inputs.labels }}
+      run: |
+        # No `set -e`: every failure path here is reported through `status`.
+        set -uo pipefail
+
+        emit() { echo "status=$1" >> "$GITHUB_OUTPUT"; }
+
+        if [ ! -s "${IN_FILE}" ]; then
+          echo "::warning::${IN_FILE} is missing or empty — no OHDF produced (from=${FROM_FMT})"
+          emit input-missing
+          exit 0
+        fi
+
+        mkdir -p "$(dirname "${OUT_FILE}")"
+
+        if ! hdf convert --from "${FROM_FMT}" "${IN_FILE}" -o "${OUT_FILE}" 2> convert.err; then
+          echo "::warning::hdf convert --from ${FROM_FMT} failed for ${IN_FILE}"
+          sed 's/^/    /' convert.err || true
+          emit convert-failed
+          exit 0
+        fi
+
+        # Labels: drop empties so an unset digest doesn't stamp `digest=`.
+        # Trimmed with parameter expansion rather than `xargs`, which would strip
+        # quotes out of a value and silently corrupt it.
+        labels=()
+        while IFS= read -r pair; do
+          pair="${pair#"${pair%%[![:space:]]*}"}"   # ltrim
+          pair="${pair%"${pair##*[![:space:]]}"}"   # rtrim
+          [ -z "${pair}" ] && continue
+          case "${pair}" in *=) continue ;; esac
+          labels+=("${pair}")
+        done <<< "${RAW_LABELS}"
+
+        if [ ${#labels[@]} -gt 0 ]; then
+          if hdf label set "${OUT_FILE}" "${labels[@]}" -o "${OUT_FILE}.lbl"; then
+            mv "${OUT_FILE}.lbl" "${OUT_FILE}"
+          else
+            echo "::warning::hdf label set failed for ${OUT_FILE} — the OHDF is unlabeled"
+          fi
+        fi
+
+        if ! hdf validate "${OUT_FILE}" -q; then
+          echo "::warning::hdf validate failed for ${OUT_FILE}"
+          emit convert-failed
+          exit 0
+        fi
+
+        hdf label show "${OUT_FILE}" || true
+        echo "hdf=${OUT_FILE}" >> "$GITHUB_OUTPUT"
+        emit ok
+
+    - name: Summarise
+      id: summarise
+      if: steps.convert.outputs.status == 'ok'
+      shell: bash
+      env:
+        HDF_FILE: ${{ steps.convert.outputs.hdf }}
+        HEADING: ${{ inputs.label }}
+        WANT_SUMMARY: ${{ inputs.summary }}
+      run: |
+        set -uo pipefail
+        args=("${HDF_FILE}" --label "${HEADING}")
+        [ "${WANT_SUMMARY}" = "true" ] || args+=(--no-step-summary)
+        python3 "${GITHUB_ACTION_PATH}/summary.py" "${args[@]}" || \
+          echo "::warning::summary.py failed for ${HDF_FILE}"

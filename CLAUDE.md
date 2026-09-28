@@ -58,10 +58,21 @@ The container and env-var contract for the future Go binary are in
 `docs/08-build-deploy.md`. Two corrections to that file, decided when this repo
 joined the estate: its `deploy/terraform/` and `deploy/helm/` sketch is
 **superseded** — all AWS Terraform lives in `sparc-iac`, and Kubernetes is not a
-prototype target — and the image is built, scanned, signed, and published through
-`container-build-sign`'s shared `build-sign-publish.yml` rather than by a
-hand-rolled Dockerfile build. The deployment target is **ECS Fargate in AWS
-commercial**.
+prototype target — and the image is built, scanned, signed, and published by
+`container-build-sign`'s pipeline rather than by a hand-rolled Dockerfile build.
+The deployment target is **ECS Fargate in AWS commercial**.
+
+**That pipeline runs here as a ported copy, not as a call.** This repository is
+public (2026-09-28) and `container-build-sign` is internal, and a public repository
+cannot call an internal one's reusable workflows. So `sbom-source.yml`,
+`sca-scan.yml`, `sca-emit-source.yml` and their composite actions are copied into
+`.github/` (#84), and `build-sign-publish.yml` follows the same way with the
+Dockerfile (S1-8). A ported file is byte-identical to upstream except for edits
+marked `PORT(sparc-horizon)`. A fix belongs **upstream first**, filed as an issue
+there, and is then re-ported. Provenance and upstream digests are in
+`.github/ported/PROVENANCE.json`; `ported-workflow-drift.yml` files an issue when
+upstream moves. The port retires if `container-build-sign#342` makes that
+repository public.
 
 ## Architecture: the parts that span files
 

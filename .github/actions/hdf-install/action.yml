@@ -1,0 +1,61 @@
+# PORTED from risk-sentinel/container-build-sign:.github/actions/hdf-install/action.yml at bf604055e70e.
+# MIT licence: .github/ported/LICENSE-container-build-sign. Provenance, digests and
+# the drift check: .github/ported/PROVENANCE.json, ported-workflow-drift.yml.
+#
+# Ported because this repository is public and container-build-sign is internal: a
+# public repository cannot call its reusable workflows or composite actions
+# (sparc-horizon#84, container-build-sign#342). Every local edit is marked
+# `PORT(sparc-horizon)`; everything else is byte-identical to upstream, so a diff
+# against the recorded commit shows only those. Change upstream first, then re-port.
+#
+name: Install hdf-cli
+description: >-
+  Install a pinned, checksum-verified MITRE hdf-cli (mitre/hdf-libs) onto the
+  runner at /usr/local/bin/hdf.
+
+# Extracted from the block duplicated verbatim in build-sign-publish.yml,
+# sca-emit-images.yml and sonarqube-hdf.yml (#208). A `workflow_call` reusable
+# runs against the CALLER's checkout, so it cannot execute anything from this
+# repo's tools/ — a composite action referenced as
+#   risk-sentinel/container-build-sign/.github/actions/hdf-install@<sha>
+# is the only cross-repo-safe way to share this. `uses:` does not accept
+# expressions, so that SHA must already exist on main.
+#
+# `version` is REQUIRED and has no default on purpose. Each workflow keeps
+# owning its own HDF_CLI_VERSION pin; what is deduplicated here is the install
+# mechanism, not the pin. A default here would silently become a second source
+# of truth the moment one workflow forgot to pass it.
+
+inputs:
+  version:
+    description: 'hdf-cli release tag, e.g. v3.7.0. Required — pass your own HDF_CLI_VERSION pin.'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Install hdf-cli (pinned, checksum-verified)
+      shell: bash
+      env:
+        VER: ${{ inputs.version }}
+      run: |
+        set -euo pipefail
+        if [ -z "${VER}" ]; then
+          echo "::error::hdf-install: 'version' input is empty. Pass your workflow's HDF_CLI_VERSION pin explicitly."
+          exit 1
+        fi
+        base="https://github.com/mitre/hdf-libs/releases/download/${VER}"
+        tar="hdf_${VER#v}_linux_amd64.tar.gz"
+        # --proto '=https' --proto-redir '=https' alongside -L: the release URL
+        # redirects to objects.githubusercontent.com, and without these a
+        # redirect could downgrade the transport for a binary we then install to
+        # /usr/local/bin. The checksum catches tampering with the tarball, but
+        # not with checksums.txt fetched over the same channel — so both calls
+        # pin the protocol, not just the one carrying the payload.
+        curl --proto '=https' --proto-redir '=https' -sSfL "$base/${tar}" -o "${tar}"
+        curl --proto '=https' --proto-redir '=https' -sSfL "$base/checksums.txt" -o hdf-checksums.txt
+        grep " ${tar}$" hdf-checksums.txt | sha256sum -c -
+        tar -xzf "${tar}" hdf
+        install -m 0755 hdf /usr/local/bin/hdf
+        rm -f "${tar}" hdf-checksums.txt hdf
+        hdf version

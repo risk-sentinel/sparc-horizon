@@ -1,0 +1,96 @@
+name: SCA fixture
+
+# Proves the SCA gate can fail. It feeds tests/sca-fixture/vulnerable-components.json,
+# an SBOM naming two packages with published CRITICAL advisories, through the same
+# sca-scan.yml the real gate uses, and asserts that the gate finds them.
+#
+# Without this, a scanner that stopped matching (a database that failed to load,
+# or an SBOM format the pinned Grype cannot decode, as container-build-sign#265
+# was) would pass every real scan with nothing found. Nothing would distinguish
+# that from a clean tree. It is the same shape as the TruffleHog fixture job in
+# secret-scan.yml.
+#
+# It is a separate workflow, not a job in sbom-and-sca.yml, because sca-scan.yml
+# uploads its reports under the fixed artifact name `sca-reports`. Two calls in
+# one run would collide.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  # Each planted package must produce at least one CRITICAL of its own. A total
+  # count alone would pass with one package seen many times: x/crypto v0.30.0
+  # alone matches eight CRITICAL advisories, so it would hide a lost ecosystem.
+  EXPECT_PACKAGES: 'golang.org/x/crypto lodash'
+
+jobs:
+  stage:
+    name: Stage the fixture SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Upload fixture SBOM
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sca-fixture-sbom
+          path: tests/sca-fixture/vulnerable-components.json
+          if-no-files-found: error
+          retention-days: 7
+
+  scan:
+    name: Scan
+    needs: stage
+    uses: ./.github/workflows/sca-scan.yml
+    with:
+      sbom_artifact: sca-fixture-sbom
+      severity_gate: CRITICAL
+      # The fixture is an SBOM, not a tree, so Trivy fs has nothing to walk here.
+      secondary_signal: false
+      # Report the count rather than fail on it. The assertion below is the gate.
+      fail_on_gating: false
+      emit_evidence: false
+
+  assert:
+    name: SCA fixture detection (proves scanner works)
+    needs: scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the scan's reports
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: sca-reports
+          path: sca-reports
+
+      - name: Every planted package gated at CRITICAL
+        env:
+          FOUND: ${{ needs.scan.outputs.gating_findings_count }}
+        run: |
+          set -euo pipefail
+          report=sca-reports/grype-results.json
+          if [ ! -s "${report}" ]; then
+            echo "::error::No Grype report in the sca-reports artifact. The scan did not run far enough to be judged."
+            exit 1
+          fi
+          echo "Gating count reported by the reconcile step: ${FOUND:-<empty>}"
+          missing=0
+          for pkg in ${EXPECT_PACKAGES}; do
+            n="$(jq --arg p "${pkg}" '[.matches[] | select(.artifact.name == $p and .vulnerability.severity == "Critical")] | length' "${report}")"
+            echo "${pkg}: ${n} CRITICAL"
+            if [ "${n}" -lt 1 ]; then
+              echo "::error::Planted package ${pkg} produced no CRITICAL. The gate cannot see that ecosystem."
+              missing=$((missing+1))
+            fi
+          done
+          # The reconcile step must agree that these gate, or the reconcile step is what broke.
+          if [ -z "${FOUND:-}" ] || [ "${FOUND}" -lt 1 ]; then
+            echo "::error::Grype matched, but the reconcile step reported ${FOUND:-no} gating findings."
+            missing=$((missing+1))
+          fi
+          [ "${missing}" -eq 0 ]

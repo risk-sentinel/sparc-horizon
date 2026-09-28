@@ -1,0 +1,267 @@
+# PORTED from risk-sentinel/container-build-sign:.github/workflows/sca-emit-source.yml at bf604055e70e.
+# MIT licence: .github/ported/LICENSE-container-build-sign. Provenance, digests and
+# the drift check: .github/ported/PROVENANCE.json, ported-workflow-drift.yml.
+#
+# Ported because this repository is public and container-build-sign is internal: a
+# public repository cannot call its reusable workflows or composite actions
+# (sparc-horizon#84, container-build-sign#342). Every local edit is marked
+# `PORT(sparc-horizon)`; everything else is byte-identical to upstream, so a diff
+# against the recorded commit shows only those. Change upstream first, then re-port.
+#
+name: Emit source-SCA evidence to S3
+
+# Ships the HDF evidence produced by sca-scan.yml to the org evidence bucket.
+#
+# Why this is a SEPARATE reusable rather than steps inside sca-scan.yml (#204):
+#
+#   1. A called workflow cannot request a permission its caller's token lacks —
+#      the job fails outright rather than degrading. sca-scan.yml is
+#      `contents: read` + `actions: read`, and every existing caller grants
+#      exactly that, so adding `id-token: write` there would break each of them
+#      the moment they re-pinned.
+#   2. #204 asks explicitly that the scan reusable not hold a shared writer.
+#      Here the role arrives from the caller, who owns it.
+#
+# Shape copied from sonarqube-hdf.yml + sonarqube-hdf-emit.yml, which already
+# solve this: the CALLER declares `id-token: write` and passes its own role in
+# as a secret.
+#
+# Caller sketch:
+#
+#   emit:
+#     needs: sca
+#     permissions:
+#       contents: read
+#       actions: read
+#       id-token: write          # REQUIRED — this workflow cannot add it
+#     uses: risk-sentinel/container-build-sign/.github/workflows/sca-emit-source.yml@vX.Y.Z
+#     with:
+#       repo_slug: my-repo
+#     secrets:
+#       S3_EMIT_ROLE_ARN: ${{ secrets.SCA_EMIT_ROLE_ARN }}
+#       AWS_REGION: ${{ secrets.AWS_REGION }}
+
+on:
+  workflow_call:
+    inputs:
+      artifact_name:
+        description: 'Artifact written by sca-scan.yml'
+        type: string
+        default: 'sca-reports'
+      repo_slug:
+        description: 'The <repo> path segment in the canonical evidence layout (#151 / sparc-iac#537)'
+        type: string
+        required: true
+      boundary:
+        description: >-
+          Evidence boundary — the first path segment. Wired from the
+          EVIDENCE_BOUNDARY Actions variable (sparc-iac#537). NO DEFAULT: an
+          unset variable used to fall back to `sparc` and write valid evidence
+          where nobody reads it (sparc-iac#715). Empty fails the run.
+        type: string
+        default: ''
+      evidence_prefix:
+        description: >-
+          The <source> segment. Defaults to sca-source rather than sca: in this
+          repo `<...>/container-build-sign/sca/` already holds image-SBOM HDFs
+          from sca-emit-images.yml, and mixing image and source evidence under one
+          prefix reads fine today and is unexplainable in a year. The org rollup
+          (sparc-validate#332) globs sca, sca-source and iac alike, so keeping
+          them apart costs nothing on the reading side.
+        type: string
+        default: 'sca-source'
+      emit:
+        description: 'Set false to exercise the path without writing to S3'
+        type: boolean
+        default: true
+    secrets:
+      S3_EMIT_ROLE_ARN:
+        description: >-
+          Caller-owned role with s3:PutObject on <boundary>/*/<repo_slug>/* — note the
+          boundary segment moves with EVIDENCE_BOUNDARY, so a role scoped to the old
+          value denies every write after a pivot (sparc-iac#715 step 1 widens them
+          BEFORE the variable flips). Absent = emit is skipped with a notice.
+        required: false
+      AWS_REGION:
+        description: 'Region for the OIDC assume'
+        required: false
+      # PORT(sparc-horizon): the bucket arrives as a secret instead of an input
+      # defaulted to its name. This repository is public and carries no resource
+      # identifiers (docs/dev/issue_rules.md); dev-sec-ops-baseline's
+      # secret-scan-hdf.yml takes it the same way, as COMPLIANCE_S3_BUCKET.
+      COMPLIANCE_S3_BUCKET:
+        description: 'Evidence bucket. Required when a role is supplied and emit=true.'
+        required: false
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+jobs:
+  emit:
+    name: Emit to the evidence bucket
+    runs-on: ubuntu-latest
+    steps:
+      # Fail closed on an unset boundary (#325 / sparc-iac#715). FIRST, before the
+      # role preflight: a run that cannot name its boundary must not reach the
+      # point of deciding whether to skip quietly.
+      - name: Preflight — the boundary is set
+        # Only when this run will actually WRITE. `emit: false` is a deliberate
+        # no-op (the dry-run harness proves a caller with no role skips green),
+        # and failing a run that was never going to publish teaches nobody
+        # anything — fail closed at the point evidence would land, not before.
+        if: ${{ inputs.emit }}
+        env:
+          BOUNDARY: ${{ inputs.boundary }}
+        run: |
+          set -euo pipefail
+          if [ -z "${BOUNDARY:-}" ]; then
+            echo "::error::boundary is empty — refusing to guess."
+            echo "::error::Wire it from the EVIDENCE_BOUNDARY variable. This input had a"
+            echo "::error::'sparc' default until #325: an unset variable then produced a"
+            echo "::error::VALID write to a prefix nobody reads for this repo, which is"
+            echo "::error::worse than an error because the evidence exists and validates"
+            echo "::error::(sparc-iac#715)."
+            exit 1
+          fi
+          echo "boundary: ${BOUNDARY}"
+
+      # Decides `have_role` in a plain step rather than mapping the secret into a
+      # workflow-level `env:`. That mapping works in sca-emit-images.yml, but that
+      # is not a reusable, and the behaviour under workflow_call is not something
+      # to guess at when a preflight step is provably safe.
+      - name: Preflight — is a role supplied?
+        id: preflight
+        env:
+          ROLE: ${{ secrets.S3_EMIT_ROLE_ARN }}
+          BUCKET: ${{ secrets.COMPLIANCE_S3_BUCKET }}  # PORT(sparc-horizon)
+          EMIT: ${{ inputs.emit }}                     # PORT(sparc-horizon)
+        run: |
+          set -euo pipefail
+          if [ -n "${ROLE}" ]; then
+            # PORT(sparc-horizon): a role without a bucket fails here, by name,
+            # rather than as a malformed s3:// URI in the emit step.
+            if [ "${EMIT}" = "true" ] && [ -z "${BUCKET}" ]; then
+              echo "::error::S3_EMIT_ROLE_ARN is set but COMPLIANCE_S3_BUCKET is empty — pass the bucket secret."
+              exit 1
+            fi
+            echo "have_role=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "have_role=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download evidence
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: evidence
+
+      - name: Inspect what arrived
+        id: inspect
+        run: |
+          set -uo pipefail
+          ls -laR evidence/ || true
+          if [ ! -f evidence/provenance.json ]; then
+            # Not fatal: an older sca-scan.yml pin, or emit_evidence=false. Say so
+            # rather than shipping a silently partial evidence set.
+            echo "::warning::no provenance.json in '${{ inputs.artifact_name }}' — the producer ran with emit_evidence=false or predates #204"
+            echo "have_provenance=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "have_provenance=true" >> "$GITHUB_OUTPUT"
+            python3 -c "
+          import json
+          d=json.load(open('evidence/provenance.json'))
+          for s in d['scanners']:
+              n=s['findings']
+              print(f\"  {s['name']}: {s['status']}\", f'({n} findings)' if n is not None else '(count unavailable)')
+          "
+          fi
+
+      - name: Configure AWS credentials (OIDC)
+        id: aws
+        if: ${{ inputs.emit && steps.preflight.outputs.have_role == 'true' }}
+        continue-on-error: true
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ secrets.S3_EMIT_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Emit to S3
+        id: emit
+        if: ${{ inputs.emit && steps.preflight.outputs.have_role == 'true' && steps.aws.outcome == 'success' }}
+        env:
+          BUCKET: ${{ secrets.COMPLIANCE_S3_BUCKET }}  # PORT(sparc-horizon): was inputs.bucket
+          BOUNDARY: ${{ inputs.boundary }}
+          REPO_SLUG: ${{ inputs.repo_slug }}
+          PREFIX: ${{ inputs.evidence_prefix }}
+        run: |
+          set -eo pipefail
+          DATE=$(date -u +%F)
+          cd evidence
+          for slot in "${DATE}" latest; do
+            dest="${BOUNDARY}/${slot}/${REPO_SLUG}/${PREFIX}"
+            # provenance FIRST. If the run dies part-way, the record of what was
+            # attempted is the one object worth having landed.
+            #
+            # --sse aws:kms (#328) on every put: the evidence bucket's deny reads
+            # the request HEADER, which the bucket's default encryption does not
+            # set — so an object that WILL be encrypted can still be refused.
+            # Callers of this reusable inherit the flag. No key id; the bucket
+            # default is an AWS-managed key.
+            [ -f provenance.json ] && aws s3 cp provenance.json "s3://${BUCKET}/${dest}/" --sse aws:kms --no-progress
+            if [ -d hdf ]; then
+              aws s3 cp hdf/ "s3://${BUCKET}/${dest}/hdf/" \
+                --recursive --sse aws:kms --no-progress
+            fi
+            [ -f sca-summary.md ]  && aws s3 cp sca-summary.md "s3://${BUCKET}/${dest}/" --sse aws:kms --no-progress
+            # The CycloneDX BOM (#312). Until this existed the lane carried
+            # provenance, HDF and a summary — none of which the org rollup can
+            # merge or re-scan — so every consumer's source lane arrived EMPTY
+            # and the org numbers were image-only without anyone being able to
+            # see it from either side.
+            #
+            # Published as <repo_slug>.cdx.json, matching what sparc-iac and
+            # sparc-validate already publish by their own means, so the
+            # aggregator resolves a consumer's own BOM the same way everywhere.
+            if [ -f bom.cdx.json ]; then
+              aws s3 cp bom.cdx.json "s3://${BUCKET}/${dest}/${REPO_SLUG}.cdx.json" --sse aws:kms --no-progress
+            fi
+          done
+          if [ ! -f bom.cdx.json ]; then
+            echo "::warning::no bom.cdx.json in the evidence artifact —" \
+                 "this lane contributes nothing to the org SCA rollup (#312)"
+          fi
+          echo "Emitted to s3://${BUCKET}/${BOUNDARY}/{${DATE},latest}/${REPO_SLUG}/${PREFIX}/"
+
+      # Ported from sca-emit-images.yml (#194), including the earlier-step branch
+      # added in e4da584. Reads steps.emit.outcome and never HeadObject: the emit
+      # role holds s3:PutObject only, and S3 answers a missing read grant with 404
+      # rather than 403, so a probe cannot tell "absent" from "not allowed" (#197).
+      #
+      # `inputs.emit` is a typed, defaulted workflow_call boolean here, so it is
+      # never the empty string and the #194 coercion bug cannot recur. Do NOT
+      # write `inputs.emit != false` by symmetry with the dispatch-triggered
+      # workflows — that is the bug.
+      - name: Assert the emit was not silently skipped
+        if: ${{ always() && inputs.emit && steps.preflight.outputs.have_role == 'true' }}
+        run: |
+          set -euo pipefail
+          OUTCOME="${{ steps.emit.outcome }}"
+          if [ "${OUTCOME}" = "success" ]; then echo "Emit ran and succeeded."; exit 0; fi
+          if [ "${{ job.status }}" = "failure" ] && [ "${OUTCOME}" = "skipped" ]; then
+            echo "::error::the emit did not run because an EARLIER step failed — fix that, not this."
+          else
+            echo "::error::a role was supplied and emit=true, but the emit step outcome was '${OUTCOME}' (see #194). Check the OIDC assume above."
+          fi
+          exit 1
+
+      - name: Note when the emit was skipped
+        if: ${{ !inputs.emit || steps.preflight.outputs.have_role != 'true' }}
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.emit }}" != "true" ]; then
+            echo "::notice::emit=false — evidence was staged but not shipped."
+          else
+            echo "::notice::no S3_EMIT_ROLE_ARN supplied — evidence was staged but not shipped. Pass your repo's emit role to ship it."
+          fi

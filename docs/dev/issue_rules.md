@@ -457,8 +457,10 @@ s3://<COMPLIANCE_S3_BUCKET>/risk-sentinel/<date|latest>/sparc-horizon/<source>/<
 
 ### Workflow conventions
 
-- Third-party actions are **SHA-pinned** with a comment naming the version;
-  GitHub-owned `actions/*` stay tag-pinned, per estate convention.
+- **Every action is SHA-pinned** with a comment naming the version, GitHub-owned
+  `actions/*` included. The forge enforces this for this repository
+  (`sha_pinning_required`), so the estate convention of tag-pinning `actions/*` does not
+  apply here.
 - Reusable workflows from `container-build-sign` are pinned to a **SHA** with a
   dated comment saying what the bump was for.
 - `sonarqube-hdf-emit.yml` is **self-contained and copied per repo** — a public
@@ -513,6 +515,30 @@ gh api "repos/risk-sentinel/sparc-validate/rulesets/<id>"
   bypass
 - **A ruleset in evaluate mode reports its name happily while blocking nothing.**
   Assert on enforcement, not existence
+
+The repository is **public** (2026-09-28). Anyone can fork it and open a pull request, so
+three Actions settings sit beside the ruleset. They are repository settings, not files, so
+they are read back rather than reviewed in a diff:
+
+- **Fork-PR workflows need approval from a maintainer for all external contributors**
+  (`approval_policy: all_external_contributors`), not only first-time ones. A fork PR can
+  rewrite any workflow it triggers, and a contributor's first merged PR would otherwise
+  exempt every later one
+- **Every action must be pinned to a full commit SHA** (`sha_pinning_required: true`). The
+  forge refuses a tag-pinned action outright, which backs the convention below with
+  enforcement rather than review
+- **The default workflow token is read-only.** Jobs that need more ask for it by name
+
+Never attach a self-hosted runner to this repository, and never add a
+`pull_request_target` or `workflow_run` job that checks out the PR's code: both hand a
+stranger's code something a fork PR is otherwise denied. A job that needs a secret skips
+on a fork PR rather than failing it, and no required check may depend on a secret.
+
+```bash
+gh api "repos/risk-sentinel/sparc-horizon/actions/permissions"
+gh api "repos/risk-sentinel/sparc-horizon/actions/permissions/fork-pr-contributor-approval"
+gh api "repos/risk-sentinel/sparc-horizon/actions/permissions/workflow"
+```
 
 Verify what is in effect, then prove it:
 

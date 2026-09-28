@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-24 (#42). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-28 (#42). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,43 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-28 — #42 — `fix/42_public_visibility`
+
+**In flight:** nothing unpushed. The settings changes in this PR were applied to the repository
+**before** it was written, by the owner and at the owner's direction; the PR records them.
+
+**The line ceiling was measured per repository, not assumed.** Read-only through the SonarCloud
+Web API, largest branch per project: private projects totalled **49,880**, and the 24 public ones
+(about 253,000 lines) count for nothing. So the ceiling is a private-code budget the estate shares,
+and a subscription increase would have bought headroom that the next repository to grow spends.
+
+**Rejected: the larger subscription the last session chose, and excluding `demo/**`.** Both leave
+the budget shared and finite. The owner's reasoning replaced them: Horizon is to be open-sourced
+off SPARC, so nothing here needed to be private. Public on GitHub and in SonarCloud took the
+private total to **40,791**. The two are separate switches — the GitHub flip alone left the Sonar
+project private and still counted.
+
+**Checked before the flip:** full history carries no account identifiers (one `us-east-1`
+fallback default); no self-hosted runners; no `pull_request_target` or `workflow_run`; the emit
+role trusts `ref:refs/heads/main` only (`sparc-iac/AWS/IAM/sparc_horizon_emit.tf`); the Sonar PR
+job already skips fork PRs; no required check needs a secret. Two unfiled upstream defect reports
+in `docs/dev/` became public with it — neither is a security defect.
+
+**A consequence found after the flip, not before:** `container-build-sign` is internal, and a
+public repository cannot call its reusable workflows. Nothing calls them yet; S1-6 and S1-9 will.
+`container-build-sign#342` was filed for the line budget and is now blocking for that reason too.
+It should have been on the pre-flight list — **a visibility change is checked against every
+reusable workflow the repository calls, and every one it plans to.**
+
+**Upstream checked 2026-09-28:** `dev-sec-ops-baseline` is public, so `secret-scan-hdf-emit.yml`
+still resolves.
+
+**Next:** this PR's merge is the first push to `main` since the Sonar project went public. If
+SonarCloud analyses it and `SonarQube HDF emit` goes green, read the landed object back before
+calling #42 item 5 closed. Item 4, coverage, stays open behind S1-4.
 
 ---
 

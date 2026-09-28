@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-28 (#84). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-28 (#87). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,30 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-28 — #87 — `fix/87_remove_mockserver_binary`
+
+**In flight:** nothing unpushed.
+
+**How it was found:** the first `main` emit of the new SCA lane (#85) carried 13 findings, all
+against Go stdlib `go1.26.3`. `go.mod` targets 1.25, so no source in the tree could have
+produced them. The BOM traced them to a 9 MB `mockserver` binary tracked at the root since
+`0de70ec` (#79). The SCA scan did its job on its first day: it saw a component nobody had
+reviewed.
+
+**Checked before removing:** nothing uses it. Both docs run the server with
+`go run ./cmd/mockserver`. No workflow, script or test executes the file. It is a macOS arm64
+build, so it could never have run on a CI runner.
+
+**Rejected: rewriting history.** The binary stays in `0de70ec`. Rewriting a public `main` breaks
+every clone and fork, and the object is a stale build of reviewed source, not a secret. Untracking
+it, plus an ignore rule, is proportionate.
+
+**Next:** the first `sca-source` emit after merge should carry no `stdlib` component and 0 Grype
+findings. Read it back rather than trusting the green job. Then #86 (pin check), then S1-13
+(require the SCA contexts).
 
 ---
 

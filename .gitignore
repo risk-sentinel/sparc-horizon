@@ -8,6 +8,14 @@
 *.so
 *.dylib
 
+# `go build ./cmd/<name>` run from the repository root writes the binary here.
+# One was committed in #79 and went public with the repository (#87). Anchored to
+# the root so the cmd/ source directories are unaffected. `horizon/` is left off:
+# it is the placeholder directory for the service, not a build output.
+/mockserver
+/genfixtures
+/oscalprobe
+
 # Test binary, built with `go test -c`
 *.test
 

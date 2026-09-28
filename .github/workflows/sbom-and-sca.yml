@@ -39,9 +39,9 @@ on:
     - cron: '0 8 * * *'
   workflow_dispatch:
 
+# Workflow default is contents: read only; each job asks for what it needs.
 permissions:
   contents: read
-  actions: read
 
 jobs:
   sbom:
@@ -54,6 +54,9 @@ jobs:
   sca:
     name: SCA gate
     needs: sbom
+    permissions:
+      contents: read
+      actions: read   # sca-scan.yml downloads the SBOM artifact
     uses: ./.github/workflows/sca-scan.yml
     with:
       sbom_artifact: cyclonedx-sbom

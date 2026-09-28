@@ -20,9 +20,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Workflow default is contents: read only; each job asks for what it needs.
 permissions:
   contents: read
-  actions: read
 
 env:
   # Each planted package must produce at least one CRITICAL of its own. A total
@@ -47,6 +47,9 @@ jobs:
   scan:
     name: Scan
     needs: stage
+    permissions:
+      contents: read
+      actions: read   # sca-scan.yml downloads the fixture artifact
     uses: ./.github/workflows/sca-scan.yml
     with:
       sbom_artifact: sca-fixture-sbom
@@ -61,6 +64,8 @@ jobs:
     name: SCA fixture detection (proves scanner works)
     needs: scan
     runs-on: ubuntu-latest
+    permissions:
+      actions: read   # downloads the sca-reports artifact
     steps:
       - name: Download the scan's reports
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1

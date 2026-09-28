@@ -1,0 +1,113 @@
+name: SBOM + SCA
+
+# Source SBOM, then a dependency-vulnerability gate over it, then the evidence.
+# S1-6, sparc-horizon#84.
+#
+# ---- Why the reusables are local -------------------------------------------
+#
+# sbom-source.yml, sca-scan.yml and sca-emit-source.yml are PORTED from
+# container-build-sign, not called there. This repository is public and
+# container-build-sign is internal, and a public repository cannot call an
+# internal one's reusable workflows. That failure is a 0-second run with no jobs
+# and no logs. Provenance and the drift check are in .github/ported/. Once
+# container-build-sign#342 makes it public, calling upstream becomes possible
+# again, and the port can be retired.
+#
+# ---- What gates and what does not --------------------------------------------
+#
+# The gate is CRITICAL, from Grype over the SBOM plus Trivy fs over the tree,
+# reconciled against .security/sca-allowlist.yaml. The allow-list is EMPTY, so
+# every CRITICAL fails the build. The OHDF and the provenance record are
+# evidence only: they never gate, and a conversion failure is recorded as data.
+#
+# ---- Emit --------------------------------------------------------------------
+#
+# Emits only on push to main and on the schedule, never on pull_request. A fork
+# PR has no OIDC credentials, and the evidence stream reflects what landed on
+# the default branch. The same boundary rule applies as in
+# secret-scan-hdf-emit.yml: an unset EVIDENCE_BOUNDARY fails the run, with no
+# fallback. The emit runs even when the gate failed, because a failing scan is
+# evidence too.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    # Daily. The tree does not change overnight, but the advisory databases do,
+    # so a newly disclosed CVE in an existing dependency surfaces within a day.
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+# Workflow default is contents: read only; each job asks for what it needs.
+permissions:
+  contents: read
+
+jobs:
+  sbom:
+    name: Source SBOM
+    uses: ./.github/workflows/sbom-source.yml
+    with:
+      source_path: '.'
+      artifact_name: cyclonedx-sbom
+
+  sca:
+    name: SCA gate
+    needs: sbom
+    permissions:
+      contents: read
+      actions: read   # sca-scan.yml downloads the SBOM artifact
+    uses: ./.github/workflows/sca-scan.yml
+    with:
+      sbom_artifact: cyclonedx-sbom
+      source_path: '.'
+      severity_gate: CRITICAL
+      allowlist_path: .security/sca-allowlist.yaml
+      secondary_signal: true
+      fail_on_gating: true
+
+  preflight:
+    name: Boundary is set
+    if: github.event_name == 'push' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    outputs:
+      boundary: ${{ steps.b.outputs.boundary }}
+    steps:
+      - name: Require EVIDENCE_BOUNDARY
+        id: b
+        env:
+          BOUNDARY: ${{ vars.EVIDENCE_BOUNDARY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${BOUNDARY:-}" ]; then
+            echo "::error::EVIDENCE_BOUNDARY is not set. Refusing to emit rather than defaulting (sparc-horizon#1)."
+            exit 1
+          fi
+          echo "boundary=${BOUNDARY}" >> "$GITHUB_OUTPUT"
+
+  emit:
+    name: Emit SCA evidence
+    needs: [sca, preflight]
+    # always(), so a gating failure still ships its evidence; but only when the
+    # scan itself ran to completion, and only once the boundary is known.
+    if: >-
+      always()
+      && (github.event_name == 'push' || github.event_name == 'schedule')
+      && needs.preflight.result == 'success'
+      && (needs.sca.result == 'success' || needs.sca.result == 'failure')
+    permissions:
+      contents: read
+      actions: read
+      id-token: write   # the called workflow cannot add this itself
+    uses: ./.github/workflows/sca-emit-source.yml
+    with:
+      repo_slug: sparc-horizon
+      boundary: ${{ needs.preflight.outputs.boundary }}
+      # Upstream's default, kept: the org rollup globs sca, sca-source and iac
+      # alike, and source evidence stays apart from any later image lane.
+      evidence_prefix: sca-source
+    secrets:
+      # Scoped to risk-sentinel/*/sparc-horizon/*, so sca-source falls inside it.
+      S3_EMIT_ROLE_ARN: ${{ secrets.SPARC_HORIZON_EMIT_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      COMPLIANCE_S3_BUCKET: ${{ secrets.COMPLIANCE_S3_BUCKET }}

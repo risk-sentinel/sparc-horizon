@@ -1,0 +1,51 @@
+{
+  "upstream": {
+    "repo": "risk-sentinel/container-build-sign",
+    "commit": "bf604055e70e0b689e1cb80355e93f56828ce5cb",
+    "license": "MIT"
+  },
+  "ported": "2026-09-28",
+  "issue": "sparc-horizon#84",
+  "files": [
+    {
+      "path": ".github/workflows/sbom-source.yml",
+      "upstream_sha256": "71e81f14ec803e3385eec20e93a0562dad3bec17d66d187f64c1ab78a310540a",
+      "modified": true
+    },
+    {
+      "path": ".github/workflows/sca-scan.yml",
+      "upstream_sha256": "e73493879d66c943226025699ee45a0b8b953ddfefca7f5bbb53419a84a014f8",
+      "modified": true
+    },
+    {
+      "path": ".github/workflows/sca-emit-source.yml",
+      "upstream_sha256": "655c083ad73c7c0088dfee9f1e63ff542288ab232c56bdc02e0e6c3c7a4d2858",
+      "modified": true
+    },
+    {
+      "path": ".github/actions/hdf-install/action.yml",
+      "upstream_sha256": "d82a17e43d4f08083d9b7bd3234cec7c92686756d662c5985bb4c59bfad4bd13",
+      "modified": true
+    },
+    {
+      "path": ".github/actions/hdf-evidence/action.yml",
+      "upstream_sha256": "355825bf33fb82326d1592a1d542601bb08b85462558f9a6d12870481403ffb0",
+      "modified": true
+    },
+    {
+      "path": ".github/actions/hdf-evidence/summary.py",
+      "upstream_sha256": "12b3fd5b5f4d6c8704636ab03c2201f97cc07b58179c514f521093a543652327",
+      "modified": false
+    },
+    {
+      "path": ".github/actions/evidence-provenance/action.yml",
+      "upstream_sha256": "02381e7369ba9d8a062384dd1348b571e07a40f35fdae0baf8333357576f8b72",
+      "modified": true
+    },
+    {
+      "path": ".github/actions/evidence-provenance/provenance.py",
+      "upstream_sha256": "7257891b2377f00851d024929d1aeae10bb58964edaa18fb4c3c45ffd0c6ee94",
+      "modified": false
+    }
+  ]
+}

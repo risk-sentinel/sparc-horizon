@@ -1,0 +1,139 @@
+name: Ported workflow drift
+
+# Notices when container-build-sign changes a file this repository ported.
+#
+# The SBOM and SCA reusables and their composite actions are copies
+# (sparc-horizon#84), because a public repository cannot call an internal one's
+# workflows. A copy does not receive upstream fixes, so this compares each
+# ported file's recorded upstream digest (.github/ported/PROVENANCE.json)
+# against upstream's default branch.
+#
+# It is scheduled and files an issue, and it is not a PR check. The same
+# reasoning applies as for vendored-contract-freshness.yml: a required check
+# would make every merge here depend on a sibling repository being reachable.
+#
+# container-build-sign is INTERNAL, and this repository's default token cannot
+# read it. So this reads with CBS_READ_TOKEN, a read-only token for that one
+# repository. With no such token, the run reports "unverifiable" and files an
+# issue saying so. A drift check that passes because it could not look is the
+# failure it exists to prevent. Nothing here writes to a sibling repository.
+
+on:
+  schedule:
+    - cron: '30 7 * * 1'   # Mondays; after the other scheduled checks
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  PROVENANCE: .github/ported/PROVENANCE.json
+  MARKER: '<!-- ported-workflow-drift:container-build-sign -->'
+
+jobs:
+  drift:
+    name: Are the ported files current?
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Compare recorded upstream digests against upstream default branch
+        id: compare
+        env:
+          READ_TOKEN: ${{ secrets.CBS_READ_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -uo pipefail
+          repo="$(jq -r '.upstream.repo' "${PROVENANCE}")"
+          pinned="$(jq -r '.upstream.commit' "${PROVENANCE}")"
+          echo "upstream_repo=${repo}" >> "$GITHUB_OUTPUT"
+          echo "pinned=${pinned}" >> "$GITHUB_OUTPUT"
+          api() { curl -sSfL --proto '=https' --proto-redir '=https' --tlsv1.2 \
+                    -H "Authorization: Bearer ${READ_TOKEN}" "$@"; }
+
+          if ! head="$(api -H 'Accept: application/vnd.github+json' \
+                 "https://api.github.com/repos/${repo}/commits/HEAD" | jq -er '.sha')"; then
+            echo "state=unverifiable" >> "$GITHUB_OUTPUT"
+            echo "::warning::Cannot read ${repo}. Set CBS_READ_TOKEN, or wait for container-build-sign#342."
+            exit 0
+          fi
+          echo "upstream_sha=${head}" >> "$GITHUB_OUTPUT"
+
+          : > drift.md
+          n=0; moved=0
+          while IFS=$'\t' read -r path want; do
+            n=$((n+1))
+            if ! api -H 'Accept: application/vnd.github.raw' \
+                   "https://api.github.com/repos/${repo}/contents/${path}?ref=${head}" -o upstream.bin; then
+              echo "| \`${path}\` | missing upstream |" >> drift.md; moved=$((moved+1)); continue
+            fi
+            have="$(sha256sum upstream.bin | cut -d' ' -f1)"
+            if [ "${have}" != "${want}" ]; then
+              echo "| \`${path}\` | changed |" >> drift.md; moved=$((moved+1))
+            fi
+          done < <(jq -r '.files[] | [.path, .upstream_sha256] | @tsv' "${PROVENANCE}")
+
+          # A provenance file that lists nothing would compare nothing and pass.
+          if [ "${n}" -lt 1 ]; then
+            echo "::error::${PROVENANCE} lists no files."
+            exit 1
+          fi
+          echo "Compared ${n} files against ${repo}@${head}: ${moved} moved."
+          if [ "${moved}" -gt 0 ]; then
+            echo "state=stale" >> "$GITHUB_OUTPUT"
+          else
+            echo "state=current" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open an issue unless current
+        if: steps.compare.outputs.state == 'stale' || steps.compare.outputs.state == 'unverifiable'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STATE: ${{ steps.compare.outputs.state }}
+          REPO: ${{ steps.compare.outputs.upstream_repo }}
+          PINNED: ${{ steps.compare.outputs.pinned }}
+          HEAD_SHA: ${{ steps.compare.outputs.upstream_sha }}
+        run: |
+          set -euo pipefail
+          existing="$(gh issue list --state open --search "${MARKER} in:body" \
+            --json number -q '.[0].number' || true)"
+          if [ -n "${existing}" ]; then
+            echo "Issue #${existing} is already open for this. Not filing another."
+            exit 0
+          fi
+          if [ "${STATE}" = "stale" ]; then
+            { echo "Upstream is at \`${HEAD_SHA}\`. Files whose upstream content moved:"
+              echo; echo "| File | Upstream |"; echo "|---|---|"; cat drift.md; } > detail.md
+          else
+            echo "This run could not read the upstream repository, so it says nothing about drift." > detail.md
+          fi
+          # Render with a template, not by building markdown in shell (see
+          # vendored-contract-freshness.yml for why).
+          python3 - <<'PY'
+          import os
+          t = open('.github/issue-templates/ported-workflow-drift.md').read()
+          for k, v in {'@MARKER@': os.environ['MARKER'], '@UPSTREAM_REPO@': os.environ['REPO'],
+                       '@PINNED@': os.environ['PINNED'], '@DETAIL@': open('detail.md').read().strip()}.items():
+              t = t.replace(k, v)
+          import re
+          assert not re.search(r'@[A-Z_]+@', t), 'unrendered placeholder'
+          open('body.md', 'w').write(t)
+          PY
+          title="Ported container-build-sign workflows: ${STATE}"
+          gh issue create --title "${title}" --label bug --body-file body.md
+
+      - name: Summarise
+        if: always()
+        env:
+          STATE: ${{ steps.compare.outputs.state }}
+        run: |
+          {
+            echo "## Ported workflow drift"
+            echo
+            case "${STATE:-}" in
+              current)      echo "**Current.** Every ported file matches upstream's default branch." ;;
+              stale)        echo "**Upstream moved.** An issue was filed, unless one was already open." ;;
+              unverifiable) echo "**Unverifiable.** Upstream could not be read. An issue says so." ;;
+              *)            echo "**Not determined.** The comparison did not complete. Read the job log." ;;
+            esac
+          } >> "$GITHUB_STEP_SUMMARY"

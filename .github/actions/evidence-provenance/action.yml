@@ -1,0 +1,131 @@
+# PORTED from risk-sentinel/container-build-sign:.github/actions/evidence-provenance/action.yml at bf604055e70e.
+# MIT licence: .github/ported/LICENSE-container-build-sign. Provenance, digests and
+# the drift check: .github/ported/PROVENANCE.json, ported-workflow-drift.yml.
+#
+# Ported because this repository is public and container-build-sign is internal: a
+# public repository cannot call its reusable workflows or composite actions
+# (sparc-horizon#84, container-build-sign#342). Every local edit is marked
+# `PORT(sparc-horizon)`; everything else is byte-identical to upstream, so a diff
+# against the recorded commit shows only those. Change upstream first, then re-port.
+#
+name: Write evidence provenance
+description: >-
+  Record what actually ran this cycle, so a clean scan and a broken bridge are
+  distinguishable. Written on every run, including clean ones.
+
+# Separate from hdf-evidence on purpose. hdf-evidence converts ONE report;
+# the provenance record spans every scanner in a lane plus the gate and emit
+# outcomes, so it has to be written once by the workflow after all of them.
+# It is its own action, rather than a script in tools/, because a workflow_call
+# reusable runs against the CALLER's checkout and cannot execute anything from
+# this repo's tree.
+#
+# Contract:
+#   status=ok             + findings=<int>   -> the scanner ran and converted
+#   status=convert-failed | input-missing    -> broken bridge, findings=null
+#
+# findings is null and never 0 when the count is unknown. A zero meaning "we
+# could not tell" is the exact confusion this record exists to prevent — the
+# same failure class as aws-config#7, where a guard counted controls and passed
+# a file with 78 controls and not one NIST tag.
+
+inputs:
+  lane:
+    description: 'Evidence lane, e.g. sca-source or iac'
+    required: true
+  output:
+    description: 'Path to write the record to'
+    required: false
+    default: 'provenance.json'
+  scanners:
+    description: >-
+      One scanner per line, each `k=v,k=v`. Recognised keys: name (required),
+      version, status, input, hdf, findings, error. Blank lines are ignored so
+      callers can build the list conditionally.
+    required: true
+  scan_path:
+    description: 'Subtree that was scanned'
+    required: false
+    default: ''
+  gate:
+    description: '`k=v,...` describing the gate outcome, e.g. severity=CRITICAL,gating=0'
+    required: false
+    default: ''
+  emit:
+    description: '`k=v,...` describing the emit outcome'
+    required: false
+    default: ''
+  require_hdf:
+    description: >-
+      Fail when a scanner reports ok without a readable HDF. For smoke tests —
+      leave false in the reusables, where evidence must never gate.
+    required: false
+    default: 'false'
+
+outputs:
+  provenance:
+    description: 'Path to the written record'
+    value: ${{ steps.write.outputs.provenance }}
+  rollup:
+    description: 'ok when every scanner converted, partial when some did, failed when none did'
+    value: ${{ steps.write.outputs.rollup }}
+
+runs:
+  using: composite
+  steps:
+    - name: Write the provenance record
+      id: write
+      shell: bash
+      env:
+        LANE: ${{ inputs.lane }}
+        OUT: ${{ inputs.output }}
+        RAW_SCANNERS: ${{ inputs.scanners }}
+        SCAN_PATH: ${{ inputs.scan_path }}
+        GATE: ${{ inputs.gate }}
+        EMIT: ${{ inputs.emit }}
+        REQUIRE_HDF: ${{ inputs.require_hdf }}
+      run: |
+        set -uo pipefail
+
+        args=(--lane "${LANE}" --out "${OUT}")
+        [ -n "${SCAN_PATH}" ] && args+=(--scan-path "${SCAN_PATH}")
+        [ -n "${GATE}" ]      && args+=(--gate "${GATE}")
+        [ -n "${EMIT}" ]      && args+=(--emit "${EMIT}")
+        [ "${REQUIRE_HDF}" = "true" ] && args+=(--require-hdf)
+
+        n=0
+        while IFS= read -r spec; do
+          spec="${spec#"${spec%%[![:space:]]*}"}"   # ltrim
+          spec="${spec%"${spec##*[![:space:]]}"}"   # rtrim
+          [ -z "${spec}" ] && continue
+          args+=(--scanner "${spec}")
+          n=$((n+1))
+        done <<< "${RAW_SCANNERS}"
+
+        if [ "${n}" -eq 0 ]; then
+          echo "::error::evidence-provenance: no scanner specs supplied"
+          exit 1
+        fi
+
+        python3 "${GITHUB_ACTION_PATH}/provenance.py" "${args[@]}"
+        rc=$?
+        echo "provenance=${OUT}" >> "$GITHUB_OUTPUT"
+
+        # Roll the per-scanner statuses up into one value a caller can branch on.
+        # Read back from the written file rather than re-parsing the inputs, so
+        # the rollup describes what was actually recorded.
+        if [ -s "${OUT}" ]; then
+          rollup="$(python3 -c "
+        import json
+        s=json.load(open('${OUT}'))['scanners']
+        ok=sum(1 for x in s if x['status']=='ok')
+        print('ok' if ok==len(s) else ('partial' if ok else 'failed'))
+        ")"
+        else
+          rollup=failed
+        fi
+        echo "rollup=${rollup}" >> "$GITHUB_OUTPUT"
+        echo "provenance rollup: ${rollup}"
+
+        # require_hdf is the only path that may fail, and only when asked.
+        exit $rc

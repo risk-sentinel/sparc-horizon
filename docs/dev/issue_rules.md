@@ -88,7 +88,7 @@ saying so in the PR body.
 |---|---|---|
 | `sparc` | Authoritative catalogs, baselines, profile resolution, crosswalks, the Delivery API, federation trust fabric | A namespace prop, a `sparc-validate` rule, a mapping document, or a Delivery API endpoint Horizon consumes needs to change |
 | `sparc-validate` | InSpec/CINC profiles, HDF production, overlay pins | A profile must assert something about Horizon's deployed resources, or an HDF conversion route is missing |
-| `container-build-sign` | Image build / scan / SBOM / sign / publish; the shared reusable scan workflows | Horizon needs an ECR repo, a caller added to the consumer list, a base-image bump, or a change to a reusable workflow it calls |
+| `container-build-sign` | Image build / scan / SBOM / sign / publish; the shared reusable scan workflows. Horizon runs **ported copies** of them (see Workflow conventions), so a fix still lands there first | Horizon needs an ECR repo, a caller added to the consumer list, a base-image bump, or a change to a reusable workflow it calls |
 | `sparc-iac` | All AWS Terraform, IAM roles, ECR repos, ECS services, evidence-bucket policy | Horizon needs its deployment, its emit role, its task definition, or a secret provisioned |
 | `dev-sec-ops-baseline` | The SDLC evidence profile and the org repository inventory | Horizon must be declared in the inventory, or a coverage declaration needs adding |
 
@@ -403,10 +403,10 @@ code.**
 | Static analysis (service) | SonarCloud, project `risk-sentinel_sparc-horizon` | The project **resolves** before results are fetched, and the analysed line count is plausible for the tree. An unknown project returns an empty result that converts into a clean report. Keys are assigned at onboarding and do not follow a repository rename |
 | Code scanning | CodeQL (`go`, `javascript-typescript`) | The detected language list is non-empty. Language detection reads the **default branch only** |
 | Dependency | `govulncheck` (Go module graph) + Dependabot | The module count analysed is non-zero. A transitive advisory gets no Dependabot PR when nothing in `go.mod` names it directly — an empty dependency queue is not evidence of a clean graph (`sparc`'s `mail` advisory sat on `main` for five days that way) |
-| SBOM | Syft → CycloneDX, via `container-build-sign`'s `sbom-source.yml` | The component count is greater than zero. An SBOM is inventory; it does not satisfy SCA |
-| SCA | Grype (SBOM-driven) + Trivy `fs`, via `sca-scan.yml`, reconciled against `.security/sca-allowlist.yaml` | Both scanners converted to HDF. Every allow-list entry carries an expiry, and an expired entry suppresses nothing |
+| SBOM | Syft → CycloneDX, via `sbom-source.yml`, ported from `container-build-sign` | The component count is greater than zero. An SBOM is inventory; it does not satisfy SCA |
+| SCA | Grype (SBOM-driven) + Trivy `fs`, via `sca-scan.yml` (ported), reconciled against `.security/sca-allowlist.yaml`; gate at CRITICAL in `sbom-and-sca.yml` | Both scanners converted to HDF. Every allow-list entry carries an expiry, and an expired entry suppresses nothing. `sca-fixture.yml` feeds a planted SBOM through the same gate and requires a CRITICAL **per planted package**, so one ecosystem going blind is not hidden by another's matches |
 | Container | Trivy against the built image; `container-baseline.yml` for CRITICAL/HIGH dispositions | A CRITICAL/HIGH not in the baseline blocks the build. Scan the image that ships, not a dev variant |
-| Signing | cosign, via `container-build-sign`'s `build-sign-publish.yml` | Signature and CycloneDX attestation verify for the published digest before anything consumes it |
+| Signing | cosign, via `container-build-sign`'s `build-sign-publish.yml`, ported with S1-8 while that repository is internal | Signature and CycloneDX attestation verify for the published digest before anything consumes it |
 | IaC | Not applicable in this repo — Horizon holds no Terraform | The `sparc-iac` issue covering Horizon's deployment carries the IaC scan |
 
 ### Conversion to HDF
@@ -461,8 +461,21 @@ s3://<COMPLIANCE_S3_BUCKET>/risk-sentinel/<date|latest>/sparc-horizon/<source>/<
   `actions/*` included. The forge enforces this for this repository
   (`sha_pinning_required`), so the estate convention of tag-pinning `actions/*` does not
   apply here.
-- Reusable workflows from `container-build-sign` are pinned to a **SHA** with a
-  dated comment saying what the bump was for.
+- **`container-build-sign`'s reusables are ported, not called**, while that
+  repository is internal (#84, `container-build-sign#342`). The rules of a port:
+  - A ported file stays **byte-identical to upstream** except for edits marked
+    `PORT(sparc-horizon)`, so a diff against the recorded commit shows only those.
+    Make references local (`./.github/actions/…`), keep resource identifiers out,
+    and keep the workflow lint clean. Nothing else changes
+  - **A fix goes upstream first**, as an issue there, and is then re-ported. A local
+    fix that is not marked is a fork nobody knows about
+  - Re-porting updates `.github/ported/PROVENANCE.json`: the upstream commit and each
+    file's `upstream_sha256`, which is the digest of the **upstream** original
+  - `ported-workflow-drift.yml` compares those digests weekly and files an issue.
+    Until `container-build-sign` is public it needs `CBS_READ_TOKEN`; without it,
+    it reports *unverifiable* rather than passing
+  - If `container-build-sign` becomes public, go back to calling it, SHA-pinned with
+    a dated comment, and delete the ports
 - `sonarqube-hdf-emit.yml` is **self-contained and copied per repo** — a public
   repository cannot call a reusable workflow in a private or internal one, and
   that failure presents as a 0-second run with no jobs and no logs. Copy the

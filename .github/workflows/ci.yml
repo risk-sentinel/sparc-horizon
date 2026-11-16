@@ -26,7 +26,7 @@ permissions:
 env:
   # Pinned. Bump here and in .golangci.yml together — an unpinned linter
   # silently changes what the gate measures.
-  GOLANGCI_LINT_VERSION: v2.6.2
+  GOLANGCI_LINT_VERSION: v2.15.0
   # Minimum packages that must run tests. Raise it as packages gain tests;
   # it exists so deleting a test file is a build failure rather than a
   # quieter green run.
@@ -55,17 +55,17 @@ jobs:
           #
           # Go patch releases are security and bug fixes only, so taking the
           # newest one on the pinned minor is both safer and closer to what
-          # ships: docs/08-build-deploy.md builds on `golang:1.25`, which is
-          # itself the newest 1.25 patch. The step below asserts the runner's
+          # ships: docs/08-build-deploy.md builds on `golang:1.27`, which is
+          # itself the newest 1.27 patch. The step below asserts the runner's
           # minor still matches go.mod, so the pin is enforced where it means
           # something.
-          go-version: "1.25.x"
+          go-version: "1.27.x"
           check-latest: true
 
       - name: Assert the toolchain matches the pinned image
         run: |
           set -euo pipefail
-          # docs/08-build-deploy.md builds on golang:1.25. A runner that
+          # docs/08-build-deploy.md builds on golang:1.27. A runner that
           # silently used a different minor would lint and test something the
           # shipped image never compiles. This is where the go-version above is
           # held to go.mod — change one without the other and this fails.

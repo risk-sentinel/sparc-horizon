@@ -211,13 +211,16 @@ func (s *server) who(r *http.Request) (persona, bool) {
 // produce the same response, so the server cannot accidentally distinguish
 // them.
 func (s *server) serve(w http.ResponseWriter, name string) {
-	b, err := fs.ReadFile(s.fsys, name)
-	if err != nil {
+	// Decoded and re-encoded rather than copied, so only well-formed JSON leaves
+	// the server and it goes out through the same encoder as every other
+	// response.
+	var doc json.RawMessage
+	if err := s.read(name, &doc); err != nil {
 		notFound(w)
 		return
 	}
 	w.Header().Set(contentType, mediaJSON)
-	_, _ = w.Write(b)
+	_ = json.NewEncoder(w).Encode(doc)
 }
 
 func notFound(w http.ResponseWriter) {

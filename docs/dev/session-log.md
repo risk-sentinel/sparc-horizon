@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-28 (S1-13, #84). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-16 (#105). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,40 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-16 — #105 — `feature/105_go_1_27`
+
+**In flight:** nothing unpushed.
+
+**The #56 decision reopened because its premise expired.** #56 left the Go line on 1.25 with "no
+security pressure either way". On 2026-11-16 go.dev lists 1.27.4 and 1.26.11 as the supported
+releases, so 1.25 receives no further fixes. Dependabot #99 (`x/text` v0.43.0, which declares
+`go 1.26.0`) failed `ci.yml`'s toolchain assertion, as designed.
+
+**Rejected: 1.26.** It satisfies `x/text`, but leaves support when 1.28 ships, about three months
+out. 1.27 also matches `container-build-sign`'s Go 1.27.3.
+
+**golangci-lint had to move with it.** v2.6.2 built with go1.27.4 cannot read the 1.27 standard
+library's export data ("export data version 5 is greater than maximum supported version 2"), so
+every package fails typecheck. Moved to v2.15.0, the latest. **Rejected: an intermediate lint
+version chosen to avoid the new findings** — that is pinning to quiet a report, which
+`issue_rules.md` counts as a suppression.
+
+**v2.15.0 found four issues already on `main`** (they reproduce with `main`'s `go.mod`). All four
+fixed, none suppressed: two `noctx` in `cmd/mockserver` tests (`NewRequestWithContext`), a `G404`
+on `math/rand` in `TestBuildIsOrderIndependent` (now every rotation and every reversed rotation,
+which is deterministic and covers more orders), and a `G705` taint finding on `serve`. The `G705`
+is not exploitable — every path segment is regex-checked and the files are JSON fixtures served as
+`application/json` — but the fix costs nothing: the golden is decoded into `json.RawMessage` and
+re-encoded, so only well-formed JSON leaves the server.
+
+**Local trap:** with a second Go installed, an inherited `GOROOT` makes go1.27.4 drive go1.26's
+compiler ("compile: version go1.26.11 does not match go tool version go1.27.4"). Set `GOROOT` to
+the toolchain being tested.
+
+**Next:** Dependabot rebases #99 after merge; it should pass.
 
 ---
 

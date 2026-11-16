@@ -73,7 +73,9 @@ three signing keys. `ca-certificates` was rejected as a package: it pulls 39, in
 the whole OS scan with "unable to find CPE indices" (trivy-db#435), because it has no RHEL 10
 default. It reads `/usr/share/buildinfo/content-sets.json`; `/root/buildinfo/` alone is not enough.
 Found by bisecting against stock ubi-micro's filesystem. The image now carries the builder's file
-filtered to BaseOS, at both paths, as ubi-micro does. Grype did not need it.
+filtered to the target architecture's two BaseOS sets (binary and source), at both paths, as
+ubi-micro does; the build asserts exactly two. `image_layer_index: 0` is accurate: layer 0 holds the
+rpm database and both copies. Grype did not need the file.
 
 **Measured 2026-11-16, amd64 and arm64:** Trivy redhat 10.3, 4 packages + 3 keys, 0 vulnerabilities,
 0 secrets; Grype redhat 10.3, 0 matches; no shell, empty `/usr/bin`; 118 CA certificates; the only

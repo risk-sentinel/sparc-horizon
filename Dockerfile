@@ -25,8 +25,8 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
 # nothing else: no shell, no utilities, no libraries (CM-7). Four packages, so the
 # rpm database lists exactly what is in the image. The CA bundle is copied as a
 # file: the ca-certificates package would pull in bash and coreutils. The content
-# sets name the repositories the packages came from (BaseOS only), which is how
-# scanners map them to Red Hat advisories.
+# sets name the repositories the packages came from (BaseOS, target arch only),
+# which is how scanners map them to Red Hat advisories.
 FROM --platform=$BUILDPLATFORM ${UBI_BUILDER} AS rootfs
 ARG TARGETARCH
 RUN case "${TARGETARCH}" in \
@@ -42,9 +42,10 @@ RUN case "${TARGETARCH}" in \
     && mkdir -p /rootfs/etc/pki/tls/certs /rootfs/usr/share/buildinfo /rootfs/root/buildinfo \
     && cp /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /rootfs/etc/pki/tls/certs/ca-bundle.crt \
     && python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); \
-d["content_sets"]=[c for c in d["content_sets"] if "-baseos-" in c]; \
+d["content_sets"]=[c for c in d["content_sets"] if "-for-" + sys.argv[3] + "-baseos-" in c]; \
+assert len(d["content_sets"]) == 2, d["content_sets"]; \
 json.dump(d, open(sys.argv[2], "w"), indent=2)' \
-      /usr/share/buildinfo/content-sets.json /rootfs/usr/share/buildinfo/content-sets.json \
+      /usr/share/buildinfo/content-sets.json /rootfs/usr/share/buildinfo/content-sets.json "${arch}" \
     && cp /rootfs/usr/share/buildinfo/content-sets.json /rootfs/root/buildinfo/content-sets.json
 
 FROM scratch

@@ -34,8 +34,8 @@ database lists exactly those four packages, so a scanner reports only what is pr
 in rather than installed:
 
 - the CA bundle, because the `ca-certificates` package would pull in `bash`, `coreutils` and 35 more;
-- the BaseOS content sets (`/usr/share/buildinfo/content-sets.json`), which scanners use to map the packages to
-  Red Hat advisories. Without it Trivy fails with "unable to find CPE indices".
+- the content sets (`/usr/share/buildinfo/content-sets.json`): the two BaseOS repositories for the image's
+  architecture, which scanners use to map the packages to Red Hat advisories. Without it Trivy fails with "unable to find CPE indices".
 
 The repository's `Dockerfile` builds this shape today (#108), with the builders and package versions pinned. Until
 `cmd/horizon` exists it builds `cmd/mockserver` instead, and copies in the fixture federation and the HUD

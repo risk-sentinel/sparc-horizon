@@ -14,12 +14,31 @@ COPY . .
 COPY --from=web /web/dist ./web/dist
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /horizon ./cmd/horizon
 
-FROM gcr.io/distroless/static-debian12:nonroot
-COPY --from=build /horizon /horizon
-ENTRYPOINT ["/horizon", "serve"]
+FROM registry.access.redhat.com/ubi10/ubi-micro AS ubi
+
+FROM scratch
+COPY --from=ubi --exclude=usr/bin --exclude=usr/sbin --exclude=usr/libexec / /
+COPY --from=build /horizon /usr/local/bin/horizon
+USER 1001:1001
+ENTRYPOINT ["/usr/local/bin/horizon", "serve"]
 ```
 
-Pin base image digests in the real repo.
+The base is UBI 10 micro, the same Red Hat lineage as `sparc`'s image, with its executables left out: the
+service is the only program in the image, with no shell or utilities, and it runs as uid 1001. The UBI files
+that remain include the rpm database, so scanners still identify the image as Red Hat 10. That database
+still lists `bash` and `coreutils-single`, so a scanner can report CVEs for those packages although their
+files are absent.
+
+The repository's `Dockerfile` builds this shape today (#108), with both bases pinned by digest. Until
+`cmd/horizon` exists it builds `cmd/mockserver` instead, and copies in the fixture federation and the HUD
+demos:
+
+```bash
+docker build -t sparc-horizon:dev .
+docker run --rm -p 8080:8080 sparc-horizon:dev
+# HUD demos at http://localhost:8080/ and API v0 at http://localhost:8080/v1/
+# (persona header: X-Horizon-Persona, see fixtures/api/personas.json)
+```
 
 ## Configuration
 

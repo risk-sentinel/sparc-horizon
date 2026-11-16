@@ -281,7 +281,7 @@ Ship a container that passes your own pipeline and run the pilot demo on a real 
 
 ### Tasks
 
-- Distroless, non-root, static image with an SBOM and signature
+- Shell-free UBI 10 micro, non-root, static image with an SBOM and signature
 - Helm chart and Terraform module
 - Run Horizon through the reusable SAF pipeline and produce its own OSCAL package
 - Audit export of the ledger chain head

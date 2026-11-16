@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-11-16 (#105). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-16 (#108). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,41 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-16 — #108 — `feature/108_local_container`
+
+**In flight:** nothing unpushed.
+
+**Base image: owner decision, UBI 10 micro with its executables excluded.** Stock `ubi10/ubi-micro` ships
+`bash` and 137 utilities in `/usr/bin`, which breaks the "no shell" property TM-8, `docs/07` and
+`issue_rules.md` rely on. Three options went to the owner: strip the shell, keep UBI micro as-is and
+document the shell, or keep distroless. Strip chosen.
+
+**How the strip is done, and two rejected ways.** `RUN rm -rf /usr/bin/* …` trips hadolint SC2115;
+the exec form `RUN ["/usr/bin/rm", "-rf", …]` trips SC2114 ("deletes a system directory"). Both are
+the intended action, so suppressing either would have needed owner approval. A code fix exists instead:
+`FROM scratch` plus `COPY --from=ubi --exclude=usr/bin --exclude=usr/sbin --exclude=usr/libexec / /`.
+No `rm`, nothing to suppress, and the shell is never in any layer, not just hidden by a whiteout.
+Verified with a positive control: a per-blob scan finds `usr/bin/bash` in stock ubi-micro's one layer
+and in none of the image's 10 blobs.
+
+**Measured 2026-11-16:** Trivy 0.74.0 identifies redhat 10.3, inventories 26 OS packages and 3 Go
+modules, and reports 0 vulnerabilities and 0 secrets. Grype 0.114.0: 0 CRITICAL/HIGH, 5 Medium, 4 Low.
+The rpm database still lists `bash` and `coreutils-single`; a scanner can report CVEs for those
+absent files, and any such finding goes to `container-baseline.yml` (S1-10), not an inline skip.
+
+**Two local traps:** `docker top <c> -eo uid` errors ("Couldn't find PID field"); it needs
+`-eo pid,uid`. A relative `GOROOT` breaks once `go` changes directory; use an absolute path.
+
+**Carried forward:** `demo/full-plan.html` still showed `golang:1.25` after #105, which updated only
+`docs/08`. Fixed here. **Not done:** TM-8's text. The threat model is an attestation, so the change is
+a ledger row for the owner, not an edit.
+
+**Next:** S1-9 (port `build-sign-publish.yml`) with S1-10, once container-build-sign#326 and the
+public-or-ECR-only decision are settled. The real service will need CA certificates for SPARC mTLS
+(`HORIZON_SPARC_CA`); ubi-micro carries none.
 
 ---
 

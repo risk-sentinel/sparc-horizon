@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"sort"
+	"strings"
 	"testing"
 )
 
@@ -330,5 +331,55 @@ func TestTreeIsComputedNotRead(t *testing.T) {
 	if !sameTree(want, got) {
 		t.Errorf("computed tree differs from the golden it must still match\n got: %s\nwant: %s",
 			res.Body.String(), raw)
+	}
+}
+
+func TestHealthz(t *testing.T) {
+	_, h := testServer(t)
+
+	w := get(t, h, "", "/healthz")
+	if w.Code != http.StatusOK {
+		t.Fatalf("/healthz: %d, want 200", w.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil || body["status"] != "ok" {
+		t.Fatalf("/healthz body %q, want {\"status\":\"ok\"}", w.Body.String())
+	}
+}
+
+// The demos are served only when asked for, and never shadow the API: `/v1/`
+// is the more specific pattern, so an unknown API path is still the contract's
+// 501, not a file-server 404.
+func TestStaticIsOptionalAndNeverShadowsTheAPI(t *testing.T) {
+	s, h := testServer(t)
+	if w := get(t, h, "", "/"); w.Code != http.StatusNotFound {
+		t.Fatalf("/ without -static: %d, want 404", w.Code)
+	}
+
+	s.static = os.DirFS("../../demo")
+	h = s.routes()
+
+	w := get(t, h, "", "/")
+	if w.Code != http.StatusOK || !strings.Contains(w.Body.String(), "<html") {
+		t.Fatalf("/ with -static: %d, want the demo index", w.Code)
+	}
+	if got := w.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+		t.Errorf("X-Content-Type-Options %q, want nosniff", got)
+	}
+	if w := get(t, h, "", "/hud.html"); w.Code != http.StatusOK {
+		t.Errorf("/hud.html: %d, want 200", w.Code)
+	}
+	if w := get(t, h, "", "/v1/tree"); w.Code != http.StatusOK {
+		t.Errorf("/v1/tree with -static: %d, want 200", w.Code)
+	}
+	if w := get(t, h, "", "/v1/nope"); w.Code != http.StatusNotImplemented {
+		t.Errorf("/v1/nope with -static: %d, want 501", w.Code)
+	}
+
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/hud.html", nil)
+	pw := httptest.NewRecorder()
+	h.ServeHTTP(pw, r)
+	if pw.Code != http.StatusMethodNotAllowed {
+		t.Errorf("POST /hud.html: %d, want 405", pw.Code)
 	}
 }

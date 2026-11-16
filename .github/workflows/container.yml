@@ -1,0 +1,126 @@
+name: Container
+
+# The image that ships, built and run the way a user runs it (S1-8, #108).
+#
+# The pipeline-hardening question for an image is whether a green run proves the
+# container serves anything. A build that succeeds proves only that the layers
+# assembled. So the smoke job runs the image, waits for /healthz, and asserts
+# on what came back: the API answers as a persona, the refusal rule holds, the
+# demos are served, and the process is not root.
+#
+# Reporting, not required, until it has been observed on main (S1-13).
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # hadolint v2.14.0, pinned by digest.
+  HADOLINT_IMAGE: hadolint/hadolint@sha256:27086352fd5e1907ea2b934eb1023f217c5ae087992eb59fde121dce9c9ff21e
+  IMAGE: sparc-horizon:ci
+
+jobs:
+  hadolint:
+    name: Dockerfile lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: hadolint
+        run: |
+          set -euo pipefail
+          docker run --rm -i "${HADOLINT_IMAGE}" < Dockerfile
+          echo "PASS — hadolint reported nothing."
+
+  smoke:
+    name: Build and smoke the image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build
+        run: |
+          set -euo pipefail
+          docker build -t "${IMAGE}" .
+          user="$(docker image inspect "${IMAGE}" --format '{{.Config.User}}')"
+          echo "image user: ${user}"
+          if [ "${user}" != "1001:1001" ]; then
+            echo "::error::Image user is '${user}', want 1001:1001."
+            exit 1
+          fi
+
+      - name: Assert there is no shell
+        run: |
+          set -uo pipefail
+          # Fails for the right reason only: the exec must be refused because
+          # /bin/sh is absent, not because the image failed to start at all.
+          if out="$(docker run --rm --entrypoint /bin/sh "${IMAGE}" -c true 2>&1)"; then
+            echo "::error::/bin/sh ran inside the image."
+            exit 1
+          fi
+          if ! printf '%s' "${out}" | grep -q 'exec: "/bin/sh": stat /bin/sh'; then
+            echo "::error::/bin/sh failed for an unexpected reason: ${out}"
+            exit 1
+          fi
+          echo "PASS — the image has no /bin/sh."
+
+      - name: Run and wait for /healthz
+        run: |
+          set -euo pipefail
+          docker run -d --name horizon -p 127.0.0.1:8080:8080 --read-only --cap-drop ALL \
+            --security-opt no-new-privileges "${IMAGE}"
+          for _ in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8080/healthz > healthz.json; then
+              break
+            fi
+            sleep 1
+          done
+          docker logs horizon
+          if [ "$(jq -r '.status // empty' healthz.json 2>/dev/null)" != "ok" ]; then
+            echo "::error::/healthz never answered {\"status\":\"ok\"} within 30 seconds."
+            exit 1
+          fi
+          echo "PASS — /healthz answered."
+
+      - name: Assert what the container serves
+        run: |
+          set -euo pipefail
+          base=http://127.0.0.1:8080
+          fail=0
+          check() { # name, want status, got status
+            if [ "$3" = "$2" ]; then echo "PASS — $1: $3"; else echo "::error::$1: $3, want $2"; fail=1; fi
+          }
+
+          code="$(curl -s -o tree.json -w '%{http_code}' "${base}/v1/tree")"
+          check "/v1/tree as the default persona" 200 "${code}"
+          nodes="$(jq '[.. | objects | select(has("id") and has("nodeType"))] | length' tree.json 2>/dev/null || echo 0)"
+          echo "tree carries ${nodes} node object(s)"
+          if [ "${nodes}" -lt 1 ]; then echo "::error::/v1/tree returned no nodes."; fail=1; fi
+
+          code="$(curl -s -o /dev/null -w '%{http_code}' \
+            "${base}/v1/nodes/00000000-0000-5000-8000-000000000000/heat")"
+          check "a node that does not exist" 404 "${code}"
+
+          code="$(curl -s -o /dev/null -w '%{http_code}' -H 'X-Horizon-Persona: nobody' "${base}/v1/tree")"
+          check "an unknown persona" 401 "${code}"
+
+          code="$(curl -s -o index.html -w '%{http_code}' "${base}/")"
+          check "/ (demo index)" 200 "${code}"
+          if ! grep -qi '<html' index.html; then echo "::error::/ did not return HTML."; fail=1; fi
+
+          code="$(curl -s -o /dev/null -w '%{http_code}' "${base}/hud.html")"
+          check "/hud.html" 200 "${code}"
+
+          uid="$(docker top horizon -eo pid,uid | awk 'NR==2 {print $2}')"
+          check "process uid" 1001 "${uid}"
+
+          exit "${fail}"
+
+      - name: Stop
+        if: always()
+        run: docker rm -f horizon || true

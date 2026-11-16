@@ -256,7 +256,7 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
 
 <section id="arch" aria-labelledby="arch-h">
  <h2 id="arch-h">Architecture</h2>
- <p class="sub">One Go binary with an embedded TypeScript UI, shipped as a distroless container. Results and mappings flow up; attestations and decisions flow down.</p>
+ <p class="sub">One Go binary with an embedded TypeScript UI, shipped as a shell-free UBI 10 micro container. Results and mappings flow up; attestations and decisions flow down.</p>
  <div class="arch" role="img" aria-label="Layered architecture: pipelines feed SPARC, SPARC feeds Horizon, Horizon serves role lenses.">
   <div class="lane"><b>Role lenses</b><div class="boxes">
    <div class="box b-lens">AO lens<small>Portfolio, decisions, conditions</small></div>
@@ -511,15 +511,21 @@ WORKDIR /web
 COPY web/ .
 RUN npm ci &amp;&amp; npm run build
 
-FROM golang:1.25 AS build
+FROM golang:1.27 AS build
 WORKDIR /src
 COPY . .
 COPY --from=web /web/dist ./web/dist
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /horizon ./cmd/horizon
 
-FROM gcr.io/distroless/static-debian12:nonroot
-COPY --from=build /horizon /horizon
-ENTRYPOINT ["/horizon", "serve"]</code></pre>
+FROM registry.access.redhat.com/ubi10/ubi-micro AS ubi
+
+FROM scratch
+COPY --from=ubi --exclude=usr/bin --exclude=usr/sbin --exclude=usr/libexec / /
+COPY --from=build /horizon /usr/local/bin/horizon
+USER 1001:1001
+ENTRYPOINT ["/usr/local/bin/horizon", "serve"]</code></pre>
+ <p>The base is UBI 10 micro, the same Red Hat lineage as <code>sparc</code>'s image, with its executables left out: the service is the only program in the image, with no shell or utilities, and it runs as uid 1001. The UBI files that remain include the rpm database, so scanners still identify the image as Red Hat 10. That database still lists <code>bash</code> and <code>coreutils-single</code>, so a scanner can report CVEs for those packages although their files are absent.</p>
+ <p>The repository's <code>Dockerfile</code> builds this shape today (#108), with both bases pinned by digest. Until <code>cmd/horizon</code> exists it builds <code>cmd/mockserver</code> instead, and copies in the fixture federation and the HUD demos: <code>docker build -t sparc-horizon:dev .</code>, then <code>docker run --rm -p 8080:8080 sparc-horizon:dev</code>.</p>
  <details><summary>Configuration</summary><div>
   <table>
    <tr><th>Variable</th><th>Default</th><th>Purpose</th></tr>
@@ -649,7 +655,7 @@ const PH=[
  risks:['AOs want different condition types: start with date and score thresholds only']},
 {id:'P8',name:'Hardening, packaging, and pilot',track:'hard',effort:3,par:3,deps:[],
  goal:'Ship a container that passes your own pipeline and run the pilot demo on a real boundary.',
- tasks:['Distroless, non-root, static image with an SBOM and signature','Helm chart and Terraform module','Run Horizon through the reusable SAF pipeline and produce its own OSCAL package','Audit export of the ledger chain head','Pilot demo with one real boundary and its AO'],
+ tasks:['Shell-free UBI 10 micro, non-root, static image with an SBOM and signature','Helm chart and Terraform module','Run Horizon through the reusable SAF pipeline and produce its own OSCAL package','Audit export of the ledger chain head','Pilot demo with one real boundary and its AO'],
  deliver:['Signed image','deploy/helm and deploy/terraform','Pilot demo recording'],
  exit:['Image passes the reusable pipeline gates','AO completes the demo script unassisted'],
  risks:['Real boundary data exposes missing namespace props: run sparc-validate on it in week one']}

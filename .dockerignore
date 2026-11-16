@@ -1,0 +1,10 @@
+# Allow-list: only what the image build reads.
+*
+!go.mod
+!go.sum
+!cmd/
+!internal/
+!fixtures/
+!demo/
+**/*_test.go
+**/testdata/

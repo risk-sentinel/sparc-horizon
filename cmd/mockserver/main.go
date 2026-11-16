@@ -66,6 +66,9 @@ type server struct {
 	// than with the rule, and could not show that a caller's tree is COMPUTED
 	// from their bindings rather than stored.
 	authz *authz.Authorizer
+	// static, when set, is served at `/` — the HUD demos, so one process is
+	// the whole working model. The API stays under `/v1/`.
+	static fs.FS
 }
 
 // Path components are matched rather than trusted: a UUID or a column, and
@@ -78,11 +81,19 @@ var (
 func main() {
 	dir := flag.String("dir", "fixtures", "fixtures directory to serve")
 	addr := flag.String("addr", "127.0.0.1:8080", "listen address")
+	static := flag.String("static", "", "directory to serve at / (the HUD demos); off when empty")
 	flag.Parse()
 
 	s, err := newServer(os.DirFS(*dir))
 	if err != nil {
 		log.Fatalf("mockserver: %v", err)
+	}
+	if *static != "" {
+		if _, err := os.Stat(*static); err != nil {
+			log.Fatalf("mockserver: -static: %v", err)
+		}
+		s.static = os.DirFS(*static)
+		log.Printf("mockserver: serving %s at /", *static)
 	}
 
 	mux := s.routes()
@@ -107,7 +118,31 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc("GET /v1/controls/{uuid}/chain", s.chain)
 	mux.HandleFunc("GET /v1/export/oscal/{boundary}", s.export)
 	mux.HandleFunc("/v1/", s.notImplemented)
+	mux.HandleFunc("GET /healthz", healthz)
+	if s.static != nil {
+		// Registered for every method and narrowed here: "GET /" would
+		// conflict with the method-less "/v1/" above, since each pattern is
+		// more specific than the other in one dimension.
+		files := http.FileServerFS(s.static)
+		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodGet && r.Method != http.MethodHead {
+				w.Header().Set("Allow", "GET, HEAD")
+				writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "The demos are read-only.")
+				return
+			}
+			w.Header().Set("X-Content-Type-Options", "nosniff")
+			files.ServeHTTP(w, r)
+		})
+	}
 	return mux
+}
+
+// healthz answers liveness only. It reads nothing: newServer already refused
+// to start without the fixtures, so a process that is up is a process that
+// loaded them.
+func healthz(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set(contentType, mediaJSON)
+	_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
 
 func newServer(fsys fs.FS) (*server, error) {

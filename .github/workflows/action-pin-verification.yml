@@ -15,9 +15,23 @@ name: Action pin verification
 # is not happening. The control is real; the thing that makes it legible had
 # quietly stopped being true.
 #
+# ---- How a tag is resolved --------------------------------------------------
+#
+# `git ls-remote --tags`, anonymously, over the git protocol, not the REST API
+# with the workflow token (#86). Every pinned action is public, so no credential
+# is needed, and presenting one made the check depend on a third party's access
+# policy: the `aquasecurity` org has an IP allow list, which refuses an
+# AUTHENTICATED request from a runner IP (HTTP 403) while serving the same
+# repository to anyone anonymous. ls-remote also reports each annotated tag's
+# peeled commit (`^{}`), which is the SHA a `uses:` pin names.
+#
+# A repository that cannot be resolved is a FINDING in the filed issue, not an
+# early exit. Exiting stopped the loop at the first failure, so every pin after
+# it went unchecked, and the issue-filing step never ran.
+#
 # ---- Why this is NOT a required check ---------------------------------------
 #
-# Resolving a SHA means calling api.github.com about somebody else's
+# Resolving a SHA means calling GitHub about somebody else's
 # repository. Putting that in a required check makes every pull request in this
 # repository depend on an external service being reachable, which is the same
 # trade #68 refused for vendored-contract-freshness.yml and for the same reason.
@@ -47,8 +61,9 @@ permissions:
 env:
   # A floor, not a formality. The obvious implementation greps, loops and
   # reports success over an empty list the first time a file is renamed or the
-  # `uses:` spelling changes. Raise it when pins are added.
-  MIN_PINS: '5'
+  # `uses:` spelling changes. Raise it when pins are added. 9 as of #86, when
+  # the SBOM/SCA port (#84) brought in the anchore and aquasecurity pins.
+  MIN_PINS: '9'
   MARKER: '<!-- action-pin-verification -->'
 
 jobs:
@@ -57,11 +72,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # checkout otherwise writes the job token into this repository's git
+          # config as an http.extraheader for github.com, and every
+          # `git ls-remote` below would send it, which is the authenticated
+          # request #86 is removing. This job never pushes.
+          persist-credentials: false
 
       - name: Verify every pin against the tag it claims
         id: verify
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No runner prompt exists, but a missing repository must fail fast
+          # rather than wait on one.
+          GIT_TERMINAL_PROMPT: '0'
         run: |
           set -euo pipefail
 
@@ -95,10 +118,22 @@ jobs:
               *) bad="${bad}\n- \`${repo}\` is labelled \`${comment}\`, which is not a specific version" ; continue ;;
             esac
 
-            # An API failure must not read as a pass.
-            if ! tags="$(gh api "repos/${repo}/tags" --paginate --jq '.[] | "\(.name)|\(.commit.sha)"' 2>err.txt)"; then
-              echo "::error::Could not list tags for ${repo}: $(tr -d '\n' < err.txt)"
-              exit 1
+            # A lookup failure must not read as a pass, and must not stop the
+            # remaining pins from being checked either (#86). One retry, for
+            # a transient network error. Anonymous on purpose: see the header.
+            if ! raw="$(git ls-remote --tags "https://github.com/${repo}.git" 2>err.txt)" \
+              && ! raw="$(sleep 5; git ls-remote --tags "https://github.com/${repo}.git" 2>err.txt)"; then
+              echo "::warning::Could not list tags for ${repo}: $(tr -d '\n' < err.txt)"
+              bad="${bad}\n- \`${repo}\` could **not be resolved** (\`git ls-remote\` failed twice), so \`${comment}\` is unchecked"
+              continue
+            fi
+            # `<sha>\trefs/tags/<name>`, plus `<commit>\trefs/tags/<name>^{}` for
+            # an annotated tag. Normalise to name|sha. An annotated tag keeps both
+            # lines, and a commit pin only ever matches the peeled one.
+            tags="$(printf '%s\n' "${raw}" | awk '{n=$2; sub(/^refs\/tags\//,"",n); sub(/\^\{\}$/,"",n); print n "|" $1}')"
+            if [ -z "${tags}" ]; then
+              bad="${bad}\n- \`${repo}\` has **no tags at all**, so \`${comment}\` cannot be true"
+              continue
             fi
 
             at_sha="$(printf '%s\n' "${tags}" | awk -F'|' -v s="${sha}" '$2==s {print $1}' | paste -sd, -)"
@@ -112,7 +147,7 @@ jobs:
           done < pins.txt
 
           if [ -n "${bad}" ]; then
-            echo "::error::A pinned SHA does not match the version its comment claims."
+            echo "::error::A pinned SHA does not match the version its comment claims, or could not be checked."
             printf '%b\n' "${bad}"
             { echo "drift<<EOF"; printf '%b\n' "${bad}"; echo "EOF"; } >> "$GITHUB_OUTPUT"
             echo "stale=true" >> "$GITHUB_OUTPUT"
@@ -135,7 +170,7 @@ jobs:
           fi
           {
             printf '%s\n\n' "${MARKER}"
-            printf 'A pinned action SHA does not match the version its comment claims.\n\n'
+            printf 'A pinned action SHA does not match the version its comment claims, or could not be checked.\n\n'
             printf '%s\n\n' "${DRIFT}"
             printf 'The comment is the only part of a pin a human reads, and SA-10 in\n'
             printf 'docs/compliance/nist-sp800-53-rev5-mapping.md rests on it being true.\n'
@@ -143,7 +178,7 @@ jobs:
             printf 'so this does not correct itself (#57).\n\n'
             printf 'Opened by action-pin-verification.yml.\n'
           } > body.md
-          gh issue create --title "A pinned action SHA does not match its version comment" --label bug --body-file body.md
+          gh issue create --title "A pinned action is mislabelled, or could not be checked" --label bug --body-file body.md
 
       - name: Summarise
         if: always()
@@ -154,7 +189,7 @@ jobs:
             echo
             case "${{ steps.verify.outputs.stale }}" in
               false) echo "**All pins match the version they claim.**" ;;
-              true)  echo "**A pin is mislabelled.** An issue has been filed, unless one was already open." ;;
+              true)  echo "**A pin is mislabelled or could not be checked.** An issue has been filed, unless one was already open." ;;
               *)     echo "**Not determined.** The check did not complete; read the job log." ;;
             esac
           } >> "$GITHUB_STEP_SUMMARY"

@@ -26,7 +26,7 @@ check() {
   local label="$1"
   local want="$2"
   local got="$3"
-  if [ "${got}" = "${want}" ]; then
+  if [[ "${got}" = "${want}" ]]; then
     echo "PASS — ${label}: ${got}"
   else
     echo "::error::${label}: ${got}, want ${want}"
@@ -61,13 +61,13 @@ docker run -d --name "${name}" -p "127.0.0.1:${port}:8080" --read-only --cap-dro
 
 healthy=""
 for _ in $(seq 1 30); do
-  if [ "$(curl -sf "${base}/healthz" 2> /dev/null | jq -r '.status // empty' 2> /dev/null)" = "ok" ]; then
+  if [[ "$(curl -sf "${base}/healthz" 2> /dev/null | jq -r '.status // empty' 2> /dev/null)" = "ok" ]]; then
     healthy=yes
     break
   fi
   sleep 1
 done
-if [ -z "${healthy}" ]; then
+if [[ -z "${healthy}" ]]; then
   echo "::error::/healthz never answered {\"status\":\"ok\"} within 30 seconds."
   docker logs "${name}" 2>&1 | tail -20
   exit 1
@@ -77,7 +77,7 @@ echo "PASS — /healthz answered."
 check "/v1/tree as the default persona" 200 "$(status "${work}/tree.json" /v1/tree)"
 nodes="$(jq '[.. | objects | select(has("id") and has("nodeType"))] | length' "${work}/tree.json" 2> /dev/null || echo 0)"
 echo "tree carries ${nodes} node object(s)"
-if [ "${nodes}" -lt 1 ]; then
+if [[ "${nodes}" -lt 1 ]]; then
   echo "::error::/v1/tree returned no nodes."
   fail=1
 fi
@@ -95,7 +95,7 @@ check "/hud.html" 200 "$(status /dev/null /hud.html)"
 
 check "process uid" 1001 "$(docker top "${name}" -eo pid,uid | awk 'NR==2 {print $2}')"
 
-if [ "${fail}" -ne 0 ]; then
+if [[ "${fail}" -ne 0 ]]; then
   docker logs "${name}" 2>&1 | tail -20
 fi
 exit "${fail}"

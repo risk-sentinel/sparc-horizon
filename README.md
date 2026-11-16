@@ -20,6 +20,21 @@ python3 -m http.server 8080 --directory demo
 # then browse to http://localhost:8080
 ```
 
+### In the container
+
+The image serves the same demos plus API v0 over the fixture federation, so the HUD and the API run
+together with nothing else installed:
+
+```bash
+docker build -t sparc-horizon:dev .
+docker run --rm -p 8080:8080 sparc-horizon:dev
+# demos at http://localhost:8080/, API at http://localhost:8080/v1/
+curl -s -H 'X-Horizon-Persona: so-ods-portal' http://localhost:8080/v1/tree
+```
+
+Personas are in [`fixtures/api/personas.json`](fixtures/api/personas.json); with no header the first one is
+used. See [`docs/08-build-deploy.md`](docs/08-build-deploy.md) for how the image is built.
+
 | Demo | What it shows |
 |---|---|
 | [`demo/hud.html`](demo/hud.html) | Tiered heatmap (federation, organization, boundary, system), look-ahead slider, drill-in to the OSCAL evidence chain, what-if attestations, and an 800-53 or KSI column axis |

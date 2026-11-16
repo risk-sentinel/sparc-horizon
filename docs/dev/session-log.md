@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-11-16 (#105). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-16 (#111). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,90 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-16 — #111 — `feature/111_govulncheck`
+
+**In flight:** nothing unpushed.
+
+**Two canary designs failed before the one that landed.** A committed fixture module (`go.mod` pinning
+`x/text v0.3.7`) is scanned by Syft and Trivy as a real dependency — the SBOM absorbs it and Trivy fs
+reports CVE-2022-32149 and two 2026 HIGHs against this repository — and Dependabot alerts on it. So
+the module is assembled at run time in `$RUNNER_TEMP` from `testdata/`, which the Go tool skips: its
+`go.mod`/`go.sum` are committed as `canary.mod`/`canary.sum`, names no scanner matches, and are
+verified with `go mod download` + `go mod verify`.
+And calling `language.Parse` is **not** a finding: GO-2022-1059 names `MatchStrings` and
+`ParseAcceptLanguage` only, so a `Parse` call reports at package level (exit 0 in text mode). The
+canary calls `ParseAcceptLanguage`.
+
+**`-format json` always exits 0,** so the gate reads the findings: symbol level is a finding whose
+`trace[0].function` is set. Measured locally, five ways: module pass, canary pass, canary findings
+under the module gate fail, an empty module (0 modules, 0 roots) fails, a clean module under the
+canary row fails.
+
+**SonarCloud S8545 ("dependency versions are not predictable") failed the first push** on
+`go install …@v1.9.0` and `go get x/text@v0.3.7`: neither is checked against a committed `go.sum`.
+govulncheck now installs from a `tools/` module (`tool` directive, `go.sum` committed, its own
+Dependabot entry), and the canary from `canary.sum`. Trivy fs sees `tools/go.mod` with 0 findings.
+
+**Rejected:** path-filtering to `go.mod`/`go.sum`, as S1-5 was written. Reachability is a property of
+the code too, and a path-filtered check is the S1-12 pending-required-check trap once it is required.
+
+**Next:** S1-9, sparc-horizon's own `build-sign-publish.yml` modelled on `sparc`'s (not
+container-build-sign's; container-build-sign#326 closed 2026-11-16 on that basis). Running the Go jobs
+in ci-runner waits on container-build-sign#380.
+
+---
+
+## 2026-11-16 — #108 — `feature/108_local_container`
+
+**In flight:** nothing unpushed.
+
+**Base image: owner decisions, in order.** Distroless is out ("trusted publishers, Iron Bank-style",
+not Google). Stock `ubi10/ubi-micro` ships `bash` and 137 utilities, which breaks the "no shell"
+property TM-8, `docs/07` and `issue_rules.md` rely on, so the owner chose UBI with the shell removed,
+then asked for the stricter form: a root filesystem built from only the Red Hat packages chosen.
+
+**Where it landed:** `dnf --installroot` in a pinned `ubi10/ubi` builder installs `filesystem`,
+`redhat-release`, `setup`, `tzdata` (versions pinned, `--forcearch` for the target, `noscripts`), then
+`FROM scratch` copies the root in. 17 MB. The rpm database lists exactly those four plus Red Hat's
+three signing keys. `ca-certificates` was rejected as a package: it pulls 39, including `bash` and
+`coreutils`. The CA bundle is copied as a file instead, so it updates only with a builder bump.
+
+**Rejected on the way, each measured:**
+
+- `RUN rm -rf /usr/bin/*` in ubi-micro: hadolint SC2115. The exec-form `rm`: SC2114. Both flag the
+  intended action, so either would have needed an approved suppression.
+- `FROM scratch` + `COPY --from=ubi-micro --exclude=usr/bin …`: built, but left the rpm database
+  listing `bash` and `coreutils-single` with their files gone, and **failed twice on the runner**
+  ("failed to calculate checksum … not found"). The runner's Docker engine refuses any dangling link
+  (`usr/lib/.build-id/…`, then `var/lock`); Docker Desktop and BuildKit v0.34.2 accept them, so it
+  never reproduced locally.
+
+**Trivy trap, worth knowing for any hand-built UBI root:** with no content sets, Trivy 0.74.0 fails
+the whole OS scan with "unable to find CPE indices" (trivy-db#435), because it has no RHEL 10
+default. It reads `/usr/share/buildinfo/content-sets.json`; `/root/buildinfo/` alone is not enough.
+Found by bisecting against stock ubi-micro's filesystem. The image now carries the builder's file
+filtered to the target architecture's two BaseOS sets (binary and source), at both paths, as
+ubi-micro does; the build asserts exactly two. `image_layer_index: 0` is accurate: layer 0 holds the
+rpm database and both copies. Grype did not need the file.
+
+**Measured 2026-11-16, amd64 and arm64:** Trivy redhat 10.3, 4 packages + 3 keys, 0 vulnerabilities,
+0 secrets; Grype redhat 10.3, 0 matches; no shell, empty `/usr/bin`; 118 CA certificates; the only
+dangling link in an export is `etc/mtab`, which Docker adds when it creates a container.
+
+**Local traps:** `docker top <c> -eo uid` errors ("Couldn't find PID field"); it needs `-eo pid,uid`.
+A relative `GOROOT` breaks once `go` changes directory. Pulling a second platform of a digest
+already in the local store fails ("cannot overwrite digest"). The Docker VM filled (59 GB) during
+this work; the owner approved removing this branch's images and pruning the build cache.
+
+**Carried forward:** `demo/full-plan.html` still showed `golang:1.25` after #105. Fixed here.
+**Not done:** TM-8's text; the change is a ledger row for the owner.
+
+**Next:** S1-9 (port `build-sign-publish.yml`) with S1-10. Dual-publish, Docker Hub and ECR (owner
+decision 2026-11-16); the ECR repository and publisher role are sparc-iac#856, and the Docker Hub
+repository `risksentinel/sparc-horizon` does not exist yet.
 
 ---
 

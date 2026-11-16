@@ -572,7 +572,7 @@ rule nobody has tested is a claim.
 ## Go and TypeScript standards
 
 - **`CGO_ENABLED=0`.** The storage layer is `modernc.org/sqlite` specifically so
-  the binary stays static and the image stays distroless. A dependency that
+  the binary stays static and the image keeps no executable but the service. A dependency that
   requires cgo is a design change, not a convenience.
 - **Deterministic UUIDv5 over natural keys** (`uuid.NewSHA1`) for every object
   UUID, so reruns are idempotent and federated peers deduplicate without

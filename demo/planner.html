@@ -245,7 +245,7 @@ const PH=[
  risks:['AOs want different condition types: start with date and score thresholds only']},
 {id:'P8',name:'Hardening, packaging, and pilot',track:'hard',effort:3,par:3,deps:[],
  goal:'Ship a container that passes your own pipeline and run the pilot demo on a real boundary.',
- tasks:['Distroless, non-root, static image with an SBOM and signature','Helm chart and Terraform module','Run Horizon through the reusable SAF pipeline and produce its own OSCAL package','Audit export of the ledger chain head','Pilot demo with one real boundary and its AO'],
+ tasks:['Minimal UBI 10 image (four Red Hat packages, no shell), non-root, static, with an SBOM and signature','Helm chart and Terraform module','Run Horizon through the reusable SAF pipeline and produce its own OSCAL package','Audit export of the ledger chain head','Pilot demo with one real boundary and its AO'],
  deliver:['Signed image','deploy/helm and deploy/terraform','Pilot demo recording'],
  exit:['Image passes the reusable pipeline gates','AO completes the demo script unassisted'],
  risks:['Real boundary data exposes missing namespace props: run sparc-validate on it in week one']}

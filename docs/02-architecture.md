@@ -1,6 +1,6 @@
 # 02 Architecture
 
-One Go binary with an embedded TypeScript UI, shipped as a distroless container. Results and mappings flow up; attestations and decisions flow down.
+One Go binary with an embedded TypeScript UI, shipped as a minimal UBI 10 container with no shell. Results and mappings flow up; attestations and decisions flow down.
 
 ```mermaid
 flowchart TB

@@ -507,7 +507,12 @@ Order that works:
 2. Let each scanner run once and read **the exact name it reports** from the
    forge, not from the workflow file — the reported name is often the job name,
    or a name the external tool chooses.
-3. Add those names as required checks.
+3. Add those names as required checks. **Require every job in a `needs:` chain,
+   not only the one that asserts.** A required check whose job was *skipped*
+   counts as passing, so an upstream failure that skips the asserting job
+   satisfies the rule. That is a green merge over a scan that never ran.
+   Measured on the SCA lane (S1-13): `SCA gate` needs `Source SBOM`, so both
+   are required.
 
 Settings are copied from a known-good estate repository rather than invented, so
 a reviewer can diff one against another:

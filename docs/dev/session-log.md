@@ -51,7 +51,9 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 **Two canary designs failed before the one that landed.** A committed fixture module (`go.mod` pinning
 `x/text v0.3.7`) is scanned by Syft and Trivy as a real dependency — the SBOM absorbs it and Trivy fs
 reports CVE-2022-32149 and two 2026 HIGHs against this repository — and Dependabot alerts on it. So
-the module is built at run time in `$RUNNER_TEMP` from `testdata/fixture.go`, which the Go tool skips.
+the module is assembled at run time in `$RUNNER_TEMP` from `testdata/`, which the Go tool skips: its
+`go.mod`/`go.sum` are committed as `canary.mod`/`canary.sum`, names no scanner matches, and are
+verified with `go mod download` + `go mod verify`.
 And calling `language.Parse` is **not** a finding: GO-2022-1059 names `MatchStrings` and
 `ParseAcceptLanguage` only, so a `Parse` call reports at package level (exit 0 in text mode). The
 canary calls `ParseAcceptLanguage`.
@@ -60,6 +62,11 @@ canary calls `ParseAcceptLanguage`.
 `trace[0].function` is set. Measured locally, five ways: module pass, canary pass, canary findings
 under the module gate fail, an empty module (0 modules, 0 roots) fails, a clean module under the
 canary row fails.
+
+**SonarCloud S8545 ("dependency versions are not predictable") failed the first push** on
+`go install …@v1.9.0` and `go get x/text@v0.3.7`: neither is checked against a committed `go.sum`.
+govulncheck now installs from a `tools/` module (`tool` directive, `go.sum` committed, its own
+Dependabot entry), and the canary from `canary.sum`. Trivy fs sees `tools/go.mod` with 0 findings.
 
 **Rejected:** path-filtering to `go.mod`/`go.sum`, as S1-5 was written. Reachability is a property of
 the code too, and a path-filtered check is the S1-12 pending-required-check trap once it is required.

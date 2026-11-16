@@ -13,10 +13,15 @@ name: govulncheck
 #   module — this repository. Fails on any symbol-level finding, and fails if
 #            the scan analysed nothing (zero modules or packages), because an
 #            empty scan and a clean one otherwise look the same.
-#   canary — a throwaway module built at run time from
-#            tests/govulncheck-fixture/testdata/fixture.go, which calls a
-#            symbol GO-2022-1059 names. It must be flagged. It is never
-#            committed as a module, so Syft, Trivy and Dependabot never see it.
+#   canary — a throwaway module assembled at run time from
+#            tests/govulncheck-fixture/testdata/ (fixture.go, canary.mod,
+#            canary.sum), which calls a symbol GO-2022-1059 names. It must be
+#            flagged. Its go.mod/go.sum are committed under other names, so
+#            Syft, Trivy and Dependabot never see the vulnerable version.
+#
+# Every module download is checked against a committed go.sum: govulncheck
+# comes from the tools/ module (Dependabot keeps it current), and the canary
+# from canary.sum.
 #
 # JSON output always exits 0, so the gate is decided from the findings, not
 # the exit status.
@@ -33,8 +38,6 @@ permissions:
   contents: read
 
 env:
-  # Pinned. Bump deliberately; the run asserts the scanner reports this version.
-  GOVULNCHECK_VERSION: v1.9.0
   CANARY_OSV: GO-2022-1059
 
 jobs:
@@ -64,10 +67,13 @@ jobs:
             *) echo "::error::Runner is ${have} but go.mod pins ${want}."; exit 1 ;;
           esac
 
-      - name: Install govulncheck
+      - name: Install govulncheck from tools/go.mod
         run: |
           set -euo pipefail
-          go install "golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION}"
+          # The version is the one tools/go.sum locks; the gate asserts the
+          # scanner reports it.
+          go -C tools install golang.org/x/vuln/cmd/govulncheck
+          echo "GOVULNCHECK_VERSION=$(go -C tools list -m -f '{{.Version}}' golang.org/x/vuln)" >> "$GITHUB_ENV"
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
 
       - name: Build the canary module
@@ -76,10 +82,12 @@ jobs:
           set -euo pipefail
           dir="${RUNNER_TEMP}/govulncheck-canary"
           mkdir -p "${dir}"
-          cp tests/govulncheck-fixture/testdata/fixture.go "${dir}/main.go"
-          cd "${dir}"
-          go mod init example.invalid/govulncheck-canary
-          go get golang.org/x/text@v0.3.7
+          src=tests/govulncheck-fixture/testdata
+          cp "${src}/fixture.go" "${dir}/main.go"
+          cp "${src}/canary.mod" "${dir}/go.mod"
+          cp "${src}/canary.sum" "${dir}/go.sum"
+          go -C "${dir}" mod download
+          go -C "${dir}" mod verify
           echo "SCAN_DIR=${dir}" >> "$GITHUB_ENV"
 
       - name: Scan

@@ -9,7 +9,9 @@ of passing every real scan with nothing found. It is the same idea as `tests/sca
 
 Nothing here is a dependency of this repository:
 
-- **No `go.mod` is committed.** The workflow creates the module at run time, so Syft, Trivy and Dependabot never
+- **Its `go.mod` and `go.sum` are committed as `testdata/canary.mod` and `testdata/canary.sum`.** The workflow
+  copies them into a temporary directory under their real names, then runs `go mod download` and `go mod verify`,
+  so every download is checked against the committed checksums. Under these names Syft, Trivy and Dependabot never
   see `x/text v0.3.7`, and the real SBOM does not absorb it.
 - **The source sits under `testdata/`,** which the Go tool skips, so `go build ./...`, `go test ./...` and
   golangci-lint over the real module never compile it.

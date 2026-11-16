@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-28 (#87). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-28 (#86). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,34 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-28 — #86 — `fix/86_pin_check_ls_remote`
+
+**In flight:** nothing unpushed.
+
+**Root cause, measured:** the `aquasecurity` org has an IP allow list. It refuses an
+**authenticated** API request from a runner IP (403) and serves the same repository to an
+anonymous request (200). The pin was right all along: `ed142fd` is `v0.36.0`.
+
+**The worse defect was the early exit.** One unresolvable repository ended the loop, so the two
+pins sorted after it (`aws-actions/configure-aws-credentials`, `trufflesecurity/trufflehog`) went
+unchecked on `main`, and the issue-filing step never ran. A red scheduled job with no issue is the
+state #57 was built to prevent.
+
+**A trap the local test could not show:** `actions/checkout` persists the job token as an
+`http.extraheader` for github.com, so `git ls-remote` inside the checkout would have authenticated
+anyway and hit the same 403. `persist-credentials: false` removes it. It was verified by
+dispatching the branch's workflow on a runner, not locally, because a local checkout carries no
+such header.
+
+**Rejected: keep the API and retry anonymously on 403.** That is two code paths where one works,
+and the anonymous REST API is rate-limited at 60 requests an hour per IP on shared runner IPs.
+`ls-remote` has no REST rate limit and returns peeled commits for annotated tags directly.
+
+**Next:** S1-13, making `SCA gate / Scan + reconcile` and `SCA fixture detection (proves scanner
+works)` required.
 
 ---
 

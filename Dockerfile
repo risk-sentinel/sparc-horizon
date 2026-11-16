@@ -26,13 +26,15 @@ FROM ${UBI_IMAGE} AS ubi
 # ubi-micro without its executables: no shell or utilities at runtime, so the
 # server is the only program in the image (CM-7). Copied rather than deleted, so
 # the shell is never in any layer. The rpm database and release files come with
-# it, so scanners still see a UBI 10 image. The bin/sbin links and the debug
-# build-id links point into the excluded directories, so they go too.
+# it, so scanners still see a UBI 10 image. Every link that would dangle is left
+# out too (bin/sbin, the debug build-id links, var/lock): some Docker engines
+# refuse to copy a tree holding a dangling link.
 FROM scratch
 COPY --from=ubi \
     --exclude=bin --exclude=sbin \
     --exclude=usr/bin --exclude=usr/sbin --exclude=usr/libexec \
     --exclude=usr/lib/.build-id --exclude=usr/lib/debug \
+    --exclude=var/lock \
     / /
 COPY --from=build /out/horizon /usr/local/bin/horizon
 COPY fixtures/ /srv/horizon/fixtures/

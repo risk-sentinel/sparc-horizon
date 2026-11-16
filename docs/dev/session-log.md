@@ -70,9 +70,13 @@ absent files, and any such finding goes to `container-baseline.yml` (S1-10), not
 `failed to calculate checksum … "/usr/lib/.build-id/03/bb97…": not found`. Excluding `usr/bin` left
 links pointing into it: `/bin`, `/sbin`, `usr/lib/debug/{bin,sbin}` and 23 `usr/lib/.build-id` debug
 links. Docker Desktop and a standalone BuildKit v0.34.2 both tolerated them, so it would not
-reproduce here. Fixed by cause rather than by reproduction: those paths are excluded too, and a
-dangling-link count over the exported filesystem went from 29 to 2 (`etc/mtab`, `var/lock`, both
-dangling in stock ubi-micro as well and supplied at runtime).
+reproduce here. Fixed by cause rather than by reproduction, and the first fix was not enough: the runner then
+failed on `/var/lock` (→ `../run/lock`), which dangles in stock ubi-micro too. So the engine refuses
+**any** dangling link, not only ones into excluded directories, and `var/lock` is excluded as well.
+Measured over the image's own layers with a positive control (stock ubi-micro's layer carries
+`var/lock`; the image's carry none). A `docker export` also shows `etc/mtab`, but Docker adds that
+when it creates a container; it is in no layer of either image. A Dockerfile that builds on one
+engine and not another is the defect, so the target is zero dangling links in the image.
 
 **Two local traps:** `docker top <c> -eo uid` errors ("Couldn't find PID field"); it needs
 `-eo pid,uid`. A relative `GOROOT` breaks once `go` changes directory; use an absolute path.

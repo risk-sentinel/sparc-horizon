@@ -406,7 +406,7 @@ code.**
 | SBOM | Syft → CycloneDX, via `sbom-source.yml`, ported from `container-build-sign` | The component count is greater than zero. An SBOM is inventory; it does not satisfy SCA |
 | SCA | Grype (SBOM-driven) + Trivy `fs`, via `sca-scan.yml` (ported), reconciled against `.security/sca-allowlist.yaml`; gate at CRITICAL in `sbom-and-sca.yml` | Both scanners converted to HDF. Every allow-list entry carries an expiry, and an expired entry suppresses nothing. `sca-fixture.yml` feeds a planted SBOM through the same gate and requires a CRITICAL **per planted package**, so one ecosystem going blind is not hidden by another's matches |
 | Container | Trivy against the built image; `container-baseline.yml` for CRITICAL/HIGH dispositions | A CRITICAL/HIGH not in the baseline blocks the build. Scan the image that ships, not a dev variant |
-| Signing | cosign, via `container-build-sign`'s `build-sign-publish.yml`, ported with S1-8 while that repository is internal | Signature and CycloneDX attestation verify for the published digest before anything consumes it |
+| Signing | cosign keyless, in this repository's `build-sign-publish.yml`, modelled on `sparc`'s (#113) | Signature and CycloneDX attestation verify for the published digest in both registries before the release is created |
 | IaC | Not applicable in this repo — Horizon holds no Terraform | The `sparc-iac` issue covering Horizon's deployment carries the IaC scan |
 
 ### Conversion to HDF

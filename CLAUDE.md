@@ -38,9 +38,9 @@ The process of record lives in `docs/dev/`:
 
 ## What this repository is
 
-SPARC Horizon is at the **design and prototype-plan stage**. There is no application source yet: the repository holds design docs, two machine-readable contracts, and static HTML demos with synthetic data. `horizon/` is an empty placeholder for the Go service described in `docs/02-architecture.md`.
+SPARC Horizon is at the **prototype stage**. The service (`cmd/horizon`) does not exist yet, but the repository holds the design docs, two machine-readable contracts, the static HTML demos, a Go module of ten-plus packages (identifier grammar, fixtures, tree builder, authorization, OSCAL probe, a mock API server), and a container image that serves the mock API and the demos (`docs/08-build-deploy.md`).
 
-Nothing here is built, compiled, linted, or tested. There is no `go.mod`, `package.json`, `Makefile`, or CI config. Do not invent build or test commands; if a task needs tooling, add it deliberately and say so.
+Go 1.27 (`go.mod`); the verification gate and its commands are in `docs/dev/issue_rules.md`, and CI in `.github/workflows/`. Build and run the image with `docker build -t sparc-horizon:dev . && docker run --rm -p 8080:8080 sparc-horizon:dev`; releases go through `build-sign-publish.yml` from a pushed `v*` tag only.
 
 ## Commands
 

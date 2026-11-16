@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-11-16 (#111). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-16 (#113). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,54 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-16 — #113 — `feature/113_publish`
+
+**In flight:** nothing unpushed. The first real release is not run: it waits on sparc-iac#856
+(ECR repository + `SPARC_HORIZON_PUBLISH_ARN`), the Docker Hub repository `risksentinel/sparc-horizon`
+(404 on 2026-11-16) and required reviewers on `production` (no environments exist yet).
+
+**Owner decisions:** this repository publishes its own image, the way `sparc` does; container-build-sign
+manages shared images only (CBS#326 closed). Mirror sparc's shape because it guards against burning
+tags, and keep its single `production` environment.
+
+**Differences from sparc's pipeline, each on purpose:**
+
+- A dry run never reaches the `production` job. sparc's `build-and-push` carries the environment for its
+  dry-run steps too, so even a dry run waits for an approval.
+- Every run except a pushed `v*` tag is a dry run, and pull requests touching the release path run it.
+  `workflow_dispatch` only exists for workflows on the default branch, so without the PR trigger the
+  pipeline's first execution would have been a real tag.
+- `prepare` refuses a publish that is not a tag push. The signing identity is the workflow at
+  `refs/tags/v*`, and `gh release create --verify-tag` needs the tag, so a branch publish would push
+  to both registries and then fail.
+- The Trivy gate sits in `verify`, before the approval (sparc scans only after publishing, for its
+  VEX attestation), and asserts the OS was identified, since a hand-built UBI root without content
+  sets reports no findings at all (#108).
+- Each registry's digest is read back separately and signed as read, without assuming they match.
+
+**Measured locally:**
+
+- `smoke.sh` passes against the image and fails three ways against stock ubi-micro;
+- the gate step script passes a real Trivy report and fails on an injected vulnerability, a report with
+  no OS, and an injected secret;
+- `cmd/baseline` refuses `../` paths (`os.Root`: "path escapes from parent");
+- the OSCAL component definition validates against OSCAL 1.2.1, and a corrupted UUID is rejected.
+
+**Found and fixed on the way, without suppression:** gosec G304 on `os.Open(flag)` → `os.OpenRoot(".")`
+(the `#nosec` first written was removed: it is a suppression under this file's rules). shellcheck
+SC2317 on a trap-only function → an inline trap. The misspell linter on a deliberately misspelt test
+key → a different unknown key.
+
+**Carried forward from #110 and #112 (step 9 missed):** the NIST mapping and OSCAL component
+definition now cover CM-7 and the container AC-6 (#108), govulncheck in RA-5/SI-2/SA-11(7) (#111),
+and SI-7, CM-8 and the CM-3 release approval (#113). New implemented-requirement UUIDs use a recorded
+key; the older ones' keys were never recorded and could not be reconstructed (tried exhaustively).
+
+**Next:** the first release, once the three prerequisites exist. Then a docs PR: a tester guide and a
+README overview.
 
 ---
 

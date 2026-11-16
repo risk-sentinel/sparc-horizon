@@ -152,8 +152,13 @@ in someone's memory is not reproducible, which is the one property it is for.
 | `resource:aws-sts` | AWS Security Token Service — AWS component definition |
 | `resource:horizon-design-docs` | SPARC Horizon design documents |
 | `resource:nist-sp800-53-rev5-catalog` | NIST SP 800-53 rev 5 catalog |
+| `implemented-requirement:horizon-pipeline:cm-7` | Pipeline component, CM-7 (#108) |
+| `implemented-requirement:horizon-pipeline:si-7` | Pipeline component, SI-7 (#113) |
+| `implemented-requirement:horizon-pipeline:cm-8` | Pipeline component, CM-8 (#113) |
 
-Adding a component or a resource means adding its key here in the same change. A UUID in the
+Implemented-requirement UUIDs added from #113 on use `implemented-requirement:<component key without the component: prefix>:<control-id>`. The ones that predate it carry identifiers whose keys were not recorded, and keep them: regenerating them would churn every existing identifier.
+
+Adding a component, a resource or an implemented requirement means adding its key here in the same change. A UUID in the
 definition with no row here cannot be checked, and an unchecked "deterministic" identifier is
 indistinguishable from a random one.
 

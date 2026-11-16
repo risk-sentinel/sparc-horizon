@@ -1,0 +1,37 @@
+# container-baseline.yml — CRITICAL/HIGH CVE dispositions for the sparc-horizon image (S1-10).
+#
+# Same workflow and schema as container-build-sign's and sparc-iac's baselines:
+#
+#   discovered → triaged → accepted / deferred / remediated
+#
+# - The release gate (build-sign-publish.yml, verify jobs) fails on any CRITICAL or HIGH finding in the image that is
+#   not listed here as accepted or deferred. The list Trivy reads is generated from this file by
+#   `go run ./cmd/baseline -trivyignore`, so there is one place a decision is recorded.
+# - Accepting a finding is a risk decision for the owner (issue_rules.md, "Suppressing scanner findings"). Each entry
+#   carries a rationale, a NIST control, who reviewed it, and a next_review_date. An entry past its review date fails
+#   validation; it doesn't quietly stop suppressing.
+# - Entries are never deleted. A finding the scan no longer reports is flipped in place to `remediated` with a
+#   `remediated_date`, and drops its `next_review_date`. Remediated findings never suppress anything, so a regression
+#   fails the gate again.
+#
+# Schema, per entry:
+#
+#   - cve_id: CVE-YYYY-NNNNN or GHSA-xxxx-xxxx-xxxx
+#     image: risksentinel/sparc-horizon
+#     image_tag_first_seen: vX.Y.Z
+#     package: <package>
+#     installed_version: <version>
+#     fixed_version: <version> | null
+#     severity: CRITICAL | HIGH
+#     disposition: accepted | deferred | remediated
+#     rationale: "<why it is not exploitable here, or what compensates>"
+#     nist_control: si-2
+#     reviewed_by: "@<owner>"
+#     discovery_date: "YYYY-MM-DD"
+#     last_reviewed: "YYYY-MM-DD"
+#     next_review_date: "YYYY-MM-DD"   # accepted / deferred only
+#     remediated_date: "YYYY-MM-DD"    # remediated only
+#
+# Empty is the intended steady state. The image is four Red Hat packages and one static Go binary; Trivy and Grype
+# both reported 0 vulnerabilities on 2026-11-16 (#108).
+findings: []

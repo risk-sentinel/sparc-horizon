@@ -42,3 +42,4 @@ go.work.sum
 # Repo snapshot archives — a committed copy of the tree goes stale on every commit
 horizon.zip
 *.zip
+.trivyignore

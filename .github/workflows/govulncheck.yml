@@ -1,0 +1,145 @@
+name: govulncheck
+
+# Go vulnerability gate (S1-5, #111).
+#
+# govulncheck reads the module graph and the call graph, so it answers what
+# Dependabot cannot: whether a vulnerable SYMBOL is reachable from this code,
+# including through a transitive module nothing in go.mod names. It runs on
+# every pull request, not only those touching go.mod: a code change can make an
+# already-present vulnerable function reachable. The weekly run catches new
+# advisories against unchanged code.
+#
+# Two rows, one gate:
+#   module — this repository. Fails on any symbol-level finding, and fails if
+#            the scan analysed nothing (zero modules or packages), because an
+#            empty scan and a clean one otherwise look the same.
+#   canary — a throwaway module built at run time from
+#            tests/govulncheck-fixture/testdata/fixture.go, which calls a
+#            symbol GO-2022-1059 names. It must be flagged. It is never
+#            committed as a module, so Syft, Trivy and Dependabot never see it.
+#
+# JSON output always exits 0, so the gate is decided from the findings, not
+# the exit status.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Pinned. Bump deliberately; the run asserts the scanner reports this version.
+  GOVULNCHECK_VERSION: v1.9.0
+  CANARY_OSV: GO-2022-1059
+
+jobs:
+  govulncheck:
+    name: govulncheck (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [module, canary]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          # Same line as ci.yml; the step below holds it to go.mod.
+          go-version: "1.27.x"
+          check-latest: true
+
+      - name: Assert the toolchain matches go.mod
+        run: |
+          set -euo pipefail
+          want="$(awk '/^go /{print $2}' go.mod | cut -d. -f1,2)"
+          have="$(go env GOVERSION)"
+          case "${have}" in
+            "go${want}"|"go${want}."*) echo "PASS — ${have} matches go.mod ${want}." ;;
+            *) echo "::error::Runner is ${have} but go.mod pins ${want}."; exit 1 ;;
+          esac
+
+      - name: Install govulncheck
+        run: |
+          set -euo pipefail
+          go install "golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Build the canary module
+        if: matrix.target == 'canary'
+        run: |
+          set -euo pipefail
+          dir="${RUNNER_TEMP}/govulncheck-canary"
+          mkdir -p "${dir}"
+          cp tests/govulncheck-fixture/testdata/fixture.go "${dir}/main.go"
+          cd "${dir}"
+          go mod init example.invalid/govulncheck-canary
+          go get golang.org/x/text@v0.3.7
+          echo "SCAN_DIR=${dir}" >> "$GITHUB_ENV"
+
+      - name: Scan
+        run: |
+          set -euo pipefail
+          out="${GITHUB_WORKSPACE}/govulncheck-${{ matrix.target }}.json"
+          cd "${SCAN_DIR:-${GITHUB_WORKSPACE}}"
+          govulncheck -format json ./... > "${out}"
+          echo "OUT=${out}" >> "$GITHUB_ENV"
+
+      - name: Gate
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          version="$(jq -rs '[.[] | select(.config)][0].config.scanner_version // empty' "${OUT}")"
+          modules="$(jq -s '[.[] | select(.SBOM)][0].SBOM.modules // [] | length' "${OUT}")"
+          roots="$(jq -s '[.[] | select(.SBOM)][0].SBOM.roots // [] | length' "${OUT}")"
+          # Symbol level: the trace reaches a function this code calls.
+          symbol="$(jq -rs '[.[] | select(.finding and .finding.trace[0].function != null)
+                     | .finding.osv] | unique | join(" ")' "${OUT}")"
+          imported="$(jq -rs '[.[] | select(.finding) | .finding.osv] | unique | length' "${OUT}")"
+          echo "scanner ${version}; ${modules} module(s), ${roots} package root(s) analysed"
+          echo "reachable: ${symbol:-none}; any level: ${imported} advisory(ies)"
+
+          if [ "${version}" != "${GOVULNCHECK_VERSION}" ]; then
+            echo "::error::Scanner reported '${version}', want ${GOVULNCHECK_VERSION}."
+            exit 1
+          fi
+          if [ "${modules}" -lt 1 ] || [ "${roots}" -lt 1 ]; then
+            echo "::error::govulncheck analysed nothing (${modules} modules, ${roots} roots)."
+            exit 1
+          fi
+
+          {
+            echo "### govulncheck (${TARGET})"
+            echo
+            echo "| Scanner | Modules | Package roots | Reachable |"
+            echo "|---|---|---|---|"
+            echo "| ${version} | ${modules} | ${roots} | ${symbol:-none} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "${TARGET}" = "canary" ]; then
+            case " ${symbol} " in
+              *" ${CANARY_OSV} "*) echo "PASS — the canary's ${CANARY_OSV} was found at symbol level." ;;
+              *) echo "::error::The canary's ${CANARY_OSV} was not reported. The scanner can no longer fail."; exit 1 ;;
+            esac
+          elif [ -n "${symbol}" ]; then
+            jq -rs '.[] | select(.finding and .finding.trace[0].function != null) | .finding
+                    | "::error::\(.osv) reachable via \(.trace[0].package).\(.trace[0].function); fixed in \(.fixed_version // "no release")"' \
+              "${OUT}" | sort -u
+            exit 1
+          else
+            echo "PASS — no reachable vulnerability."
+          fi
+
+      - name: Upload the report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: govulncheck-${{ matrix.target }}
+          path: govulncheck-${{ matrix.target }}.json
+          if-no-files-found: warn

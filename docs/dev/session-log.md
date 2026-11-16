@@ -66,6 +66,14 @@ modules, and reports 0 vulnerabilities and 0 secrets. Grype 0.114.0: 0 CRITICAL/
 The rpm database still lists `bash` and `coreutils-single`; a scanner can report CVEs for those
 absent files, and any such finding goes to `container-baseline.yml` (S1-10), not an inline skip.
 
+**CI found what local builds could not.** The first push failed on the runner's Docker engine:
+`failed to calculate checksum … "/usr/lib/.build-id/03/bb97…": not found`. Excluding `usr/bin` left
+links pointing into it: `/bin`, `/sbin`, `usr/lib/debug/{bin,sbin}` and 23 `usr/lib/.build-id` debug
+links. Docker Desktop and a standalone BuildKit v0.34.2 both tolerated them, so it would not
+reproduce here. Fixed by cause rather than by reproduction: those paths are excluded too, and a
+dangling-link count over the exported filesystem went from 29 to 2 (`etc/mtab`, `var/lock`, both
+dangling in stock ubi-micro as well and supplied at runtime).
+
 **Two local traps:** `docker top <c> -eo uid` errors ("Couldn't find PID field"); it needs
 `-eo pid,uid`. A relative `GOROOT` breaks once `go` changes directory; use an absolute path.
 

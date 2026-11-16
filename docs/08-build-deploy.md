@@ -17,7 +17,8 @@ RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /horizon ./cmd/horizon
 FROM registry.access.redhat.com/ubi10/ubi-micro AS ubi
 
 FROM scratch
-COPY --from=ubi --exclude=usr/bin --exclude=usr/sbin --exclude=usr/libexec / /
+COPY --from=ubi --exclude=bin --exclude=sbin --exclude=usr/bin --exclude=usr/sbin --exclude=usr/libexec \
+    --exclude=usr/lib/.build-id --exclude=usr/lib/debug / /
 COPY --from=build /horizon /usr/local/bin/horizon
 USER 1001:1001
 ENTRYPOINT ["/usr/local/bin/horizon", "serve"]

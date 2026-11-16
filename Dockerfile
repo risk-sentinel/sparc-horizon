@@ -26,9 +26,14 @@ FROM ${UBI_IMAGE} AS ubi
 # ubi-micro without its executables: no shell or utilities at runtime, so the
 # server is the only program in the image (CM-7). Copied rather than deleted, so
 # the shell is never in any layer. The rpm database and release files come with
-# it, so scanners still see a UBI 10 image.
+# it, so scanners still see a UBI 10 image. The bin/sbin links and the debug
+# build-id links point into the excluded directories, so they go too.
 FROM scratch
-COPY --from=ubi --exclude=usr/bin --exclude=usr/sbin --exclude=usr/libexec / /
+COPY --from=ubi \
+    --exclude=bin --exclude=sbin \
+    --exclude=usr/bin --exclude=usr/sbin --exclude=usr/libexec \
+    --exclude=usr/lib/.build-id --exclude=usr/lib/debug \
+    / /
 COPY --from=build /out/horizon /usr/local/bin/horizon
 COPY fixtures/ /srv/horizon/fixtures/
 COPY demo/ /srv/horizon/demo/

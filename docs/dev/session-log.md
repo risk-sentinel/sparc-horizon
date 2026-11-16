@@ -48,46 +48,48 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
 
 **In flight:** nothing unpushed.
 
-**Base image: owner decision, UBI 10 micro with its executables excluded.** Stock `ubi10/ubi-micro` ships
-`bash` and 137 utilities in `/usr/bin`, which breaks the "no shell" property TM-8, `docs/07` and
-`issue_rules.md` rely on. Three options went to the owner: strip the shell, keep UBI micro as-is and
-document the shell, or keep distroless. Strip chosen.
+**Base image: owner decisions, in order.** Distroless is out ("trusted publishers, Iron Bank-style",
+not Google). Stock `ubi10/ubi-micro` ships `bash` and 137 utilities, which breaks the "no shell"
+property TM-8, `docs/07` and `issue_rules.md` rely on, so the owner chose UBI with the shell removed,
+then asked for the stricter form: a root filesystem built from only the Red Hat packages chosen.
 
-**How the strip is done, and two rejected ways.** `RUN rm -rf /usr/bin/* …` trips hadolint SC2115;
-the exec form `RUN ["/usr/bin/rm", "-rf", …]` trips SC2114 ("deletes a system directory"). Both are
-the intended action, so suppressing either would have needed owner approval. A code fix exists instead:
-`FROM scratch` plus `COPY --from=ubi --exclude=usr/bin --exclude=usr/sbin --exclude=usr/libexec / /`.
-No `rm`, nothing to suppress, and the shell is never in any layer, not just hidden by a whiteout.
-Verified with a positive control: a per-blob scan finds `usr/bin/bash` in stock ubi-micro's one layer
-and in none of the image's 10 blobs.
+**Where it landed:** `dnf --installroot` in a pinned `ubi10/ubi` builder installs `filesystem`,
+`redhat-release`, `setup`, `tzdata` (versions pinned, `--forcearch` for the target, `noscripts`), then
+`FROM scratch` copies the root in. 17 MB. The rpm database lists exactly those four plus Red Hat's
+three signing keys. `ca-certificates` was rejected as a package: it pulls 39, including `bash` and
+`coreutils`. The CA bundle is copied as a file instead, so it updates only with a builder bump.
 
-**Measured 2026-11-16:** Trivy 0.74.0 identifies redhat 10.3, inventories 26 OS packages and 3 Go
-modules, and reports 0 vulnerabilities and 0 secrets. Grype 0.114.0: 0 CRITICAL/HIGH, 5 Medium, 4 Low.
-The rpm database still lists `bash` and `coreutils-single`; a scanner can report CVEs for those
-absent files, and any such finding goes to `container-baseline.yml` (S1-10), not an inline skip.
+**Rejected on the way, each measured:**
 
-**CI found what local builds could not.** The first push failed on the runner's Docker engine:
-`failed to calculate checksum … "/usr/lib/.build-id/03/bb97…": not found`. Excluding `usr/bin` left
-links pointing into it: `/bin`, `/sbin`, `usr/lib/debug/{bin,sbin}` and 23 `usr/lib/.build-id` debug
-links. Docker Desktop and a standalone BuildKit v0.34.2 both tolerated them, so it would not
-reproduce here. Fixed by cause rather than by reproduction, and the first fix was not enough: the runner then
-failed on `/var/lock` (→ `../run/lock`), which dangles in stock ubi-micro too. So the engine refuses
-**any** dangling link, not only ones into excluded directories, and `var/lock` is excluded as well.
-Measured over the image's own layers with a positive control (stock ubi-micro's layer carries
-`var/lock`; the image's carry none). A `docker export` also shows `etc/mtab`, but Docker adds that
-when it creates a container; it is in no layer of either image. A Dockerfile that builds on one
-engine and not another is the defect, so the target is zero dangling links in the image.
+- `RUN rm -rf /usr/bin/*` in ubi-micro: hadolint SC2115. The exec-form `rm`: SC2114. Both flag the
+  intended action, so either would have needed an approved suppression.
+- `FROM scratch` + `COPY --from=ubi-micro --exclude=usr/bin …`: built, but left the rpm database
+  listing `bash` and `coreutils-single` with their files gone, and **failed twice on the runner**
+  ("failed to calculate checksum … not found"). The runner's Docker engine refuses any dangling link
+  (`usr/lib/.build-id/…`, then `var/lock`); Docker Desktop and BuildKit v0.34.2 accept them, so it
+  never reproduced locally.
 
-**Two local traps:** `docker top <c> -eo uid` errors ("Couldn't find PID field"); it needs
-`-eo pid,uid`. A relative `GOROOT` breaks once `go` changes directory; use an absolute path.
+**Trivy trap, worth knowing for any hand-built UBI root:** with no content sets, Trivy 0.74.0 fails
+the whole OS scan with "unable to find CPE indices" (trivy-db#435), because it has no RHEL 10
+default. It reads `/usr/share/buildinfo/content-sets.json`; `/root/buildinfo/` alone is not enough.
+Found by bisecting against stock ubi-micro's filesystem. The image now carries the builder's file
+filtered to BaseOS, at both paths, as ubi-micro does. Grype did not need it.
 
-**Carried forward:** `demo/full-plan.html` still showed `golang:1.25` after #105, which updated only
-`docs/08`. Fixed here. **Not done:** TM-8's text. The threat model is an attestation, so the change is
-a ledger row for the owner, not an edit.
+**Measured 2026-11-16, amd64 and arm64:** Trivy redhat 10.3, 4 packages + 3 keys, 0 vulnerabilities,
+0 secrets; Grype redhat 10.3, 0 matches; no shell, empty `/usr/bin`; 118 CA certificates; the only
+dangling link in an export is `etc/mtab`, which Docker adds when it creates a container.
 
-**Next:** S1-9 (port `build-sign-publish.yml`) with S1-10, once container-build-sign#326 and the
-public-or-ECR-only decision are settled. The real service will need CA certificates for SPARC mTLS
-(`HORIZON_SPARC_CA`); ubi-micro carries none.
+**Local traps:** `docker top <c> -eo uid` errors ("Couldn't find PID field"); it needs `-eo pid,uid`.
+A relative `GOROOT` breaks once `go` changes directory. Pulling a second platform of a digest
+already in the local store fails ("cannot overwrite digest"). The Docker VM filled (59 GB) during
+this work; the owner approved removing this branch's images and pruning the build cache.
+
+**Carried forward:** `demo/full-plan.html` still showed `golang:1.25` after #105. Fixed here.
+**Not done:** TM-8's text; the change is a ledger row for the owner.
+
+**Next:** S1-9 (port `build-sign-publish.yml`) with S1-10. Dual-publish, Docker Hub and ECR (owner
+decision 2026-11-16); the ECR repository and publisher role are sparc-iac#856, and the Docker Hub
+repository `risksentinel/sparc-horizon` does not exist yet.
 
 ---
 

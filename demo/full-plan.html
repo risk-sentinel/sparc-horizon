@@ -256,7 +256,7 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
 
 <section id="arch" aria-labelledby="arch-h">
  <h2 id="arch-h">Architecture</h2>
- <p class="sub">One Go binary with an embedded TypeScript UI, shipped as a shell-free UBI 10 micro container. Results and mappings flow up; attestations and decisions flow down.</p>
+ <p class="sub">One Go binary with an embedded TypeScript UI, shipped as a minimal UBI 10 container with no shell. Results and mappings flow up; attestations and decisions flow down.</p>
  <div class="arch" role="img" aria-label="Layered architecture: pipelines feed SPARC, SPARC feeds Horizon, Horizon serves role lenses.">
   <div class="lane"><b>Role lenses</b><div class="boxes">
    <div class="box b-lens">AO lens<small>Portfolio, decisions, conditions</small></div>
@@ -517,16 +517,19 @@ COPY . .
 COPY --from=web /web/dist ./web/dist
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /horizon ./cmd/horizon
 
-FROM registry.access.redhat.com/ubi10/ubi-micro AS ubi
+FROM registry.access.redhat.com/ubi10/ubi AS rootfs
+RUN dnf --installroot=/rootfs --releasever=10 --setopt=install_weak_deps=False \
+      --setopt=tsflags=nodocs,noscripts -y install filesystem redhat-release setup tzdata \
+    && dnf --installroot=/rootfs --releasever=10 clean all
+# plus the CA bundle and the BaseOS content sets, copied as files
 
 FROM scratch
-COPY --from=ubi --exclude=bin --exclude=sbin --exclude=usr/bin --exclude=usr/sbin --exclude=usr/libexec \
-    --exclude=usr/lib/.build-id --exclude=usr/lib/debug --exclude=var/lock / /
+COPY --from=rootfs /rootfs/ /
 COPY --from=build /horizon /usr/local/bin/horizon
 USER 1001:1001
 ENTRYPOINT ["/usr/local/bin/horizon", "serve"]</code></pre>
- <p>The base is UBI 10 micro, the same Red Hat lineage as <code>sparc</code>'s image, with its executables left out: the service is the only program in the image, with no shell or utilities, and it runs as uid 1001. The UBI files that remain include the rpm database, so scanners still identify the image as Red Hat 10. That database still lists <code>bash</code> and <code>coreutils-single</code>, so a scanner can report CVEs for those packages although their files are absent.</p>
- <p>The repository's <code>Dockerfile</code> builds this shape today (#108), with both bases pinned by digest. Until <code>cmd/horizon</code> exists it builds <code>cmd/mockserver</code> instead, and copies in the fixture federation and the HUD demos: <code>docker build -t sparc-horizon:dev .</code>, then <code>docker run --rm -p 8080:8080 sparc-horizon:dev</code>.</p>
+ <p>The root filesystem is built from Red Hat's signed UBI 10 packages, the same lineage as <code>sparc</code>'s image, and holds only four of them: <code>filesystem</code>, <code>redhat-release</code>, <code>setup</code> and <code>tzdata</code>. There is no shell, no utility and no shared library, so the service is the only program in the image, and it runs as uid 1001. The rpm database lists exactly those four packages, so a scanner reports only what is present. Two files are copied in rather than installed: the CA bundle, because the <code>ca-certificates</code> package would pull in <code>bash</code>, <code>coreutils</code> and 35 more, and the BaseOS content sets (<code>/usr/share/buildinfo/content-sets.json</code>), which scanners use to map the packages to Red Hat advisories.</p>
+ <p>The repository's <code>Dockerfile</code> builds this shape today (#108), with the builders and package versions pinned. Until <code>cmd/horizon</code> exists it builds <code>cmd/mockserver</code> instead, and copies in the fixture federation and the HUD demos: <code>docker build -t sparc-horizon:dev .</code>, then <code>docker run --rm -p 8080:8080 sparc-horizon:dev</code>.</p>
  <details><summary>Configuration</summary><div>
   <table>
    <tr><th>Variable</th><th>Default</th><th>Purpose</th></tr>
@@ -656,7 +659,7 @@ const PH=[
  risks:['AOs want different condition types: start with date and score thresholds only']},
 {id:'P8',name:'Hardening, packaging, and pilot',track:'hard',effort:3,par:3,deps:[],
  goal:'Ship a container that passes your own pipeline and run the pilot demo on a real boundary.',
- tasks:['Shell-free UBI 10 micro, non-root, static image with an SBOM and signature','Helm chart and Terraform module','Run Horizon through the reusable SAF pipeline and produce its own OSCAL package','Audit export of the ledger chain head','Pilot demo with one real boundary and its AO'],
+ tasks:['Minimal UBI 10 image (four Red Hat packages, no shell), non-root, static, with an SBOM and signature','Helm chart and Terraform module','Run Horizon through the reusable SAF pipeline and produce its own OSCAL package','Audit export of the ledger chain head','Pilot demo with one real boundary and its AO'],
  deliver:['Signed image','deploy/helm and deploy/terraform','Pilot demo recording'],
  exit:['Image passes the reusable pipeline gates','AO completes the demo script unassisted'],
  risks:['Real boundary data exposes missing namespace props: run sparc-validate on it in week one']}

@@ -73,10 +73,10 @@ carry. Step 8 updates it in the same PR as the work.
 | Machine-readable contracts | **2 owned**, one of them now frozen (`api/openapi.yaml`, #61) — `api/openapi.yaml` (v0 skeleton) and `schemas/sparc-namespace-props.v1.schema.json` (v1, 9 props, namespace `https://sparc.risk-sentinel.org/ns`) — plus **1 consumed**, `sparc:lib/federation/key-grammar.v1.json`, vendored with provenance into `internal/keys/testdata/` |
 | Demos | **4** static HTML files, synthetic data, seeded PRNG, no build step |
 | CI workflows | **15 files: 12 workflows and 3 ported reusables** — `secret-scan.yml` (gate + fixture canary), `secret-scan-hdf-emit.yml` and `sonarqube-hdf-emit.yml` (emitters, both fail closed on an unset boundary), `pr-checklist.yml`, `contracts.yml` (OpenAPI, namespace schema, **fixture props**, actionlint, duplication drift), `ci.yml` (Go: fmt, vet, lint, race, coverage and package-count floors), `sonar-pr-findings.yml` (this PR's SonarCloud findings as OHDF, reported not gated — #63), `vendored-contract-freshness.yml` (scheduled; notices when SPARC's key-grammar contract moves and the vendored copy has not — #68), `action-pin-verification.yml` (scheduled and on merges touching workflows; checks each pinned SHA against the version its comment claims — #57), `sbom-and-sca.yml` (source SBOM → SCA gate at CRITICAL → emit — #84), `sca-fixture.yml` (the SCA canary), `ported-workflow-drift.yml` (scheduled; notices when `container-build-sign` moves a ported file). The ported reusables are `sbom-source.yml`, `sca-scan.yml` and `sca-emit-source.yml`, with three composite actions under `.github/actions/` |
-| Branch protection | **Active.** Ruleset on `main`: 8 required contexts (`Go build, vet, lint, test` added 2026-09-28, #42), PR required with CODEOWNERS review, signed commits, no force-push, no deletion, bypass **pull request only**. Verified by a direct push being refused, not just by reading the config back. **The repository is public since 2026-09-28**, so two Actions settings sit beside the ruleset: fork-PR workflows need maintainer approval for **all** external contributors, and every action must be pinned to a full commit SHA (`sha_pinning_required`) |
+| Branch protection | **Active.** Ruleset on `main`: 13 required contexts (`Go build, vet, lint, test` added 2026-09-28, #42; the five SBOM/SCA contexts the same day, S1-13), PR required with CODEOWNERS review, signed commits, no force-push, no deletion, bypass **pull request only**. Verified by a direct push being refused, not just by reading the config back. **The repository is public since 2026-09-28**, so two Actions settings sit beside the ruleset: fork-PR workflows need maintainer approval for **all** external contributors, and every action must be pinned to a full commit SHA (`sha_pinning_required`) |
 | Secret scanning | **Gate + canary landed.** TruffleHog verified-only, `tests/trufflehog-fixture/` planted and asserted, exclude file scoped to the fixture alone |
 | SAST / code scanning | **Sonar wired.** Project `risk-sentinel_sparc-horizon` live (**public since 2026-09-28**; it was private, and counted against the organization's line ceiling), `SONAR_TOKEN` an org secret, emitter converts to HDF and verifies the project resolves before fetching. CodeQL and `golangci-lint` still pending — Phase S1, when Go lands |
-| Dependency / SBOM / SCA | **SBOM and SCA wired (#84)**, from ported `container-build-sign` reusables: Syft → CycloneDX, then Grype + Trivy fs gating at CRITICAL against an **empty** `.security/sca-allowlist.yaml`, with a canary that must find a CRITICAL per planted package. Not yet a required check: it has to be observed reporting on `main` first. `go.mod` exists (Go 1.25, three direct dependencies). `govulncheck` is still S1-5 |
+| Dependency / SBOM / SCA | **SBOM and SCA wired (#84)**, from ported `container-build-sign` reusables: Syft → CycloneDX, then Grype + Trivy fs gating at CRITICAL against an **empty** `.security/sca-allowlist.yaml`, with a canary that must find a CRITICAL per planted package. **Required since 2026-09-28**, every job in both chains (see the context list). Evidence read back from `sca-source/` on `49579f1` and `2bd56f5`. `go.mod` exists (Go 1.25, three direct dependencies). `govulncheck` is still S1-5 |
 | Container | **None** — the Dockerfile in [`docs/08-build-deploy.md`](../08-build-deploy.md) is a sketch, unpinned, never built |
 | HDF evidence emitted | **Live for secret scanning, stalled for Sonar.** `sparc-iac#715` closed 2026-09-19 and `secret-scan-hdf-emit.yml` has landed a dated object plus the `latest/` alias on every merge since at least 2026-09-22 — `risk-sentinel/<date>/sparc-horizon/trufflehog/`. **`sonarqube-hdf-emit.yml` has failed since 2026-09-24T02:44**, because `main`'s analysis was failing on an organization-wide 50,000-line ceiling (#42): `40718 + 9553 = 50271`, over by 271. **Ceiling cleared 2026-09-28** by making this repository and its Sonar project public — public projects do not count, and the private total fell to 40,791. The stream resumes with the first analysis of `main` after that; until one has emitted and been read back, treat it as stalled. The emit is behaving correctly — it refuses to stamp a new commit onto 02:44's findings rather than misattribute them (#13). **This row said "0 artifacts, blocked on the role" until #42 measured it**, which understated the estate by five days |
 | Org inventory (`dev-sec-ops-baseline`) | **Not declared.** `devsecops-inventory-reconciliation` does not see this repo |
@@ -254,6 +254,22 @@ reports on every push:
 Go build, vet, lint, test
 ```
 
+Added 2026-09-28 (S1-13), after reporting on #85, #88 and `main` (`2bd56f5`). The names were read
+from that commit's check-runs:
+
+```text
+Source SBOM / Generate CycloneDX SBOM
+SCA gate / Scan + reconcile
+Stage the fixture SBOM
+Scan / Scan + reconcile
+SCA fixture detection (proves scanner works)
+```
+
+**All five, not just the two that assert.** A required check whose job is *skipped* counts as
+passing. `SCA gate` needs `Source SBOM`, and the fixture assertion needs `Stage` and then `Scan`.
+So a failure upstream in either chain would skip the asserting job and satisfy the rule, unless
+every job in the chain is required.
+
 `Secret scan HDF emit (TruffleHog)` is deliberately **not** in that list: it does not
 run on `pull_request`, so requiring it would block every PR permanently.
 
@@ -299,14 +315,14 @@ it is required.
 | S1-3 | CodeQL for `go` and `javascript-typescript`; assert the detected language list is non-empty | | |
 | S1-4 | SonarCloud project onboarded (`risk-sentinel_sparc-horizon`); compare analysed lines against the tree — indexed is not analysed | | |
 | S1-5 | `govulncheck` on every PR that touches `go.mod`/`go.sum`, not only at release. A transitive advisory gets no Dependabot PR, so the queue being empty is not evidence | | |
-| S1-6 | `sbom-and-sca.yml` running `container-build-sign`'s `sbom-source.yml` + `sca-scan.yml` + `sca-emit-source.yml` as **ported local copies**. A public repository cannot call an internal one's reusables (X-14). `.security/sca-allowlist.yaml` starts **empty** as the intended steady state, every future entry carrying an expiry. A canary (`sca-fixture.yml`) proves the gate can fail | [#84](https://github.com/risk-sentinel/sparc-horizon/issues/84) | |
+| S1-6 | `sbom-and-sca.yml` running `container-build-sign`'s `sbom-source.yml` + `sca-scan.yml` + `sca-emit-source.yml` as **ported local copies**. A public repository cannot call an internal one's reusables (X-14). `.security/sca-allowlist.yaml` starts **empty** as the intended steady state, every future entry carrying an expiry. A canary (`sca-fixture.yml`) proves the gate can fail | [#84](https://github.com/risk-sentinel/sparc-horizon/issues/84) | 2026-09-28 |
 | S1-7 | `web/` CI: `tsc --strict`, ESLint, unit tests, axe accessibility run that gates | | |
 | S1-8 | Dockerfile hardened from the sketch: base images pinned **by digest**, non-root, distroless, `CGO_ENABLED=0`, `-trimpath`. hadolint in CI | | |
 | S1-9 | Port `container-build-sign`'s `build-sign-publish.yml` the same way as S1-6, unless X-14 has made it public, in which case call it SHA-pinned — Trivy gate against the image that ships, cosign signature, CycloneDX attestation, ECR publish. ECR-only (`publish_to_dockerhub: false`) unless the owner wants a public image | | |
 | S1-10 | `container-baseline.yml` for CRITICAL/HIGH dispositions, each with `rationale`, `nist_control`, `reviewed_by`, `next_review_date` | | |
 | S1-11 | Playwright smoke suite (Chrome, zero CSP violations) against the built image, run detached and polled — not concurrently with the Go suite | | |
 | S1-12 | `required-checks.json` + an aggregating `required-passed.yml` if path-filtered checks start leaving PRs waiting, as they did in `sparc` (#436) | | |
-| S1-13 | Extend branch protection with the now-reporting contexts, read from the forge | | |
+| S1-13 | Extend branch protection with the now-reporting contexts, read from the forge. **Partial:** `Go build, vet, lint, test` and the five SBOM/SCA contexts are required as of 2026-09-28. CodeQL, `govulncheck`, `web/` and the container follow as each lands | | |
 | S1-14 | `docs/security/SCANNER_FINDINGS_AUDIT.md` and the release-time refresh cadence: every release PR re-runs the scanners, reconciles counts and the suppression inventory, and confirms no suppression's review date is older than 90 days | | |
 
 ### Exit criteria

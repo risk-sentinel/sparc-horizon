@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-09-28 (#86). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-09-28 (S1-13, #84). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,27 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-09-28 — S1-13 for #84 — `fix/84_require_sca_checks`
+
+**In flight:** nothing. **Stacked on #89**: merge #89 first, because both add a top entry to this
+file.
+
+**The ruleset was changed before this PR, which records it.** Five contexts were added; 13 are
+required now. The ruleset was diffed before and after: only the required-check list moved. #89
+was open when the change landed, and all 13 reported and passed on it, so no required check sits
+waiting on a name that never arrives.
+
+**Rejected: requiring only the two asserting jobs.** GitHub treats a skipped required check as a
+pass. With only `SCA gate` required, a failing SBOM job skips the gate and the merge goes green
+over a scan that never ran. The rule now in `issue_rules.md` is to require every job in the
+chain.
+
+**Next (owner):** `CBS_READ_TOKEN`, or #342, before the Monday 07:30 drift run. Then S1 continues:
+S1-5 `govulncheck`; S1-3 CodeQL (default setup is already running since the repo went public, and
+is unrecorded); S1-8 Dockerfile + S1-9 build-sign-publish port.
 
 ---
 

@@ -33,7 +33,7 @@ func testServer(t *testing.T) (*server, http.Handler) {
 func get(t *testing.T, h http.Handler, persona, path string) *httptest.ResponseRecorder {
 	t.Helper()
 
-	r := httptest.NewRequest(http.MethodGet, path, nil)
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodGet, path, nil)
 	if persona != "" {
 		r.Header.Set(personaHeader, persona)
 	}
@@ -151,7 +151,7 @@ func TestWriteEndpointsRefuseRatherThanPretend(t *testing.T) {
 	s, h := testServer(t)
 
 	for _, path := range []string{"/v1/attestations", "/v1/decisions", "/v1/whatif"} {
-		r := httptest.NewRequest(http.MethodPost, path, nil)
+		r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, path, nil)
 		r.Header.Set(personaHeader, s.personas[0].ID)
 		w := httptest.NewRecorder()
 		h.ServeHTTP(w, r)

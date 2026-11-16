@@ -8,7 +8,7 @@ WORKDIR /web
 COPY web/ .
 RUN npm ci && npm run build
 
-FROM golang:1.25 AS build
+FROM golang:1.27 AS build
 WORKDIR /src
 COPY . .
 COPY --from=web /web/dist ./web/dist

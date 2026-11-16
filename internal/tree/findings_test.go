@@ -2,7 +2,7 @@ package tree
 
 import (
 	"encoding/json"
-	"math/rand"
+	"slices"
 	"testing"
 
 	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-2"
@@ -178,9 +178,15 @@ func TestBuildIsOrderIndependent(t *testing.T) {
 		t.Fatalf("marshal: %v", err)
 	}
 
-	for i := 0; i < 5; i++ {
+	// Every rotation, then every rotation reversed: deterministic, so a failure
+	// reproduces, and it covers more orders than a few random shuffles did.
+	n := len(loadSSPs(t))
+	for i := 0; i < 2*n; i++ {
 		shuffled := loadSSPs(t)
-		rand.Shuffle(len(shuffled), func(a, b int) { shuffled[a], shuffled[b] = shuffled[b], shuffled[a] })
+		shuffled = slices.Concat(shuffled[i%n:], shuffled[:i%n])
+		if i >= n {
+			slices.Reverse(shuffled)
+		}
 
 		res, err := Build(shuffled)
 		if err != nil {

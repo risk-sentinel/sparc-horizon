@@ -92,29 +92,37 @@ jobs:
           set -euo pipefail
           base=http://127.0.0.1:8080
           fail=0
-          check() { # name, want status, got status
-            if [ "$3" = "$2" ]; then echo "PASS — $1: $3"; else echo "::error::$1: $3, want $2"; fail=1; fi
+          check() {
+            local name="$1"
+            local want="$2"
+            local got="$3"
+            if [ "${got}" = "${want}" ]; then
+              echo "PASS — ${name}: ${got}"
+            else
+              echo "::error::${name}: ${got}, want ${want}"
+              fail=1
+            fi
+          }
+          # status <body file> <path> [curl args...]: the HTTP status, with the body kept for later checks.
+          status() {
+            local out="$1"
+            local path="$2"
+            shift 2
+            curl -s -o "${out}" -w '%{http_code}' "$@" "${base}${path}"
           }
 
-          code="$(curl -s -o tree.json -w '%{http_code}' "${base}/v1/tree")"
-          check "/v1/tree as the default persona" 200 "${code}"
+          check "/v1/tree as the default persona" 200 "$(status tree.json /v1/tree)"
           nodes="$(jq '[.. | objects | select(has("id") and has("nodeType"))] | length' tree.json 2>/dev/null || echo 0)"
           echo "tree carries ${nodes} node object(s)"
           if [ "${nodes}" -lt 1 ]; then echo "::error::/v1/tree returned no nodes."; fail=1; fi
 
-          code="$(curl -s -o /dev/null -w '%{http_code}' \
-            "${base}/v1/nodes/00000000-0000-5000-8000-000000000000/heat")"
-          check "a node that does not exist" 404 "${code}"
+          check "a node that does not exist" 404 \
+            "$(status /dev/null /v1/nodes/00000000-0000-5000-8000-000000000000/heat)"
+          check "an unknown persona" 401 "$(status /dev/null /v1/tree -H 'X-Horizon-Persona: nobody')"
 
-          code="$(curl -s -o /dev/null -w '%{http_code}' -H 'X-Horizon-Persona: nobody' "${base}/v1/tree")"
-          check "an unknown persona" 401 "${code}"
-
-          code="$(curl -s -o index.html -w '%{http_code}' "${base}/")"
-          check "/ (demo index)" 200 "${code}"
+          check "/ (demo index)" 200 "$(status index.html /)"
           if ! grep -qi '<html' index.html; then echo "::error::/ did not return HTML."; fail=1; fi
-
-          code="$(curl -s -o /dev/null -w '%{http_code}' "${base}/hud.html")"
-          check "/hud.html" 200 "${code}"
+          check "/hud.html" 200 "$(status /dev/null /hud.html)"
 
           uid="$(docker top horizon -eo pid,uid | awk 'NR==2 {print $2}')"
           check "process uid" 1001 "${uid}"

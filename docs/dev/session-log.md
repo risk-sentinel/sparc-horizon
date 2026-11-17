@@ -66,11 +66,14 @@ share data into**, for testing beyond the fixtures.
 
 **Alternatives rejected:** a new contract path for the documents (the API is frozen; the href is a
 string, so a mock-only `/oscal/{name}` serves it); `genfixtures` writing `0644` (gosec G306 — the
-image now sets its own modes with `COPY --chmod=u=rwX,go=rX`); serving documents through the
+image now sets its own modes with `chmod -R` in the build stage). **`COPY --chmod=u=rwX,go=rX` was
+tried first and passed locally, then failed in CI** ("open api/personas.json: permission denied"):
+the runner's engine did not apply the symbolic mode as Docker Desktop's did, so it is engine-dependent
+and not used; serving documents through the
 JSON re-encoder (it HTML-escapes `&`, so the bytes would not match the `sha256` the export lists).
 
 **Measured:** the new tests fail on the old logic (the column test reads "pass 2 of 2" with a
-failing row present); the smoke walk fails on exactly the three new cell goldens without `--chmod`
+failing row present); the smoke walk fails on exactly the three new cell goldens without the mode fix
 and passes with it; every command in `docs/testing.md` re-run against the final image.
 
 **Noticed, not fixed:** Implementation_plan's "NIST control coverage: 0 documented, no

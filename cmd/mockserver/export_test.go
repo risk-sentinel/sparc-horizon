@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"io/fs"
 	"net/http"
 	"os"
 	"strings"
@@ -79,22 +80,7 @@ func TestExportLinksResolveAndVerify(t *testing.T) {
 		if d.Model != exportModels[i].model {
 			t.Errorf("document %d is %s, want %s: the order is part of the response", i, d.Model, exportModels[i].model)
 		}
-		got := get(t, h, so.ID, d.Href)
-		if got.Code != http.StatusOK {
-			t.Errorf("%s returned %d to the caller the export gave it to", d.Href, got.Code)
-			continue
-		}
-		sum := sha256.Sum256(got.Body.Bytes())
-		if hex.EncodeToString(sum[:]) != d.SHA256 {
-			t.Errorf("%s does not hash to the sha256 the export listed", d.Href)
-		}
-		want, err := os.ReadFile("../.." + "/fixtures" + d.Href)
-		if err != nil || string(want) != got.Body.String() {
-			t.Errorf("%s is not served byte for byte from the fixture (%v)", d.Href, err)
-		}
-		if w := get(t, h, iso.ID, d.Href); w.Code != http.StatusNotFound {
-			t.Errorf("%s returned %d to another organization, want 404", d.Href, w.Code)
-		}
+		checkLinkedDocument(t, h, so.ID, iso.ID, d.Href, d.SHA256)
 	}
 
 	for _, p := range []string{
@@ -110,5 +96,29 @@ func TestExportLinksResolveAndVerify(t *testing.T) {
 	}
 	if w := get(t, h, "nobody", body.Documents[0].Href); w.Code != http.StatusUnauthorized {
 		t.Errorf("an unknown persona fetching a document got %d, want 401", w.Code)
+	}
+}
+
+// checkLinkedDocument fetches one href as the caller it was listed for and as
+// a caller from another organization.
+func checkLinkedDocument(t *testing.T, h http.Handler, owner, other, href, listed string) {
+	t.Helper()
+
+	got := get(t, h, owner, href)
+	if got.Code != http.StatusOK {
+		t.Errorf("%s returned %d to the caller the export gave it to", href, got.Code)
+		return
+	}
+	sum := sha256.Sum256(got.Body.Bytes())
+	if hex.EncodeToString(sum[:]) != listed {
+		t.Errorf("%s does not hash to the sha256 the export listed", href)
+	}
+	// Read through an fs.FS rooted at the fixtures, so the href cannot climb out.
+	want, err := fs.ReadFile(os.DirFS("../../fixtures"), strings.TrimPrefix(href, "/"))
+	if err != nil || string(want) != got.Body.String() {
+		t.Errorf("%s is not served byte for byte from the fixture (%v)", href, err)
+	}
+	if w := get(t, h, other, href); w.Code != http.StatusNotFound {
+		t.Errorf("%s returned %d to another organization, want 404", href, w.Code)
 	}
 }

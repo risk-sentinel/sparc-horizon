@@ -38,24 +38,8 @@ func (g *Generator) apiResponses(tree Tree) (map[string]any, error) {
 
 		out[pathAPI(p.ID, "tree.json")] = g.treeFor(p, visible)
 		out[pathAPI(p.ID, "next-action.json")] = g.nextActionFor(p, visible, assessed)
-
-		// Heat for every node with children: the persona's root, and each
-		// boundary beneath it. A system is a leaf and has no rows.
-		for _, node := range g.heatNodes(p, visible) {
-			heat, err := g.heatFor(node, assessed)
-			if err != nil {
-				return nil, err
-			}
-			out[pathAPI(p.ID, "heat", node.id+".json")] = heat
-
-			// Cell drill-downs, for the columns that have something to say.
-			for _, col := range heat.Columns {
-				detail := g.cellFor(node, col, assessed)
-				if len(detail.Controls) == 0 {
-					continue
-				}
-				out[pathAPI(p.ID, "cell", node.id+"--"+strings.ToLower(col)+".json")] = detail
-			}
+		if err := g.heatResponses(out, p, visible, assessed); err != nil {
+			return nil, err
 		}
 	}
 
@@ -70,6 +54,28 @@ func (g *Generator) apiResponses(tree Tree) (map[string]any, error) {
 		}
 	}
 	return out, nil
+}
+
+// heatResponses adds a persona's heat for every node with children (its root,
+// and each boundary beneath it; a system is a leaf and has no rows), and a cell
+// drill-down for each drawn column that has something to say.
+func (g *Generator) heatResponses(out map[string]any, p Persona, visible []Boundary, assessed map[string][]assessment) error {
+	for _, node := range g.heatNodes(p, visible) {
+		heat, err := g.heatFor(node, assessed)
+		if err != nil {
+			return err
+		}
+		out[pathAPI(p.ID, "heat", node.id+".json")] = heat
+
+		for _, col := range heat.Columns {
+			detail := g.cellFor(node, col, assessed)
+			if len(detail.Controls) == 0 {
+				continue
+			}
+			out[pathAPI(p.ID, "cell", node.id+"--"+strings.ToLower(col)+".json")] = detail
+		}
+	}
+	return nil
 }
 
 // heatNode is a node the heatmap can be drawn for.

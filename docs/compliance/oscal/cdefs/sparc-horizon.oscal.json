@@ -1,11 +1,11 @@
 {
   "component-definition": {
-    "uuid": "cee7fc2c-de6a-4c38-b193-f8044a156637",
+    "uuid": "ccf6c065-9e48-41c0-a40f-723a7fa0364d",
     "metadata": {
       "title": "SPARC Horizon",
       "last-modified": "2026-11-16T00:00:00Z",
-      "version": "0.2.0",
-      "oscal-version": "1.2.1",
+      "version": "0.3.0",
+      "oscal-version": "1.2.3",
       "roles": [
         {
           "id": "provider",

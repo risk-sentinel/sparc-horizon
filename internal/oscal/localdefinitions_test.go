@@ -27,16 +27,32 @@ import (
 // | result (inside results[]) | assessment-assets, components, inventory-items, tasks, users |
 // | plan-of-action-and-milestones | assessment-assets, components, inventory-items, remarks |
 //
-// Identical in the OSCAL 1.2.3 schema, and in `go-oscal`'s unreleased 1.2.3
-// types, so this is not something a version bump resolves.
+// Identical in the OSCAL 1.2.3 schema and in `go-oscal`'s 1.2.3 types (released
+// in v0.7.2, measured in #115), so this is not something a version bump resolves.
 
 const authoredResultLocalDefinitions = "testdata/authored/result-local-definitions.json"
 
 // Direction one: a schema-valid document loses fields on the way in.
+// Measured at 1.2.2 and at 1.2.3 (#115). For 1.2.3 the authored document is
+// re-declared as 1.2.3 first, so the premise is checked against that schema
+// rather than borrowed from the 1.2.2 run.
 func TestResultLocalDefinitionsLosesTasksAndAssessmentAssets(t *testing.T) {
-	b, err := os.ReadFile(authoredResultLocalDefinitions)
+	authored, err := os.ReadFile(authoredResultLocalDefinitions)
 	if err != nil {
 		t.Fatalf("reading the authored document: %v", err)
+	}
+	for _, version := range []string{"1.2.2", "1.2.3"} {
+		t.Run(version, func(t *testing.T) {
+			b := []byte(strings.Replace(string(authored), `"oscal-version": "1.2.2"`, `"oscal-version": "`+version+`"`, 1))
+			measureResultLocalDefinitions(t, b, version)
+		})
+	}
+}
+
+func measureResultLocalDefinitions(t *testing.T, b []byte, version string) {
+	t.Helper()
+	if got, err := Version(b); err != nil || got != version {
+		t.Fatalf("the document declares %q (%v), want %s", got, err, version)
 	}
 
 	// The premise: OSCAL accepts this document. Without checking that, a
@@ -49,7 +65,11 @@ func TestResultLocalDefinitionsLosesTasksAndAssessmentAssets(t *testing.T) {
 		t.Fatalf("the authored document is not valid OSCAL, so it proves nothing: %v", err)
 	}
 
-	ts, err := TypesFor("1.2.2")
+	if got := v.GetSchemaVersion(); got != version {
+		t.Fatalf("validated against OSCAL %s, want %s", got, version)
+	}
+
+	ts, err := TypesFor(version)
 	if err != nil {
 		t.Fatalf("TypesFor: %v", err)
 	}

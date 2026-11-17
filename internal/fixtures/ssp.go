@@ -3,7 +3,7 @@ package fixtures
 import (
 	"strconv"
 
-	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-2"
+	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
 
 	"github.com/risk-sentinel/sparc-horizon/internal/canonical"
 	"github.com/risk-sentinel/sparc-horizon/internal/keys"
@@ -227,41 +227,8 @@ func (g *Generator) implementedRequirements(b Boundary, exports map[string]expor
 				Description:          s.Name + " implements " + c.ID + ".",
 				ImplementationStatus: &oscal.ImplementationStatus{State: "implemented"},
 			}
-			export, inherited := exports[c.ID]
-			if inherited && j == 0 {
-				if isProvider {
-					// The provider declares what it provides and what it
-					// leaves to the consumer.
-					bc.ComponentUuid = export.ComponentUUID
-					bc.Export = &oscal.Export{
-						Description: "Provided to every leveraging boundary in the federation.",
-						Provided: &[]oscal.ProvidedControlImplementation{{
-							UUID:        export.ProvidedUUID,
-							Description: "Authentication and authenticator management for leveraging boundaries.",
-						}},
-						Responsibilities: &[]oscal.ControlImplementationResponsibility{{
-							UUID:         export.ResponsibilityUUID,
-							ProvidedUuid: export.ProvidedUUID,
-							Description:  "The leveraging boundary configures its own session and account policy against this service.",
-						}},
-					}
-				} else {
-					// The consumer's half. A hybrid control is green only when
-					// both halves have unexpired observations.
-					satisfied, err := g.keys.Responsibility(g.sspUUID(b), g.profileSource(), c.ID, g.componentUUID(b, s.Slug), keys.HalfConsumer)
-					if err == nil {
-						bc.Inherited = &[]oscal.InheritedControlImplementation{{
-							UUID:         g.objectUUID("inherited", b.Slug, c.ID),
-							ProvidedUuid: export.ProvidedUUID,
-							Description:  "Inherited from " + providerBoundary().Name + ".",
-						}}
-						bc.Satisfied = &[]oscal.SatisfiedControlImplementationResponsibility{{
-							UUID:               satisfied.UUID.String(),
-							ResponsibilityUuid: export.ResponsibilityUUID,
-							Description:        "Boundary-side configuration answering the provider's stated responsibility.",
-						}}
-					}
-				}
+			if export, inherited := exports[c.ID]; inherited && j == 0 {
+				g.inheritedHalf(&bc, b, c, s, export, isProvider)
 			}
 			byComponents = append(byComponents, bc)
 		}
@@ -277,6 +244,43 @@ func (g *Generator) implementedRequirements(b Boundary, exports map[string]expor
 		})
 	}
 	return out
+}
+
+// inheritedHalf fills in one side of an inherited control: the provider
+// declares what it provides and what it leaves to the consumer; the consumer
+// records what it inherits and how it answers the stated responsibility. A
+// hybrid control is green only when both halves have unexpired observations.
+func (g *Generator) inheritedHalf(bc *oscal.ByComponent, b Boundary, c Control, s System, export exportedHalf, isProvider bool) {
+	if isProvider {
+		bc.ComponentUuid = export.ComponentUUID
+		bc.Export = &oscal.Export{
+			Description: "Provided to every leveraging boundary in the federation.",
+			Provided: &[]oscal.ProvidedControlImplementation{{
+				UUID:        export.ProvidedUUID,
+				Description: "Authentication and authenticator management for leveraging boundaries.",
+			}},
+			Responsibilities: &[]oscal.ControlImplementationResponsibility{{
+				UUID:         export.ResponsibilityUUID,
+				ProvidedUuid: export.ProvidedUUID,
+				Description:  "The leveraging boundary configures its own session and account policy against this service.",
+			}},
+		}
+		return
+	}
+	satisfied, err := g.keys.Responsibility(g.sspUUID(b), g.profileSource(), c.ID, g.componentUUID(b, s.Slug), keys.HalfConsumer)
+	if err != nil {
+		return
+	}
+	bc.Inherited = &[]oscal.InheritedControlImplementation{{
+		UUID:         g.objectUUID("inherited", b.Slug, c.ID),
+		ProvidedUuid: export.ProvidedUUID,
+		Description:  "Inherited from " + providerBoundary().Name + ".",
+	}}
+	bc.Satisfied = &[]oscal.SatisfiedControlImplementationResponsibility{{
+		UUID:               satisfied.UUID.String(),
+		ResponsibilityUuid: export.ResponsibilityUUID,
+		Description:        "Boundary-side configuration answering the provider's stated responsibility.",
+	}}
 }
 
 func (g *Generator) ssp(b Boundary, profileBytes, providerSSPBytes []byte, exports map[string]exportedHalf) oscal.OscalCompleteSchema {

@@ -189,7 +189,7 @@ A row whose evidence has not been produced yet stays `planned`. Moving a row to
 # The schema ships as a release asset, not in the OSCAL source tree —
 # raw.githubusercontent paths under the tag return 404.
 curl -sL -o /tmp/oscal_component_schema.json \
-  https://github.com/usnistgov/OSCAL/releases/download/v1.2.1/oscal_component_schema.json
+  https://github.com/usnistgov/OSCAL/releases/download/v1.2.3/oscal_component_schema.json
 
 # draft-07, and ajv-formats must be loaded explicitly: without -c the schema
 # itself is rejected for an "unknown format uri-reference" before it reads a
@@ -199,7 +199,7 @@ npx ajv-cli@5 validate --spec=draft7 -c ajv-formats \
   -d 'docs/compliance/oscal/cdefs/*.json'
 ```
 
-Verified against `v1.2.1` on 2026-09-19: `sparc-horizon.oscal.json valid`.
+Verified against `v1.2.3` on 2026-11-16 (#115): `sparc-horizon.oscal.json valid`, and a copy with a corrupted UUID rejected. The definition moved from 1.2.1 to 1.2.3 because the lower schemas have known issues.
 
 Tooling is not vendored in this repository; install on demand, as with the contract
 checks in `CLAUDE.md`.

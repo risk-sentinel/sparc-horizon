@@ -82,7 +82,7 @@ inheritance in would lose it.
 
 | Need | Choice | Why |
 |---|---|---|
-| OSCAL types | `github.com/defenseunicorns/go-oscal`, pinned | **Decided in P0 (#26), re-tested in #49.** v0.7.1 ships type packages for 1.1.x through 1.2.2; all seven models Horizon reads are present. Eight published NIST documents round-trip losslessly at their declared version apart from timestamp normalisation — **except `results[*].local-definitions`, where `tasks` and `assessment-assets` are never modelled at any version, because `go-oscal` collapses OSCAL's four differently-shaped `local-definitions` assemblies into one Go type. The same collapse lets the types emit a document OSCAL rejects, so validate what Horizon writes.** The "generate from the NIST schemas" fallback is the same generator self-hosted — `go-oscal` *is* a schema-to-types generator — so it buys no fidelity. **Parse for reading, never to reproduce a signed document:** hash and verify the received bytes |
+| OSCAL types | `github.com/defenseunicorns/go-oscal`, pinned | **Decided in P0 (#26), re-tested in #49 and #115.** v0.7.2 ships type packages for 1.1.x through 1.2.3; all seven models Horizon reads are present. Eight published NIST documents round-trip losslessly at their declared version apart from timestamp normalisation — **except `results[*].local-definitions`, where `tasks` and `assessment-assets` are never modelled at any version, because `go-oscal` collapses OSCAL's four differently-shaped `local-definitions` assemblies into one Go type. The same collapse lets the types emit a document OSCAL rejects, so validate what Horizon writes.** The "generate from the NIST schemas" fallback is the same generator self-hosted — `go-oscal` *is* a schema-to-types generator — so it buys no fidelity. **Parse for reading, never to reproduce a signed document:** hash and verify the received bytes |
 | HDF types | Generated from the HDF v3 JSON schema | Only needed to read raw HDF from back-matter for provenance views |
 | Storage | `modernc.org/sqlite`, Postgres optional | Pure Go, so `CGO_ENABLED=0` and a static binary |
 | HTTP | `github.com/go-chi/chi/v5` | Standard `net/http` handlers, small surface |
@@ -91,7 +91,7 @@ inheritance in would lose it.
 | UI | TypeScript, Vite, CSS grid heatmap | No chart library needed for the HUD; add ECharts later for trends only |
 
 **Documents arrive at more than one OSCAL version.** NIST's own published examples declare
-1.1.2, 1.1.3 and 1.2.2 across the models Horizon reads, while Horizon's fixtures are 1.2.2 and
+1.1.2, 1.1.3 and 1.2.2 across the models Horizon reads, while Horizon's own documents are 1.2.3 (#115) and
 `go-oscal` ships a separate type package per version. `internal/oscal` therefore selects the
 type package from the document's own `oscal-version` and **rejects a version it does not carry
 types for**, rather than decoding with the nearest set — measured in #49, where every document

@@ -20,7 +20,7 @@ func TestTypesForRejectsWhatItCannotDecode(t *testing.T) {
 	// An unlisted version is refused rather than decoded with the nearest
 	// types. Falling back is how a field goes missing quietly: the decode
 	// succeeds, the document is short, and nothing says so.
-	for _, v := range []string{"1.0.0", "1.2.3", "1.3.0", "", "latest"} {
+	for _, v := range []string{"1.0.0", "1.2.4", "1.3.0", "", "latest"} {
 		if _, err := TypesFor(v); err == nil {
 			t.Errorf("TypesFor(%q) was accepted", v)
 		}

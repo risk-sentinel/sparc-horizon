@@ -32,8 +32,8 @@ The result is silent data loss in one direction and invalid output in the other:
 
 | | |
 |---|---|
-| Released | **v0.7.1**, all type packages `oscal-1-0-4` through `oscal-1-2-2` |
-| Unreleased | `main`, including the `oscal-1-2-3` types |
+| Released | **v0.7.1**, all type packages `oscal-1-0-4` through `oscal-1-2-2`; **v0.7.2** adds `oscal-1-2-3` |
+| Still affected at 1.2.3 | Measured 2026-11-16 (#115) on v0.7.2: the probe's 1.2.3 results are identical to 1.2.2's for all eight NIST documents, `local-definitions/tasks` included, and the authored result-level document loses the same two fields |
 | Not a version-skew issue | The OSCAL 1.2.2 and 1.2.3 schemas are identical in this area |
 
 ## What OSCAL specifies

@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-11-16 (#113). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-16 (#115). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,38 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-16 — #115 — `feature/115_oscal_1_2_3`
+
+**In flight:** nothing unpushed. Rebased onto `main` after #114 (the publish pipeline) merged; the component
+definition keeps #114's requirements and moves to 1.2.3 as version 0.3.0.
+
+**Owner decision:** everything Horizon produces or types moves to OSCAL 1.2.3, because the lower
+schemas have known issues. Inbound documents are still read at the version they declare (1.1.2–1.2.3),
+which is the only honest way to read NIST's examples and a peer's export.
+
+**What moved:** `fixtures.OSCALVersion`, the `oscal-1-2-3` types in the generator, tree, authz and the
+mock server, all 25 fixture documents (regenerated: 0 UUID lines changed; the 29 changed SHA-256 values
+are back-matter hashes of documents whose `oscal-version` changed, recomputed against the files), and
+the component definition (1.2.1 → 1.2.3, validated against the v1.2.3 schema with a corrupted copy
+rejected).
+
+**What the measurement says:** `measurements.json` regenerated with `-update`, not edited. Its 1.2.3
+column is identical to 1.2.2's for all eight NIST documents, including the `local-definitions/tasks`
+loss; the authored result-level document loses the same two fields at 1.2.3 as at 1.2.2. So 1.2.3 fixes
+nothing `go-oscal-local-definitions.md` records. The recorded go-oscal version was still v0.7.1 from
+before #99; the regeneration corrected it to v0.7.2.
+
+**SonarCloud S3776 on the touched fixture files** (pre-existing: `assess` 28, `implementedRequirements`
+19, both over 15): split into helpers with the generator's random draws kept in their original order,
+proved by regenerating the fixtures with **0 files changed**. gocognit, which matched Sonar's 28,
+measures 14 and 9 after. `Generate` (32) and `apiResponses` (19) are also over 15 but in files this
+change does not touch.
+
+**Next:** the first release (see #113's prerequisites below), then a docs PR: a tester guide and a
+README overview.
 
 ---
 

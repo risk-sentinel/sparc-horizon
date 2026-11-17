@@ -230,7 +230,8 @@ type Measurement struct {
 //
 // Cross-version decoding is measured rather than assumed because published
 // content does not agree on a version: NIST's own examples declare 1.1.2,
-// 1.1.3 and 1.2.2 across the models Horizon reads, and a peer may send either.
+// 1.1.3 and 1.2.2 across the models Horizon reads, Horizon's own documents are
+// 1.2.3 (#115), and a peer may send any of them.
 func Probe(b []byte) []Measurement {
 	out := make([]Measurement, 0, len(SupportedVersions))
 	for _, v := range SupportedVersions {

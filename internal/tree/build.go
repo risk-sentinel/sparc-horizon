@@ -3,7 +3,7 @@ package tree
 import (
 	"fmt"
 
-	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-2"
+	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
 )
 
 // builder accumulates nodes across the SSP set. Organizations and the

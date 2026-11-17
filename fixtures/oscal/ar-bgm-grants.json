@@ -67,7 +67,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "10db97bf5b6d1db9db6772c9e5bdb1b1fe15a2a89f8cdf6fab31d2742a212c80"
+                  "value": "2802798fe76436a216f1e0b1a5fdf12e4e4d70de21b7e2ae4151bba1ff1e7ecc"
                 }
               ],
               "href": "./ssp-bgm-grants.json",
@@ -92,7 +92,7 @@
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
-      "oscal-version": "1.2.2",
+      "oscal-version": "1.2.3",
       "parties": [
         {
           "name": "Cascade Federation",

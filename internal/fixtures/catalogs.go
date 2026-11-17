@@ -1,7 +1,7 @@
 package fixtures
 
 import (
-	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-2"
+	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
 )
 
 // The two catalogs and the profile over one of them.

@@ -23,6 +23,7 @@ import (
 	oscal113 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-1-3"
 	oscal121 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-1"
 	oscal122 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-2"
+	oscal123 "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
 )
 
 // TypeSet is the typed struct family for one OSCAL version.
@@ -30,7 +31,7 @@ import (
 // `go-oscal` ships a separate package per version, so selecting one is a
 // decision rather than an import. Published content makes that unavoidable:
 // NIST's own examples declare 1.1.2, 1.1.3 and 1.2.2 across the models Horizon
-// reads, while Horizon's fixtures are 1.2.2.
+// reads, while Horizon's own documents are 1.2.3 (#115).
 type TypeSet struct {
 	Version string
 	// newDocument returns a pointer to an empty complete-schema document of
@@ -42,7 +43,7 @@ type TypeSet struct {
 // purpose: it is the set actually observed in content this prototype is built
 // against, and an unlisted version is rejected rather than decoded with the
 // nearest types. Guessing is how a field goes missing without anyone noticing.
-var SupportedVersions = []string{"1.1.2", "1.1.3", "1.2.1", "1.2.2"}
+var SupportedVersions = []string{"1.1.2", "1.1.3", "1.2.1", "1.2.2", "1.2.3"}
 
 // TypesFor returns the type set for an OSCAL version.
 func TypesFor(version string) (TypeSet, error) {
@@ -55,6 +56,8 @@ func TypesFor(version string) (TypeSet, error) {
 		return TypeSet{Version: version, newDocument: func() any { return &oscal121.OscalCompleteSchema{} }}, nil
 	case "1.2.2":
 		return TypeSet{Version: version, newDocument: func() any { return &oscal122.OscalCompleteSchema{} }}, nil
+	case "1.2.3":
+		return TypeSet{Version: version, newDocument: func() any { return &oscal123.OscalCompleteSchema{} }}, nil
 	default:
 		return TypeSet{}, fmt.Errorf("oscal: version %q is not one of %v", version, SupportedVersions)
 	}

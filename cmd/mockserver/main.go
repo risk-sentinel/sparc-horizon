@@ -33,7 +33,7 @@ import (
 	"sort"
 	"strings"
 
-	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-2"
+	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
 
 	"github.com/risk-sentinel/sparc-horizon/internal/authz"
 	"github.com/risk-sentinel/sparc-horizon/internal/tree"

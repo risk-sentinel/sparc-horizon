@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "2bf7bf99ae6b7317a533b8085c6d6c0ff07b6c38acb9b55d44236b4856e46dcc"
+                  "value": "c7960964e6c4222dd665b2fd7f3692d39e8e1b25bfc8032e37ffc70ae91b4c6a"
                 }
               ],
               "href": "./ssp-coa-fieldops.json",
@@ -26,7 +26,7 @@
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
-      "oscal-version": "1.2.2",
+      "oscal-version": "1.2.3",
       "parties": [
         {
           "name": "Cascade Federation",

@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "b4f80988f26ea0a980a38c30d763cf7ae8c1e783555652b11129ae5f324d482f"
+                  "value": "3d14e9ca6ae9c05d849a4cdc221e6e9efec0112521fbb2ea9d0f7b80643b56b5"
                 }
               ],
               "href": "./profile-moderate.json",
@@ -423,7 +423,7 @@
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
-      "oscal-version": "1.2.2",
+      "oscal-version": "1.2.3",
       "parties": [
         {
           "name": "Cascade Federation",

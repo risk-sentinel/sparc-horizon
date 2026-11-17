@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-2"
+	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
 
 	"github.com/risk-sentinel/sparc-horizon/internal/project"
 )

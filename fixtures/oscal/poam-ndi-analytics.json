@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "e57fdb962fcab5d225bd69d7afa226bde33010d796a38e1c2b3fda505dfb6ec5"
+                  "value": "8db4175171b6d10d8c7189a12c902514e5634b35b38ccf1c3d5a506baa587172"
                 }
               ],
               "href": "./ssp-ndi-analytics.json",
@@ -26,7 +26,7 @@
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
-      "oscal-version": "1.2.2",
+      "oscal-version": "1.2.3",
       "parties": [
         {
           "name": "Cascade Federation",

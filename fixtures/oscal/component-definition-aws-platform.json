@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "a94eaf1c623001e93b4c6e1a2f2c34f42806d84ff3d76151a8c2e614b27606f0"
+                  "value": "f6dc19075c3094f8d5d8a15368f7d1ccf86b56a39fe146e3ebebe12d2b45a417"
                 }
               ],
               "href": "./catalog-aws-security-hub-subset.json",
@@ -77,7 +77,7 @@
     ],
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
-      "oscal-version": "1.2.2",
+      "oscal-version": "1.2.3",
       "published": "2026-09-15T00:00:00Z",
       "remarks": "Carries `source` on its control-implementation, so a control identifier reaching a boundary through this document resolves to the Security Hub catalog rather than to the boundary's profile.",
       "title": "Inherited AWS platform components",

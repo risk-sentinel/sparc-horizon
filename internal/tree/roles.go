@@ -1,7 +1,7 @@
 package tree
 
 import (
-	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-2"
+	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
 )
 
 // bindRoles attaches this document's responsible-parties to the right tier.

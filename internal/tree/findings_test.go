@@ -5,7 +5,7 @@ import (
 	"slices"
 	"testing"
 
-	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-2"
+	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
 )
 
 // clone deep-copies an SSP so a test can break one document without breaking

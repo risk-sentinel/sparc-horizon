@@ -49,7 +49,7 @@ const (
 )
 
 // OSCALVersion is the version every fixture document declares.
-const OSCALVersion = "1.2.2"
+const OSCALVersion = "1.2.3"
 
 // Period is the assessment period every keyed object in the fixtures falls in.
 const Period = "2026-Q3"

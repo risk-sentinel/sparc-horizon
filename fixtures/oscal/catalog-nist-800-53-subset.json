@@ -190,7 +190,7 @@
     ],
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
-      "oscal-version": "1.2.2",
+      "oscal-version": "1.2.3",
       "published": "2026-09-15T00:00:00Z",
       "remarks": "Twelve controls across six families, for the SPARC Horizon fixture federation. Not a substitute for the published catalog.",
       "title": "Fixture subset of NIST SP 800-53 Revision 5",

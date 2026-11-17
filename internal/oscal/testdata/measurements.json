@@ -6,7 +6,7 @@
     "strict-decode-error = a field the types do not model at all, found with DisallowUnknownFields.",
     "Regenerate with: go test ./internal/oscal/ -update"
   ],
-  "go-oscal": "v0.7.1",
+  "go-oscal": "v0.7.2",
   "results": {
     "basic-catalog.json": [
       {
@@ -26,6 +26,11 @@
       },
       {
         "type-version": "1.2.2",
+        "differences": 0,
+        "timestamp-differences": 1
+      },
+      {
+        "type-version": "1.2.3",
         "differences": 0,
         "timestamp-differences": 1
       }
@@ -50,6 +55,11 @@
         "type-version": "1.2.2",
         "differences": 0,
         "timestamp-differences": 0
+      },
+      {
+        "type-version": "1.2.3",
+        "differences": 0,
+        "timestamp-differences": 0
       }
     ],
     "basic-profile.json": [
@@ -70,6 +80,11 @@
       },
       {
         "type-version": "1.2.2",
+        "differences": 0,
+        "timestamp-differences": 0
+      },
+      {
+        "type-version": "1.2.3",
         "differences": 0,
         "timestamp-differences": 0
       }
@@ -94,6 +109,11 @@
         "type-version": "1.2.2",
         "differences": 0,
         "timestamp-differences": 2
+      },
+      {
+        "type-version": "1.2.3",
+        "differences": 0,
+        "timestamp-differences": 2
       }
     ],
     "ifa_assessment-plan.json": [
@@ -114,6 +134,11 @@
       },
       {
         "type-version": "1.2.2",
+        "differences": 0,
+        "timestamp-differences": 2
+      },
+      {
+        "type-version": "1.2.3",
         "differences": 0,
         "timestamp-differences": 2
       }
@@ -154,6 +179,15 @@
         "paths": [
           "/assessment-results/results/0/local-definitions/tasks"
         ]
+      },
+      {
+        "type-version": "1.2.3",
+        "differences": 1,
+        "timestamp-differences": 1,
+        "strict-decode-error": "oscal: strict decode at 1.2.3: json: unknown field \"tasks\"",
+        "paths": [
+          "/assessment-results/results/0/local-definitions/tasks"
+        ]
       }
     ],
     "ifa_plan-of-action-and-milestones.json": [
@@ -176,6 +210,11 @@
         "type-version": "1.2.2",
         "differences": 0,
         "timestamp-differences": 2
+      },
+      {
+        "type-version": "1.2.3",
+        "differences": 0,
+        "timestamp-differences": 2
       }
     ],
     "ifa_ssp-example.json": [
@@ -196,6 +235,11 @@
       },
       {
         "type-version": "1.2.2",
+        "differences": 0,
+        "timestamp-differences": 0
+      },
+      {
+        "type-version": "1.2.3",
         "differences": 0,
         "timestamp-differences": 0
       }

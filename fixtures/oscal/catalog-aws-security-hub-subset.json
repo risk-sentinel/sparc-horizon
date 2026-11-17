@@ -52,7 +52,7 @@
     ],
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
-      "oscal-version": "1.2.2",
+      "oscal-version": "1.2.3",
       "published": "2026-09-15T00:00:00Z",
       "remarks": "A second catalog authority. Its identifiers are carried exactly as issued: ACM.1 is not acm.1, and normalising it into NIST's form would produce an identifier that validates and names nothing.",
       "title": "Fixture subset of AWS Security Hub controls",

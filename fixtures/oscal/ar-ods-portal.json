@@ -67,7 +67,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "9d40304af8df17548132e4363dee7484bcab32c0d7e05aa6b73d6131dff99798"
+                  "value": "f2613aa08f518a10480d649bd364318bfd4a36f68ee6540e74a98078fddfc36e"
                 }
               ],
               "href": "./ssp-ods-portal.json",
@@ -92,7 +92,7 @@
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
-      "oscal-version": "1.2.2",
+      "oscal-version": "1.2.3",
       "parties": [
         {
           "name": "Cascade Federation",

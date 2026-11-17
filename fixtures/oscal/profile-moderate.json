@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "770eb6d28fe36846eba1bb77d29fa487e18e93ccdfec4cd317a0433a86881678"
+                  "value": "6705b9282bc3933b624f45ea7335e92d7c857fdd269dfead52a5194973c1a8cf"
                 }
               ],
               "href": "./catalog-nist-800-53-subset.json",
@@ -46,7 +46,7 @@
     ],
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
-      "oscal-version": "1.2.2",
+      "oscal-version": "1.2.3",
       "published": "2026-09-15T00:00:00Z",
       "remarks": "The resolved control set every fixture SSP imports. Where a control-implementation carries no source of its own, this profile is what `source-uuid` resolves to.",
       "title": "Fixture moderate baseline",

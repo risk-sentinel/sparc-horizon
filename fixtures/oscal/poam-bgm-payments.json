@@ -9,7 +9,7 @@
               "hashes": [
                 {
                   "algorithm": "SHA-256",
-                  "value": "802ff2a30ac8d6c3714e5f2494bff6d7e75ac5b9552fe387c52e27f421de10d4"
+                  "value": "7f90b1b78c94687c16469cb748e1063993a5ab3265ed68c00d72c6fd8e97a802"
                 }
               ],
               "href": "./ssp-bgm-payments.json",
@@ -26,7 +26,7 @@
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
-      "oscal-version": "1.2.2",
+      "oscal-version": "1.2.3",
       "parties": [
         {
           "name": "Cascade Federation",

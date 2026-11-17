@@ -70,7 +70,7 @@ Machine-readable contracts:
   into `internal/keys/testdata/` with its provenance — rather than publishing its own
 
 The fixture federation itself — four organizations, seven authorization boundaries, twenty
-systems, OSCAL 1.2.2 — is generated into [`fixtures/`](fixtures/README.md):
+systems, OSCAL 1.2.3 — is generated into [`fixtures/`](fixtures/README.md):
 
 ```bash
 go run ./cmd/genfixtures     # rewrites fixtures/ wholesale; never edit it by hand
@@ -86,5 +86,5 @@ go test ./...                # includes the regeneration-stability check
   their identifiers are final.
 - The KSI theme mapping in the demo is illustrative; real mappings come from SPARC.
 - ~~`go-oscal` coverage of OSCAL 1.2.x is a phase 0 decision, not an assumption.~~ **Decided
-  (#26): `go-oscal`, pinned.** The fixtures are emitted through its `oscal-1-2-2` types and
-  validated against the 1.2.2 schema in `go test`.
+  (#26): `go-oscal`, pinned.** The fixtures are emitted through its `oscal-1-2-3` types and
+  validated against the 1.2.3 schema in `go test` (#115; 1.2.2 before).

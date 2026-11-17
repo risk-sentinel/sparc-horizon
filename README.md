@@ -16,7 +16,7 @@ flowchart LR
   T["Tester<br/>browser or curl"] -->|"/"| D["HUD demos<br/>demo/*.html"]
   T -->|"/v1/* + X-Horizon-Persona"| M["Mock server<br/>cmd/mockserver"]
   M --> A["internal/authz<br/>node-scoped 404 rule"]
-  M --> F["fixtures/<br/>25 OSCAL 1.2.3 documents<br/>+ API goldens"]
+  M --> F["fixtures/ or your folder<br/>OSCAL SSP, AP, AR, POA&M<br/>(fixtures: 32, OSCAL 1.2.3)"]
   G["cmd/genfixtures"] -->|"regenerates"| F
   subgraph planned["Designed, not built"]
     L["Ledger + projection engine (P2)"]
@@ -27,8 +27,9 @@ flowchart LR
 ```
 
 Everything in the box on the left is in this repository and runs with nothing else installed. The
-mock serves precomputed responses for one horizon date and answers the write endpoints with 501;
-the persona header stands in for a login. **To try it, follow [the tester guide](docs/testing.md).**
+mock computes every response from the OSCAL documents it is given, at the horizon a request asks
+for, and answers the write endpoints with 501; the persona header stands in for a login. Point it at
+your own SSP, assessment results and POA&M with `-dir` ([tester guide, section 7](docs/testing.md#7-bring-your-own-oscal)). **To try it, follow [the tester guide](docs/testing.md).**
 
 ## Three ways to run it
 

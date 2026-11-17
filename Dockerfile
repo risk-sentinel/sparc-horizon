@@ -60,4 +60,6 @@ COPY --from=build /out/srv/ /srv/horizon/
 USER 1001:1001
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/horizon"]
-CMD ["-addr", "0.0.0.0:8080", "-dir", "/srv/horizon/fixtures", "-static", "/srv/horizon/demo"]
+# The fixtures' horizon, so docs/testing.md's outputs reproduce. Point -dir at
+# your own OSCAL to see your own boundary.
+CMD ["-addr", "0.0.0.0:8080", "-dir", "/srv/horizon/fixtures", "-static", "/srv/horizon/demo", "-horizon", "2026-10-15"]

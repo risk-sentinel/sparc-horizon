@@ -6,9 +6,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path"
 	"sort"
 	"strings"
 	"testing"
+	"time"
 )
 
 // The mock exists to be built against, so the thing worth testing is the rule
@@ -18,10 +20,13 @@ import (
 // Checked through the router, as HTTP responses. A refusal rule that holds
 // only when handlers are called directly is not a refusal rule.
 
+// fixtureHorizon is the date the fixture goldens were computed for.
+var fixtureHorizon = time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC)
+
 func testServer(t *testing.T) (*server, http.Handler) {
 	t.Helper()
 
-	s, err := newServer(os.DirFS("../../fixtures"))
+	s, err := newServerWith(os.DirFS("../../fixtures"), config{horizon: fixtureHorizon})
 	if err != nil {
 		t.Fatalf("newServer: %v — run `go run ./cmd/genfixtures`", err)
 	}
@@ -55,7 +60,7 @@ func TestUnseenNodeAndAbsentNodeAreIndistinguishable(t *testing.T) {
 	// Premise, asserted rather than assumed: if these two personas overlapped,
 	// the test below would pass while proving nothing. Asked of internal/authz
 	// since #79, which is the same question the server now answers with.
-	if s.authz.Visible(caller.PartyUUID, foreign) {
+	if s.view.Authorizer().Visible(caller.PartyUUID, foreign) {
 		t.Fatal("premise wrong: the personas overlap, so this proves nothing")
 	}
 
@@ -124,10 +129,11 @@ func TestChainFollowsTheSameRule(t *testing.T) {
 			Requirement string `json:"requirement"`
 			Component   string `json:"component"`
 		}
-		if err := s.read("api/chain/"+e.Name(), &c); err != nil {
+		raw, err := os.ReadFile("../../fixtures/api/chain/" + e.Name())
+		if err != nil || json.Unmarshal(raw, &c) != nil {
 			continue
 		}
-		if s.authz.Visible(caller.PartyUUID, c.Component) {
+		if s.view.Authorizer().Visible(caller.PartyUUID, c.Component) {
 			mine = c.Requirement
 		} else {
 			theirs = c.Requirement
@@ -215,29 +221,29 @@ func TestTreeIsComputedAndStillMatchesTheGolden(t *testing.T) {
 	s, h := testServer(t)
 
 	for _, p := range s.personas {
-		t.Run(p.ID, func(t *testing.T) {
-			raw, err := fs.ReadFile(s.fsys, "api/"+p.ID+"/tree.json")
-			if err != nil {
-				t.Fatalf("golden: %v", err)
-			}
-			var want, got any
-			if err := json.Unmarshal(raw, &want); err != nil {
-				t.Fatalf("golden: %v", err)
-			}
+		t.Run(p.ID, func(t *testing.T) { checkTreeGolden(t, h, p.ID) })
+	}
+}
 
-			res := get(t, h, p.ID, "/v1/tree")
-			if res.Code != http.StatusOK {
-				t.Fatalf("GET /v1/tree returned %d", res.Code)
-			}
-			if err := json.Unmarshal(res.Body.Bytes(), &got); err != nil {
-				t.Fatalf("response: %v", err)
-			}
-
-			if !sameTree(want, got) {
-				t.Errorf("computed tree differs from the frozen golden\n got: %s\nwant: %s",
-					res.Body.String(), raw)
-			}
-		})
+func checkTreeGolden(t *testing.T, h http.Handler, persona string) {
+	t.Helper()
+	raw, err := fs.ReadFile(os.DirFS("../../fixtures"), "api/"+persona+"/tree.json")
+	if err != nil {
+		t.Fatalf("golden: %v", err)
+	}
+	var want, got any
+	if err := json.Unmarshal(raw, &want); err != nil {
+		t.Fatalf("golden: %v", err)
+	}
+	res := get(t, h, persona, "/v1/tree")
+	if res.Code != http.StatusOK {
+		t.Fatalf("GET /v1/tree returned %d", res.Code)
+	}
+	if err := json.Unmarshal(res.Body.Bytes(), &got); err != nil {
+		t.Fatalf("response: %v", err)
+	}
+	if !sameTree(want, got) {
+		t.Errorf("computed tree differs from the frozen golden\n got: %s\nwant: %s", res.Body.String(), raw)
 	}
 }
 
@@ -293,7 +299,14 @@ func (h hideFS) Open(name string) (fs.File, error) {
 }
 
 func (h hideFS) ReadDir(name string) ([]fs.DirEntry, error) {
-	return fs.ReadDir(h.FS, name)
+	entries, err := fs.ReadDir(h.FS, name)
+	out := entries[:0]
+	for _, e := range entries {
+		if path.Join(name, e.Name()) != h.hidden {
+			out = append(out, e)
+		}
+	}
+	return out, err
 }
 
 // The proof that /v1/tree is COMPUTED rather than served.
@@ -315,7 +328,7 @@ func TestTreeIsComputedNotRead(t *testing.T) {
 		t.Fatalf("golden: %v", err)
 	}
 
-	s, err := newServer(hideFS{FS: fixtures, hidden: "api/" + who + "/tree.json"})
+	s, err := newServerWith(hideFS{FS: fixtures, hidden: "api/" + who + "/tree.json"}, config{horizon: fixtureHorizon})
 	if err != nil {
 		t.Fatalf("newServer: %v", err)
 	}

@@ -16,6 +16,13 @@ type builder struct {
 	bindings   []Binding
 	findings   []Finding
 	seenSystem map[string]string // system-id -> the SSP that claimed it first
+	aliases    map[string]Role
+	// implicit is true when no SSP in the set names a federation, so a lone
+	// organization goes under LocalFederation. In a set where any document
+	// names one, a lone organization party is a document missing its
+	// organization, which is reported as before rather than allowed to root
+	// the tree.
+	implicit bool
 }
 
 // Build assembles the tree from a set of boundary SSPs.
@@ -24,6 +31,11 @@ type builder struct {
 // sorted by name then id, so a golden file compares byte for byte regardless
 // of how the documents were loaded.
 func Build(ssps []*oscal.SystemSecurityPlan) (Result, error) {
+	return BuildWith(ssps, Options{})
+}
+
+// BuildWith is Build with reading options.
+func BuildWith(ssps []*oscal.SystemSecurityPlan, opts Options) (Result, error) {
 	if len(ssps) == 0 {
 		return Result{}, fmt.Errorf("tree: no SSPs to build from")
 	}
@@ -31,6 +43,8 @@ func Build(ssps []*oscal.SystemSecurityPlan) (Result, error) {
 	b := &builder{
 		orgs:       map[string]*Node{},
 		seenSystem: map[string]string{},
+		aliases:    opts.RoleAliases,
+		implicit:   !anyNamesFederation(ssps),
 	}
 
 	for _, ssp := range ssps {
@@ -94,7 +108,14 @@ func (b *builder) addBoundary(ssp *oscal.SystemSecurityPlan) {
 // federation node on first sight. A nil return means the document could not be
 // placed in the tree at all, which is reported rather than skipped silently.
 func (b *builder) resolveOrganization(parties map[string]oscal.Party, src string) *Node {
-	fed, org, err := tiers(parties)
+	fed, org, err := tiers(parties, b.implicit)
+	if err == nil && fed.UUID == "" {
+		// One organization, a member of nothing: placed under the local
+		// federation, and said so.
+		b.note(FindingImplicitFederation, src,
+			"organization %s names no federation; placed under %q", org.UUID, LocalFederation.Name)
+		fed = oscal.Party{UUID: LocalFederation.ID, Name: LocalFederation.Name}
+	}
 	if err != nil {
 		kind := FindingNoOrganization
 		if fed.UUID == "" {
@@ -129,7 +150,17 @@ func (b *builder) resolveOrganization(parties map[string]oscal.Party, src string
 // The federation is the organization party that is a member of nothing; an
 // organization is a party that is a member of it. Both are read from the SSP
 // rather than from an admin table, because a document edit is the grant.
-func tiers(parties map[string]oscal.Party) (fed, org oscal.Party, err error) {
+//
+// A document with exactly one organization party, a member of nothing, names
+// an organization and no federation: it returns that party as org and an empty
+// fed, and the caller places it under LocalFederation.
+func tiers(parties map[string]oscal.Party, implicit bool) (fed, org oscal.Party, err error) {
+	if implicit {
+		if lone, ok := loneOrganization(parties); ok {
+			return oscal.Party{}, lone, nil
+		}
+	}
+
 	for _, p := range parties {
 		if p.Type != "organization" {
 			continue
@@ -162,4 +193,33 @@ func (b *builder) bind(n *Node, role Role, party string) {
 	b.bindings = append(b.bindings, Binding{
 		NodeID: n.ID, NodeType: n.NodeType, Role: role, PartyUUID: party,
 	})
+}
+
+// anyNamesFederation reports whether any SSP in the set has both tiers: an
+// organization party that is a member of another.
+func anyNamesFederation(ssps []*oscal.SystemSecurityPlan) bool {
+	for _, ssp := range ssps {
+		if ssp == nil {
+			continue
+		}
+		if _, _, err := tiers(partyIndex(ssp), false); err == nil {
+			return true
+		}
+	}
+	return false
+}
+
+// loneOrganization is the document's only organization party, when it is a
+// member of nothing.
+func loneOrganization(parties map[string]oscal.Party) (oscal.Party, bool) {
+	var orgs []oscal.Party
+	for _, p := range parties {
+		if p.Type == "organization" {
+			orgs = append(orgs, p)
+		}
+	}
+	if len(orgs) == 1 && len(memberOf(orgs[0])) == 0 {
+		return orgs[0], true
+	}
+	return oscal.Party{}, false
 }

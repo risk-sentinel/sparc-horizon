@@ -1,10 +1,10 @@
 {
   "component-definition": {
-    "uuid": "294f01df-281a-4dd1-acd3-3e88b082045a",
+    "uuid": "460aafaf-df97-441c-8f26-fbe0d73eeb22",
     "metadata": {
       "title": "SPARC Horizon",
-      "last-modified": "2026-11-16T00:00:00Z",
-      "version": "0.3.1",
+      "last-modified": "2026-11-17T00:00:00Z",
+      "version": "0.3.2",
       "oscal-version": "1.2.3",
       "roles": [
         {
@@ -513,7 +513,7 @@
                     "rel": "evidence"
                   }
                 ],
-                "remarks": "Configuration dependency: the rejection behaviour is the contract, not a defensive extra. A caller that cannot resolve a source-uuid, or that supplies a control identifier from an authority other than the one the source resolves to, gets an error rather than an identifier. 11 of the refusals are published in fixtures/key-vectors.v1.json so the Ruby and Python ports of the grammar (sparc#1161) inherit them."
+                "remarks": "Configuration dependency: the rejection behaviour is the contract, not a defensive extra. A caller that cannot resolve a source-uuid, or that supplies a control identifier from an authority other than the one the source resolves to, gets an error rather than an identifier. 11 of the refusals are published in fixtures/key-vectors.v1.json so the Ruby and Python ports of the grammar (sparc#1161) inherit them. Document-level input handling in the prototype mock (#120): internal/view reads only files under -dir through an os.Root, caps each at 64 MiB, refuses a root that is not an OSCAL model or a version outside 1.1.2-1.2.3, and reports every document that does not decode or does not link rather than repairing it. Full schema validation on ingestion is still planned."
               }
             ]
           }

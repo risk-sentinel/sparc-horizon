@@ -3,29 +3,31 @@
 **Generated. Do not edit by hand.** Written by `internal/fixtures` alongside the OSCAL,
 and rewritten wholesale by `go run ./cmd/genfixtures`.
 
-Served by `go run ./cmd/mockserver`, which P3 builds the HUD against and P1 shapes its
-client against. Every response validates against `api/openapi.yaml` in CI — both that each
-golden satisfies the schema its path declares, and that the contract declares nothing the
-mock cannot answer.
+Computed by `internal/view`, the same code `go run ./cmd/mockserver` runs live over any
+folder of OSCAL (#120). Every response validates against `api/openapi.yaml` in CI — both
+that each golden satisfies the schema its path declares, and that the contract declares
+nothing the mock cannot answer.
 
 ## These are illustrative shape, not projections
 
-Cell states come from `project.StateAt` over the fixtures' own observation expiries and
-blocking risks. That is the algorithm `docs/05-projection-engine.md` specifies, but this is
+Cell states come from `project.StateAt` over the observations' expiries and the risks'
+blocks-ato. That is the algorithm `docs/05-projection-engine.md` specifies, but this is
 **not the projection engine**: there is no ledger, no materialisation, no invalidation along
 a node's ancestry, and no ranking model. P2 builds those.
 
 So: do not cite a number here as an engine result, and do not treat the ordering as the
 ranking. What these are good for is shape, volume and the joins between endpoints.
 
-Every value is derived by **parsing the OSCAL this same run emitted**, rather than from the
-generator's own state. That is the cheap version of the audit claim — if a response cannot
-be recomputed from exported documents, it does not belong in the contract either.
+Every value is derived by **parsing the OSCAL this same run emitted** through the standard
+relationships (finding → observation → component, finding → risk → POA&M item), rather than
+from the generator's own state. If a response cannot be recomputed from exported documents,
+it does not belong in the contract either.
 
 ## Horizon
 
-Computed once, for **2026-10-15**. The `horizon` query parameter is
-accepted and ignored by the mock; a real service projects to the date it is asked for.
+These goldens are computed for **2026-10-15**. The mock computes every response live
+from the documents, so it honours the `horizon` query parameter (#120); these files are the
+contract's examples and the regression baseline, not what the mock reads.
 
 ## Personas
 

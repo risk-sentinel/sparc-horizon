@@ -11,6 +11,7 @@ const (
 
 func pathSSP(b Boundary) string               { return "oscal/ssp-" + b.Slug + ".json" }
 func pathAssessmentResults(b Boundary) string { return "oscal/ar-" + b.Slug + ".json" }
+func pathAssessmentPlan(b Boundary) string    { return "oscal/ap-" + b.Slug + ".json" }
 func pathPOAM(b Boundary) string              { return "oscal/poam-" + b.Slug + ".json" }
 func pathEvidence(b Boundary, kind string) string {
 	return "evidence/" + b.Slug + "-" + kind + "-" + Period + ".json"

@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-11-16 (#117). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-17 (#120). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,39 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-17 — #120 — `feature/120_byo_oscal`
+
+**In flight:** nothing unpushed. Owner: land this PR; another session picks sparc-horizon up after it.
+
+**Owner decisions (2026-11-17):** Horizon is **OSCAL-only**, a visualization tool; translation (HDF and
+the like) stays outside it. Approved as filed: roles from dropped-in documents decide visibility in the
+local mock only; honour `horizon`. No SPARC export was supplied, so NIST's example set is the second corpus.
+
+**What the measurement found:** the old derivation joined on conventions only the generator emits (an
+observation link naming the control; one result per known boundary), so no other producer's documents
+would have shown anything. NIST's set also had no federation party (one organization) and none of the
+contract's role names (`owner`), so `internal/tree` built nothing from it. Both fixed on this PR: a
+lone organization goes under a derived local federation **only when no SSP in the set names a
+federation** (the first version let a federation document missing its organization root the tree;
+`TestDocumentWithNoOrganizationIsReported` caught it), and `-role-alias`.
+
+**Regression:** `internal/view` over the regenerated fixtures reproduces every API golden except 6:
+two are ordering only (organization rows now in tree order, by name, instead of the generator's table
+order; si-4 ties broken by component), and four are the Security Hub chains, keyed on a component
+definition requirement every boundary shares, so the golden holds whichever boundary is written last.
+`Chain` now returns the first one the caller can see (the first version stopped at the first match).
+
+**Alternatives rejected:** keeping goldens as what the mock serves (a tester's folder has none);
+decoding each version with its own types (the fields read are unchanged across 1.1.2–1.2.3, and
+go-oscal-local-definitions.md records what the types drop); a new contract path for documents (frozen).
+
+**Next:** P1's SPARC client is unblocked (sparc#1181 closed 2026-09-30, PR #1197); its export is the
+corpus this mock should be checked against next. sparc PR #1197's owner decision that "Horizon's
+data-model doc changes to match" (SSP `node-type: system`, `parent-uuid` = boundary) is not yet
+reflected here.
 
 ---
 

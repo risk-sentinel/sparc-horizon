@@ -134,7 +134,7 @@ func TestGeneratedDocumentsAreValidOSCAL(t *testing.T) {
 		validated++
 	}
 	// A loop that validated nothing reports no failures.
-	if want := 4 + 3*len(Boundaries); validated != want {
+	if want := 4 + 4*len(Boundaries); validated != want { // SSP, AP, AR, POA&M each
 		t.Errorf("validated %d documents, want %d", validated, want)
 	}
 }

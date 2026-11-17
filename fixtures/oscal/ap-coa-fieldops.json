@@ -1,0 +1,162 @@
+{
+  "assessment-plan": {
+    "import-ssp": {
+      "href": "#1942d11b-584d-580b-91cb-0ad94254c560"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.3",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
+        },
+        {
+          "member-of-organizations": [
+            "77187569-aef0-5983-8528-3571a71f997b"
+          ],
+          "name": "Coastal Operations Agency",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "organization"
+            }
+          ],
+          "short-name": "COA",
+          "type": "organization",
+          "uuid": "019cb43f-7468-5184-8780-be8a71a340dc"
+        },
+        {
+          "member-of-organizations": [
+            "019cb43f-7468-5184-8780-be8a71a340dc"
+          ],
+          "name": "FIELDOPS Authorizing Official",
+          "type": "person",
+          "uuid": "92a463cb-c2b1-5a81-909d-c7b5b463bf03"
+        },
+        {
+          "member-of-organizations": [
+            "019cb43f-7468-5184-8780-be8a71a340dc"
+          ],
+          "name": "FIELDOPS System Owner",
+          "type": "person",
+          "uuid": "46d94c6d-28db-57f9-8579-86ed5253279c"
+        },
+        {
+          "member-of-organizations": [
+            "019cb43f-7468-5184-8780-be8a71a340dc"
+          ],
+          "name": "FIELDOPS Information System Security Officer",
+          "type": "person",
+          "uuid": "ede17861-8582-5239-b66e-cde0b634932f"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "92a463cb-c2b1-5a81-909d-c7b5b463bf03"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "46d94c6d-28db-57f9-8579-86ed5253279c"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "ede17861-8582-5239-b66e-cde0b634932f"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Field Operations continuous monitoring plan 2026-Q3",
+      "version": "1.0.0"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "description": "Controls assessed for Field Operations in 2026-Q3.",
+          "include-controls": [
+            {
+              "control-id": "ac-2"
+            },
+            {
+              "control-id": "ac-2.1"
+            },
+            {
+              "control-id": "au-6"
+            },
+            {
+              "control-id": "au-6.1"
+            },
+            {
+              "control-id": "cp-4"
+            },
+            {
+              "control-id": "cp-9"
+            },
+            {
+              "control-id": "ia-2"
+            },
+            {
+              "control-id": "ia-5"
+            },
+            {
+              "control-id": "sc-7"
+            },
+            {
+              "control-id": "sc-28"
+            },
+            {
+              "control-id": "si-4"
+            },
+            {
+              "control-id": "si-7"
+            },
+            {
+              "control-id": "ACM.1"
+            },
+            {
+              "control-id": "IAM.4"
+            },
+            {
+              "control-id": "S3.5"
+            },
+            {
+              "control-id": "EC2.2"
+            }
+          ]
+        }
+      ]
+    },
+    "uuid": "7c47accd-b74d-500d-8f6b-bd57013b37a6"
+  }
+}

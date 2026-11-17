@@ -15,7 +15,7 @@ A hand edit is lost on the next run and fails the regeneration check before that
 
 | Directory | Files | What |
 |---|---|---|
-| `oscal/` | 25 | Catalogs, the profile, the inherited component definition, and one SSP, assessment-results and POA&M per boundary |
+| `oscal/` | 32 | Catalogs, the profile, the inherited component definition, and one SSP, assessment-results and POA&M per boundary |
 | `evidence/` | 14 | The artifacts the back-matter resources hash. Synthetic content; the digests are of these bytes |
 | `sparc/` | 8 | SPARC Delivery API responses, byte-shaped as the API serves them: `{data, meta}`, paginated. Discovery and addressing only — `ssp_documents[].uuid` is the single OSCAL identifier |
 

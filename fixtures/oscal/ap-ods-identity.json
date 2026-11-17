@@ -1,0 +1,162 @@
+{
+  "assessment-plan": {
+    "import-ssp": {
+      "href": "#52176fd3-10ad-5df7-bbb4-c69a930223a8"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.3",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
+        },
+        {
+          "member-of-organizations": [
+            "77187569-aef0-5983-8528-3571a71f997b"
+          ],
+          "name": "Office of Digital Services",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "organization"
+            }
+          ],
+          "short-name": "ODS",
+          "type": "organization",
+          "uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
+        },
+        {
+          "member-of-organizations": [
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
+          ],
+          "name": "IDENTITY Authorizing Official",
+          "type": "person",
+          "uuid": "52e63fca-a9a5-52a6-8454-ba8e354cdaa0"
+        },
+        {
+          "member-of-organizations": [
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
+          ],
+          "name": "IDENTITY System Owner",
+          "type": "person",
+          "uuid": "49726dd3-5aa6-501e-9530-9b1d7a59a0a6"
+        },
+        {
+          "member-of-organizations": [
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
+          ],
+          "name": "IDENTITY Information System Security Officer",
+          "type": "person",
+          "uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "52e63fca-a9a5-52a6-8454-ba8e354cdaa0"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "49726dd3-5aa6-501e-9530-9b1d7a59a0a6"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "d98e6054-678e-56d3-a5d5-93ae01cd8064"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Identity Services continuous monitoring plan 2026-Q3",
+      "version": "1.0.0"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "description": "Controls assessed for Identity Services in 2026-Q3.",
+          "include-controls": [
+            {
+              "control-id": "ac-2"
+            },
+            {
+              "control-id": "ac-2.1"
+            },
+            {
+              "control-id": "au-6"
+            },
+            {
+              "control-id": "au-6.1"
+            },
+            {
+              "control-id": "cp-4"
+            },
+            {
+              "control-id": "cp-9"
+            },
+            {
+              "control-id": "ia-2"
+            },
+            {
+              "control-id": "ia-5"
+            },
+            {
+              "control-id": "sc-7"
+            },
+            {
+              "control-id": "sc-28"
+            },
+            {
+              "control-id": "si-4"
+            },
+            {
+              "control-id": "si-7"
+            },
+            {
+              "control-id": "ACM.1"
+            },
+            {
+              "control-id": "IAM.4"
+            },
+            {
+              "control-id": "S3.5"
+            },
+            {
+              "control-id": "EC2.2"
+            }
+          ]
+        }
+      ]
+    },
+    "uuid": "cf30a7c6-154a-579b-b54b-644b5e3a940f"
+  }
+}

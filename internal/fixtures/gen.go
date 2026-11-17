@@ -137,6 +137,50 @@ func (g *Generator) Generate() (Tree, error) {
 		return b, nil
 	}
 
+	profileBytes, err := g.catalogDocuments(add)
+	if err != nil {
+		return nil, err
+	}
+
+	// The provider's exported responsibilities are read by every consumer, so
+	// they are derived once, and the provider's SSP is built first so the
+	// consumers can hash the document they leverage.
+	exports, err := g.exportedResponsibilities()
+	if err != nil {
+		return nil, err
+	}
+
+	var providerSSPBytes []byte
+	for _, b := range providerFirst(Boundaries) {
+		sspBytes, err := g.boundaryDocuments(add, b, profileBytes, providerSSPBytes, exports)
+		if err != nil {
+			return nil, err
+		}
+		if b.Slug == ProviderBoundarySlug {
+			providerSSPBytes = sspBytes
+		}
+	}
+
+	for path, doc := range g.sparcAPI() {
+		if _, err := add(path, doc); err != nil {
+			return nil, err
+		}
+	}
+	if err := g.addAPIResponses(tree, add); err != nil {
+		return nil, err
+	}
+
+	tree[pathREADME] = g.readme(tree)
+	return tree, nil
+}
+
+// adder writes one document into the tree and returns its bytes.
+type adder func(path string, doc any) ([]byte, error)
+
+// catalogDocuments emits the catalogs, the profile and the provider's
+// component definition, and returns the profile's bytes, which every SSP
+// hashes.
+func (g *Generator) catalogDocuments(add adder) ([]byte, error) {
 	catBytes, err := add(pathNISTCatalog, g.nistCatalog())
 	if err != nil {
 		return nil, err
@@ -152,61 +196,55 @@ func (g *Generator) Generate() (Tree, error) {
 	if _, err := add(pathComponentDefinition, g.awsComponentDefinition(securityHubBytes)); err != nil {
 		return nil, err
 	}
+	return profileBytes, nil
+}
 
-	// The provider's exported responsibilities are read by every consumer, so
-	// they are derived once, and the provider's SSP is built first so the
-	// consumers can hash the document they leverage.
-	exports, err := g.exportedResponsibilities()
+// boundaryDocuments emits one boundary's SSP, evidence, assessment plan,
+// assessment results and POA&M, and returns the SSP's bytes. The order is the
+// generator's draw order, which the committed fixtures depend on.
+func (g *Generator) boundaryDocuments(add adder, b Boundary, profileBytes, providerSSPBytes []byte, exports map[string]exportedHalf) ([]byte, error) {
+	sspBytes, err := add(pathSSP(b), g.ssp(b, profileBytes, providerSSPBytes, exports))
 	if err != nil {
 		return nil, err
 	}
 
-	var providerSSPBytes []byte
-	for _, b := range providerFirst(Boundaries) {
-		sspBytes, err := add(pathSSP(b), g.ssp(b, profileBytes, providerSSPBytes, exports))
+	artifacts := g.evidenceArtifacts(b)
+	for i, a := range artifacts {
+		written, err := add(a.path, a.doc)
 		if err != nil {
 			return nil, err
 		}
-		if b.Slug == ProviderBoundarySlug {
-			providerSSPBytes = sspBytes
-		}
+		// The digest the back-matter resource cites is of the bytes just
+		// written, not of a string that stands for them.
+		artifacts[i].digest = sha256Hex(written)
+	}
 
-		artifacts := g.evidenceArtifacts(b)
-		for i, a := range artifacts {
-			written, err := add(a.path, a.doc)
-			if err != nil {
-				return nil, err
-			}
-			// The digest the back-matter resource cites is of the bytes just
-			// written, not of a string that stands for them.
-			artifacts[i].digest = sha256Hex(written)
-		}
-
-		assessed, err := g.assess(b, artifacts, sspBytes)
-		if err != nil {
-			return nil, err
-		}
-		if _, err := add(pathAssessmentResults(b), assessed.results); err != nil {
-			return nil, err
-		}
-		if _, err := add(pathPOAM(b), assessed.poam); err != nil {
+	assessed, err := g.assess(b, artifacts, sspBytes)
+	if err != nil {
+		return nil, err
+	}
+	for _, doc := range []struct {
+		path string
+		doc  any
+	}{
+		{pathAssessmentPlan(b), assessed.plan},
+		{pathAssessmentResults(b), assessed.results},
+		{pathPOAM(b), assessed.poam},
+	} {
+		if _, err := add(doc.path, doc.doc); err != nil {
 			return nil, err
 		}
 	}
+	return sspBytes, nil
+}
 
-	for path, doc := range g.sparcAPI() {
-		if _, err := add(path, doc); err != nil {
-			return nil, err
-		}
-	}
-
-	// The API v0 mock's goldens, derived by parsing the OSCAL this run just
-	// emitted rather than from the generator's own state (#61). Every number
-	// the mock serves therefore recomputes from exported documents, which is
-	// the audit claim in cheap form.
+// addAPIResponses adds the API v0 mock's goldens, computed by internal/view
+// from the OSCAL this run just emitted rather than from the generator's own
+// state, so every number recomputes from exported documents (#61, #120).
+func (g *Generator) addAPIResponses(tree Tree, add adder) error {
 	responses, err := g.apiResponses(tree)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	for path, doc := range responses {
 		// The README is markdown, not a JSON document.
@@ -215,12 +253,10 @@ func (g *Generator) Generate() (Tree, error) {
 			continue
 		}
 		if _, err := add(path, doc); err != nil {
-			return nil, err
+			return err
 		}
 	}
-
-	tree[pathREADME] = g.readme(tree)
-	return tree, nil
+	return nil
 }
 
 // providerFirst orders the boundaries so the one that exports inherited

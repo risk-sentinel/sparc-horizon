@@ -2,31 +2,34 @@ package fixtures
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 
-	"github.com/risk-sentinel/sparc-horizon/internal/project"
+	"github.com/risk-sentinel/sparc-horizon/internal/view"
 )
-
-// Building the golden responses, once the OSCAL exists to derive them from.
 
 func pathAPI(parts ...string) string { return "api/" + strings.Join(parts, "/") }
 
-// dateLayout is the one date format every response carries: the OSCAL date
-// form, which is also what the namespace props use.
-const dateLayout = "2006-01-02"
+// dateLayout is the contract's date format.
+const dateLayout = view.DateLayout
 
 func horizonDate() string { return Horizon.Format(dateLayout) }
 
-// apiResponses builds every golden the mock serves.
+// apiResponses builds every golden the mock serves, by running internal/view
+// over the OSCAL this run emitted. The tree is the generator's own (frozen in
+// #61, and asserted equal to the computed one by cmd/mockserver's tests).
 func (g *Generator) apiResponses(tree Tree) (map[string]any, error) {
-	assessed := map[string][]assessment{}
-	for _, b := range Boundaries {
-		a, err := g.assessmentsFor(tree, b)
-		if err != nil {
-			return nil, err
+	docs := map[string][]byte{}
+	for p, b := range tree {
+		if strings.HasPrefix(p, "oscal/") {
+			docs[p] = b
 		}
-		assessed[b.Slug] = a
+	}
+	v, err := view.New(view.LoadFiles(docs), view.Options{})
+	if err != nil {
+		return nil, err
+	}
+	if probs := v.Problems(); len(probs) > 0 {
+		return nil, fmt.Errorf("the fixtures do not join cleanly: %s: %s (and %d more)", probs[0].Path, probs[0].Detail, len(probs)-1)
 	}
 
 	out := map[string]any{}
@@ -35,12 +38,11 @@ func (g *Generator) apiResponses(tree Tree) (map[string]any, error) {
 
 	for _, p := range personas {
 		visible := g.boundariesFor(p)
-
 		out[pathAPI(p.ID, "tree.json")] = g.treeFor(p, visible)
-		out[pathAPI(p.ID, "next-action.json")] = g.nextActionFor(p, visible, assessed)
-		if err := g.heatResponses(out, p, visible, assessed); err != nil {
-			return nil, err
+		if next, ok := v.NextAction(p.PartyUUID, p.NodeUUID, Horizon); ok {
+			out[pathAPI(p.ID, "next-action.json")] = next
 		}
+		g.heatResponses(out, v, p, visible)
 	}
 
 	out[pathAPI("README.md")] = apiReadme(personas)
@@ -48,44 +50,34 @@ func (g *Generator) apiResponses(tree Tree) (map[string]any, error) {
 	// Chains are not persona-scoped: a chain is reached by requirement UUID,
 	// and the mock refuses one outside the caller's tree the same way it
 	// refuses a node.
-	for _, b := range Boundaries {
-		for _, a := range assessed[b.Slug] {
-			out[pathAPI("chain", a.requirement+".json")] = chainOf(a)
-		}
+	for _, c := range v.Chains() {
+		out[pathAPI("chain", c.Requirement+".json")] = c
 	}
 	return out, nil
 }
 
-// heatResponses adds a persona's heat for every node with children (its root,
-// and each boundary beneath it; a system is a leaf and has no rows), and a cell
-// drill-down for each drawn column that has something to say.
-func (g *Generator) heatResponses(out map[string]any, p Persona, visible []Boundary, assessed map[string][]assessment) error {
-	for _, node := range g.heatNodes(p, visible) {
-		heat, err := g.heatFor(node, assessed)
-		if err != nil {
-			return err
+// heatResponses adds a persona's heat for every node with rows (its root, and
+// each boundary beneath it), and a cell for each drawn column.
+func (g *Generator) heatResponses(out map[string]any, v *view.View, p Persona, visible []Boundary) {
+	nodes := []string{}
+	if p.NodeType == "organization" {
+		nodes = append(nodes, p.NodeUUID)
+	}
+	for _, b := range visible {
+		nodes = append(nodes, g.sspUUID(b))
+	}
+	for _, id := range nodes {
+		heat, ok := v.Heat(p.PartyUUID, id, Horizon)
+		if !ok {
+			continue
 		}
-		out[pathAPI(p.ID, "heat", node.id+".json")] = heat
-
+		out[pathAPI(p.ID, "heat", id+".json")] = heat
 		for _, col := range heat.Columns {
-			detail := g.cellFor(node, col, assessed)
-			if len(detail.Controls) == 0 {
-				continue
+			if cell, ok := v.Cell(p.PartyUUID, id, col, Horizon); ok {
+				out[pathAPI(p.ID, "cell", id+"--"+strings.ToLower(col)+".json")] = cell
 			}
-			out[pathAPI(p.ID, "cell", node.id+"--"+strings.ToLower(col)+".json")] = detail
 		}
 	}
-	return nil
-}
-
-// heatNode is a node the heatmap can be drawn for.
-type heatNode struct {
-	id       string
-	name     string
-	nodeType string
-	children []Boundary
-	systems  []System
-	boundary *Boundary
 }
 
 func (g *Generator) boundariesFor(p Persona) []Boundary {
@@ -101,18 +93,6 @@ func (g *Generator) boundariesFor(p Persona) []Boundary {
 				out = append(out, b)
 			}
 		}
-	}
-	return out
-}
-
-func (g *Generator) heatNodes(p Persona, visible []Boundary) []heatNode {
-	var out []heatNode
-	if p.NodeType == "organization" {
-		out = append(out, heatNode{id: p.NodeUUID, name: p.Name, nodeType: "organization", children: visible})
-	}
-	for i := range visible {
-		b := visible[i]
-		out = append(out, heatNode{id: g.sspUUID(b), name: b.Name, nodeType: "boundary", systems: b.Systems, boundary: &b})
 	}
 	return out
 }
@@ -142,311 +122,6 @@ func (g *Generator) boundaryNode(b Boundary, role string) APINode {
 	return node
 }
 
-// heatFor draws one node's heatmap: rows are its children, columns are
-// families. The column order is blockers descending then pass ratio ascending,
-// and nominal columns collapse — management by exception, so green is quiet.
-//
-// A row carries a cell only for the columns that survived collapsing, in
-// column order. docs/04-api.md's own example has five columns and two cells,
-// and says to keep cell payloads small; details come from the cell and chain
-// endpoints.
-// heatFor draws one node's heatmap: rows are its children, columns are
-// families. The column order is blockers descending then pass ratio ascending,
-// and nominal columns collapse — management by exception, so green is quiet.
-func (g *Generator) heatFor(node heatNode, assessed map[string][]assessment) (APIHeat, error) {
-	data := g.rowsOf(node, assessed)
-
-	// Column aggregates first, because the order and the collapsing decide
-	// which cells a row emits at all.
-	columns, collapsed := orderColumns(columnAggs(data))
-
-	rows := make([]APIRow, 0, len(data))
-	for _, r := range data {
-		rows = append(rows, r.render(columns))
-	}
-
-	return APIHeat{
-		Node:      node.id,
-		Horizon:   horizonDate(),
-		Axis:      "800-53",
-		Columns:   columns,
-		Collapsed: collapsed,
-		Rows:      rows,
-	}, nil
-}
-
-// columnAggs rolls every row into each family's column in one Roll call.
-//
-// Rolled once rather than accumulated pairwise: Roll returns an Agg with no
-// Weight of its own, so folding a running total back in as a child multiplies
-// it by zero, and a column then reflects only its last row (#117).
-func columnAggs(data []rowData) map[string]project.Agg {
-	kids := map[string][]project.Agg{}
-	for _, r := range data {
-		for fam, as := range r.byFamily {
-			agg, _ := aggregate(as, r.weight)
-			kids[fam] = append(kids[fam], agg)
-		}
-	}
-	colAgg := make(map[string]project.Agg, len(kids))
-	for fam, k := range kids {
-		colAgg[fam] = project.Roll(k)
-	}
-	return colAgg
-}
-
-// rowData is one heat row before the columns are known.
-type rowData struct {
-	id, name string
-	byFamily map[string][]assessment
-	weight   float64
-}
-
-// render emits cells for the columns that survived collapsing, in column
-// order. A family the row has nothing in is omitted rather than drawn as
-// passing: they are not the same claim, and the HUD draws a gap.
-func (r rowData) render(columns []string) APIRow {
-	row := APIRow{ID: r.id, Name: r.name, Cells: []APICell{}}
-	for _, col := range columns {
-		as, ok := r.byFamily[col]
-		if !ok {
-			continue
-		}
-		_, cell := aggregate(as, r.weight)
-		row.Cells = append(row.Cells, cell)
-	}
-	return row
-}
-
-// rowsOf gathers a node's children as rows: an organization's rows are its
-// boundaries, a boundary's rows are its systems.
-func (g *Generator) rowsOf(node heatNode, assessed map[string][]assessment) []rowData {
-	collect := func(id, name string, as []assessment, weight float64) rowData {
-		byFamily := map[string][]assessment{}
-		for _, a := range onAxis(as) {
-			byFamily[a.family] = append(byFamily[a.family], a)
-		}
-		return rowData{id: id, name: name, byFamily: byFamily, weight: weight}
-	}
-
-	var data []rowData
-	if node.nodeType == "organization" {
-		for _, b := range node.children {
-			data = append(data, collect(g.sspUUID(b), b.Name, assessed[b.Slug], project.FIPSWeight(b.FIPS)))
-		}
-		return data
-	}
-
-	b := *node.boundary
-	byComponent := map[string][]assessment{}
-	for _, a := range assessed[b.Slug] {
-		byComponent[a.component] = append(byComponent[a.component], a)
-	}
-	for _, s := range b.Systems {
-		id := g.componentUUID(b, s.Slug)
-		data = append(data, collect(id, s.Name, byComponent[id], project.FIPSWeight(b.FIPS)))
-	}
-	return data
-}
-
-// onAxis keeps the controls the 800-53 column axis can actually render.
-//
-// Security Hub identifiers reach a boundary through inherited AWS component
-// definitions and are keyed to that authority, not to NIST. Putting `ACM` and
-// `S3` beside `AC` and `CP` would claim a crosswalk this repository does not
-// own and has not applied — the mapping is SPARC's (`sparc#1103`, and X-8 in
-// the implementation plan). They are in the fixtures precisely so the
-// distinction is exercised; they are off this axis until the crosswalk is.
-func onAxis(as []assessment) []assessment {
-	out := make([]assessment, 0, len(as))
-	for _, a := range as {
-		if a.nist {
-			out = append(out, a)
-		}
-	}
-	return out
-}
-
-func aggregate(as []assessment, weight float64) (project.Agg, APICell) {
-	agg := project.Agg{Weight: weight}
-	cell := APICell{}
-	for _, a := range as {
-		st := a.state()
-		agg.Total++
-		if !st.Down {
-			agg.Pass++
-		}
-		if st.Blocks {
-			agg.Blockers++
-		}
-		if st.Inherited {
-			cell.Inherited = true
-		}
-		// Worsening: evidence that expires inside the look-ahead window, so
-		// the cell is on its way down even where it passes today.
-		if !st.Down && a.expires.Before(Horizon.AddDate(0, 0, 30)) {
-			cell.Worsening = true
-		}
-	}
-	if len(as) > 0 {
-		cell.Col = as[0].family
-	}
-	cell.Blockers = agg.Blockers
-	cell.State = string(project.StateOf(agg))
-	return agg, cell
-}
-
-// orderColumns ranks by blockers descending then pass ratio ascending, and
-// collapses the nominal ones — management by exception, so green is quiet.
-func orderColumns(colAgg map[string]project.Agg) (columns, collapsed []string) {
-	keys := sortedKeys(colAgg)
-	sort.SliceStable(keys, func(i, j int) bool {
-		a, b := colAgg[keys[i]], colAgg[keys[j]]
-		if a.Blockers != b.Blockers {
-			return a.Blockers > b.Blockers
-		}
-		return ratio(a) < ratio(b)
-	})
-	columns, collapsed = []string{}, []string{}
-	for _, k := range keys {
-		if project.StateOf(colAgg[k]) == project.StateNominal {
-			collapsed = append(collapsed, k)
-			continue
-		}
-		columns = append(columns, k)
-	}
-	return columns, collapsed
-}
-
-func ratio(a project.Agg) float64 {
-	if a.Total == 0 {
-		return 1
-	}
-	return a.Pass / a.Total
-}
-
-func (g *Generator) cellFor(node heatNode, col string, assessed map[string][]assessment) APICellDetail {
-	detail := APICellDetail{Node: node.id, Col: col, Horizon: horizonDate()}
-
-	var pool []assessment
-	if node.nodeType == "organization" {
-		for _, b := range node.children {
-			pool = append(pool, assessed[b.Slug]...)
-		}
-	} else {
-		pool = assessed[node.boundary.Slug]
-	}
-
-	for _, a := range onAxis(pool) {
-		if a.family != col {
-			continue
-		}
-		st := a.state()
-		if !st.Down {
-			continue
-		}
-		detail.Controls = append(detail.Controls, APIControl{
-			ControlID: a.controlID,
-			Component: a.component,
-			State:     string(project.StateOf(project.Agg{Total: 1, Blockers: boolInt(st.Blocks)})),
-			Reason:    reasonFor(a),
-			Expires:   a.expires.Format(dateLayout),
-			BlocksATO: a.blocksATO,
-			Chain:     a.requirement,
-		})
-	}
-	// Blocking first, then by control id, so the ranking is reproducible.
-	sort.SliceStable(detail.Controls, func(i, j int) bool {
-		if detail.Controls[i].BlocksATO != detail.Controls[j].BlocksATO {
-			return detail.Controls[i].BlocksATO
-		}
-		return detail.Controls[i].ControlID < detail.Controls[j].ControlID
-	})
-	return detail
-}
-
-// reasonFor states the consequence with the item, which is the HUD's rule.
-func reasonFor(a assessment) string {
-	switch {
-	case a.failing && a.blocksATO:
-		return "Not satisfied, and the open risk blocks the authorization."
-	case a.failing:
-		return "Not satisfied at the assessment."
-	case !a.expires.After(Horizon):
-		return fmt.Sprintf("Evidence expires %s, before the %s horizon.", a.expires.Format(dateLayout), horizonDate())
-	default:
-		return "Down at the horizon."
-	}
-}
-
-func chainOf(a assessment) APIChain {
-	return APIChain{
-		Requirement: a.requirement,
-		ControlID:   a.controlID,
-		Component:   a.component,
-		Resource:    a.resource,
-		Observation: a.observation,
-		Expires:     a.expires.Format(dateLayout),
-		Finding:     a.finding,
-		Risk:        a.risk,
-		BlocksATO:   a.blocksATO,
-		PoamItem:    a.poamItem,
-	}
-}
-
-// nextActionFor is the single focal point a lens offers: one next best action,
-// with the consequence stated beside it.
-func (g *Generator) nextActionFor(p Persona, visible []Boundary, assessed map[string][]assessment) APINextAction {
-	var best *assessment
-	for _, b := range visible {
-		for i, a := range assessed[b.Slug] {
-			st := a.state()
-			if !st.Down {
-				continue
-			}
-			if best == nil || (st.Blocks && !best.blocksATO) ||
-				(st.Blocks == best.blocksATO && a.expires.Before(best.expires)) {
-				best = &assessed[b.Slug][i]
-			}
-		}
-	}
-	if best == nil {
-		return APINextAction{
-			Node: p.NodeUUID, Title: "Nothing is down at this horizon.",
-			Consequence: "No control in view fails, expires or has an open milestone before " + horizonDate() + ".",
-			Horizon:     horizonDate(),
-		}
-	}
-	consequence := "The control is down at the horizon."
-	if best.blocksATO {
-		consequence = "An open risk on this control blocks the authorization for " + best.boundary.Name + "."
-	}
-	return APINextAction{
-		Node:        p.NodeUUID,
-		Title:       "Resolve " + best.controlID + " on " + best.boundary.Name,
-		Consequence: consequence,
-		ControlID:   best.controlID,
-		Chain:       best.requirement,
-		Horizon:     horizonDate(),
-	}
-}
-
-func sortedKeys[V any](m map[string]V) []string {
-	out := make([]string, 0, len(m))
-	for k := range m {
-		out = append(out, k)
-	}
-	sort.Strings(out)
-	return out
-}
-
-func boolInt(b bool) int {
-	if b {
-		return 1
-	}
-	return 0
-}
-
 // apiReadme is generated with the goldens so it cannot describe a version of
 // them that no longer exists.
 func apiReadme(personas []Persona) string {
@@ -463,29 +138,31 @@ func apiReadme(personas []Persona) string {
 		"**Generated. Do not edit by hand.** Written by `internal/fixtures` alongside the OSCAL,",
 		"and rewritten wholesale by `go run ./cmd/genfixtures`.",
 		"",
-		"Served by `go run ./cmd/mockserver`, which P3 builds the HUD against and P1 shapes its",
-		"client against. Every response validates against `api/openapi.yaml` in CI — both that each",
-		"golden satisfies the schema its path declares, and that the contract declares nothing the",
-		"mock cannot answer.",
+		"Computed by `internal/view`, the same code `go run ./cmd/mockserver` runs live over any",
+		"folder of OSCAL (#120). Every response validates against `api/openapi.yaml` in CI — both",
+		"that each golden satisfies the schema its path declares, and that the contract declares",
+		"nothing the mock cannot answer.",
 		"",
 		"## These are illustrative shape, not projections",
 		"",
-		"Cell states come from `project.StateAt` over the fixtures' own observation expiries and",
-		"blocking risks. That is the algorithm `docs/05-projection-engine.md` specifies, but this is",
+		"Cell states come from `project.StateAt` over the observations' expiries and the risks'",
+		"blocks-ato. That is the algorithm `docs/05-projection-engine.md` specifies, but this is",
 		"**not the projection engine**: there is no ledger, no materialisation, no invalidation along",
 		"a node's ancestry, and no ranking model. P2 builds those.",
 		"",
 		"So: do not cite a number here as an engine result, and do not treat the ordering as the",
 		"ranking. What these are good for is shape, volume and the joins between endpoints.",
 		"",
-		"Every value is derived by **parsing the OSCAL this same run emitted**, rather than from the",
-		"generator's own state. That is the cheap version of the audit claim — if a response cannot",
-		"be recomputed from exported documents, it does not belong in the contract either.",
+		"Every value is derived by **parsing the OSCAL this same run emitted** through the standard",
+		"relationships (finding → observation → component, finding → risk → POA&M item), rather than",
+		"from the generator's own state. If a response cannot be recomputed from exported documents,",
+		"it does not belong in the contract either.",
 		"",
 		"## Horizon",
 		"",
-		"Computed once, for **"+horizonDate()+"**. The `horizon` query parameter is",
-		"accepted and ignored by the mock; a real service projects to the date it is asked for.",
+		"These goldens are computed for **"+horizonDate()+"**. The mock computes every response live",
+		"from the documents, so it honours the `horizon` query parameter (#120); these files are the",
+		"contract's examples and the regression baseline, not what the mock reads.",
 		"",
 		"## Personas",
 		"",

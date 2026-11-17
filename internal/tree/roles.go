@@ -13,7 +13,7 @@ import (
 // responsible-parties" for the boundary.
 func (b *builder) bindRoles(ssp *oscal.SystemSecurityPlan, parties map[string]oscal.Party, org, boundary *Node, src string) {
 	for _, rp := range responsibleParties(ssp) {
-		role, ok := knownRole(rp.RoleId)
+		role, ok := b.role(rp.RoleId)
 		if !ok {
 			// Carrying it would put a value in the response that the frozen
 			// schema rejects, so it is reported instead.
@@ -108,7 +108,7 @@ func (b *builder) recordInventory(item oscal.InventoryItem, components map[strin
 // makes component `responsible-roles` the system tier's source.
 func (b *builder) componentRoles(comp oscal.SystemComponent, node *Node, src string) {
 	for _, rr := range responsibleRoles(comp) {
-		role, known := knownRole(rr.RoleId)
+		role, known := b.role(rr.RoleId)
 		if !known {
 			b.note(FindingUnknownRole, src,
 				"component %s carries role-id %q, which the contract does not enumerate",
@@ -119,4 +119,13 @@ func (b *builder) componentRoles(comp oscal.SystemComponent, node *Node, src str
 		// The component holds the role, so the component is the party.
 		b.bind(node, role, comp.UUID)
 	}
+}
+
+// role resolves a role-id: one the contract enumerates, or an operator alias.
+func (b *builder) role(id string) (Role, bool) {
+	if r, ok := knownRole(id); ok {
+		return r, true
+	}
+	r, ok := b.aliases[id]
+	return r, ok
 }

@@ -37,13 +37,17 @@ requirement whose component the caller cannot see is refused the same way a node
 
 ## The mock
 
-`go run ./cmd/mockserver` serves the contract over the fixture federation, from goldens in
-[`fixtures/api/`](../fixtures/api/README.md) that are derived by parsing the OSCAL the generator
-emitted. An `X-Horizon-Persona` header selects the caller; each persona sees a **different tree**
-rather than the same tree with parts greyed out, which is what makes the 404 rule coherent.
+`go run ./cmd/mockserver` serves the contract over a folder of OSCAL documents: the fixture
+federation by default, or any SSP, assessment plan, assessment results and POA&M (`-dir`).
+`internal/view` computes every response from the documents at the requested `horizon`, joining them
+through the standard OSCAL relationships (#120); the goldens in
+[`fixtures/api/`](../fixtures/api/README.md) are the same code's output over the fixtures, kept as
+the contract's examples and the regression baseline. An `X-Horizon-Persona` header selects the
+caller; each persona sees a **different tree** rather than the same tree with parts greyed out,
+which is what makes the 404 rule coherent.
 
-It does not project: cell states are computed once, at generation time, for one horizon, and the
-`horizon` parameter is accepted and ignored. It answers the write endpoints with 501 rather than
+It has no ledger and persists nothing: state is computed when asked, which is P2's projection
+without its materialisation. It answers the write endpoints with 501 rather than
 accepting a write and forgetting it. The export names a boundary by slug or SSP UUID and lists each
 document with its `sha256`; the mock serves those documents byte for byte at the `href` it gave,
 `/oscal/<file>`, under the same 404 rule. That route is the mock's, not the contract's, which says

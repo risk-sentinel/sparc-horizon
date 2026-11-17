@@ -1,0 +1,162 @@
+{
+  "assessment-plan": {
+    "import-ssp": {
+      "href": "#a8a226ff-c477-5c42-abdb-a46e356db5d8"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.3",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
+        },
+        {
+          "member-of-organizations": [
+            "77187569-aef0-5983-8528-3571a71f997b"
+          ],
+          "name": "Bureau of Grants Management",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "organization"
+            }
+          ],
+          "short-name": "BGM",
+          "type": "organization",
+          "uuid": "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
+        },
+        {
+          "member-of-organizations": [
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
+          ],
+          "name": "GRANTS Authorizing Official",
+          "type": "person",
+          "uuid": "d525eea8-a8b6-595e-9bd9-84ae9ba7ba01"
+        },
+        {
+          "member-of-organizations": [
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
+          ],
+          "name": "GRANTS System Owner",
+          "type": "person",
+          "uuid": "ca3593e0-7813-5676-a0ee-012cc44e8fb8"
+        },
+        {
+          "member-of-organizations": [
+            "a54ca6a7-eaff-5a9e-a593-aefaacaf8211"
+          ],
+          "name": "GRANTS Information System Security Officer",
+          "type": "person",
+          "uuid": "2ee39e09-fc22-50f9-ad38-ff397563e967"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "d525eea8-a8b6-595e-9bd9-84ae9ba7ba01"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "ca3593e0-7813-5676-a0ee-012cc44e8fb8"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "2ee39e09-fc22-50f9-ad38-ff397563e967"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Grants Platform continuous monitoring plan 2026-Q3",
+      "version": "1.0.0"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "description": "Controls assessed for Grants Platform in 2026-Q3.",
+          "include-controls": [
+            {
+              "control-id": "ac-2"
+            },
+            {
+              "control-id": "ac-2.1"
+            },
+            {
+              "control-id": "au-6"
+            },
+            {
+              "control-id": "au-6.1"
+            },
+            {
+              "control-id": "cp-4"
+            },
+            {
+              "control-id": "cp-9"
+            },
+            {
+              "control-id": "ia-2"
+            },
+            {
+              "control-id": "ia-5"
+            },
+            {
+              "control-id": "sc-7"
+            },
+            {
+              "control-id": "sc-28"
+            },
+            {
+              "control-id": "si-4"
+            },
+            {
+              "control-id": "si-7"
+            },
+            {
+              "control-id": "ACM.1"
+            },
+            {
+              "control-id": "IAM.4"
+            },
+            {
+              "control-id": "S3.5"
+            },
+            {
+              "control-id": "EC2.2"
+            }
+          ]
+        }
+      ]
+    },
+    "uuid": "4d4e1409-480f-5a28-9059-8cf10a954ad0"
+  }
+}

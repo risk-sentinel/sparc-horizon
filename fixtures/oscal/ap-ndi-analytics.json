@@ -1,0 +1,162 @@
+{
+  "assessment-plan": {
+    "import-ssp": {
+      "href": "#f495f200-e9d9-5985-a5fd-0f2bb3c6e520"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.3",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
+        },
+        {
+          "member-of-organizations": [
+            "77187569-aef0-5983-8528-3571a71f997b"
+          ],
+          "name": "National Data Institute",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "organization"
+            }
+          ],
+          "short-name": "NDI",
+          "type": "organization",
+          "uuid": "bd4969d2-d748-5a13-889f-636f6d3322df"
+        },
+        {
+          "member-of-organizations": [
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
+          ],
+          "name": "WORKBENCH Authorizing Official",
+          "type": "person",
+          "uuid": "358bbd00-eecd-5a5f-9e67-350ed079c6cd"
+        },
+        {
+          "member-of-organizations": [
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
+          ],
+          "name": "WORKBENCH System Owner",
+          "type": "person",
+          "uuid": "4bc67254-2a3e-50ce-9767-2704d5bb907b"
+        },
+        {
+          "member-of-organizations": [
+            "bd4969d2-d748-5a13-889f-636f6d3322df"
+          ],
+          "name": "WORKBENCH Information System Security Officer",
+          "type": "person",
+          "uuid": "d20f3e32-7495-5a92-b6ae-25c67507dc44"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "358bbd00-eecd-5a5f-9e67-350ed079c6cd"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "4bc67254-2a3e-50ce-9767-2704d5bb907b"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "d20f3e32-7495-5a92-b6ae-25c67507dc44"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Analytics Workbench continuous monitoring plan 2026-Q3",
+      "version": "1.0.0"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "description": "Controls assessed for Analytics Workbench in 2026-Q3.",
+          "include-controls": [
+            {
+              "control-id": "ac-2"
+            },
+            {
+              "control-id": "ac-2.1"
+            },
+            {
+              "control-id": "au-6"
+            },
+            {
+              "control-id": "au-6.1"
+            },
+            {
+              "control-id": "cp-4"
+            },
+            {
+              "control-id": "cp-9"
+            },
+            {
+              "control-id": "ia-2"
+            },
+            {
+              "control-id": "ia-5"
+            },
+            {
+              "control-id": "sc-7"
+            },
+            {
+              "control-id": "sc-28"
+            },
+            {
+              "control-id": "si-4"
+            },
+            {
+              "control-id": "si-7"
+            },
+            {
+              "control-id": "ACM.1"
+            },
+            {
+              "control-id": "IAM.4"
+            },
+            {
+              "control-id": "S3.5"
+            },
+            {
+              "control-id": "EC2.2"
+            }
+          ]
+        }
+      ]
+    },
+    "uuid": "4dcb470d-9313-5e59-9297-136118a8c271"
+  }
+}

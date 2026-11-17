@@ -1,7 +1,6 @@
 package fixtures
 
 import (
-	"strings"
 	"time"
 
 	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
@@ -18,8 +17,10 @@ import (
 // horizon bucket, risks that block an ATO and risks that do not, and an
 // accepted risk whose condition expires.
 
-// assessed is one boundary's assessment-results and POA&M documents.
+// assessed is one boundary's assessment plan, assessment-results and POA&M
+// documents.
 type assessed struct {
+	plan    oscal.OscalCompleteSchema
 	results oscal.OscalCompleteSchema
 	poam    oscal.OscalCompleteSchema
 }
@@ -138,12 +139,6 @@ func (g *Generator) assess(b Boundary, artifacts []evidenceArtifact, sspBytes []
 	}
 	resources = append(resources,
 		resourceFor(ssp, b.Name+" system security plan", "./ssp-"+b.Slug+".json", sha256Hex(sspBytes)),
-		oscal.Resource{
-			UUID:        g.objectUUID("assessment-plan-reference", b.Slug),
-			Title:       b.Name + " continuous monitoring plan",
-			Description: "Cited rather than modelled: these fixtures carry no assessment-plan document.",
-			Citation:    &oscal.Citation{Text: b.Name + " continuous monitoring plan, " + Period},
-		},
 	)
 
 	var (
@@ -171,12 +166,13 @@ func (g *Generator) assess(b Boundary, artifacts []evidenceArtifact, sspBytes []
 		observations = append(observations, obs)
 
 		if j.satisfied {
-			part, ok, err := g.attestation(b, j, ssp)
+			finding, part, err := g.satisfied(b, j, ssp, origin, obsUUID)
 			if err != nil {
 				return assessed{}, err
 			}
-			if ok {
-				attested = append(attested, part)
+			findings = append(findings, finding)
+			if part != nil {
+				attested = append(attested, *part)
 			}
 			continue
 		}
@@ -195,10 +191,11 @@ func (g *Generator) assess(b Boundary, artifacts []evidenceArtifact, sspBytes []
 
 	arResources := resources
 	return assessed{
+		plan: g.assessmentPlan(b, ssp, result.ReviewedControls),
 		results: oscal.OscalCompleteSchema{AssessmentResults: &oscal.AssessmentResults{
 			UUID:       g.documentUUID("assessment-results", b.Slug),
 			Metadata:   g.assessmentMetadata(b, b.Name+" assessment results "+Period),
-			ImportAp:   oscal.ImportAp{Href: "#" + g.objectUUID("assessment-plan-reference", b.Slug)},
+			ImportAp:   oscal.ImportAp{Href: "#" + g.documentUUID("assessment-plan", b.Slug)},
 			Results:    []oscal.Result{result},
 			BackMatter: &oscal.BackMatter{Resources: &arResources},
 		}},
@@ -373,7 +370,7 @@ func (g *Generator) shortfall(b Boundary, j judgement, ssp, iso, ao string, orig
 		RelatedRisks:        &[]oscal.AssociatedRisk{{RiskUuid: risk.UUID.String()}},
 		Target: oscal.FindingTarget{
 			Type:     "objective-id",
-			TargetId: strings.ReplaceAll(j.control.ID, ".", "_") + "_obj",
+			TargetId: j.control.ID + "_obj",
 			Title:    j.control.Title,
 			Status:   oscal.ObjectiveStatus{State: "not-satisfied"},
 		},
@@ -487,4 +484,53 @@ func boolValue(b bool) string {
 		return "true"
 	}
 	return "false"
+}
+
+// assessmentPlan is the plan the results import, and the document that names
+// the SSP they assess: import-ap, then import-ssp, is how a reader places an
+// assessment-results document (#120).
+func (g *Generator) assessmentPlan(b Boundary, ssp string, reviewed oscal.ReviewedControls) oscal.OscalCompleteSchema {
+	return oscal.OscalCompleteSchema{AssessmentPlan: &oscal.AssessmentPlan{
+		UUID:             g.documentUUID("assessment-plan", b.Slug),
+		Metadata:         g.assessmentMetadata(b, b.Name+" continuous monitoring plan "+Period),
+		ImportSsp:        oscal.ImportSsp{Href: "#" + ssp},
+		ReviewedControls: reviewed,
+	}}
+}
+
+// satisfiedFinding records that a control met its objective.
+func (g *Generator) satisfiedFinding(b Boundary, j judgement, ssp string, origin []oscal.Origin, obsUUID string) (oscal.Finding, error) {
+	finding, err := g.keys.Finding(ssp, j.source, j.control.ID, j.component, Period)
+	if err != nil {
+		return oscal.Finding{}, err
+	}
+	return oscal.Finding{
+		UUID:                finding.UUID.String(),
+		Title:               j.control.ID + " is satisfied on " + b.Short,
+		Description:         "The assessment of " + j.control.ID + " satisfied the control objective.",
+		Origins:             &origin,
+		RelatedObservations: &[]oscal.RelatedObservation{{ObservationUuid: obsUUID}},
+		Target: oscal.FindingTarget{
+			Type:     "objective-id",
+			TargetId: j.control.ID + "_obj",
+			Title:    j.control.Title,
+			Status:   oscal.ObjectiveStatus{State: "satisfied"},
+		},
+	}, nil
+}
+
+// satisfied is what a satisfied control emits: a satisfied finding, which is
+// how OSCAL ties an observation to the control it assessed and the only path a
+// reader that is not this generator has (#120), and the ISO's attestation for
+// a manual control. No draw.
+func (g *Generator) satisfied(b Boundary, j judgement, ssp string, origin []oscal.Origin, obsUUID string) (oscal.Finding, *oscal.AssessmentPart, error) {
+	finding, err := g.satisfiedFinding(b, j, ssp, origin, obsUUID)
+	if err != nil {
+		return oscal.Finding{}, nil, err
+	}
+	part, ok, err := g.attestation(b, j, ssp)
+	if err != nil || !ok {
+		return finding, nil, err
+	}
+	return finding, &part, nil
 }

@@ -15,6 +15,8 @@
 // where it was declared is the thing an assessor asks about.
 package tree
 
+import "github.com/google/uuid"
+
 // NodeType is the tier a node sits in. The values are fixed by
 // api/openapi.yaml and are not Horizon's to extend here.
 type NodeType string
@@ -80,7 +82,29 @@ const (
 	FindingDuplicateSystemID = "duplicate-system-id"
 	FindingFederationSplit   = "federation-split"
 	FindingNoFederation      = "no-federation-party"
+	// FindingImplicitFederation is informational: an SSP named one organization
+	// and no federation above it, so the tree placed it under LocalFederation.
+	FindingImplicitFederation = "implicit-federation"
 )
+
+// LocalFederation is the root an organization is placed under when its SSP
+// names no federation, which is the common case outside the SPARC estate: one
+// organization party, a member of nothing. Its UUID is derived, not random, so
+// every reader of the same documents computes the same tree.
+var LocalFederation = Node{
+	ID:       uuid.NewSHA1(uuid.NameSpaceURL, []byte("https://sparc.risk-sentinel.org/ns/horizon/local-federation")).String(),
+	Name:     "Local federation",
+	NodeType: Federation,
+}
+
+// Options adjust how documents are read. The zero value is the strict reading.
+type Options struct {
+	// RoleAliases maps a document's role-id onto one the contract enumerates,
+	// for documents that name the same role differently (NIST's examples say
+	// "owner" for the system owner). The mapping is the operator's statement,
+	// not something inferred: an unmapped unknown role is still reported.
+	RoleAliases map[string]Role
+}
 
 // Binding is one party holding one role at one node.
 //

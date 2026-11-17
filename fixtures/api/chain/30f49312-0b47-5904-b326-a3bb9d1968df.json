@@ -1,9 +1,12 @@
 {
   "requirement": "30f49312-0b47-5904-b326-a3bb9d1968df",
   "controlId": "EC2.2",
-  "component": "08f7790b-ddde-5aa8-84aa-a0df3b9c581d",
-  "resource": "bd0fe153-818f-57bc-9288-4437f11952ef",
-  "observation": "4ad3639d-6959-517a-82ac-4a45b0f5d615",
-  "expires": "2027-07-17",
-  "blocksAto": false
+  "component": "f0e2786f-8374-5c9b-9231-5d8acd3f4f43",
+  "resource": "f5d86538-4d5a-5dc4-99ae-720f07b49b98",
+  "observation": "f069243e-0531-5bcc-8971-97608b8c1537",
+  "expires": "2026-11-26",
+  "finding": "5ac81c74-bfbf-59a2-9b6a-db890db80ec2",
+  "risk": "3d02f2bc-e842-582d-9e01-06e59b363738",
+  "blocksAto": false,
+  "poamItem": "a6fa70f4-1141-5a75-873f-007c6bf0b74d"
 }

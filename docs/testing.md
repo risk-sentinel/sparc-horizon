@@ -3,18 +3,19 @@
 How to run SPARC Horizon's working prototype, what to try, what to expect, and how to report what
 you find. It takes about fifteen minutes and needs nothing beyond Docker, or Go to run from source.
 
-Every output quoted below was measured against an image built from this repository (#117), not
-written from the contract. If what you see differs, that is worth reporting.
+Every output quoted below was measured against an image built from this repository (#117, #120),
+not written from the contract. If what you see differs, that is worth reporting. To look at **your
+own** OSCAL instead of the synthetic federation, go to [section 7](#7-bring-your-own-oscal).
 
 ## What you are testing
 
 A **mock** of Horizon's API v0 over a **synthetic** federation: four organizations, seven
-authorization boundaries and twenty systems, published as 25 OSCAL 1.2.3 documents in
+authorization boundaries and twenty systems, published as 32 OSCAL 1.2.3 documents in
 [`fixtures/`](../fixtures/README.md). The same process serves the HUD demos.
 
 | Real today | Not real yet |
 |---|---|
-| The read endpoints and their response shapes ([`api/openapi.yaml`](../api/openapi.yaml)) | Projection: every response was computed once, for **2026-10-15**; `horizon` is ignored |
+| The read endpoints and their response shapes ([`api/openapi.yaml`](../api/openapi.yaml)) | Projection is state at a date, from the documents, with no ledger: the image defaults to the fixtures' **2026-10-15**, and `?horizon=YYYY-MM-DD` moves it |
 | The refusal rule: a node you cannot see is **404**, the same as one that does not exist | Login: a header picks the persona. It is **not** authentication |
 | Each persona's tree, computed from the OSCAL documents' role bindings | The write endpoints (attestations, decisions, what-if) and blast radius answer **501** |
 | The OSCAL export, with a `sha256` per document that verifies what you fetched | Ranking: next action is a placeholder, not the ranking model |
@@ -195,7 +196,7 @@ curl -s -w ' %{http_code}\n' -X POST -H "$SO" $B/v1/attestations
 ```
 
 ```text
-{"detail":"The mock serves the read endpoints from fixtures. POST /v1/attestations is in the frozen contract and is implemented by the service, not here.","error":"not_implemented"}
+{"detail":"The mock serves the read endpoints. POST /v1/attestations is in the frozen contract and is implemented by the service, not here.","error":"not_implemented"}
  501
 ```
 
@@ -209,6 +210,71 @@ than one that refuses. The [roadmap](roadmap.md) says which phase builds each of
 look-ahead slider, drill-in and what-if. [`planner.html`](../demo/planner.html) is the phase
 schedule. The demos carry their own synthetic data and **do not call the API yet**: P3 rebuilds the
 HUD against it. Judge them as interaction design, and the API as the data they will show.
+
+## 7. Bring your own OSCAL
+
+Horizon reads OSCAL only; translating scanner output (HDF, SARIF and the like) into OSCAL happens
+before it, in SPARC or your own pipeline. Put your **SSP, assessment plan, assessment results and
+POA&M** (JSON, OSCAL 1.1.2 to 1.2.3) in one folder, from SPARC's export or any other producer, and
+point the server at it:
+
+```bash
+docker run --rm -p 8080:8080 -v "$PWD/my-oscal:/data:ro" sparc-horizon:dev \
+  -addr 0.0.0.0:8080 -dir /data -static /srv/horizon/demo
+# or from source: go run ./cmd/mockserver -dir my-oscal -static demo
+```
+
+Everything is computed from the documents when the server starts: the tree from the SSPs' parties
+and `responsible-parties`, and each control's state from the standard relationships (finding →
+observation → component, finding → risk → POA&M item). File names don't matter. The horizon
+defaults to today; add `-horizon YYYY-MM-DD` to change it.
+
+**Who you can be.** Without a `personas.json`, there is one persona per party holding a role the
+contract knows: `authorizing-official`, `system-owner` or `information-system-security-officer`.
+The startup log lists them. Send the persona id or the party's UUID in `X-Horizon-Persona`. If your
+documents name roles differently, map them: `-role-alias owner=system-owner` (repeatable). The
+persona header is still not authentication; your documents decide who sees what, which is fine for a
+local mock and is not how real ingest will work.
+
+**Read the startup log.** Every link that did not resolve is listed, with the file and what was
+done about it. A document that could not be placed in any SSP is not shown, and the log says so.
+
+NIST's published example set is in the repository, so you can try this now:
+
+```bash
+docker run --rm -p 8080:8080 -v "$PWD/internal/oscal/testdata/nist:/data:ro" sparc-horizon:dev \
+  -addr 0.0.0.0:8080 -dir /data -static /srv/horizon/demo -role-alias owner=system-owner -horizon 2023-06-15
+```
+
+```text
+mockserver: 1 SSP, 1 assessment plan, 1 assessment results, 1 POA&M, 1 component definition; 1 boundaries, 1 assessed control-component pairs, 1 other JSON files ignored, 9 problems
+  problem: ifa_assessment-results.json: its assessment plan ifa_assessment-plan.json imports "../../ssp/xml/ifa_ssp.xml", which is not a loaded SSP
+  problem: ifa_assessment-results.json: placed in ifa_ssp-example.json by the components its observations name
+  ...
+  problem: 8101e04d-8305-4e73-bb95-6b59f645b143: tree: implicit-federation: organization 3a675986-b4ff-4030-b178-e953c2e55d64 names no federation; placed under "Local federation"
+  ...
+mockserver: 1 personas, default horizon 2023-06-15, serving /data on http://0.0.0.0:8080
+  X-Horizon-Persona: so-owen-stilskin                   Owen Stilskin
+```
+
+NIST's files link to each other by XML path, so each placement falls back and says how. Then:
+
+```bash
+SO='X-Horizon-Persona: so-owen-stilskin'; SSP=5e139edd-86aa-4b65-8431-1192bd276658
+curl -s -H "$SO" $B/v1/nodes/$SSP/heat | jq -c '{columns, rows: [.rows[] | {name, cells: [.cells[] | {col, state}]}]}'
+curl -s -H "$SO" $B/v1/nodes/$SSP/next-action | jq -r .title
+curl -s -H "$SO" $B/v1/controls/d5f9b263-965d-440b-99e7-77f5df670a11/chain | jq -c .
+```
+
+```text
+{"columns":["AC"],"rows":[{"name":"IFA GoodRead System","cells":[{"col":"AC","state":"degraded"}]}]}
+Resolve ac-6.1 on IFA GoodRead
+{"requirement":"d5f9b263-965d-440b-99e7-77f5df670a11","controlId":"ac-6.1","component":"551b9706-d6a4-4d25-8207-f2ccec548b89","observation":"8807eb6e-0c05-43bc-8438-799739615e34","expires":"2023-07-01","finding":"45d8a6c2-1368-4bad-9ba0-7141f0a32889","risk":"0cfa750e-3553-47ba-a7ba-cf84a884d261","blocksAto":false,"poamItem":"48c8368d-43ff-4736-9b28-64b1b1284c03"}
+```
+
+A control your assessment results never mention is a **gap, not a pass**: it has no cell. If your
+documents join and nothing shows, check the log for `could not be placed`, and that your findings
+carry `target.target-id` (for example `ac-2_obj`) and `related-observations` with `subjects`.
 
 ## Reporting what you find
 

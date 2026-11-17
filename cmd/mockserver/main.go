@@ -1,44 +1,38 @@
-// Command mockserver serves API v0 over the fixture federation.
+// Command mockserver serves API v0 over a folder of OSCAL documents.
 //
-// It exists so P3 can build the HUD and P1 can shape its client before either
-// has a service to talk to. The responses are the goldens in `fixtures/api/`,
-// derived by parsing the OSCAL the fixture generator emitted — so what the
-// mock serves recomputes from exported documents, which is the property the
-// real service has to keep.
+// Point it at the fixture federation or at your own SSP, assessment plan,
+// assessment results and POA&M documents, from SPARC or any other OSCAL
+// producer: every response is computed from the documents at the horizon the
+// request asks for, by internal/view (#120). The goldens in `fixtures/api/` are
+// the contract's examples and the regression baseline, not what it reads.
 //
 // # What it does not do
 //
-// It does not project. Cell states were computed once, at generation time,
-// for one horizon; the `horizon` parameter is accepted and ignored. It does
-// not authenticate — a header picks the persona. It answers the write
-// endpoints with 501 rather than pretending, because a mock that accepts an
-// attestation and forgets it is worse than one that refuses.
+// It does not persist anything and has no ledger: the documents are read once
+// at startup. It does not authenticate: a header picks the persona. It answers
+// the write endpoints with 501 rather than pretending, because a mock that
+// accepts an attestation and forgets it is worse than one that refuses.
 //
 // What it does enforce is the contract's refusal rule: a node outside the
 // caller's tree is **404**, indistinguishable from one that does not exist.
-// That is the part a client will be written against, and getting it wrong in
-// the mock means getting it wrong in the client.
 package main
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
+	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io/fs"
 	"log"
 	"net/http"
 	"os"
-	"path"
 	"regexp"
-	"sort"
 	"strings"
+	"time"
 
-	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
-
-	"github.com/risk-sentinel/sparc-horizon/internal/authz"
 	"github.com/risk-sentinel/sparc-horizon/internal/tree"
+	"github.com/risk-sentinel/sparc-horizon/internal/view"
 )
 
 const (
@@ -47,59 +41,67 @@ const (
 	mediaJSON     = "application/json"
 )
 
-type persona struct {
-	ID string `json:"id"`
-	// PartyUUID is the caller. internal/authz takes a party uuid, because how
-	// an OIDC subject maps to one is still an open decision
-	// (docs/10-risks-decisions.md); the persona header stands in for the login
-	// the mock deliberately does not perform.
-	PartyUUID string `json:"party-uuid"`
-	Role      string `json:"role"`
-	NodeUUID  string `json:"node-uuid"`
-	NodeType  string `json:"node-type"`
-	Name      string `json:"name"`
-}
-
 type server struct {
-	fsys     fs.FS
-	personas []persona
-	// authz decides every refusal. It was a map flattened out of the committed
-	// goldens until #79 — which meant the mock sided with the generator rather
-	// than with the rule, and could not show that a caller's tree is COMPUTED
-	// from their bindings rather than stored.
-	authz *authz.Authorizer
-	// static, when set, is served at `/` — the HUD demos, so one process is
+	view     *view.View
+	personas []view.Persona
+	// horizon is the date a request without one projects to.
+	horizon time.Time
+	// static, when set, is served at `/`: the HUD demos, so one process is
 	// the whole working model. The API stays under `/v1/`.
 	static fs.FS
-	// bySlug and byUUID resolve a boundary either way it can be named: the
-	// slug in its documents' file names, or its SSP UUID, which is also its
-	// node id in the tree. Read from the SSPs, so a boundary exists here only
-	// when its documents do.
-	bySlug map[string]string
-	byUUID map[string]string
 }
 
-// exportModels are the documents an export links, in the order it lists them.
-var exportModels = []struct{ model, prefix string }{
-	{"system-security-plan", "ssp-"},
-	{"assessment-results", "ar-"},
-	{"plan-of-action-and-milestones", "poam-"},
+// config is what main reads from flags.
+type config struct {
+	horizon time.Time
+	aliases map[string]tree.Role
 }
 
-// Path components are matched rather than trusted: a UUID or a column, and
-// nothing that could climb out of the fixtures directory.
+// Path components are matched rather than trusted.
 var (
 	uuidRe = regexp.MustCompile(`^[0-9a-fA-F-]{36}$`)
 	colRe  = regexp.MustCompile(`^[A-Za-z0-9.-]{1,16}$`)
 )
 
+// aliasFlag collects -role-alias doc-role=contract-role.
+type aliasFlag map[string]tree.Role
+
+func (a aliasFlag) String() string { return fmt.Sprint(map[string]tree.Role(a)) }
+
+func (a aliasFlag) Set(s string) error {
+	from, to, ok := strings.Cut(s, "=")
+	role := tree.Role(to)
+	if !ok || from == "" || (role != tree.AuthorizingOfficial && role != tree.SystemOwner && role != tree.ISSO) {
+		return errors.New("want <document role-id>=<authorizing-official|system-owner|information-system-security-officer>")
+	}
+	a[from] = role
+	return nil
+}
+
 func main() {
-	dir := flag.String("dir", "fixtures", "fixtures directory to serve")
+	dir := flag.String("dir", "fixtures", "folder of OSCAL documents to serve")
 	addr := flag.String("addr", "127.0.0.1:8080", "listen address")
 	static := flag.String("static", "", "directory to serve at / (the HUD demos); off when empty")
+	horizon := flag.String("horizon", "", "default horizon, YYYY-MM-DD; today when empty")
+	aliases := aliasFlag{}
+	flag.Var(aliases, "role-alias", "map a document role-id onto a contract role, e.g. owner=system-owner (repeatable)")
 	flag.Parse()
 
-	s, err := newServer(os.DirFS(*dir))
+	cfg := config{horizon: today(), aliases: aliases}
+	if *horizon != "" {
+		t, err := view.ParseHorizon(*horizon, cfg.horizon)
+		if err != nil {
+			log.Fatalf("mockserver: -horizon: %v", err)
+		}
+		cfg.horizon = t
+	}
+
+	// Read through an os.Root, so nothing under -dir reaches outside it.
+	root, err := os.OpenRoot(*dir)
+	if err != nil {
+		log.Fatalf("mockserver: -dir: %v", err)
+	}
+	s, err := newServerWith(root.FS(), cfg)
 	if err != nil {
 		log.Fatalf("mockserver: %v", err)
 	}
@@ -111,18 +113,30 @@ func main() {
 		log.Printf("mockserver: serving %s at /", *static)
 	}
 
-	mux := s.routes()
-
-	log.Printf("mockserver: %d personas, serving %s on http://%s", len(s.personas), *dir, *addr)
+	log.Printf("mockserver: %s", s.view.Summary())
+	for _, p := range s.view.Problems() {
+		log.Printf("  problem: %s: %s", p.Path, p.Detail)
+	}
+	log.Printf("mockserver: %d personas, default horizon %s, serving %s on http://%s",
+		len(s.personas), s.horizon.Format(view.DateLayout), *dir, *addr)
 	for _, p := range s.personas {
 		log.Printf("  %s %-34s %s", personaHeader+":", p.ID, p.Name)
 	}
-	srv := &http.Server{Addr: *addr, Handler: mux, ReadHeaderTimeout: 5 * 1e9}
+	if len(s.personas) == 0 {
+		log.Printf("mockserver: no party holds authorizing-official, system-owner or information-system-security-officer; " +
+			"map the documents' roles with -role-alias (see docs/testing.md)")
+	}
+	srv := &http.Server{Addr: *addr, Handler: s.routes(), ReadHeaderTimeout: 5 * time.Second}
 	log.Fatal(srv.ListenAndServe())
 }
 
+func today() time.Time {
+	y, m, d := time.Now().UTC().Date()
+	return time.Date(y, m, d, 0, 0, 0, 0, time.UTC)
+}
+
 // routes is separate from main so the contract's refusal rule can be tested
-// through the router rather than by calling handlers directly — the rule is
+// through the router rather than by calling handlers directly: the rule is
 // only worth anything as an HTTP response.
 func (s *server) routes() *http.ServeMux {
 	mux := http.NewServeMux()
@@ -134,7 +148,7 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc("GET /v1/export/oscal/{boundary}", s.export)
 	// Not a contract path: the href an export returns has to resolve, and the
 	// mock has nowhere else to serve the documents from.
-	mux.HandleFunc("GET /oscal/{name}", s.document)
+	mux.HandleFunc("GET /oscal/{name...}", s.document)
 	mux.HandleFunc("/v1/", s.notImplemented)
 	mux.HandleFunc("GET /healthz", healthz)
 	if s.static != nil {
@@ -155,133 +169,124 @@ func (s *server) routes() *http.ServeMux {
 	return mux
 }
 
-// healthz answers liveness only. It reads nothing: newServer already refused
-// to start without the fixtures, so a process that is up is a process that
-// loaded them.
+// healthz answers liveness only: newServer refused to start without an SSP,
+// so a process that is up is a process that loaded one.
 func healthz(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set(contentType, mediaJSON)
 	_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
 
 func newServer(fsys fs.FS) (*server, error) {
-	s := &server{fsys: fsys}
-	if err := s.read("api/personas.json", &s.personas); err != nil {
-		return nil, fmt.Errorf("no personas: %w (run `go run ./cmd/genfixtures`)", err)
-	}
+	return newServerWith(fsys, config{horizon: today()})
+}
 
-	a, slugs, err := buildAuthz(fsys)
+func newServerWith(fsys fs.FS, cfg config) (*server, error) {
+	set, err := view.LoadFS(fsys)
+	if err != nil {
+		return nil, fmt.Errorf("reading the documents: %w", err)
+	}
+	v, err := view.New(set, view.Options{RoleAliases: cfg.aliases})
 	if err != nil {
 		// Starting anyway would serve a federation of nothing: every node
-		// would be invisible and every response a 404, which is exactly what
-		// a working mock with no data looks like.
+		// invisible and every response a 404, which is what a working mock
+		// with no data looks like.
+		return nil, fmt.Errorf("%w (an SSP is required; run `go run ./cmd/genfixtures` for the fixtures)", err)
+	}
+	s := &server{view: v, horizon: cfg.horizon}
+
+	// A personas file names the callers; without one they come from the
+	// documents' role holders.
+	if s.personas, err = readPersonas(fsys); err != nil {
 		return nil, err
 	}
-	s.authz = a
-	s.bySlug, s.byUUID = slugs, make(map[string]string, len(slugs))
-	for slug, id := range slugs {
-		s.byUUID[strings.ToLower(id)] = slug
+	if s.personas == nil {
+		s.personas = v.Personas()
 	}
-
 	for _, p := range s.personas {
 		if p.PartyUUID == "" {
 			return nil, fmt.Errorf("persona %q has no party-uuid, so it cannot be authorized", p.ID)
 		}
-		if s.authz.Subtree(p.PartyUUID) == nil {
-			return nil, fmt.Errorf("persona %q holds no role anywhere in the fixture federation", p.ID)
+		if v.Authorizer().Subtree(p.PartyUUID) == nil {
+			return nil, fmt.Errorf("persona %q holds no role anywhere in the documents", p.ID)
 		}
 	}
 	return s, nil
 }
 
-// buildAuthz assembles the tree from the OSCAL the fixtures carry, then indexes
-// it for authorization — the same two packages the service will use. It also
-// returns each boundary's SSP UUID keyed by the slug in its file name.
-//
-// The mock reads the DOCUMENTS, not the API goldens it serves. That is the
-// property worth demonstrating: a caller's tree is derived from what the
-// documents say, so a client written against this mock is written against the
-// behaviour the service has.
-func buildAuthz(fsys fs.FS) (*authz.Authorizer, map[string]string, error) {
-	names, err := fs.Glob(fsys, "oscal/ssp-*.json")
-	if err != nil {
-		return nil, nil, fmt.Errorf("looking for SSPs: %w", err)
-	}
-	if len(names) == 0 {
-		return nil, nil, fmt.Errorf("no SSP fixtures under oscal/ (run `go run ./cmd/genfixtures`)")
-	}
-	sort.Strings(names)
-
-	ssps := make([]*oscal.SystemSecurityPlan, 0, len(names))
-	slugs := make(map[string]string, len(names))
-	for _, n := range names {
-		b, err := fs.ReadFile(fsys, n)
+func readPersonas(fsys fs.FS) ([]view.Persona, error) {
+	for _, name := range []string{"api/personas.json", "personas.json"} {
+		b, err := fs.ReadFile(fsys, name)
+		if errors.Is(err, fs.ErrNotExist) {
+			continue
+		}
 		if err != nil {
-			return nil, nil, fmt.Errorf("%s: %w", n, err)
+			return nil, err
 		}
-		var doc oscal.OscalCompleteSchema
-		if err := json.Unmarshal(b, &doc); err != nil {
-			return nil, nil, fmt.Errorf("%s: %w", n, err)
+		var out []view.Persona
+		if err := json.Unmarshal(b, &out); err != nil {
+			return nil, fmt.Errorf("%s: %w", name, err)
 		}
-		if doc.SystemSecurityPlan == nil {
-			return nil, nil, fmt.Errorf("%s is not a system-security-plan", n)
-		}
-		ssps = append(ssps, doc.SystemSecurityPlan)
-		slugs[strings.TrimSuffix(strings.TrimPrefix(path.Base(n), "ssp-"), ".json")] = doc.SystemSecurityPlan.UUID
+		return out, nil
 	}
-
-	res, err := tree.Build(ssps)
-	if err != nil {
-		return nil, nil, fmt.Errorf("building the tree: %w", err)
-	}
-	// Findings are reported, not fatal: the fixtures are expected to be clean,
-	// and a mock that refused to start on one orphaned party would be useless
-	// for exactly the malformed-document work it should help with.
-	for _, f := range res.Findings {
-		log.Printf("mockserver: tree finding %s (%s): %s", f.Kind, f.Source, f.Detail)
-	}
-	a, err := authz.New(res)
-	return a, slugs, err
+	return nil, nil
 }
 
-func (s *server) read(name string, into any) error {
-	b, err := fs.ReadFile(s.fsys, name)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, into)
-}
-
-// who resolves the caller. Defaulting to the first persona keeps a bare curl
-// useful; naming an unknown one is an error rather than a silent fallback.
-func (s *server) who(r *http.Request) (persona, bool) {
+// who resolves the caller, by persona id or party UUID. Defaulting to the
+// first persona keeps a bare curl useful; naming an unknown one is an error
+// rather than a silent fallback.
+func (s *server) who(r *http.Request) (view.Persona, bool) {
 	want := r.Header.Get(personaHeader)
-	if want == "" {
+	if want == "" && len(s.personas) > 0 {
 		return s.personas[0], true
 	}
 	for _, p := range s.personas {
-		if p.ID == want {
+		if p.ID == want || (want != "" && strings.EqualFold(p.PartyUUID, want)) {
 			return p, true
 		}
 	}
-	return persona{}, false
+	return view.Persona{}, false
 }
 
-// serve writes a golden, or the contract's 404 when it is not there.
-//
-// The two cases are deliberately one code path: "no such node" and "not yours"
-// produce the same response, so the server cannot accidentally distinguish
-// them.
-func (s *server) serve(w http.ResponseWriter, name string) {
-	// Decoded and re-encoded rather than copied, so only well-formed JSON leaves
-	// the server and it goes out through the same encoder as every other
-	// response.
-	var doc json.RawMessage
-	if err := s.read(name, &doc); err != nil {
+func (s *server) caller(w http.ResponseWriter, r *http.Request) (view.Persona, bool) {
+	p, ok := s.who(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "unknown_persona",
+			"Set "+personaHeader+" to a persona id or party UUID; the server logs them at startup.")
+		return view.Persona{}, false
+	}
+	return p, true
+}
+
+// horizonOf reads the request's horizon, answering 400 for a malformed one.
+func (s *server) horizonOf(w http.ResponseWriter, r *http.Request) (time.Time, bool) {
+	t, err := view.ParseHorizon(r.URL.Query().Get("horizon"), s.horizon)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "bad_horizon", err.Error())
+		return time.Time{}, false
+	}
+	return t, true
+}
+
+// request resolves the caller, the node id and the horizon.
+func (s *server) request(w http.ResponseWriter, r *http.Request) (view.Persona, string, time.Time, bool) {
+	p, ok := s.caller(w, r)
+	if !ok {
+		return view.Persona{}, "", time.Time{}, false
+	}
+	at, ok := s.horizonOf(w, r)
+	if !ok {
+		return view.Persona{}, "", time.Time{}, false
+	}
+	return p, r.PathValue("id"), at, true
+}
+
+func send(w http.ResponseWriter, v any, ok bool) {
+	if !ok {
 		notFound(w)
 		return
 	}
 	w.Header().Set(contentType, mediaJSON)
-	_ = json.NewEncoder(w).Encode(doc)
+	_ = json.NewEncoder(w).Encode(v)
 }
 
 func notFound(w http.ResponseWriter) {
@@ -295,57 +300,25 @@ func writeError(w http.ResponseWriter, code int, err, detail string) {
 	_ = json.NewEncoder(w).Encode(map[string]string{"error": err, "detail": detail})
 }
 
-func (s *server) caller(w http.ResponseWriter, r *http.Request) (persona, bool) {
-	p, ok := s.who(r)
-	if !ok {
-		writeError(w, http.StatusUnauthorized, "unknown_persona",
-			"Set "+personaHeader+" to a persona from fixtures/api/personas.json.")
-		return persona{}, false
-	}
-	return p, true
-}
-
-// node resolves a node id and applies the refusal rule in one place.
-func (s *server) node(w http.ResponseWriter, r *http.Request) (persona, string, bool) {
-	p, ok := s.caller(w, r)
-	if !ok {
-		return persona{}, "", false
-	}
-	id := r.PathValue("id")
-	if !uuidRe.MatchString(id) || !s.authz.Visible(p.PartyUUID, id) {
-		notFound(w)
-		return persona{}, "", false
-	}
-	return p, id, true
-}
-
-// tree is COMPUTED, not served. Every other read endpoint returns a golden,
-// because the mock does not project; this one is the exception because the
-// caller's tree is the one thing authorization actually decides.
+// tree is the caller's tree: every node they hold a role on or beneath.
 func (s *server) tree(w http.ResponseWriter, r *http.Request) {
 	p, ok := s.caller(w, r)
 	if !ok {
 		return
 	}
-	sub := s.authz.Subtree(p.PartyUUID)
-	if sub == nil {
-		// A caller holding nothing is refused the same way a caller asking
-		// about somebody else's node is.
-		notFound(w)
-		return
-	}
-	w.Header().Set(contentType, mediaJSON)
-	_ = json.NewEncoder(w).Encode(sub)
+	sub := s.view.Authorizer().Subtree(p.PartyUUID)
+	send(w, sub, sub != nil)
 }
 
 func (s *server) heat(w http.ResponseWriter, r *http.Request) {
-	if p, id, ok := s.node(w, r); ok {
-		s.serve(w, path.Join("api", p.ID, "heat", id+".json"))
+	if p, id, at, ok := s.request(w, r); ok {
+		h, found := s.view.Heat(p.PartyUUID, id, at)
+		send(w, h, found)
 	}
 }
 
 func (s *server) cell(w http.ResponseWriter, r *http.Request) {
-	p, id, ok := s.node(w, r)
+	p, id, at, ok := s.request(w, r)
 	if !ok {
 		return
 	}
@@ -354,12 +327,14 @@ func (s *server) cell(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "bad_column", "col must be a column from the heat response.")
 		return
 	}
-	s.serve(w, path.Join("api", p.ID, "cell", id+"--"+strings.ToLower(col)+".json"))
+	c, found := s.view.Cell(p.PartyUUID, id, strings.ToUpper(col), at)
+	send(w, c, found)
 }
 
 func (s *server) nextAction(w http.ResponseWriter, r *http.Request) {
-	if p, _, ok := s.node(w, r); ok {
-		s.serve(w, path.Join("api", p.ID, "next-action.json"))
+	if p, id, at, ok := s.request(w, r); ok {
+		n, found := s.view.NextAction(p.PartyUUID, id, at)
+		send(w, n, found)
 	}
 }
 
@@ -375,101 +350,41 @@ func (s *server) chain(w http.ResponseWriter, r *http.Request) {
 		notFound(w)
 		return
 	}
-	var c struct {
-		Component string `json:"component"`
-	}
-	// The chain names the component it belongs to, and since #74 a system node
-	// IS that component — so the same visibility rule answers it.
-	if err := s.read(path.Join("api", "chain", uuid+".json"), &c); err != nil || !s.authz.Visible(p.PartyUUID, c.Component) {
-		notFound(w)
-		return
-	}
-	s.serve(w, path.Join("api", "chain", uuid+".json"))
+	c, found := s.view.Chain(p.PartyUUID, uuid)
+	send(w, c, found)
 }
 
-// export hands back the OSCAL itself, which is what the recompute audit reads.
-// A boundary is named by slug or SSP UUID, and refused the way a node is: one
-// the caller cannot see is the same 404 as one that does not exist.
+// export lists a boundary's documents, by slug or SSP UUID, refused the way a
+// node is.
 func (s *server) export(w http.ResponseWriter, r *http.Request) {
 	p, ok := s.caller(w, r)
 	if !ok {
 		return
 	}
-	slug, ok := s.boundary(p, r.PathValue("boundary"))
-	if !ok {
-		notFound(w)
-		return
-	}
-	docs := []map[string]string{}
-	for _, m := range exportModels {
-		name := m.prefix + slug + ".json"
-		b, err := fs.ReadFile(s.fsys, path.Join("oscal", name))
-		if err != nil {
-			continue
-		}
-		sum := sha256.Sum256(b)
-		docs = append(docs, map[string]string{
-			"model": m.model, "href": "/oscal/" + name, "sha256": hex.EncodeToString(sum[:]),
-		})
-	}
-	if len(docs) == 0 {
-		notFound(w)
-		return
-	}
-	w.Header().Set(contentType, mediaJSON)
-	_ = json.NewEncoder(w).Encode(map[string]any{"boundary": slug, "documents": docs})
+	e, found := s.view.Export(p.PartyUUID, r.PathValue("boundary"))
+	send(w, e, found)
 }
 
 // document serves a document an export links to, byte for byte, so the
-// sha256 the export listed verifies against what arrives. Only a visible
-// boundary's SSP, AR and POA&M resolve; anything else is the same 404.
+// sha256 the export listed verifies against what arrives. Only documents an
+// export lists resolve, and only for a caller who can see their boundary.
 func (s *server) document(w http.ResponseWriter, r *http.Request) {
 	p, ok := s.caller(w, r)
 	if !ok {
 		return
 	}
-	name := r.PathValue("name")
-	for _, m := range exportModels {
-		slug, found := strings.CutPrefix(name, m.prefix)
-		slug, isJSON := strings.CutSuffix(slug, ".json")
-		if !found || !isJSON {
-			continue
-		}
-		known, ok := s.boundary(p, slug)
-		if !ok {
-			break
-		}
-		// Rebuilt from the boundary index rather than the request, so the
-		// file read is one the SSPs named.
-		b, err := fs.ReadFile(s.fsys, path.Join("oscal", m.prefix+known+".json"))
-		if err != nil {
-			break
-		}
-		w.Header().Set(contentType, mediaJSON)
-		w.Header().Set("X-Content-Type-Options", "nosniff")
-		_, _ = w.Write(b)
+	b, found := s.view.Document(p.PartyUUID, "/oscal/"+r.PathValue("name"))
+	if !found {
+		notFound(w)
 		return
 	}
-	notFound(w)
-}
-
-// boundary resolves a slug or SSP UUID to the slug, when the caller can see it.
-// The slug returned is the index's own, read from the SSPs' file names, never
-// the caller's string — so nothing a caller sends reaches a path.
-func (s *server) boundary(p persona, ref string) (string, bool) {
-	id := strings.ToLower(ref)
-	if !uuidRe.MatchString(ref) {
-		id = strings.ToLower(s.bySlug[ref])
-	}
-	slug, ok := s.byUUID[id]
-	if !ok || !s.authz.Visible(p.PartyUUID, s.bySlug[slug]) {
-		return "", false
-	}
-	return slug, true
+	w.Header().Set(contentType, mediaJSON)
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	http.ServeContent(w, r, "", time.Time{}, bytes.NewReader(b))
 }
 
 func (s *server) notImplemented(w http.ResponseWriter, r *http.Request) {
 	writeError(w, http.StatusNotImplemented, "not_implemented",
-		"The mock serves the read endpoints from fixtures. "+r.Method+" "+r.URL.Path+
+		"The mock serves the read endpoints. "+r.Method+" "+r.URL.Path+
 			" is in the frozen contract and is implemented by the service, not here.")
 }

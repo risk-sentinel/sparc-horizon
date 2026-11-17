@@ -27,14 +27,13 @@ func TestExportFollowsTheSameRule(t *testing.T) {
 	s, h := testServer(t)
 	ao, so, iso := s.personas[0], s.personas[1], s.personas[2]
 
-	own := s.byUUID[strings.ToLower(so.NodeUUID)]
-	if own == "" {
-		t.Fatalf("premise wrong: the SO's node %s is not a boundary with an SSP", so.NodeUUID)
+	own, foreign, sibling := "ods-portal", "bgm-grants", "ods-identity"
+	identity, ok := s.view.Export(ao.PartyUUID, sibling)
+	if !ok || identity.Boundary != sibling {
+		t.Fatalf("premise wrong: the AO cannot export %s", sibling)
 	}
-	foreign := s.byUUID[strings.ToLower(iso.NodeUUID)]
-	sibling := "ods-identity"
-	if !s.authz.Visible(ao.PartyUUID, s.bySlug[sibling]) || s.authz.Visible(so.PartyUUID, s.bySlug[sibling]) {
-		t.Fatalf("premise wrong: %s should be visible to the AO and not to the SO", sibling)
+	if _, ok := s.view.Export(so.PartyUUID, sibling); ok {
+		t.Fatalf("premise wrong: the SO can export %s", sibling)
 	}
 
 	bySlug := get(t, h, so.ID, "/v1/export/oscal/"+own)
@@ -73,12 +72,13 @@ func TestExportLinksResolveAndVerify(t *testing.T) {
 	if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil {
 		t.Fatalf("export: %v", err)
 	}
-	if len(body.Documents) != len(exportModels) {
-		t.Fatalf("export lists %d documents, want %d (SSP, AR, POA&M)", len(body.Documents), len(exportModels))
+	models := []string{"system-security-plan", "assessment-results", "plan-of-action-and-milestones"}
+	if len(body.Documents) != len(models) {
+		t.Fatalf("export lists %d documents, want %d (SSP, AR, POA&M)", len(body.Documents), len(models))
 	}
 	for i, d := range body.Documents {
-		if d.Model != exportModels[i].model {
-			t.Errorf("document %d is %s, want %s: the order is part of the response", i, d.Model, exportModels[i].model)
+		if d.Model != models[i] {
+			t.Errorf("document %d is %s, want %s: the order is part of the response", i, d.Model, models[i])
 		}
 		checkLinkedDocument(t, h, so.ID, iso.ID, d.Href, d.SHA256)
 	}

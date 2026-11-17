@@ -76,19 +76,11 @@
           ],
           "title": "Identity Services system security plan",
           "uuid": "52176fd3-10ad-5df7-bbb4-c69a930223a8"
-        },
-        {
-          "citation": {
-            "text": "Identity Services continuous monitoring plan, 2026-Q3"
-          },
-          "description": "Cited rather than modelled: these fixtures carry no assessment-plan document.",
-          "title": "Identity Services continuous monitoring plan",
-          "uuid": "8f4b74e4-a079-5568-9994-d270a9bbfb33"
         }
       ]
     },
     "import-ap": {
-      "href": "#8f4b74e4-a079-5568-9994-d270a9bbfb33"
+      "href": "#cf30a7c6-154a-579b-b54b-644b5e3a940f"
     },
     "metadata": {
       "last-modified": "2026-09-15T00:00:00Z",
@@ -214,6 +206,209 @@
         "end": "2026-09-14T00:00:00Z",
         "findings": [
           {
+            "description": "The assessment of ac-2 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "964ef50b-d310-535b-9be3-1023ea70811c"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "ac-2_obj",
+              "title": "Account Management",
+              "type": "objective-id"
+            },
+            "title": "ac-2 is satisfied on IDENTITY",
+            "uuid": "349031c1-6f1d-52d5-bcc1-b79e72b34d28"
+          },
+          {
+            "description": "The assessment of ac-2.1 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "f646fa24-93d5-5eb2-bef8-aa84b8e4a28d"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "ac-2.1_obj",
+              "title": "Account Management | Automated System Account Management",
+              "type": "objective-id"
+            },
+            "title": "ac-2.1 is satisfied on IDENTITY",
+            "uuid": "d71d5b9f-2595-5c55-832b-fc524562e1ac"
+          },
+          {
+            "description": "The assessment of au-6 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "ba27173d-1aa6-54dc-9160-d08a72023dc0"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "au-6_obj",
+              "title": "Audit Record Review, Analysis, and Reporting",
+              "type": "objective-id"
+            },
+            "title": "au-6 is satisfied on IDENTITY",
+            "uuid": "0e98dcaf-c958-5ad3-9998-68121cff8867"
+          },
+          {
+            "description": "The assessment of au-6.1 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "eec0c0a7-a6bf-544a-9b8a-b90afebce3e3"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "au-6.1_obj",
+              "title": "Audit Record Review, Analysis, and Reporting | Automated Process Integration",
+              "type": "objective-id"
+            },
+            "title": "au-6.1 is satisfied on IDENTITY",
+            "uuid": "c9e98837-0c32-52c7-8822-eff779f501f4"
+          },
+          {
+            "description": "The assessment of cp-4 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "04dc49af-8442-577a-94dc-a20b8e796b8e"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "cp-4_obj",
+              "title": "Contingency Plan Testing",
+              "type": "objective-id"
+            },
+            "title": "cp-4 is satisfied on IDENTITY",
+            "uuid": "009195c8-f975-5bf4-9747-67e8022743b0"
+          },
+          {
+            "description": "The assessment of cp-9 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "95f1b429-e232-5adc-be8f-e3b166f28156"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "cp-9_obj",
+              "title": "System Backup",
+              "type": "objective-id"
+            },
+            "title": "cp-9 is satisfied on IDENTITY",
+            "uuid": "923b7ca6-4994-5df1-8c8c-af995e71ab8d"
+          },
+          {
+            "description": "The assessment of ia-2 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "664332b3-bbf4-56ad-89ae-f5a2a08c3f03"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "ia-2_obj",
+              "title": "Identification and Authentication (Organizational Users)",
+              "type": "objective-id"
+            },
+            "title": "ia-2 is satisfied on IDENTITY",
+            "uuid": "97a29d2a-8ffe-5b84-a4b8-c5c8f3749bb6"
+          },
+          {
             "description": "The assessment of ia-5 did not satisfy the control objective.",
             "origins": [
               {
@@ -248,6 +443,93 @@
             "uuid": "f74c70a4-797f-55a9-a6e5-6620419be6aa"
           },
           {
+            "description": "The assessment of sc-7 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "b4c4ef7f-0dfb-5832-9088-f2c642991616"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "sc-7_obj",
+              "title": "Boundary Protection",
+              "type": "objective-id"
+            },
+            "title": "sc-7 is satisfied on IDENTITY",
+            "uuid": "0a9b17f7-99fd-5de2-b378-8738ab03fc8c"
+          },
+          {
+            "description": "The assessment of sc-28 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "3a30d653-bfb2-54f8-a4fe-9d074ed4f78d"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "sc-28_obj",
+              "title": "Protection of Information at Rest",
+              "type": "objective-id"
+            },
+            "title": "sc-28 is satisfied on IDENTITY",
+            "uuid": "1bd27484-24a8-5cb2-994e-4b012293b3ba"
+          },
+          {
+            "description": "The assessment of si-4 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "9a762fcf-b523-52ce-8e84-2bbc06ed8829"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "si-4_obj",
+              "title": "System Monitoring",
+              "type": "objective-id"
+            },
+            "title": "si-4 is satisfied on IDENTITY",
+            "uuid": "0f59c6a0-6a6a-552f-970a-459a1a7b6580"
+          },
+          {
             "description": "The assessment of si-7 did not satisfy the control objective.",
             "origins": [
               {
@@ -280,6 +562,122 @@
             },
             "title": "si-7 is not satisfied on IDENTITY",
             "uuid": "83d8fdb2-2b5c-52a5-9b36-6bf00e646db0"
+          },
+          {
+            "description": "The assessment of ACM.1 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "fee1a51e-6319-55f0-abdb-0c3e993b704b"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "ACM.1_obj",
+              "title": "Imported and ACM-issued certificates should be renewed after a specified time period",
+              "type": "objective-id"
+            },
+            "title": "ACM.1 is satisfied on IDENTITY",
+            "uuid": "9f20731a-682c-5303-be03-ebd71c7495f1"
+          },
+          {
+            "description": "The assessment of IAM.4 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "2ec70e6b-d455-5fa2-aed4-073fbce5927b"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "IAM.4_obj",
+              "title": "IAM root user access key should not exist",
+              "type": "objective-id"
+            },
+            "title": "IAM.4 is satisfied on IDENTITY",
+            "uuid": "e39df5fd-80ac-51de-aab3-c27c280a40c7"
+          },
+          {
+            "description": "The assessment of S3.5 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "d067938d-edbe-58be-8d70-abda291238ba"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "S3.5_obj",
+              "title": "S3 general purpose buckets should require requests to use SSL",
+              "type": "objective-id"
+            },
+            "title": "S3.5 is satisfied on IDENTITY",
+            "uuid": "78a8387f-335b-537f-8f84-28083faa5c17"
+          },
+          {
+            "description": "The assessment of EC2.2 satisfied the control objective.",
+            "origins": [
+              {
+                "actors": [
+                  {
+                    "actor-uuid": "d98e6054-678e-56d3-a5d5-93ae01cd8064",
+                    "role-id": "information-system-security-officer",
+                    "type": "party"
+                  }
+                ]
+              }
+            ],
+            "related-observations": [
+              {
+                "observation-uuid": "19779cb9-92ec-5ae5-8785-8c200d3e9503"
+              }
+            ],
+            "target": {
+              "status": {
+                "state": "satisfied"
+              },
+              "target-id": "EC2.2_obj",
+              "title": "VPC default security groups should not allow inbound or outbound traffic",
+              "type": "objective-id"
+            },
+            "title": "EC2.2 is satisfied on IDENTITY",
+            "uuid": "66456c08-19d6-5a16-a8d8-bb58d7240a5f"
           }
         ],
         "observations": [

@@ -1,0 +1,162 @@
+{
+  "assessment-plan": {
+    "import-ssp": {
+      "href": "#f7de308a-5555-5e35-be6a-029ad885320e"
+    },
+    "metadata": {
+      "last-modified": "2026-09-15T00:00:00Z",
+      "oscal-version": "1.2.3",
+      "parties": [
+        {
+          "name": "Cascade Federation",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "federation"
+            }
+          ],
+          "remarks": "The federation tier. Its signed manifest lives in SPARC's trust fabric, not in this document.",
+          "short-name": "CASCADE",
+          "type": "organization",
+          "uuid": "77187569-aef0-5983-8528-3571a71f997b"
+        },
+        {
+          "member-of-organizations": [
+            "77187569-aef0-5983-8528-3571a71f997b"
+          ],
+          "name": "Office of Digital Services",
+          "props": [
+            {
+              "name": "node-type",
+              "ns": "https://sparc.risk-sentinel.org/ns",
+              "value": "organization"
+            }
+          ],
+          "short-name": "ODS",
+          "type": "organization",
+          "uuid": "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
+        },
+        {
+          "member-of-organizations": [
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
+          ],
+          "name": "PORTAL Authorizing Official",
+          "type": "person",
+          "uuid": "377df8c6-c8fa-5217-a2ff-445247a7b7c5"
+        },
+        {
+          "member-of-organizations": [
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
+          ],
+          "name": "PORTAL System Owner",
+          "type": "person",
+          "uuid": "f935a0b4-4974-5aec-a8ed-590328a8fa6d"
+        },
+        {
+          "member-of-organizations": [
+            "cdf7d9f6-cf10-5944-a0ef-0351bf1ec41a"
+          ],
+          "name": "PORTAL Information System Security Officer",
+          "type": "person",
+          "uuid": "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
+        }
+      ],
+      "published": "2026-09-15T00:00:00Z",
+      "responsible-parties": [
+        {
+          "party-uuids": [
+            "377df8c6-c8fa-5217-a2ff-445247a7b7c5"
+          ],
+          "role-id": "authorizing-official"
+        },
+        {
+          "party-uuids": [
+            "f935a0b4-4974-5aec-a8ed-590328a8fa6d"
+          ],
+          "role-id": "system-owner"
+        },
+        {
+          "party-uuids": [
+            "568bd57d-85a9-57fc-a41e-2356ed92c9ed"
+          ],
+          "role-id": "information-system-security-officer"
+        }
+      ],
+      "roles": [
+        {
+          "id": "authorizing-official",
+          "title": "Authorizing Official"
+        },
+        {
+          "id": "system-owner",
+          "title": "System Owner"
+        },
+        {
+          "id": "information-system-security-officer",
+          "title": "Information System Security Officer"
+        }
+      ],
+      "title": "Public Portal continuous monitoring plan 2026-Q3",
+      "version": "1.0.0"
+    },
+    "reviewed-controls": {
+      "control-selections": [
+        {
+          "description": "Controls assessed for Public Portal in 2026-Q3.",
+          "include-controls": [
+            {
+              "control-id": "ac-2"
+            },
+            {
+              "control-id": "ac-2.1"
+            },
+            {
+              "control-id": "au-6"
+            },
+            {
+              "control-id": "au-6.1"
+            },
+            {
+              "control-id": "cp-4"
+            },
+            {
+              "control-id": "cp-9"
+            },
+            {
+              "control-id": "ia-2"
+            },
+            {
+              "control-id": "ia-5"
+            },
+            {
+              "control-id": "sc-7"
+            },
+            {
+              "control-id": "sc-28"
+            },
+            {
+              "control-id": "si-4"
+            },
+            {
+              "control-id": "si-7"
+            },
+            {
+              "control-id": "ACM.1"
+            },
+            {
+              "control-id": "IAM.4"
+            },
+            {
+              "control-id": "S3.5"
+            },
+            {
+              "control-id": "EC2.2"
+            }
+          ]
+        }
+      ]
+    },
+    "uuid": "5c4708ed-62d6-591c-a654-5353b34d8486"
+  }
+}

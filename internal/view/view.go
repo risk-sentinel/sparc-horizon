@@ -91,7 +91,7 @@ func (v *View) buildTree(opts Options) error {
 // indexComponentDefinitions keys each component definition's requirements by
 // control, for controls that reach a boundary only through one.
 func (v *View) indexComponentDefinitions() {
-	for _, d := range v.set.ofModel("component-definition") {
+	for _, d := range v.set.ofModel(modelCDef) {
 		for _, c := range deref(d.Doc.ComponentDefinition.Components) {
 			for _, ci := range deref(c.ControlImplementations) {
 				v.indexRequirements(ci.ImplementedRequirements)
@@ -139,8 +139,8 @@ func (v *View) Summary() string {
 	}
 	return fmt.Sprintf("%d SSP, %d assessment plan, %d assessment results, %d POA&M, %d component definition; "+
 		"%d boundaries, %d assessed control-component pairs, %d other JSON files ignored, %d problems",
-		counts["system-security-plan"], counts["assessment-plan"], counts["assessment-results"],
-		counts["plan-of-action-and-milestones"], counts["component-definition"],
+		counts[modelSSP], counts[modelAP], counts[modelAR],
+		counts[modelPOAM], counts[modelCDef],
 		len(v.links.boundaries), placed, v.set.NotOSCAL, len(v.set.Problems))
 }
 

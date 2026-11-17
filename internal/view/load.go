@@ -39,6 +39,15 @@ import (
 	hoscal "github.com/risk-sentinel/sparc-horizon/internal/oscal"
 )
 
+// The OSCAL model roots this package reads.
+const (
+	modelSSP  = "system-security-plan"
+	modelAP   = "assessment-plan"
+	modelAR   = "assessment-results"
+	modelPOAM = "plan-of-action-and-milestones"
+	modelCDef = "component-definition"
+)
+
 // MaxDocumentBytes caps one file. A larger one is reported and skipped rather
 // than read, because the mock reads documents a tester supplies.
 const MaxDocumentBytes = 64 << 20

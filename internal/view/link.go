@@ -42,7 +42,7 @@ func link(set *Set) *linker {
 	}
 
 	slugs := map[string]bool{}
-	for _, d := range set.ofModel("system-security-plan") {
+	for _, d := range set.ofModel(modelSSP) {
 		b := &boundary{ssp: d, plan: d.Doc.SystemSecurityPlan}
 		b.name = b.plan.SystemCharacteristics.SystemName
 		b.slug = strings.TrimPrefix(d.stem(), "ssp-")
@@ -61,12 +61,12 @@ func link(set *Set) *linker {
 		l.bySSP[b.id()] = b
 	}
 
-	for _, d := range set.ofModel("assessment-results") {
+	for _, d := range set.ofModel(modelAR) {
 		if b := l.resultsBoundary(d); b != nil {
 			b.ars = append(b.ars, d)
 		}
 	}
-	for _, d := range set.ofModel("plan-of-action-and-milestones") {
+	for _, d := range set.ofModel(modelPOAM) {
 		if b := l.poamBoundary(d); b != nil {
 			b.poams = append(b.poams, d)
 		}
@@ -116,8 +116,8 @@ func (l *linker) resolve(href, model string) *Document {
 // only SSP in the set. Every fallback is reported.
 func (l *linker) resultsBoundary(d *Document) *boundary {
 	ar := d.Doc.AssessmentResults
-	if ap := l.resolve(ar.ImportAp.Href, "assessment-plan"); ap != nil {
-		if ssp := l.resolve(ap.Doc.AssessmentPlan.ImportSsp.Href, "system-security-plan"); ssp != nil {
+	if ap := l.resolve(ar.ImportAp.Href, modelAP); ap != nil {
+		if ssp := l.resolve(ap.Doc.AssessmentPlan.ImportSsp.Href, modelSSP); ssp != nil {
 			return l.bySSP[ssp.UUID()]
 		}
 		l.set.note(d.Path, "its assessment plan %s imports %q, which is not a loaded SSP", ap.Path, ap.Doc.AssessmentPlan.ImportSsp.Href)
@@ -140,7 +140,7 @@ func (l *linker) resultsBoundary(d *Document) *boundary {
 func (l *linker) poamBoundary(d *Document) *boundary {
 	p := d.Doc.PlanOfActionAndMilestones
 	if p.ImportSsp != nil {
-		if ssp := l.resolve(p.ImportSsp.Href, "system-security-plan"); ssp != nil {
+		if ssp := l.resolve(p.ImportSsp.Href, modelSSP); ssp != nil {
 			return l.bySSP[ssp.UUID()]
 		}
 		l.set.note(d.Path, "import-ssp %q is not a loaded SSP", p.ImportSsp.Href)

@@ -63,7 +63,7 @@ env:
   # reports success over an empty list the first time a file is renamed or the
   # `uses:` spelling changes. Raise it when pins are added. 9 as of #86, when
   # the SBOM/SCA port (#84) brought in the anchore and aquasecurity pins.
-  MIN_PINS: '9'
+  MIN_PINS: '15'
   MARKER: '<!-- action-pin-verification -->'
 
 jobs:

@@ -1,10 +1,10 @@
 {
   "component-definition": {
-    "uuid": "49430871-72bc-4da7-841c-6f2a4ff0adf1",
+    "uuid": "cee7fc2c-de6a-4c38-b193-f8044a156637",
     "metadata": {
       "title": "SPARC Horizon",
-      "last-modified": "2026-09-19T00:00:00Z",
-      "version": "0.1.0",
+      "last-modified": "2026-11-16T00:00:00Z",
+      "version": "0.2.0",
       "oscal-version": "1.2.1",
       "roles": [
         {
@@ -103,7 +103,7 @@
               {
                 "uuid": "6852958e-afd0-56d6-a3c2-266583ce4017",
                 "control-id": "sa-11.7",
-                "description": "Two canaries assert that the assessors are still assessing: the secret-scanning fixture proves detection is live, and tests/actionlint-fixture/ plants an SC2012 defect that workflow lint must report. actionlint exits 0 when shellcheck is absent, skipping the integration rather than reporting it, so without the canary a runner-image change would remove a class of coverage silently.",
+                "description": "Two canaries assert that the assessors are still assessing: the secret-scanning fixture proves detection is live, and tests/actionlint-fixture/ plants an SC2012 defect that workflow lint must report. actionlint exits 0 when shellcheck is absent, skipping the integration rather than reporting it, so without the canary a runner-image change would remove a class of coverage silently. A fourth canary, tests/govulncheck-fixture/, must be reported by govulncheck at symbol level through the same gate as the real module (#111).",
                 "props": [
                   {
                     "name": "implementation-status",
@@ -121,7 +121,7 @@
               {
                 "uuid": "53cc1268-9909-5388-9628-6e276e282d0d",
                 "control-id": "cm-3",
-                "description": "Changes reach main only through an issue, a branch, a plan approved before code, the verification gate and a five-section pull request. pr-checklist.yml fails the build on an unchecked box outside the test plan.",
+                "description": "Changes reach main only through an issue, a branch, a plan approved before code, the verification gate and a five-section pull request. pr-checklist.yml fails the build on an unchecked box outside the test plan. Publishing the image needs the production environment's approval, given only after both architectures have been built, run and scanned (#113).",
                 "props": [
                   {
                     "name": "implementation-status",
@@ -200,16 +200,28 @@
               {
                 "uuid": "7809aed5-2e39-5430-92fd-0daa90a61b77",
                 "control-id": "si-2",
-                "description": "Dependabot opens pull requests for the github-actions ecosystem. The gomod and npm ecosystems are added in phase S1 when those manifests exist; declaring them before then would assert coverage of nothing.",
+                "description": "Dependabot opens pull requests for github-actions, gomod (the service) and gomod under tools/ (CI tool pins). govulncheck fails any pull request on which a vulnerable function is reachable, including through transitive modules (#111). The image's CRITICAL/HIGH dispositions are recorded in container-baseline.yml with rationale, NIST control, reviewer and review date; an acceptance past its review date fails validation (#113).",
                 "props": [
                   {
                     "name": "implementation-status",
-                    "value": "partial"
+                    "value": "implemented"
                   }
                 ],
                 "links": [
                   {
                     "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/dependabot.yml",
+                    "rel": "implemented-by"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/govulncheck.yml",
+                    "rel": "implemented-by"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/container-baseline.yml",
+                    "rel": "implemented-by"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/internal/baseline/baseline.go",
                     "rel": "implemented-by"
                   }
                 ]
@@ -217,14 +229,28 @@
               {
                 "uuid": "e44978de-3151-56d7-8580-e1280911cdc6",
                 "control-id": "ra-5",
-                "description": "Secret scanning is live and emits evidence. Static analysis is wired but has never run: SonarCloud has no analysis of this repository because it contains no analysable source yet. SCA, SBOM and govulncheck arrive with the first code in phase S1.",
+                "description": "Secret scanning, static analysis, SBOM and SCA run and emit OHDF. govulncheck gates every pull request, main and a weekly run on reachable Go vulnerabilities (#111). The image is scanned by Trivy at CRITICAL/HIGH for each architecture before a release can be approved, against container-baseline.yml, and the gate fails if the scan inventoried nothing (#113). govulncheck and the image scan are not yet emitted as HDF.",
                 "props": [
                   {
                     "name": "implementation-status",
                     "value": "partial"
                   }
                 ],
-                "remarks": "The gap is tracked rather than hidden. The static-analysis converter refuses to convert an unanalysed project instead of filing a clean report, which is the correct direction of failure."
+                "remarks": "The gap is tracked rather than hidden. The static-analysis converter refuses to convert an unanalysed project instead of filing a clean report, which is the correct direction of failure.",
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/govulncheck.yml",
+                    "rel": "implemented-by"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/build-sign-publish.yml",
+                    "rel": "implemented-by"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/container-baseline.yml",
+                    "rel": "implemented-by"
+                  }
+                ]
               },
               {
                 "uuid": "331882d6-d3b4-5eea-8c1a-0c8ae5364af2",
@@ -251,7 +277,7 @@
               {
                 "uuid": "0de2d14e-639b-5b51-ad08-b724d0a2f480",
                 "control-id": "ac-6",
-                "description": "The emit role is scoped to this repository's prefix under the risk-sentinel boundary and deliberately not granted the sparc prefix that in-boundary producers hold, because Horizon sits above the SPARC authorization boundary.",
+                "description": "The emit role is scoped to this repository's prefix under the risk-sentinel boundary and deliberately not granted the sparc prefix that in-boundary producers hold, because Horizon sits above the SPARC authorization boundary. The image runs as uid 1001 and is smoke-tested with a read-only root filesystem, all capabilities dropped and no-new-privileges (#108).",
                 "props": [
                   {
                     "name": "implementation-status",
@@ -282,6 +308,61 @@
                   }
                 ],
                 "remarks": "Depends on the emit role holding kms:GenerateDataKey and kms:Decrypt for the bucket's default key. A role without that grant begins failing the moment the header is sent."
+              },
+              {
+                "uuid": "02bd3298-f9bb-5d6f-92fc-8fb6d922fc24",
+                "control-id": "cm-7",
+                "description": "The image is a root filesystem of four Red Hat UBI 10 packages plus one static Go binary: no shell, no utilities, no shared libraries, no package manager. The smoke test asserts /bin/sh is absent on every pull request and before each release (#108).",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "implemented"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/Dockerfile",
+                    "rel": "implemented-by"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/tests/container-smoke/smoke.sh",
+                    "rel": "implemented-by"
+                  }
+                ]
+              },
+              {
+                "uuid": "5fc8a690-7034-5e2c-8b23-65137aaa6e8c",
+                "control-id": "si-7",
+                "description": "Wired, not yet exercised: each release is signed with Sigstore keyless signing, identity constrained to this repository's build-sign-publish.yml at a v* tag, and the signature and CycloneDX attestation are verified in both registries before the release is created. The published bytes are the ones verified; nothing is rebuilt after approval (#113).",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "partial"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/build-sign-publish.yml",
+                    "rel": "implemented-by"
+                  }
+                ]
+              },
+              {
+                "uuid": "2e79eda2-72eb-525e-9e17-e0ad63b4a713",
+                "control-id": "cm-8",
+                "description": "Wired, not yet exercised: each release attests a CycloneDX SBOM of the published image to Docker Hub and ECR and attaches it to the GitHub Release; the run fails on an SBOM with no components (#113).",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "partial"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/build-sign-publish.yml",
+                    "rel": "implemented-by"
+                  }
+                ]
               }
             ]
           }

@@ -1,0 +1,673 @@
+name: Build, Sign & Publish
+
+# Releases the sparc-horizon image to Docker Hub and ECR (S1-9, #113). Modelled
+# on sparc's build-sign-publish.yml, and for the same reason: nothing reaches a
+# registry until the exact bytes that will ship have been built, run and
+# scanned, and the release has been approved. A failure anywhere before the
+# approval pushes nothing, so no tag is spent.
+#
+#   prepare ──► build-image (amd64, arm64; native runners; OCI archives)
+#           ──► verify (each arch: smoke.sh + Trivy gate vs container-baseline.yml)
+#           ──► build-and-push  [environment: production — the single approval]
+#                 promote the verified archives; nothing is rebuilt
+#           ──► sign-verify-attest (cosign keyless; CycloneDX SBOM attested)
+#           ──► release (GitHub Release with digests and verify commands)
+#
+# Only a pushed v* tag publishes. A pull request that touches the release path,
+# or a dispatch, is a dry run: it builds, verifies and scans both architectures,
+# then stops before the approval. It never needs registry credentials and never
+# waits on a reviewer.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  # A pull request that changes the release path runs the whole pipeline as a
+  # dry run, so the pipeline is tested before it merges rather than at the first
+  # tag. Path-filtered, so it is never a required check.
+  pull_request:
+    paths:
+      - .github/workflows/build-sign-publish.yml
+      - Dockerfile
+      - .dockerignore
+      - container-baseline.yml
+      - cmd/baseline/**
+      - internal/baseline/**
+      - tests/container-smoke/**
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to simulate (a dispatch is always a dry run)'
+        required: false
+        default: 'v0.0.0-test'
+        type: string
+
+# Per-job permissions (least privilege); nothing is granted workflow-wide.
+permissions: {}
+
+concurrency:
+  group: build-sign-publish-${{ github.ref }}
+  cancel-in-progress: false   # never cancel a release mid-promotion
+
+env:
+  # A pull request has no tag; it simulates v0.0.0-pr.<number>.
+  VERSION: ${{ inputs.version || (github.event_name == 'pull_request' && format('v0.0.0-pr.{0}', github.event.number)) || github.ref_name }}
+  DOCKERHUB_IMAGE: risksentinel/sparc-horizon
+  ECR_REPO: sparc-horizon
+  # Same Trivy as sca-scan.yml; bump both together.
+  TRIVY_VERSION: v0.72.0
+
+jobs:
+
+  prepare:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      build_date: ${{ steps.meta.outputs.build_date }}
+      is_prerelease: ${{ steps.meta.outputs.is_prerelease }}
+      is_latest: ${{ steps.latest.outputs.is_latest }}
+      dry_run: ${{ steps.meta.outputs.dry_run }}
+    steps:
+      - name: Compute build metadata
+        id: meta
+        env:
+          EVENT: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          set -euo pipefail
+          if [[ ! "${VERSION}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
+            echo "::error::Invalid version ${VERSION}: want v{major}.{minor}.{patch}[-prerelease]"
+            exit 1
+          fi
+          # Only a pushed tag publishes. A pull request or a dispatch is a dry run.
+          dry=true
+          if [ "${EVENT}" = "push" ] && [ "${REF_TYPE}" = "tag" ]; then dry=false; fi
+          pre=false
+          if [[ "${VERSION}" == *-* ]]; then pre=true; fi
+          {
+            echo "version=${VERSION}"
+            echo "build_date=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "is_prerelease=${pre}"
+            echo "dry_run=${dry}"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "## Build configuration"
+            echo
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| Version | \`${VERSION}\` |"
+            echo "| Pre-release | ${pre} |"
+            echo "| Dry run | ${dry} |"
+            echo "| Commit | \`${GITHUB_SHA}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # `latest` moves only for the highest full release of the major line named
+      # by the HORIZON_LATEST_MAJOR repository variable, as in sparc (#1359).
+      # Anything unreadable fails safe: latest stays where it is.
+      - name: Decide whether this tag moves latest
+        id: latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.meta.outputs.version }}
+          LATEST_MAJOR: ${{ vars.HORIZON_LATEST_MAJOR }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -uo pipefail
+          decide() {
+            local moves="$1"
+            local why="$2"
+            echo "is_latest=${moves}" >> "$GITHUB_OUTPUT"
+            echo "Moves latest: ${moves} (${why})"
+            echo "| Moves latest | ${moves} (${why}) |" >> "$GITHUB_STEP_SUMMARY"
+          }
+          if [[ "${TAG}" == *-* ]]; then decide false "prerelease"; exit 0; fi
+          if [[ ! "${LATEST_MAJOR}" =~ ^[0-9]+$ ]]; then
+            echo "::warning::HORIZON_LATEST_MAJOR is not set to a major version, so latest will not move"
+            decide false "HORIZON_LATEST_MAJOR unset"; exit 0
+          fi
+          major="${TAG#v}"; major="${major%%.*}"
+          if [[ "${major}" != "${LATEST_MAJOR}" ]]; then
+            decide false "v${major} line; latest belongs to v${LATEST_MAJOR}"; exit 0
+          fi
+          if ! tags=$(gh api --paginate "repos/${REPO}/git/matching-refs/tags/v${major}." --jq '.[].ref | ltrimstr("refs/tags/")'); then
+            echo "::warning::could not list the v${major}.x tags, so latest will not move"
+            decide false "tag list unreadable"; exit 0
+          fi
+          highest=$(printf '%s\n' "${tags}" "${TAG}" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          if [[ "${highest}" != "${TAG}" ]]; then decide false "${highest} is newer"; exit 0; fi
+          decide true "highest v${major}.x release"
+
+      # Fail before anything is built when a real release could not finish. A
+      # release that dies at the push has burned nothing, but it has wasted the
+      # build and the reviewer's time; one that dies after a partial push would
+      # leave a half-published tag.
+      - name: Preflight (real releases only)
+        if: steps.meta.outputs.dry_run != 'true'
+        env:
+          EVENT: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          PUBLISH_ARN: ${{ secrets.SPARC_HORIZON_PUBLISH_ARN }}
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          set -uo pipefail
+          # Only a tag push publishes. The signing identity is this workflow at a
+          # release tag, and the release is created for that tag, so a publish
+          # from a branch would push to both registries and then fail to verify.
+          if [ "${EVENT}" != "push" ] || [ "${REF_TYPE}" != "tag" ]; then
+            echo "::error::A real release runs only from a pushed v* tag. Dispatch is for dry runs."
+            exit 1
+          fi
+          fail=0
+          for v in PUBLISH_ARN ECR_REGISTRY AWS_REGION DOCKERHUB_USERNAME DOCKERHUB_TOKEN; do
+            if [ -z "${!v:-}" ]; then
+              echo "::error::${v} is not set. SPARC_HORIZON_PUBLISH_ARN comes from sparc-iac#856."
+              fail=1
+            fi
+          done
+          [ "${fail}" -eq 0 ] || exit 1
+          jwt=$(curl -sS -X POST https://hub.docker.com/v2/users/login -H "Content-Type: application/json" \
+            -d "{\"username\":\"${DOCKERHUB_USERNAME}\",\"password\":\"${DOCKERHUB_TOKEN}\"}" \
+            | jq -r '.token // empty')
+          if [ -z "${jwt}" ]; then
+            echo "::error::Docker Hub login failed, so the push would fail."
+            exit 1
+          fi
+          code=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: JWT ${jwt}" \
+            "https://hub.docker.com/v2/namespaces/${DOCKERHUB_IMAGE%%/*}/repositories/${DOCKERHUB_IMAGE#*/}/")
+          if [ "${code}" != "200" ]; then
+            echo "::error::Docker Hub repository ${DOCKERHUB_IMAGE} answered HTTP ${code}. Create it before releasing."
+            exit 1
+          fi
+          echo "PASS — publish credentials are set and ${DOCKERHUB_IMAGE} exists."
+
+  # One native runner per architecture, as in sparc (#711). Each exports an OCI
+  # archive; nothing is pushed.
+  build-image:
+    name: Build ${{ matrix.platform }}
+    runs-on: ${{ matrix.runner }}
+    needs: [prepare]
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+            slug: linux-amd64
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            slug: linux-arm64
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The docker driver cannot export OCI; setup-buildx's docker-container can.
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Image labels
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          images: ${{ env.DOCKERHUB_IMAGE }}
+          labels: |
+            org.opencontainers.image.title=SPARC Horizon
+            org.opencontainers.image.description=Forward-looking authorization HUD over SPARC's OSCAL
+            org.opencontainers.image.version=${{ needs.prepare.outputs.version }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.created=${{ needs.prepare.outputs.build_date }}
+            org.opencontainers.image.vendor=risk-sentinel
+            org.opencontainers.image.licenses=MIT
+
+      - name: Build ${{ matrix.platform }} into an OCI archive
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.platform }}
+          outputs: type=oci,dest=/tmp/horizon-${{ matrix.slug }}.tar
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          cache-from: type=gha,scope=${{ matrix.slug }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.slug }}
+          provenance: true
+
+      - name: Upload the ${{ matrix.platform }} image
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: image-${{ matrix.slug }}
+          path: /tmp/horizon-${{ matrix.slug }}.tar
+          retention-days: 1
+          if-no-files-found: error
+
+  # The pre-approval gate, per architecture: the archive that will ship is
+  # loaded, run through the same smoke script as every PR, and scanned against
+  # container-baseline.yml. A separate job from build-and-push because the
+  # environment approval covers a whole job; a check inside it would run after
+  # the approval had been given.
+  verify:
+    name: Verify ${{ matrix.platform }}
+    runs-on: ${{ matrix.runner }}
+    needs: [prepare, build-image]
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+            slug: linux-amd64
+            arch: amd64
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            slug: linux-arm64
+            arch: arm64
+    env:
+      LOCAL_IMAGE: sparc-horizon:verify
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Download the ${{ matrix.platform }} image
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: image-${{ matrix.slug }}
+          path: /tmp
+
+      # `docker load` cannot read an OCI index; skopeo selects this runner's
+      # platform out of it, which is the one this job is here to test.
+      - name: Load the archive
+        env:
+          WANT_ARCH: ${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -y -qq skopeo
+          skopeo copy "oci-archive:/tmp/horizon-${{ matrix.slug }}.tar" \
+            "docker-archive:/tmp/horizon.tar:${LOCAL_IMAGE}"
+          docker load -i /tmp/horizon.tar
+          arch=$(docker image inspect "${LOCAL_IMAGE}" --format '{{.Architecture}}')
+          if [ "${arch}" != "${WANT_ARCH}" ]; then
+            echo "::error::Loaded a ${arch} image, want ${WANT_ARCH}."
+            exit 1
+          fi
+          echo "PASS — loaded the ${arch} image."
+
+      - name: Smoke the image
+        run: tests/container-smoke/smoke.sh "${LOCAL_IMAGE}"
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.27.x"
+          check-latest: true
+
+      - name: Validate the baseline and derive the ignore list
+        run: go run ./cmd/baseline -file container-baseline.yml -trivyignore .trivyignore
+
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          image-ref: ${{ env.LOCAL_IMAGE }}
+          scanners: vuln,secret
+          severity: CRITICAL,HIGH
+          trivyignores: .trivyignore
+          list-all-pkgs: true
+          format: json
+          output: trivy-${{ matrix.slug }}.json
+          exit-code: '0'
+          timeout: 15m
+
+      # Decided from the report, and it must have scanned something: a Trivy
+      # that could not identify the OS (as happens without content sets on a
+      # hand-built UBI root) reports no findings and would pass a count of zero.
+      - name: Gate on the scan
+        env:
+          REPORT: trivy-${{ matrix.slug }}.json
+        run: |
+          set -euo pipefail
+          os="$(jq -r '.Metadata.OS.Family // empty' "${REPORT}")"
+          pkgs="$(jq '[.Results[]? | select(.Class=="os-pkgs") | .Packages // [] | length] | add // 0' "${REPORT}")"
+          mods="$(jq '[.Results[]? | select(.Class=="lang-pkgs") | .Packages // [] | length] | add // 0' "${REPORT}")"
+          vulns="$(jq '[.Results[]?.Vulnerabilities // [] | length] | add // 0' "${REPORT}")"
+          secrets="$(jq '[.Results[]?.Secrets // [] | length] | add // 0' "${REPORT}")"
+          echo "os=${os} os-packages=${pkgs} go-modules=${mods} unaccepted CRITICAL/HIGH=${vulns} secrets=${secrets}"
+          {
+            echo "### Trivy — ${{ matrix.platform }}"
+            echo
+            echo "| OS | OS packages | Go modules | Unaccepted CRITICAL/HIGH | Secrets |"
+            echo "|---|---|---|---|---|"
+            echo "| ${os} | ${pkgs} | ${mods} | ${vulns} | ${secrets} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "${os}" != "redhat" ] || [ "${pkgs}" -lt 1 ] || [ "${mods}" -lt 1 ]; then
+            echo "::error::Trivy did not inventory the image (os='${os}', ${pkgs} OS packages, ${mods} Go modules)."
+            exit 1
+          fi
+          if [ "${vulns}" -gt 0 ] || [ "${secrets}" -gt 0 ]; then
+            jq -r '.Results[]? | .Vulnerabilities[]? | "::error::\(.VulnerabilityID) \(.Severity) in \(.PkgName) \(.InstalledVersion) (fixed: \(.FixedVersion // "none")). Remediate, or record a disposition in container-baseline.yml."' "${REPORT}"
+            jq -r '.Results[]? | .Target as $t | .Secrets[]? | "::error::Secret (\(.RuleID)) in \($t). The image must carry none."' "${REPORT}"
+            exit 1
+          fi
+          echo "PASS — no unaccepted CRITICAL/HIGH, no secrets."
+
+      - name: Upload the scan
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: trivy-${{ matrix.slug }}
+          path: trivy-${{ matrix.slug }}.json
+          if-no-files-found: warn
+
+  dry-run-summary:
+    name: Dry run — what would publish
+    runs-on: ubuntu-24.04
+    needs: [prepare, verify]
+    if: needs.prepare.outputs.dry_run == 'true'
+    permissions: {}
+    steps:
+      - name: Summary
+        env:
+          V: ${{ needs.prepare.outputs.version }}
+          LATEST: ${{ needs.prepare.outputs.is_latest }}
+        run: |
+          {
+            echo "## Dry run: verified, not published"
+            echo
+            echo "Both architectures built, passed the smoke checks and the Trivy gate. A real release would publish:"
+            echo
+            echo "- \`${DOCKERHUB_IMAGE}:${V}\` (plus the minor and major tags$( [ "${LATEST}" = "true" ] && echo ', and latest'))"
+            echo "- \`<ECR_REGISTRY>/${ECR_REPO}:${V}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  build-and-push:
+    name: Publish (after approval)
+    runs-on: ubuntu-24.04
+    needs: [prepare, verify]
+    if: needs.prepare.outputs.dry_run != 'true'
+    environment: production   # the single release approval; add required reviewers to this environment
+    permissions:
+      contents: read
+      id-token: write         # AWS OIDC for ECR
+    outputs:
+      dockerhub_digest: ${{ steps.promote.outputs.dockerhub_digest }}
+      ecr_digest: ${{ steps.promote.outputs.ecr_digest }}
+      ecr_image: ${{ steps.promote.outputs.ecr_image }}
+    steps:
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ secrets.SPARC_HORIZON_PUBLISH_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
+
+      - name: Docker Hub tags
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          images: ${{ env.DOCKERHUB_IMAGE }}
+          tags: |
+            type=semver,pattern=v{{version}},value=${{ needs.prepare.outputs.version }}
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.prepare.outputs.version }},enable=${{ needs.prepare.outputs.is_prerelease != 'true' }}
+            type=semver,pattern=v{{major}},value=${{ needs.prepare.outputs.version }},enable=${{ needs.prepare.outputs.is_prerelease != 'true' }}
+            type=raw,value=latest,enable=${{ needs.prepare.outputs.is_latest == 'true' }}
+
+      - name: Download both verified architectures
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: image-linux-*
+          merge-multiple: true
+          path: /tmp
+
+      # Publishes the bytes verify tested; nothing is rebuilt. Each archive holds
+      # one architecture, so each goes up under a transient per-arch tag and the
+      # real tags are joined with `imagetools create`, as in sparc (#711).
+      # `skopeo copy --all` keeps the archive's provenance attestation, and on an
+      # amd64 runner without --all the arm64 archive would fail outright.
+      # Staging tags start `stage-`, which matches no release lifecycle rule
+      # (sparc #1146).
+      - name: Promote the verified image
+        id: promote
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          V: ${{ needs.prepare.outputs.version }}
+          HUB_TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -y -qq skopeo
+          stage="stage-${GITHUB_RUN_ID}"
+          ecr="${ECR_REGISTRY}/${ECR_REPO}"
+
+          promote() {
+            local repo="$1"
+            shift
+            local slug
+            for slug in linux-amd64 linux-arm64; do
+              skopeo copy --all "oci-archive:/tmp/horizon-${slug}.tar" "docker://${repo}:${stage}-${slug}"
+            done
+            local tag
+            for tag in "$@"; do
+              docker buildx imagetools create -t "${tag}" "${repo}:${stage}-linux-amd64" "${repo}:${stage}-linux-arm64"
+              echo "published ${tag}"
+            done
+          }
+
+          mapfile -t hub_tags < <(printf '%s\n' "${HUB_TAGS}" | sed '/^$/d')
+          if [ "${#hub_tags[@]}" -eq 0 ]; then
+            echo "::error::No Docker Hub tags computed; refusing to report success."
+            exit 1
+          fi
+          promote "${DOCKERHUB_IMAGE}" "${hub_tags[@]}"
+          promote "${ecr}" "${ecr}:${V}"   # version tag only: ECR is immutable and never gets latest
+
+          # Read each digest back from its registry rather than assuming it.
+          hub_digest=$(skopeo inspect --raw "docker://${DOCKERHUB_IMAGE}:${V}" | sha256sum | awk '{print "sha256:"$1}')
+          ecr_digest=$(skopeo inspect --raw "docker://${ecr}:${V}" | sha256sum | awk '{print "sha256:"$1}')
+          for d in "${hub_digest}" "${ecr_digest}"; do
+            case "${d}" in sha256:????????????????????????????????????????????????????????????????) ;; *) echo "::error::bad digest '${d}'"; exit 1 ;; esac
+          done
+          {
+            echo "dockerhub_digest=${hub_digest}"
+            echo "ecr_digest=${ecr_digest}"
+            echo "ecr_image=${ecr}"
+          } >> "$GITHUB_OUTPUT"
+          echo "Docker Hub ${DOCKERHUB_IMAGE}@${hub_digest}"
+          echo "ECR        ${ecr}@${ecr_digest}"
+
+      # Runs even after a partial promotion, and never fails the job: left
+      # behind, the stage- tags cost retention nothing.
+      - name: Delete the staging tags
+        if: always()
+        continue-on-error: true
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          set -uo pipefail
+          stage="stage-${GITHUB_RUN_ID}"
+          jwt=$(curl -sS -X POST https://hub.docker.com/v2/users/login -H "Content-Type: application/json" \
+            -d "{\"username\":\"${DOCKERHUB_USERNAME}\",\"password\":\"${DOCKERHUB_TOKEN}\"}" | jq -r '.token // empty')
+          for slug in linux-amd64 linux-arm64; do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' -X DELETE -H "Authorization: JWT ${jwt}" \
+              "https://hub.docker.com/v2/repositories/${DOCKERHUB_IMAGE}/tags/${stage}-${slug}/")
+            echo "docker hub ${stage}-${slug}: HTTP ${code}"
+          done
+          aws ecr batch-delete-image --repository-name "${ECR_REPO}" \
+            --image-ids "imageTag=${stage}-linux-amd64" "imageTag=${stage}-linux-arm64" --output text \
+            || echo "ecr cleanup reported a problem; the stage- tags left behind cost retention nothing"
+
+  sign-verify-attest:
+    name: Sign, verify and attest
+    runs-on: ubuntu-24.04
+    needs: [prepare, build-and-push]
+    if: needs.prepare.outputs.dry_run != 'true'
+    permissions:
+      contents: read
+      id-token: write         # Sigstore keyless signing, and AWS OIDC for ECR
+    env:
+      HUB_REF: ${{ format('{0}@{1}', 'risksentinel/sparc-horizon', needs.build-and-push.outputs.dockerhub_digest) }}
+      ECR_REF: ${{ format('{0}@{1}', needs.build-and-push.outputs.ecr_image, needs.build-and-push.outputs.ecr_digest) }}
+      # The signing identity is this workflow at a release tag, nothing broader.
+      CERT_IDENTITY: ^https://github\.com/risk-sentinel/sparc-horizon/\.github/workflows/build-sign-publish\.yml@refs/tags/v
+      CERT_ISSUER: https://token.actions.githubusercontent.com
+    steps:
+      - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
+        with:
+          cosign-release: "v3.1.4"
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ secrets.SPARC_HORIZON_PUBLISH_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
+
+      - name: Sign
+        run: |
+          set -euo pipefail
+          cosign sign --yes "${HUB_REF}"
+          cosign sign --yes "${ECR_REF}"
+
+      # The main action rather than its download-syft subpath: the pin check
+      # matches owner/repo@sha, and a subpath would read as a repository that
+      # does not exist.
+      - name: SBOM
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+        with:
+          image: ${{ env.HUB_REF }}
+          format: cyclonedx-json
+          output-file: sparc-horizon-${{ needs.prepare.outputs.version }}.cdx.json
+          upload-artifact: false
+          upload-release-assets: false
+          dependency-snapshot: false
+
+      - name: Assert the SBOM inventories the image
+        env:
+          V: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          n=$(jq '.components | length' "sparc-horizon-${V}.cdx.json")
+          echo "SBOM components: ${n}"
+          if [ "${n}" -lt 1 ]; then
+            echo "::error::The SBOM has no components; it would attest nothing."
+            exit 1
+          fi
+          echo "SBOM=sparc-horizon-${V}.cdx.json" >> "$GITHUB_ENV"
+
+      - name: Attest the SBOM
+        run: |
+          set -euo pipefail
+          cosign attest --yes --type cyclonedx --predicate "${SBOM}" "${HUB_REF}"
+          cosign attest --yes --type cyclonedx --predicate "${SBOM}" "${ECR_REF}"
+
+      # cosign 3.x stores signatures as OCI referrers, and Docker Hub's Referrers
+      # API is eventually consistent, so an immediate verify can report "no
+      # signatures found" for a signature that verifies seconds later. Retried.
+      - name: Verify the signature and attestation in both registries
+        run: |
+          set -uo pipefail
+          verify() {
+            local what="$1"
+            local ref="$2"
+            local attempt
+            for attempt in $(seq 1 8); do
+              if [ "${what}" = "signature" ]; then
+                cosign verify --certificate-identity-regexp "${CERT_IDENTITY}" \
+                  --certificate-oidc-issuer "${CERT_ISSUER}" "${ref}" > /dev/null && return 0
+              else
+                cosign verify-attestation --type cyclonedx --certificate-identity-regexp "${CERT_IDENTITY}" \
+                  --certificate-oidc-issuer "${CERT_ISSUER}" "${ref}" > /dev/null && return 0
+              fi
+              echo "::warning::${what} verify attempt ${attempt}/8 for ${ref} failed; retrying in 15s"
+              sleep 15
+            done
+            echo "::error::${what} for ${ref} did not verify after 8 attempts"
+            return 1
+          }
+          fail=0
+          for ref in "${HUB_REF}" "${ECR_REF}"; do
+            verify signature "${ref}" || fail=1
+            verify attestation "${ref}" || fail=1
+          done
+          [ "${fail}" -eq 0 ] && echo "PASS — signature and CycloneDX attestation verify in both registries."
+          exit "${fail}"
+
+      - name: Upload the SBOM
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sbom
+          path: ${{ env.SBOM }}
+          retention-days: 90
+
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-24.04
+    needs: [prepare, build-and-push, sign-verify-attest]
+    if: needs.prepare.outputs.dry_run != 'true'
+    permissions:
+      contents: write         # create the release for the tag
+    steps:
+      - name: Download the SBOM
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: sbom
+          path: sbom
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ needs.prepare.outputs.version }}
+          PRE: ${{ needs.prepare.outputs.is_prerelease }}
+          LATEST: ${{ needs.prepare.outputs.is_latest }}
+          HUB_DIGEST: ${{ needs.build-and-push.outputs.dockerhub_digest }}
+          ECR_DIGEST: ${{ needs.build-and-push.outputs.ecr_digest }}
+        run: |
+          set -euo pipefail
+          id='^https://github\.com/risk-sentinel/sparc-horizon/\.github/workflows/build-sign-publish\.yml@refs/tags/v'
+          {
+            echo "## Image"
+            echo
+            echo "| Registry | Reference |"
+            echo "|---|---|"
+            echo "| Docker Hub | \`${DOCKERHUB_IMAGE}:${V}\` → \`${HUB_DIGEST}\` |"
+            echo "| Amazon ECR | \`${ECR_REPO}:${V}\` → \`${ECR_DIGEST}\` |"
+            echo
+            echo "Both architectures (linux/amd64, linux/arm64) were run through the smoke checks and the Trivy gate"
+            echo "before publishing. Signed with Sigstore keyless; a CycloneDX SBOM is attested and attached."
+            echo
+            echo "## Verify"
+            echo
+            echo '```bash'
+            echo "cosign verify \\"
+            echo "  --certificate-identity-regexp '${id}' \\"
+            echo "  --certificate-oidc-issuer https://token.actions.githubusercontent.com \\"
+            echo "  ${DOCKERHUB_IMAGE}@${HUB_DIGEST}"
+            echo '```'
+          } > notes.md
+          args=(--verify-tag --title "${V}" --notes-file notes.md --generate-notes)
+          [ "${PRE}" = "true" ] && args+=(--prerelease)
+          [ "${LATEST}" = "true" ] || args+=(--latest=false)
+          gh release create "${V}" -R "${GITHUB_REPOSITORY}" "${args[@]}" sbom/*.cdx.json

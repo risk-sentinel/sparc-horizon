@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-11-16 (#115). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-16 (#117). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,42 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-16 — #117 — `feature/117_tester_docs`
+
+**In flight:** nothing unpushed.
+
+**Owner decisions:** fold the bugs that measuring the guide found into this PR rather than separate
+ones (one CI cycle). After it, back to building: **seed test data and stand up a sample boundary to
+share data into**, for testing beyond the fixtures.
+
+**Found by running every guide command against the image, not by reading:**
+
+- **The export skipped the 404 rule** — it checked only that the persona existed, so `so-ods-portal`
+  could list `bgm-grants`'s documents. The cdef's own AC-3 text describes this failure ("a handler
+  that checks the endpoint passes for a node the caller may not read"). Its UUID form could never
+  resolve (it looked for `ssp-<uuid>.json`), and its hrefs were 404s.
+- **Heat columns counted only the last row.** `Roll` returns an `Agg` with `Weight` 0, and the
+  generator folded the running total back in as a child, so every row but the last was multiplied
+  away. The Portal SO's heat drew nothing while their next action was a down si-4.
+- **The image served 404 for files `genfixtures` had just created**: it writes `0600`, git keeps no
+  mode, so CI was fine and only a local regenerate-then-build broke — the path a tester takes.
+
+**Alternatives rejected:** a new contract path for the documents (the API is frozen; the href is a
+string, so a mock-only `/oscal/{name}` serves it); `genfixtures` writing `0644` (gosec G306 — the
+image now sets its own modes with `COPY --chmod=u=rwX,go=rX`); serving documents through the
+JSON re-encoder (it HTML-escapes `&`, so the bytes would not match the `sha256` the export lists).
+
+**Measured:** the new tests fail on the old logic (the column test reads "pass 2 of 2" with a
+failing row present); the smoke walk fails on exactly the three new cell goldens without `--chmod`
+and passes with it; every command in `docs/testing.md` re-run against the final image.
+
+**Noticed, not fixed:** Implementation_plan's "NIST control coverage: 0 documented, no
+`docs/compliance/` tree yet" row predates the compliance directory (#11) and is stale.
+
+**Next:** the sample boundary and seed data (owner direction above).
 
 ---
 

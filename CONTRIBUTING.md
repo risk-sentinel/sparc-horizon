@@ -7,6 +7,27 @@ For the broader issue, branch, verification, and compliance workflow, see
 [`docs/dev/issue_rules.md`](docs/dev/issue_rules.md) — it is the canonical process
 and is **mandatory** for non-trivial work.
 
+## How a change reaches a release
+
+```mermaid
+flowchart LR
+  I["Issue"] --> PL["Plan in the issue<br/>owner approves"]
+  PL --> B["Branch<br/>feature/&lt;issue&gt;_slug"]
+  B --> G["Local gates<br/>go test, lint, hadolint, smoke"]
+  G --> PR["Pull request<br/>five-section body"]
+  PR --> CI["CI<br/>required checks, Sonar,<br/>release dry run"]
+  CI --> R["Owner review<br/>and merge"]
+  R --> T["Signed v* tag<br/>(owner)"]
+  T --> A["production approval"]
+  A --> S["Signed image on<br/>Docker Hub + ECR,<br/>GitHub Release"]
+```
+
+Each step is defined once, elsewhere: the plan, the gates and the documentation obligations in
+[`docs/dev/issue_rules.md`](docs/dev/issue_rules.md), the release in
+[`docs/08-build-deploy.md`](docs/08-build-deploy.md#release). A pull request that touches the
+release path runs the whole pipeline as a dry run, which stops before the approval and pushes
+nothing. Testing a build rather than changing one is [`docs/testing.md`](docs/testing.md).
+
 ## Before you start
 
 - Horizon is part of the **Risk-Sentinel** estate. It reads its sibling

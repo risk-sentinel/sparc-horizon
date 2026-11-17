@@ -4,26 +4,43 @@ A heads-up display for authorization risk. Horizon shows authorizing officials (
 
 Horizon sits on SPARC's Delivery layer. SPARC stays authoritative for pipeline translation, framework crosswalks, and the federation trust fabric. Horizon owns the human side: attestations, AO decisions, forward projections, and the HUD.
 
-> **Status:** design and prototype plan. "SPARC Horizon" is a working name.
+> **Status:** working prototype. "SPARC Horizon" is a working name. What runs today is the HUD demos
+> and API v0's read endpoints, served over a synthetic fixture federation in OSCAL 1.2.3 from one
+> container. The ledger, the projection engine, attestation signing and the SPARC connection are
+> designed and not built yet: see the [roadmap](docs/roadmap.md).
 
-## Quick demo
+## What runs today
 
-The demos are static HTML with synthetic data. Nothing to build or install.
-
-```bash
-# open directly
-open demo/index.html            # macOS
-xdg-open demo/index.html        # Linux
-
-# or serve locally
-python3 -m http.server 8080 --directory demo
-# then browse to http://localhost:8080
+```mermaid
+flowchart LR
+  T["Tester<br/>browser or curl"] -->|"/"| D["HUD demos<br/>demo/*.html"]
+  T -->|"/v1/* + X-Horizon-Persona"| M["Mock server<br/>cmd/mockserver"]
+  M --> A["internal/authz<br/>node-scoped 404 rule"]
+  M --> F["fixtures/<br/>25 OSCAL 1.2.3 documents<br/>+ API goldens"]
+  G["cmd/genfixtures"] -->|"regenerates"| F
+  subgraph planned["Designed, not built"]
+    L["Ledger + projection engine (P2)"]
+    S["Attestations and signing (P4)"]
+    P["SPARC peer connection (P1/P6)"]
+  end
+  M -. replaced by .-> L
 ```
 
-### In the container
+Everything in the box on the left is in this repository and runs with nothing else installed. The
+mock serves precomputed responses for one horizon date and answers the write endpoints with 501;
+the persona header stands in for a login. **To try it, follow [the tester guide](docs/testing.md).**
 
-The image serves the same demos plus API v0 over the fixture federation, so the HUD and the API run
-together with nothing else installed:
+## Three ways to run it
+
+**1. The demos alone.** Static HTML with synthetic data; nothing to build or install.
+
+```bash
+open demo/index.html            # macOS
+xdg-open demo/index.html        # Linux
+# or: python3 -m http.server 8080 --directory demo, then browse to http://localhost:8080
+```
+
+**2. The container** (Docker). The demos plus API v0 over the fixture federation, in one process:
 
 ```bash
 docker build -t sparc-horizon:dev .
@@ -32,8 +49,16 @@ docker run --rm -p 8080:8080 sparc-horizon:dev
 curl -s -H 'X-Horizon-Persona: so-ods-portal' http://localhost:8080/v1/tree
 ```
 
+**3. From source** (Go 1.27). The same server without the image, for changing it:
+
+```bash
+go run ./cmd/mockserver -static demo   # same as the container, on 127.0.0.1:8080
+go run ./cmd/genfixtures               # rewrites fixtures/ wholesale; never edit it by hand
+go test ./...                          # includes the regeneration-stability check
+```
+
 Personas are in [`fixtures/api/personas.json`](fixtures/api/personas.json); with no header the first one is
-used. See [`docs/08-build-deploy.md`](docs/08-build-deploy.md) for how the image is built.
+used. See [`docs/08-build-deploy.md`](docs/08-build-deploy.md) for how the image is built and released.
 
 | Demo | What it shows |
 |---|---|
@@ -47,6 +72,7 @@ Fonts load from Google Fonts when online and fall back to system fonts offline. 
 
 | Doc | Covers |
 |---|---|
+| [Tester guide](docs/testing.md) | **Start here to try it:** run it, walk each persona, what is mocked, how to report |
 | [01 Scope](docs/01-scope.md) | The claim the prototype proves, what is in and out |
 | [02 Architecture](docs/02-architecture.md) | Layers, components, repository layout, dependencies |
 | [03 Data model](docs/03-data-model.md) | Tier-to-OSCAL mapping, namespace contract, evidence chain, UUIDs, inheritance |
@@ -58,6 +84,7 @@ Fonts load from Google Fonts when online and fall back to system fonts offline. 
 | [09 Acceptance](docs/09-acceptance.md) | Acceptance criteria and pilot demo script |
 | [10 Risks and decisions](docs/10-risks-decisions.md) | Risks, mitigations, and phase 0 decisions |
 | [Roadmap](docs/roadmap.md) | Phase plan with tasks, exit criteria, and a default schedule |
+| [Contributing](CONTRIBUTING.md) | How a change goes from issue to signed release |
 | [Compliance](docs/compliance/README.md) | Horizon's own control story: the 800-53 mapping, its OSCAL component definitions, and the threat model attestation |
 
 Machine-readable contracts:
@@ -70,12 +97,7 @@ Machine-readable contracts:
   into `internal/keys/testdata/` with its provenance — rather than publishing its own
 
 The fixture federation itself — four organizations, seven authorization boundaries, twenty
-systems, OSCAL 1.2.3 — is generated into [`fixtures/`](fixtures/README.md):
-
-```bash
-go run ./cmd/genfixtures     # rewrites fixtures/ wholesale; never edit it by hand
-go test ./...                # includes the regeneration-stability check
-```
+systems, OSCAL 1.2.3 — is generated into [`fixtures/`](fixtures/README.md) by `go run ./cmd/genfixtures`.
 
 ## Placeholders to replace
 

@@ -76,6 +76,12 @@ JSON re-encoder (it HTML-escapes `&`, so the bytes would not match the `sha256` 
 failing row present); the smoke walk fails on exactly the three new cell goldens without the mode fix
 and passes with it; every command in `docs/testing.md` re-run against the final image.
 
+**CI found a fourth, environmental:** the ported `sca-scan.yml` pins `pyyaml==6.0.2`, which has no
+wheel for the runner's Python 3.14 (`--only-binary :all:` sees only 6.0.3), so both SCA scans failed
+before scanning. Bumped to 6.0.3 here. container-build-sign's canonical copy carries the same pin
+(checked 2026-11-17) and will break the same way; not filed there (owner: no CBS work for now), and
+`ported-workflow-drift.yml` will report the divergence.
+
 **Noticed, not fixed:** Implementation_plan's "NIST control coverage: 0 documented, no
 `docs/compliance/` tree yet" row predates the compliance directory (#11) and is stale.
 

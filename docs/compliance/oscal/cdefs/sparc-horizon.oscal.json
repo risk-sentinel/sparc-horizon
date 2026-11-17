@@ -1,10 +1,10 @@
 {
   "component-definition": {
-    "uuid": "ccf6c065-9e48-41c0-a40f-723a7fa0364d",
+    "uuid": "294f01df-281a-4dd1-acd3-3e88b082045a",
     "metadata": {
       "title": "SPARC Horizon",
       "last-modified": "2026-11-16T00:00:00Z",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "oscal-version": "1.2.3",
       "roles": [
         {
@@ -399,6 +399,7 @@
                 "uuid": "c44551ea-6d01-5503-a763-60c49bce3fe2",
                 "control-id": "ac-3",
                 "description": "Every API handler authorises against the node named in the request, not the endpoint it reached. A handler that checks the endpoint passes for a node the caller may not read.",
+                "remarks": "Planned for the service. The prototype mock (cmd/mockserver) already applies the rule through internal/authz on every read endpoint, including the OSCAL export and the documents it links: a boundary the caller cannot see, by slug or SSP UUID, is the same 404 as one that does not exist. The export checked only that the persona existed until #117, which is the failure this requirement describes; cmd/mockserver/export_test.go covers it.",
                 "props": [
                   {
                     "name": "implementation-status",

@@ -4,8 +4,8 @@
   "axis": "800-53",
   "columns": [
     "IA",
-    "SC",
-    "SI"
+    "SI",
+    "SC"
   ],
   "collapsed": [
     "AC",
@@ -25,15 +25,15 @@
           "inherited": true
         },
         {
-          "col": "SC",
-          "state": "nominal",
+          "col": "SI",
+          "state": "degraded",
           "blockers": 0,
           "worsening": false,
           "inherited": false
         },
         {
-          "col": "SI",
-          "state": "degraded",
+          "col": "SC",
+          "state": "nominal",
           "blockers": 0,
           "worsening": false,
           "inherited": false
@@ -52,14 +52,14 @@
           "inherited": false
         },
         {
-          "col": "SC",
+          "col": "SI",
           "state": "degraded",
           "blockers": 0,
           "worsening": false,
           "inherited": false
         },
         {
-          "col": "SI",
+          "col": "SC",
           "state": "degraded",
           "blockers": 0,
           "worsening": false,

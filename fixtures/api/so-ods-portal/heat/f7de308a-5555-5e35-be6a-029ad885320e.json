@@ -2,14 +2,15 @@
   "node": "f7de308a-5555-5e35-be6a-029ad885320e",
   "horizon": "2026-10-15",
   "axis": "800-53",
-  "columns": [],
+  "columns": [
+    "SI"
+  ],
   "collapsed": [
     "AC",
     "AU",
     "CP",
     "IA",
-    "SC",
-    "SI"
+    "SC"
   ],
   "rows": [
     {
@@ -20,12 +21,28 @@
     {
       "id": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
       "name": "Portal API",
-      "cells": []
+      "cells": [
+        {
+          "col": "SI",
+          "state": "degraded",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        }
+      ]
     },
     {
       "id": "193c0b92-191f-51ae-8155-18c027ae2d92",
       "name": "Portal Edge Cache",
-      "cells": []
+      "cells": [
+        {
+          "col": "SI",
+          "state": "nominal",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": false
+        }
+      ]
     }
   ]
 }

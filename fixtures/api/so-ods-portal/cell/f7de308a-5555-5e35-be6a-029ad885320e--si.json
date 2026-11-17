@@ -1,0 +1,16 @@
+{
+  "node": "f7de308a-5555-5e35-be6a-029ad885320e",
+  "col": "SI",
+  "horizon": "2026-10-15",
+  "controls": [
+    {
+      "controlId": "si-4",
+      "component": "e0c4e151-6e8c-5bcf-8be5-eb674b498b2e",
+      "state": "degraded",
+      "reason": "Evidence expires 2026-09-19, before the 2026-10-15 horizon.",
+      "expires": "2026-09-19",
+      "blocksAto": false,
+      "chain": "adcd691d-fb75-5e59-b369-bf017cf06e72"
+    }
+  ]
+}

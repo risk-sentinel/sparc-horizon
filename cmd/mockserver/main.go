@@ -21,6 +21,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -69,6 +71,19 @@ type server struct {
 	// static, when set, is served at `/` — the HUD demos, so one process is
 	// the whole working model. The API stays under `/v1/`.
 	static fs.FS
+	// bySlug and byUUID resolve a boundary either way it can be named: the
+	// slug in its documents' file names, or its SSP UUID, which is also its
+	// node id in the tree. Read from the SSPs, so a boundary exists here only
+	// when its documents do.
+	bySlug map[string]string
+	byUUID map[string]string
+}
+
+// exportModels are the documents an export links, in the order it lists them.
+var exportModels = []struct{ model, prefix string }{
+	{"system-security-plan", "ssp-"},
+	{"assessment-results", "ar-"},
+	{"plan-of-action-and-milestones", "poam-"},
 }
 
 // Path components are matched rather than trusted: a UUID or a column, and
@@ -117,6 +132,9 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc("GET /v1/nodes/{id}/next-action", s.nextAction)
 	mux.HandleFunc("GET /v1/controls/{uuid}/chain", s.chain)
 	mux.HandleFunc("GET /v1/export/oscal/{boundary}", s.export)
+	// Not a contract path: the href an export returns has to resolve, and the
+	// mock has nowhere else to serve the documents from.
+	mux.HandleFunc("GET /oscal/{name}", s.document)
 	mux.HandleFunc("/v1/", s.notImplemented)
 	mux.HandleFunc("GET /healthz", healthz)
 	if s.static != nil {
@@ -151,7 +169,7 @@ func newServer(fsys fs.FS) (*server, error) {
 		return nil, fmt.Errorf("no personas: %w (run `go run ./cmd/genfixtures`)", err)
 	}
 
-	a, err := buildAuthz(fsys)
+	a, slugs, err := buildAuthz(fsys)
 	if err != nil {
 		// Starting anyway would serve a federation of nothing: every node
 		// would be invisible and every response a 404, which is exactly what
@@ -159,6 +177,10 @@ func newServer(fsys fs.FS) (*server, error) {
 		return nil, err
 	}
 	s.authz = a
+	s.bySlug, s.byUUID = slugs, make(map[string]string, len(slugs))
+	for slug, id := range slugs {
+		s.byUUID[strings.ToLower(id)] = slug
+	}
 
 	for _, p := range s.personas {
 		if p.PartyUUID == "" {
@@ -172,41 +194,44 @@ func newServer(fsys fs.FS) (*server, error) {
 }
 
 // buildAuthz assembles the tree from the OSCAL the fixtures carry, then indexes
-// it for authorization — the same two packages the service will use.
+// it for authorization — the same two packages the service will use. It also
+// returns each boundary's SSP UUID keyed by the slug in its file name.
 //
 // The mock reads the DOCUMENTS, not the API goldens it serves. That is the
 // property worth demonstrating: a caller's tree is derived from what the
 // documents say, so a client written against this mock is written against the
 // behaviour the service has.
-func buildAuthz(fsys fs.FS) (*authz.Authorizer, error) {
+func buildAuthz(fsys fs.FS) (*authz.Authorizer, map[string]string, error) {
 	names, err := fs.Glob(fsys, "oscal/ssp-*.json")
 	if err != nil {
-		return nil, fmt.Errorf("looking for SSPs: %w", err)
+		return nil, nil, fmt.Errorf("looking for SSPs: %w", err)
 	}
 	if len(names) == 0 {
-		return nil, fmt.Errorf("no SSP fixtures under oscal/ (run `go run ./cmd/genfixtures`)")
+		return nil, nil, fmt.Errorf("no SSP fixtures under oscal/ (run `go run ./cmd/genfixtures`)")
 	}
 	sort.Strings(names)
 
 	ssps := make([]*oscal.SystemSecurityPlan, 0, len(names))
+	slugs := make(map[string]string, len(names))
 	for _, n := range names {
 		b, err := fs.ReadFile(fsys, n)
 		if err != nil {
-			return nil, fmt.Errorf("%s: %w", n, err)
+			return nil, nil, fmt.Errorf("%s: %w", n, err)
 		}
 		var doc oscal.OscalCompleteSchema
 		if err := json.Unmarshal(b, &doc); err != nil {
-			return nil, fmt.Errorf("%s: %w", n, err)
+			return nil, nil, fmt.Errorf("%s: %w", n, err)
 		}
 		if doc.SystemSecurityPlan == nil {
-			return nil, fmt.Errorf("%s is not a system-security-plan", n)
+			return nil, nil, fmt.Errorf("%s is not a system-security-plan", n)
 		}
 		ssps = append(ssps, doc.SystemSecurityPlan)
+		slugs[strings.TrimSuffix(strings.TrimPrefix(path.Base(n), "ssp-"), ".json")] = doc.SystemSecurityPlan.UUID
 	}
 
 	res, err := tree.Build(ssps)
 	if err != nil {
-		return nil, fmt.Errorf("building the tree: %w", err)
+		return nil, nil, fmt.Errorf("building the tree: %w", err)
 	}
 	// Findings are reported, not fatal: the fixtures are expected to be clean,
 	// and a mock that refused to start on one orphaned party would be useless
@@ -214,7 +239,8 @@ func buildAuthz(fsys fs.FS) (*authz.Authorizer, error) {
 	for _, f := range res.Findings {
 		log.Printf("mockserver: tree finding %s (%s): %s", f.Kind, f.Source, f.Detail)
 	}
-	return authz.New(res)
+	a, err := authz.New(res)
+	return a, slugs, err
 }
 
 func (s *server) read(name string, into any) error {
@@ -362,32 +388,84 @@ func (s *server) chain(w http.ResponseWriter, r *http.Request) {
 }
 
 // export hands back the OSCAL itself, which is what the recompute audit reads.
+// A boundary is named by slug or SSP UUID, and refused the way a node is: one
+// the caller cannot see is the same 404 as one that does not exist.
 func (s *server) export(w http.ResponseWriter, r *http.Request) {
-	if _, ok := s.caller(w, r); !ok {
+	p, ok := s.caller(w, r)
+	if !ok {
 		return
 	}
-	boundary := r.PathValue("boundary")
-	if !colRe.MatchString(boundary) && !uuidRe.MatchString(boundary) {
+	slug, ok := s.boundary(p, r.PathValue("boundary"))
+	if !ok {
 		notFound(w)
 		return
 	}
 	docs := []map[string]string{}
-	for model, prefix := range map[string]string{
-		"system-security-plan":          "ssp-",
-		"assessment-results":            "ar-",
-		"plan-of-action-and-milestones": "poam-",
-	} {
-		name := path.Join("oscal", prefix+boundary+".json")
-		if _, err := fs.Stat(s.fsys, name); err == nil {
-			docs = append(docs, map[string]string{"model": model, "href": "/" + name})
+	for _, m := range exportModels {
+		name := m.prefix + slug + ".json"
+		b, err := fs.ReadFile(s.fsys, path.Join("oscal", name))
+		if err != nil {
+			continue
 		}
+		sum := sha256.Sum256(b)
+		docs = append(docs, map[string]string{
+			"model": m.model, "href": "/oscal/" + name, "sha256": hex.EncodeToString(sum[:]),
+		})
 	}
 	if len(docs) == 0 {
 		notFound(w)
 		return
 	}
 	w.Header().Set(contentType, mediaJSON)
-	_ = json.NewEncoder(w).Encode(map[string]any{"boundary": boundary, "documents": docs})
+	_ = json.NewEncoder(w).Encode(map[string]any{"boundary": slug, "documents": docs})
+}
+
+// document serves a document an export links to, byte for byte, so the
+// sha256 the export listed verifies against what arrives. Only a visible
+// boundary's SSP, AR and POA&M resolve; anything else is the same 404.
+func (s *server) document(w http.ResponseWriter, r *http.Request) {
+	p, ok := s.caller(w, r)
+	if !ok {
+		return
+	}
+	name := r.PathValue("name")
+	for _, m := range exportModels {
+		slug, found := strings.CutPrefix(name, m.prefix)
+		slug, isJSON := strings.CutSuffix(slug, ".json")
+		if !found || !isJSON {
+			continue
+		}
+		known, ok := s.boundary(p, slug)
+		if !ok {
+			break
+		}
+		// Rebuilt from the boundary index rather than the request, so the
+		// file read is one the SSPs named.
+		b, err := fs.ReadFile(s.fsys, path.Join("oscal", m.prefix+known+".json"))
+		if err != nil {
+			break
+		}
+		w.Header().Set(contentType, mediaJSON)
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		_, _ = w.Write(b)
+		return
+	}
+	notFound(w)
+}
+
+// boundary resolves a slug or SSP UUID to the slug, when the caller can see it.
+// The slug returned is the index's own, read from the SSPs' file names, never
+// the caller's string — so nothing a caller sends reaches a path.
+func (s *server) boundary(p persona, ref string) (string, bool) {
+	id := strings.ToLower(ref)
+	if !uuidRe.MatchString(ref) {
+		id = strings.ToLower(s.bySlug[ref])
+	}
+	slug, ok := s.byUUID[id]
+	if !ok || !s.authz.Visible(p.PartyUUID, s.bySlug[slug]) {
+		return "", false
+	}
+	return slug, true
 }
 
 func (s *server) notImplemented(w http.ResponseWriter, r *http.Request) {

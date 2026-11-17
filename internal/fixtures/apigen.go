@@ -38,24 +38,8 @@ func (g *Generator) apiResponses(tree Tree) (map[string]any, error) {
 
 		out[pathAPI(p.ID, "tree.json")] = g.treeFor(p, visible)
 		out[pathAPI(p.ID, "next-action.json")] = g.nextActionFor(p, visible, assessed)
-
-		// Heat for every node with children: the persona's root, and each
-		// boundary beneath it. A system is a leaf and has no rows.
-		for _, node := range g.heatNodes(p, visible) {
-			heat, err := g.heatFor(node, assessed)
-			if err != nil {
-				return nil, err
-			}
-			out[pathAPI(p.ID, "heat", node.id+".json")] = heat
-
-			// Cell drill-downs, for the columns that have something to say.
-			for _, col := range heat.Columns {
-				detail := g.cellFor(node, col, assessed)
-				if len(detail.Controls) == 0 {
-					continue
-				}
-				out[pathAPI(p.ID, "cell", node.id+"--"+strings.ToLower(col)+".json")] = detail
-			}
+		if err := g.heatResponses(out, p, visible, assessed); err != nil {
+			return nil, err
 		}
 	}
 
@@ -70,6 +54,28 @@ func (g *Generator) apiResponses(tree Tree) (map[string]any, error) {
 		}
 	}
 	return out, nil
+}
+
+// heatResponses adds a persona's heat for every node with children (its root,
+// and each boundary beneath it; a system is a leaf and has no rows), and a cell
+// drill-down for each drawn column that has something to say.
+func (g *Generator) heatResponses(out map[string]any, p Persona, visible []Boundary, assessed map[string][]assessment) error {
+	for _, node := range g.heatNodes(p, visible) {
+		heat, err := g.heatFor(node, assessed)
+		if err != nil {
+			return err
+		}
+		out[pathAPI(p.ID, "heat", node.id+".json")] = heat
+
+		for _, col := range heat.Columns {
+			detail := g.cellFor(node, col, assessed)
+			if len(detail.Controls) == 0 {
+				continue
+			}
+			out[pathAPI(p.ID, "cell", node.id+"--"+strings.ToLower(col)+".json")] = detail
+		}
+	}
+	return nil
 }
 
 // heatNode is a node the heatmap can be drawn for.
@@ -152,14 +158,7 @@ func (g *Generator) heatFor(node heatNode, assessed map[string][]assessment) (AP
 
 	// Column aggregates first, because the order and the collapsing decide
 	// which cells a row emits at all.
-	colAgg := map[string]project.Agg{}
-	for _, r := range data {
-		for fam, as := range r.byFamily {
-			agg, _ := aggregate(as, r.weight)
-			colAgg[fam] = project.Roll([]project.Agg{colAgg[fam], agg})
-		}
-	}
-	columns, collapsed := orderColumns(colAgg)
+	columns, collapsed := orderColumns(columnAggs(data))
 
 	rows := make([]APIRow, 0, len(data))
 	for _, r := range data {
@@ -174,6 +173,26 @@ func (g *Generator) heatFor(node heatNode, assessed map[string][]assessment) (AP
 		Collapsed: collapsed,
 		Rows:      rows,
 	}, nil
+}
+
+// columnAggs rolls every row into each family's column in one Roll call.
+//
+// Rolled once rather than accumulated pairwise: Roll returns an Agg with no
+// Weight of its own, so folding a running total back in as a child multiplies
+// it by zero, and a column then reflects only its last row (#117).
+func columnAggs(data []rowData) map[string]project.Agg {
+	kids := map[string][]project.Agg{}
+	for _, r := range data {
+		for fam, as := range r.byFamily {
+			agg, _ := aggregate(as, r.weight)
+			kids[fam] = append(kids[fam], agg)
+		}
+	}
+	colAgg := make(map[string]project.Agg, len(kids))
+	for fam, k := range kids {
+		colAgg[fam] = project.Roll(k)
+	}
+	return colAgg
 }
 
 // rowData is one heat row before the columns are known.

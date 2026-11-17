@@ -44,7 +44,11 @@ rather than the same tree with parts greyed out, which is what makes the 404 rul
 
 It does not project: cell states are computed once, at generation time, for one horizon, and the
 `horizon` parameter is accepted and ignored. It answers the write endpoints with 501 rather than
-accepting a write and forgetting it. CI asserts that every golden validates against the schema
+accepting a write and forgetting it. The export names a boundary by slug or SSP UUID and lists each
+document with its `sha256`; the mock serves those documents byte for byte at the `href` it gave,
+`/oscal/<file>`, under the same 404 rule. That route is the mock's, not the contract's, which says
+only that `href` is a string. [`docs/testing.md`](testing.md) walks every read endpoint as each
+persona. CI asserts that every golden validates against the schema
 its path declares, and that the contract declares nothing the mock cannot answer.
 
 ## Heat response

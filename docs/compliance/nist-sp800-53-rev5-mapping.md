@@ -85,7 +85,7 @@ each becomes a step-9 obligation on the issue that implements it.
 | Control | Title | Design | Reference |
 |---|---|---|---|
 | AC-2 | Account management | There are no Horizon accounts to manage. Identity comes from the agency IdP and roles come from `responsible-parties` in the OSCAL documents, so account state is a consequence of document edits | `docs/07-security.md`, `docs/03-data-model.md` |
-| AC-3 | Access enforcement | Every API handler authorises against the **node** the request names, not the endpoint it reached. Roles bind to a node and inherit downward | `docs/07-security.md`, `docs/04-api.md` |
+| AC-3 | Access enforcement | Every API handler authorises against the **node** the request names, not the endpoint it reached. Roles bind to a node and inherit downward. The prototype mock already applies this through `internal/authz` on every read endpoint, including the OSCAL export and the documents it links (#117: the export had checked only that the persona existed) | `docs/07-security.md`, `docs/04-api.md`, `cmd/mockserver/export_test.go` |
 | AC-6 | Least privilege | Role bindings are per node; a role at one node confers nothing above it | `docs/07-security.md` |
 | IA-2, IA-8 | Identification and authentication | OIDC with the agency IdP; party UUIDs map to subjects | `docs/07-security.md` |
 | AU-2, AU-3 | Event logging, content of audit records | The ledger is append-only and records the decision, its inputs and its actor. Projections are materialised from it and rebuildable | `docs/05-projection-engine.md` |

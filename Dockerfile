@@ -20,6 +20,10 @@ COPY internal/ internal/
 # Static binary: nothing to link against at runtime (CM-7, SI-7).
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build -trimpath -ldflags="-s -w" -o /out/horizon ./cmd/mockserver
+# The served tree, read-only for every user whatever modes the context carries.
+COPY fixtures/ /out/srv/fixtures/
+COPY demo/ /out/srv/demo/
+RUN chmod -R u=rwX,go=rX /out/srv
 
 # The runtime root filesystem, built from Red Hat's signed UBI 10 packages and
 # nothing else: no shell, no utilities, no libraries (CM-7). Four packages, so the
@@ -51,8 +55,7 @@ json.dump(d, open(sys.argv[2], "w"), indent=2)' \
 FROM scratch
 COPY --from=rootfs /rootfs/ /
 COPY --from=build /out/horizon /usr/local/bin/horizon
-COPY fixtures/ /srv/horizon/fixtures/
-COPY demo/ /srv/horizon/demo/
+COPY --from=build /out/srv/ /srv/horizon/
 # Non-root, and the served tree is read-only to the process (AC-6).
 USER 1001:1001
 EXPOSE 8080

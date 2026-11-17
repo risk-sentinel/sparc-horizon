@@ -39,7 +39,8 @@ in rather than installed:
 
 The repository's `Dockerfile` builds this shape today (#108), with the builders and package versions pinned. Until
 `cmd/horizon` exists it builds `cmd/mockserver` instead, and copies in the fixture federation and the HUD
-demos:
+demos, read-only for every user (`chmod -R u=rwX,go=rX` in the build stage) whatever modes the build context carries:
+`cmd/genfixtures` writes new files `0600`, which uid 1001 could not read (#117):
 
 ```bash
 docker build -t sparc-horizon:dev .

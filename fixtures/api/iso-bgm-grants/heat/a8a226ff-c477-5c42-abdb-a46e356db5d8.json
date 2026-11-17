@@ -5,11 +5,11 @@
   "columns": [
     "AU",
     "CP",
-    "SC"
+    "SC",
+    "IA"
   ],
   "collapsed": [
     "AC",
-    "IA",
     "SI"
   ],
   "rows": [
@@ -30,6 +30,13 @@
           "blockers": 1,
           "worsening": false,
           "inherited": false
+        },
+        {
+          "col": "IA",
+          "state": "degraded",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": true
         }
       ]
     },
@@ -43,6 +50,13 @@
           "blockers": 1,
           "worsening": false,
           "inherited": false
+        },
+        {
+          "col": "IA",
+          "state": "nominal",
+          "blockers": 0,
+          "worsening": false,
+          "inherited": true
         }
       ]
     },

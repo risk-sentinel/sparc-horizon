@@ -1,0 +1,16 @@
+{
+  "node": "a8a226ff-c477-5c42-abdb-a46e356db5d8",
+  "col": "IA",
+  "horizon": "2026-10-15",
+  "controls": [
+    {
+      "controlId": "ia-2",
+      "component": "fe8bc53a-0299-5889-bb2a-9bba0489c833",
+      "state": "degraded",
+      "reason": "Evidence expires 2026-09-28, before the 2026-10-15 horizon.",
+      "expires": "2026-09-28",
+      "blocksAto": false,
+      "chain": "e788fca4-e10c-5ce9-8d3a-de75bf39cbc1"
+    }
+  ]
+}

@@ -10,7 +10,7 @@
 # It asserts what the container serves, not that it started: the image runs
 # as 1001:1001 with no /bin/sh, /healthz answers, the API answers as a persona,
 # the refusal rule holds (404 for an absent node, 401 for an unknown persona),
-# and the demos are served.
+# every response a persona can reach is readable, and the demos are served.
 set -euo pipefail
 
 image="${1:?usage: smoke.sh <image> [host port]}"
@@ -85,6 +85,38 @@ fi
 check "a node that does not exist" 404 \
   "$(status /dev/null /v1/nodes/00000000-0000-5000-8000-000000000000/heat)"
 check "an unknown persona" 401 "$(status /dev/null /v1/tree -H 'X-Horizon-Persona: nobody')"
+
+# Walk every persona's tree through the image: each node's heat, each drawn
+# column's cell, each boundary's export and the documents it links. This reads
+# every golden a tester can reach through the image's own file modes, which a
+# single request cannot show.
+personas="$(dirname "$0")/../../fixtures/api/personas.json"
+walked=0
+for who in $(jq -r '.[].id' "${personas}"); do
+  hdr=(-H "X-Horizon-Persona: ${who}")
+  status "${work}/t.json" /v1/tree "${hdr[@]}" > /dev/null
+  for node in $(jq -r '.. | objects | select(has("nodeType") and .nodeType != "system") | .id' "${work}/t.json"); do
+    got="$(status "${work}/h.json" "/v1/nodes/${node}/heat" "${hdr[@]}")"
+    [[ "${got}" = 200 ]] || check "${who} heat ${node}" 200 "${got}"
+    for col in $(jq -r '.columns[]?' "${work}/h.json"); do
+      got="$(status /dev/null "/v1/nodes/${node}/cell?col=${col}" "${hdr[@]}")"
+      [[ "${got}" = 200 ]] || check "${who} cell ${node} ${col}" 200 "${got}"
+      walked=$((walked + 1))
+    done
+    if [[ "$(jq -r '.. | objects | select(.id == "'"${node}"'") | .nodeType' "${work}/t.json")" = boundary ]]; then
+      got="$(status "${work}/e.json" "/v1/export/oscal/${node}" "${hdr[@]}")"
+      [[ "${got}" = 200 ]] || check "${who} export ${node}" 200 "${got}"
+      while read -r href sum; do
+        got="$(status "${work}/doc.json" "${href}" "${hdr[@]}")"
+        [[ "${got}" = 200 ]] || check "${who} ${href}" 200 "${got}"
+        [[ "$(sha256sum "${work}/doc.json" | cut -d' ' -f1)" = "${sum}" ]] || check "${who} ${href} sha256" "${sum}" mismatch
+        walked=$((walked + 1))
+      done < <(jq -r '.documents[] | "\(.href) \(.sha256)"' "${work}/e.json")
+    fi
+    walked=$((walked + 1))
+  done
+done
+check "every persona's reachable responses walked" yes "$([[ "${walked}" -gt 0 && "${fail}" -eq 0 ]] && echo yes || echo "no (${walked} walked)")"
 
 check "/ (demo index)" 200 "$(status "${work}/index.html" /)"
 if ! grep -qi '<html' "${work}/index.html" 2> /dev/null; then

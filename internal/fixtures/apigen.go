@@ -152,14 +152,7 @@ func (g *Generator) heatFor(node heatNode, assessed map[string][]assessment) (AP
 
 	// Column aggregates first, because the order and the collapsing decide
 	// which cells a row emits at all.
-	colAgg := map[string]project.Agg{}
-	for _, r := range data {
-		for fam, as := range r.byFamily {
-			agg, _ := aggregate(as, r.weight)
-			colAgg[fam] = project.Roll([]project.Agg{colAgg[fam], agg})
-		}
-	}
-	columns, collapsed := orderColumns(colAgg)
+	columns, collapsed := orderColumns(columnAggs(data))
 
 	rows := make([]APIRow, 0, len(data))
 	for _, r := range data {
@@ -174,6 +167,26 @@ func (g *Generator) heatFor(node heatNode, assessed map[string][]assessment) (AP
 		Collapsed: collapsed,
 		Rows:      rows,
 	}, nil
+}
+
+// columnAggs rolls every row into each family's column in one Roll call.
+//
+// Rolled once rather than accumulated pairwise: Roll returns an Agg with no
+// Weight of its own, so folding a running total back in as a child multiplies
+// it by zero, and a column then reflects only its last row (#117).
+func columnAggs(data []rowData) map[string]project.Agg {
+	kids := map[string][]project.Agg{}
+	for _, r := range data {
+		for fam, as := range r.byFamily {
+			agg, _ := aggregate(as, r.weight)
+			kids[fam] = append(kids[fam], agg)
+		}
+	}
+	colAgg := make(map[string]project.Agg, len(kids))
+	for fam, k := range kids {
+		colAgg[fam] = project.Roll(k)
+	}
+	return colAgg
 }
 
 // rowData is one heat row before the columns are known.

@@ -51,8 +51,9 @@ json.dump(d, open(sys.argv[2], "w"), indent=2)' \
 FROM scratch
 COPY --from=rootfs /rootfs/ /
 COPY --from=build /out/horizon /usr/local/bin/horizon
-COPY fixtures/ /srv/horizon/fixtures/
-COPY demo/ /srv/horizon/demo/
+# Read-only for every user, whatever modes the build context carries.
+COPY --chmod=u=rwX,go=rX fixtures/ /srv/horizon/fixtures/
+COPY --chmod=u=rwX,go=rX demo/ /srv/horizon/demo/
 # Non-root, and the served tree is read-only to the process (AC-6).
 USER 1001:1001
 EXPOSE 8080

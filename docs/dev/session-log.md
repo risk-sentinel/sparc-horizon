@@ -65,6 +65,12 @@ loss; the authored result-level document loses the same two fields at 1.2.3 as a
 nothing `go-oscal-local-definitions.md` records. The recorded go-oscal version was still v0.7.1 from
 before #99; the regeneration corrected it to v0.7.2.
 
+**SonarCloud S3776 on the touched fixture files** (pre-existing: `assess` 28, `implementedRequirements`
+19, both over 15): split into helpers with the generator's random draws kept in their original order,
+proved by regenerating the fixtures with **0 files changed**. gocognit, which matched Sonar's 28,
+measures 14 and 9 after. `Generate` (32) and `apiResponses` (19) are also over 15 but in files this
+change does not touch.
+
 **Next:** the first release (see #113's prerequisites below), then a docs PR: a tester guide and a
 README overview.
 

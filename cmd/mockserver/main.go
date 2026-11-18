@@ -46,10 +46,25 @@ type server struct {
 	personas []view.Persona
 	// horizon is the date a request without one projects to.
 	horizon time.Time
-	// static, when set, is served at `/`: the HUD demos, so one process is
-	// the whole working model. The API stays under `/v1/`.
+	// static, when set, is served at `/`: the HUD (web/dist), so one process
+	// is the whole working model. The API stays under `/v1/`.
 	static fs.FS
+	// demo, when set, is served at `/demo/`: the static design demos, which
+	// carry their own synthetic data and inline code, so a looser policy.
+	demo fs.FS
 }
+
+// Content-Security-Policy per surface (SC-18): the browser runs only the
+// HUD's own code. The HUD loads one script and one stylesheet from its own
+// origin and talks only to it; every document string it draws is untrusted,
+// so nothing inline is allowed. The API answers JSON that no browser should
+// execute or frame. The demos are single files with inline code and Google
+// Fonts, and are throwaway (#122).
+const (
+	cspHUD  = "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+	cspAPI  = "default-src 'none'; frame-ancestors 'none'"
+	cspDemo = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+)
 
 // config is what main reads from flags.
 type config struct {
@@ -81,7 +96,8 @@ func (a aliasFlag) Set(s string) error {
 func main() {
 	dir := flag.String("dir", "fixtures", "folder of OSCAL documents to serve")
 	addr := flag.String("addr", "127.0.0.1:8080", "listen address")
-	static := flag.String("static", "", "directory to serve at / (the HUD demos); off when empty")
+	static := flag.String("static", "", "directory to serve at / (the HUD, web/dist); off when empty")
+	demo := flag.String("demo", "", "directory to serve at /demo/ (the static design demos); off when empty")
 	horizon := flag.String("horizon", "", "default horizon, YYYY-MM-DD; today when empty")
 	aliases := aliasFlag{}
 	flag.Var(aliases, "role-alias", "map a document role-id onto a contract role, e.g. owner=system-owner (repeatable)")
@@ -112,6 +128,13 @@ func main() {
 		s.static = os.DirFS(*static)
 		log.Printf("mockserver: serving %s at /", *static)
 	}
+	if *demo != "" {
+		if _, err := os.Stat(*demo); err != nil {
+			log.Fatalf("mockserver: -demo: %v", err)
+		}
+		s.demo = os.DirFS(*demo)
+		log.Printf("mockserver: serving %s at /demo/", *demo)
+	}
 
 	log.Printf("mockserver: %s", s.view.Summary())
 	for _, p := range s.view.Problems() {
@@ -138,7 +161,7 @@ func today() time.Time {
 // routes is separate from main so the contract's refusal rule can be tested
 // through the router rather than by calling handlers directly: the rule is
 // only worth anything as an HTTP response.
-func (s *server) routes() *http.ServeMux {
+func (s *server) routes() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /v1/tree", s.tree)
 	mux.HandleFunc("GET /v1/nodes/{id}/heat", s.heat)
@@ -149,24 +172,53 @@ func (s *server) routes() *http.ServeMux {
 	// Not a contract path: the href an export returns has to resolve, and the
 	// mock has nowhere else to serve the documents from.
 	mux.HandleFunc("GET /oscal/{name...}", s.document)
+	// Not a contract path either: the HUD's persona picker. A real server
+	// knows the caller from the token; the mock has to offer a choice.
+	mux.HandleFunc("GET /mock/personas", s.personaList)
 	mux.HandleFunc("/v1/", s.notImplemented)
 	mux.HandleFunc("GET /healthz", healthz)
+	if s.demo != nil {
+		mux.Handle("/demo/", http.StripPrefix("/demo", files(s.demo, cspDemo)))
+	}
 	if s.static != nil {
-		// Registered for every method and narrowed here: "GET /" would
+		// Registered for every method and narrowed in files: "GET /" would
 		// conflict with the method-less "/v1/" above, since each pattern is
 		// more specific than the other in one dimension.
-		files := http.FileServerFS(s.static)
-		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			if r.Method != http.MethodGet && r.Method != http.MethodHead {
-				w.Header().Set("Allow", "GET, HEAD")
-				writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "The demos are read-only.")
-				return
-			}
-			w.Header().Set("X-Content-Type-Options", "nosniff")
-			files.ServeHTTP(w, r)
-		})
+		mux.Handle("/", files(s.static, cspHUD))
 	}
-	return mux
+	return secureHeaders(mux)
+}
+
+// secureHeaders sets the API's policy on every response; files replaces it
+// with the policy for the surface it serves.
+func secureHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h := w.Header()
+		h.Set("Content-Security-Policy", cspAPI)
+		h.Set("X-Content-Type-Options", "nosniff")
+		h.Set("Referrer-Policy", "no-referrer")
+		next.ServeHTTP(w, r)
+	})
+}
+
+// files serves a directory read-only under the given policy.
+func files(fsys fs.FS, csp string) http.Handler {
+	fileServer := http.FileServerFS(fsys)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet && r.Method != http.MethodHead {
+			w.Header().Set("Allow", "GET, HEAD")
+			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "Static files are read-only.")
+			return
+		}
+		w.Header().Set("Content-Security-Policy", csp)
+		fileServer.ServeHTTP(w, r)
+	})
+}
+
+// personaList answers the mock's callers, in the shape of personas.json.
+func (s *server) personaList(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set(contentType, mediaJSON)
+	_ = json.NewEncoder(w).Encode(s.personas)
 }
 
 // healthz answers liveness only: newServer refused to start without an SSP,

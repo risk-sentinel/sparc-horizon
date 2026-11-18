@@ -58,12 +58,12 @@ they will cause every avoidable conflict until they are removed.)
 | API contract | `api/openapi.yaml` | P0, P2–P5 | **Frozen 2026-09-22 (#61).** Changes are versioned, not edited in place. CI asserts every golden in `fixtures/api/` validates against it and that it declares nothing the mock cannot answer, so a schema edit that outruns the goldens fails |
 | Namespace contract | `schemas/sparc-namespace-props.v1.schema.json` | P0 | **Additive only within v1.** A new prop touches the `enum` and a matching `allOf` branch. The namespace URI itself is `https://sparc.risk-sentinel.org/ns`, registered by SPARC (`sparc#1155`) — it is not Horizon's to change |
 | UUIDv5 key grammar | `docs/03-data-model.md` § Deterministic UUIDs | P0 | **Normative, and a change is a v2 not an edit** — the grammar version is part of the hashed input, so touching a field list changes every identifier in the estate. Ports live in `sparc` (X-10) |
-| Demos | `demo/*.html` | S0, P3 | Synthetic data, no build step. `full-plan.html` **duplicates** the other two — see hot files |
+| Demos | `demo/*.html` | S0, P3 | Synthetic data, no build step, served at `/demo/` since #122. `full-plan.html` **duplicates** the other two — see hot files. P3 retires them |
 | Pipeline | `.github/workflows/`, `.github/actions/`, `.security/`, `container-baseline.yml`, `Dockerfile`, `.dockerignore`, `tests/container-smoke/`, `tests/govulncheck-fixture/`, `tools/` | S0, S1 | One workflow PR at a time (rule below). **`sonarqube-hdf-emit.yml` never gains a `pull_request` trigger** — a fork PR has no OIDC and the evidence stream reflects the default branch. PR-scoped scanning lives in `sonar-pr-findings.yml`, which holds no `id-token` and writes to no bucket. **`vendored-contract-freshness.yml` and `action-pin-verification.yml` are scheduled and must stay off the PR path** — it reaches the network and a sibling repository, which is the opposite of why `internal/keys/testdata/` is vendored (#68). The pin check calls api.github.com about other people's repositories, so requiring it would make every merge here depend on an external service (#57). **Ported files** (`sbom-source.yml`, `sca-scan.yml`, `sca-emit-source.yml`, `.github/actions/*`, `.github/ported/`) change only by re-porting from `container-build-sign`; a local edit carries a `PORT(sparc-horizon)` marker or it does not land. `ported-workflow-drift.yml` is scheduled and stays off the PR path for the same reason as the freshness check (#84) |
 | Compliance artefacts | `docs/compliance/` | S0-15, then every security-touching issue | CDEFs, the NIST mapping, inline control comments. **Exists as of #11.** `oscal/cdefs/*.json` must stay OSCAL 1.2.x valid; UUIDs there are deterministic UUIDv5, so do not regenerate them casually |
 | Go service | `cmd/horizon/`, `internal/*` | P1–P7 | The service does not exist yet. Four packages do — see the table below. Ownership splits by package, per `docs/02-architecture.md` |
 | Fixtures | `fixtures/` | P0 | **Generated. Never edited by hand.** Written by `go run ./cmd/genfixtures`; a hand edit is lost on the next run and fails `TestCommittedFixturesMatch` before that |
-| Web UI | `web/` | P3, P7 | Does not exist yet |
+| Web UI | `web/` | P3, P7 | **Exists as of #122:** the HUD over API v0. `src/model.ts` (pure, unit-tested) and `src/api.ts` (the client) are the seams; `src/main.ts` draws. `e2e/` is data-agnostic so it runs over any corpus. `package-lock.json` is the whole dependency set — exact pins, no runtime dependencies, both asserted by `web.yml` |
 
 ### Package-level ownership, once code lands
 
@@ -87,7 +87,7 @@ which makes most product phases collision-free against each other:
 | `internal/decide` | P5 | `internal/attest` lifecycle states |
 | `internal/federate` | P6 | `internal/project` rollups |
 | `internal/api` | P1–P6 | **Everything.** The router is the one file every phase adds to |
-| `web/` | P3, P7 | P7 adds the simulation banner to P3's shell |
+| `web/` | **P3 (#122)**, P7 | `cmd/mockserver` (`/mock/personas`, the CSP constants) and `api/openapi.yaml`: the HUD's types in `src/types.ts` are kept by hand against the frozen contract. P7 adds the simulation banner to P3's shell |
 
 `internal/api` is the predictable conflict. Keep route registration one line per
 route in a stable alphabetical block so two phases adding routes conflict on
@@ -172,7 +172,9 @@ something nobody chose.
 | `actionlint` | The `go install` line in `contracts.yml` | The canary fixture |
 | `govulncheck` | `tools/go.mod` / `tools/go.sum` (Dependabot `/tools`) | `govulncheck.yml` asserts the scanner reports the locked version |
 | Trivy | `TRIVY_VERSION` in `sca-scan.yml` and `build-sign-publish.yml` | Bump both together |
-| Base images | The `GO_IMAGE` and `UBI_BUILDER` digests, and the four package versions, in `Dockerfile` | `container.yml` builds the image on every PR |
+| Base images | The `NODE_IMAGE`, `GO_IMAGE` and `UBI_BUILDER` digests, and the four package versions, in `Dockerfile` | `container.yml` builds the image on every PR |
+| Node | `web/.node-version`, matching `NODE_IMAGE`'s Node in `Dockerfile` | Both `setup-node` steps read `.node-version`; bump it with the image digest |
+| npm packages | `web/package.json` (exact) and `web/package-lock.json` | `web.yml` refuses a range or a runtime dependency; `npm audit --include=dev` gates at CRITICAL |
 
 **`shellcheck` carries a digest as well as a version**, because it is the only
 one fetched as a release tarball rather than through a checksum-verified module

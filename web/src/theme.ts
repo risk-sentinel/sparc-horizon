@@ -17,8 +17,9 @@ function read(): Theme {
 }
 
 function apply(t: Theme): void {
-  if (t === "auto") document.documentElement.removeAttribute("data-theme");
-  else document.documentElement.setAttribute("data-theme", t);
+  const data = document.documentElement.dataset;
+  if (t === "auto") delete data["theme"];
+  else data["theme"] = t;
   try {
     if (t === "auto") localStorage.removeItem(KEY);
     else localStorage.setItem(KEY, t);

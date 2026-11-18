@@ -568,11 +568,11 @@ td.none::after {
   padding: 1rem;
 }
 
+/* The HUD has no transitions or animations; reduced motion only has scrolling
+   to quiet, and it is never smooth to begin with. */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    scroll-behavior: auto !important;
-    transition: none !important;
-    animation: none !important;
+  html {
+    scroll-behavior: auto;
   }
 }
 

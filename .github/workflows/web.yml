@@ -57,6 +57,9 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
 
+      # Every tool below is called by path from this install, never through
+      # npx, which can resolve a package on demand and run its lifecycle
+      # scripts (#48; enforced in contracts.yml).
       - name: Install from the lockfile, scripts off
         run: |
           set -euo pipefail
@@ -94,8 +97,8 @@ jobs:
       - name: tsc --strict
         run: |
           set -euo pipefail
-          npx tsc --noEmit
-          files="$(npx tsc --noEmit --listFilesOnly | grep -c '/web/\(src\|e2e\)/' || true)"
+          ./node_modules/.bin/tsc --noEmit
+          files="$(./node_modules/.bin/tsc --noEmit --listFilesOnly | grep -c '/web/\(src\|e2e\)/' || true)"
           echo "tsc compiled ${files} source file(s)"
           if [ "${files}" -lt "${MIN_SOURCE_FILES}" ]; then
             echo "::error::tsc compiled ${files} source files, under the floor of ${MIN_SOURCE_FILES}."
@@ -106,8 +109,8 @@ jobs:
       - name: ESLint
         run: |
           set -euo pipefail
-          npx eslint --max-warnings 0 .
-          linted="$(npx eslint -f json . | jq 'length')"
+          ./node_modules/.bin/eslint --max-warnings 0 .
+          linted="$(./node_modules/.bin/eslint -f json . | jq 'length')"
           echo "ESLint linted ${linted} file(s)"
           if [ "${linted}" -lt "${MIN_LINTED_FILES}" ]; then
             echo "::error::ESLint linted ${linted} files, under the floor of ${MIN_LINTED_FILES}."

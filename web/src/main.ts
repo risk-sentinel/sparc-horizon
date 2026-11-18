@@ -26,7 +26,7 @@ import {
   type Route,
 } from "./model.ts";
 import { initTheme, themeButton } from "./theme.ts";
-import type { CellDetail, Chain, Export, Heat, NextAction, Persona, TreeNode } from "./types.ts";
+import type { CellDetail, Chain, Export, Heat, HeatCell, HeatRow, NextAction, Persona, TreeNode } from "./types.ts";
 
 const LOOK_AHEAD_DAYS = 365;
 
@@ -320,38 +320,10 @@ function heatTable(v: Loaded, h: Heat): HTMLElement {
   }
   const body = el("tbody");
   for (const row of h.rows) {
-    const child = findNode(v.tree, row.id);
-    const rowHead = el("th", { scope: "row" });
-    if (child !== undefined && drillable(child)) {
-      rowHead.append(el("a", { href: formatRoute({ persona: v.route.persona, node: row.id, horizon: v.route.horizon }) }, row.name));
-    } else {
-      rowHead.append(row.name);
-    }
-    const tr = el("tr", {}, rowHead);
+    const tr = el("tr", {}, rowHeader(v, row));
     for (const col of h.columns) {
       const cell = row.cells.find((c) => c.col === col);
-      if (cell === undefined) {
-        tr.append(el("td", { class: "none" }, el("span", { class: "visually-hidden" }, "No controls")));
-        continue;
-      }
-      const selected = v.route.col === col && v.route.row === row.id;
-      const b = el(
-        "button",
-        {
-          type: "button",
-          id: `cell-${row.id}-${col}`,
-          class: `cell s-${cell.state}${cell.worsening ? " worse" : ""}${cell.inherited ? " inh" : ""}`,
-          "aria-label": cellLabel(row.name, cell),
-          "aria-pressed": selected ? "true" : "false",
-        },
-        el("span", { class: "glyph", "aria-hidden": "true" }, STATES[cell.state].glyph),
-        cell.blockers > 0 ? el("span", { class: "n", "aria-hidden": "true" }, cell.blockers) : null,
-        cell.worsening ? el("span", { class: "trend", "aria-hidden": "true" }, "↘") : null,
-      );
-      b.addEventListener("click", () => {
-        go({ persona: v.route.persona, node: v.node.id, horizon: v.route.horizon, row: row.id, col });
-      });
-      tr.append(el("td", {}, b));
+      tr.append(cell === undefined ? el("td", { class: "none" }, el("span", { class: "visually-hidden" }, "No controls")) : el("td", {}, cellButton(v, row, cell)));
     }
     body.append(tr);
   }
@@ -360,6 +332,39 @@ function heatTable(v: Loaded, h: Heat): HTMLElement {
     { class: "scroll" },
     el("table", { class: "grid" }, el("caption", { class: "visually-hidden" }, "Control family state by row"), el("thead", {}, head), body),
   );
+}
+
+/** A row's name, a link when the row has a heatmap of its own. */
+function rowHeader(v: Loaded, row: HeatRow): HTMLElement {
+  const child = findNode(v.tree, row.id);
+  const name =
+    child !== undefined && drillable(child)
+      ? el("a", { href: formatRoute({ persona: v.route.persona, node: row.id, horizon: v.route.horizon }) }, row.name)
+      : row.name;
+  return el("th", { scope: "row" }, name);
+}
+
+function cellButton(v: Loaded, row: HeatRow, cell: HeatCell): HTMLButtonElement {
+  const classes = ["cell", `s-${cell.state}`];
+  if (cell.worsening) classes.push("worse");
+  if (cell.inherited) classes.push("inh");
+  const b = el(
+    "button",
+    {
+      type: "button",
+      id: `cell-${row.id}-${cell.col}`,
+      class: classes.join(" "),
+      "aria-label": cellLabel(row.name, cell),
+      "aria-pressed": String(v.route.col === cell.col && v.route.row === row.id),
+    },
+    el("span", { class: "glyph", "aria-hidden": "true" }, STATES[cell.state].glyph),
+    cell.blockers > 0 ? el("span", { class: "n", "aria-hidden": "true" }, cell.blockers) : null,
+    cell.worsening ? el("span", { class: "trend", "aria-hidden": "true" }, "↘") : null,
+  );
+  b.addEventListener("click", () => {
+    go({ persona: v.route.persona, node: v.node.id, horizon: v.route.horizon, row: row.id, col: cell.col });
+  });
+  return b;
 }
 
 function legend(): HTMLElement {
@@ -559,4 +564,4 @@ async function start(): Promise<void> {
   await load();
 }
 
-void start();
+await start();

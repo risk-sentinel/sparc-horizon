@@ -60,7 +60,8 @@ export function displayControl(id: string): string {
   const m = /^([a-z]{2})-(\d+)(?:\.(\d+))?$/i.exec(id);
   if (m === null) return id;
   const [, fam = "", num = "", enh] = m;
-  return `${fam.toUpperCase()}-${num}${enh === undefined ? "" : `(${enh})`}`;
+  const suffix = enh === undefined ? "" : `(${enh})`;
+  return `${fam.toUpperCase()}-${num}${suffix}`;
 }
 
 // --- Dates ------------------------------------------------------------------

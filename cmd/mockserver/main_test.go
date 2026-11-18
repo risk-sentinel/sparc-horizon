@@ -428,15 +428,6 @@ func TestEachSurfaceCarriesItsOwnPolicy(t *testing.T) {
 			t.Errorf("%s: X-Content-Type-Options %q, want nosniff", c.path, got)
 		}
 	}
-	for _, p := range []string{cspHUD, cspAPI} {
-		if strings.Contains(p, "unsafe-") {
-			t.Errorf("policy %q allows unsafe code", p)
-		}
-		if !strings.Contains(p, "frame-ancestors 'none'") {
-			t.Errorf("policy %q allows framing", p)
-		}
-	}
-
 	if w := get(t, h, "", "/demo/hud.html"); w.Code != http.StatusOK || !strings.Contains(w.Body.String(), "<html") {
 		t.Errorf("/demo/hud.html: %d, want the demo", w.Code)
 	}
@@ -445,6 +436,19 @@ func TestEachSurfaceCarriesItsOwnPolicy(t *testing.T) {
 	h.ServeHTTP(pw, r)
 	if pw.Code != http.StatusMethodNotAllowed {
 		t.Errorf("POST /demo/hud.html: %d, want 405", pw.Code)
+	}
+}
+
+// The two policies that are not the demos' allow no unsafe code and no
+// framing, whatever else changes in them.
+func TestStrictPoliciesAllowNoUnsafeCodeOrFraming(t *testing.T) {
+	for _, p := range []string{cspHUD, cspAPI} {
+		if strings.Contains(p, "unsafe-") {
+			t.Errorf("policy %q allows unsafe code", p)
+		}
+		if !strings.Contains(p, "frame-ancestors 'none'") {
+			t.Errorf("policy %q allows framing", p)
+		}
 	}
 }
 

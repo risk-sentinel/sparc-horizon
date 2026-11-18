@@ -19,7 +19,8 @@ checked = 0; failed = 0; props = 0
 Dir[File.join(dir, "*.json")].sort.each do |f|
   data = JSON.parse(File.read(f)) rescue next
   next unless data.is_a?(Hash)
-  key = (data.keys & models.keys).first or next
+  key = (data.keys & models.keys).first
+  next unless key
   props += JSON.generate(data).scan('"ns":"https://sparc.risk-sentinel.org/ns"').size
   errs = SparcNamespacePropsRule.new(models[key], data).errors
   checked += 1

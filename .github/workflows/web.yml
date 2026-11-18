@@ -1,0 +1,152 @@
+name: Web
+
+# The HUD's gate (S1-7, #122): types, lint, unit tests with coverage, and the
+# build. The axe and CSP gates run against the built image, where the HUD is
+# served under its real policy — container.yml's "HUD in a browser" steps.
+#
+# The pipeline-hardening question for each step: if the thing it checks were
+# absent, would it still report success? For a TypeScript project the answer is
+# yes in three ways this workflow is built to defeat:
+#
+#   1. `tsc` over an `include` that matches nothing exits 0. The number of
+#      source files it compiled is asserted.
+#   2. ESLint over a glob that matches nothing exits 0. The number of files it
+#      linted is asserted, from its own JSON report.
+#   3. `node --test` over no test files exits 0, and its coverage table lists
+#      only files a test imported — so a deleted test file drops a module out
+#      of the coverage floor rather than failing it. The test count and the
+#      presence of each covered module are asserted.
+#
+# Each gate was shown failing on a planted defect before it was trusted (#122's
+# PR body lists them).
+#
+# Reporting, not required, until it has been observed on main (S1-13).
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: web
+
+env:
+  # Raise as the HUD grows; a floor exists so deleting files is a failure.
+  MIN_SOURCE_FILES: "8"
+  MIN_LINTED_FILES: "10"
+  MIN_TESTS: "27"
+
+jobs:
+  web:
+    name: Web types, lint, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          # The same Node the image's build stage runs (Dockerfile NODE_IMAGE).
+          node-version-file: web/.node-version
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install from the lockfile, scripts off
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts --no-audit --no-fund
+          # Exact pins only: a range in package.json lets the lockfile drift on
+          # the next `npm install` without a reviewed diff.
+          ranges="$(jq -r '.devDependencies // {}, .dependencies // {} | to_entries[] | select(.value | test("^[0-9]+\\.[0-9]+\\.[0-9]+$") | not) | "\(.key)@\(.value)"' package.json)"
+          if [ -n "${ranges}" ]; then
+            echo "::error::Unpinned dependencies: ${ranges}"
+            exit 1
+          fi
+          # No runtime dependencies: everything the browser loads is ours.
+          runtime="$(jq '.dependencies // {} | length' package.json)"
+          if [ "${runtime}" -ne 0 ]; then
+            echo "::error::${runtime} runtime dependencies; the HUD ships none (docs/02-architecture.md)."
+            exit 1
+          fi
+          echo "PASS — exact pins, no runtime dependencies."
+
+      # The ported SCA chain (sbom-and-sca.yml) does not assess web/: Grype and
+      # Trivy both skip npm DEV dependencies by default, and every dependency
+      # the HUD has is a dev dependency. Measured on #122 with a planted
+      # lodash 4.17.15: 0 matches from either as a dev dependency, 5 (Grype) and
+      # 6 (Trivy) as a production one. npm audit reads the whole graph. Gated
+      # at CRITICAL, as the SCA gate is; every level is printed. A planted
+      # lodash 4.17.11 (critical) was shown to fail it. The fix to the ported
+      # files belongs upstream first (CLAUDE.md), so this stands in meanwhile.
+      - name: npm audit, dev dependencies included
+        run: |
+          set -euo pipefail
+          npm audit --include=dev || true
+          npm audit --include=dev --audit-level=critical
+          echo "PASS — no critical advisory in web/'s dependency graph."
+
+      - name: tsc --strict
+        run: |
+          set -euo pipefail
+          npx tsc --noEmit
+          files="$(npx tsc --noEmit --listFilesOnly | grep -c '/web/\(src\|e2e\)/' || true)"
+          echo "tsc compiled ${files} source file(s)"
+          if [ "${files}" -lt "${MIN_SOURCE_FILES}" ]; then
+            echo "::error::tsc compiled ${files} source files, under the floor of ${MIN_SOURCE_FILES}."
+            exit 1
+          fi
+          echo "PASS — tsc clean over ${files} files."
+
+      - name: ESLint
+        run: |
+          set -euo pipefail
+          npx eslint --max-warnings 0 .
+          linted="$(npx eslint -f json . | jq 'length')"
+          echo "ESLint linted ${linted} file(s)"
+          if [ "${linted}" -lt "${MIN_LINTED_FILES}" ]; then
+            echo "::error::ESLint linted ${linted} files, under the floor of ${MIN_LINTED_FILES}."
+            exit 1
+          fi
+          echo "PASS — ESLint clean over ${linted} files."
+
+      - name: Unit tests with coverage floors
+        run: |
+          set -euo pipefail
+          npm test 2>&1 | tee "${RUNNER_TEMP}/test.txt"
+          pass="$(sed -n 's/^# pass //p' "${RUNNER_TEMP}/test.txt")"
+          failed="$(sed -n 's/^# fail //p' "${RUNNER_TEMP}/test.txt")"
+          echo "tests passed: ${pass:-0}, failed: ${failed:-?}"
+          if [ "${failed:-1}" -ne 0 ] || [ "${pass:-0}" -lt "${MIN_TESTS}" ]; then
+            echo "::error::${pass:-0} tests passed (floor ${MIN_TESTS}), ${failed:-?} failed."
+            exit 1
+          fi
+          for f in api.ts model.ts; do
+            if ! grep -qE "^#  +${f} +\|" "${RUNNER_TEMP}/test.txt"; then
+              echo "::error::${f} is missing from the coverage table: no test imported it."
+              exit 1
+            fi
+          done
+          echo "PASS — ${pass} tests, coverage floors met for api.ts and model.ts."
+
+      - name: Build
+        run: |
+          set -euo pipefail
+          npm run build
+          js="$(find dist/assets -name '*.js' | wc -l | tr -d ' ')"
+          css="$(find dist/assets -name '*.css' | wc -l | tr -d ' ')"
+          if [ ! -s dist/index.html ] || [ "${js}" -ne 1 ] || [ "${css}" -ne 1 ]; then
+            echo "::error::dist/ should hold index.html, one script and one stylesheet; has ${js} js, ${css} css."
+            exit 1
+          fi
+          # The HUD's CSP allows nothing inline; the build must not emit any.
+          if grep -qE '<script>|<style>| style=' dist/index.html; then
+            echo "::error::dist/index.html carries inline code, which the HUD's policy refuses."
+            exit 1
+          fi
+          echo "PASS — dist/ is one page, one script, one stylesheet, nothing inline."

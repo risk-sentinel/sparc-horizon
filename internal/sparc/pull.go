@@ -16,6 +16,13 @@ import (
 // own files.
 const marker = ".sparcpull"
 
+// logPrefix begins every line Pull logs about a failure.
+const logPrefix = "sparcpull:"
+
+func report(w io.Writer, err error) {
+	_, _ = fmt.Fprintln(w, logPrefix, err)
+}
+
 // Fetcher is what Pull needs from a Client.
 type Fetcher interface {
 	List(ctx context.Context, k Kind) ([]Document, error)
@@ -29,7 +36,7 @@ type Fetcher interface {
 func Pull(ctx context.Context, c Fetcher, out string, stderr io.Writer) int {
 	root, err := claim(out)
 	if err != nil {
-		_, _ = fmt.Fprintln(stderr, "sparcpull:", err)
+		report(stderr, err)
 		return 2
 	}
 	defer func() { _ = root.Close() }()
@@ -40,12 +47,12 @@ func Pull(ctx context.Context, c Fetcher, out string, stderr io.Writer) int {
 	failures := p.failures
 	written := p.written
 	if len(failures) > 0 {
-		_, _ = fmt.Fprintf(stderr, "sparcpull: %d failure(s); nothing was removed from %s\n", len(failures), out)
+		_, _ = fmt.Fprintf(stderr, "%s %d failure(s); nothing was removed from %s\n", logPrefix, len(failures), out)
 		return 1
 	}
 	removed, err := prune(root, written)
 	if err != nil {
-		_, _ = fmt.Fprintln(stderr, "sparcpull:", err)
+		report(stderr, err)
 		return 1
 	}
 	for _, r := range removed {
@@ -64,7 +71,7 @@ type puller struct {
 
 func (p *puller) fail(err error) {
 	p.failures = append(p.failures, err.Error())
-	_, _ = fmt.Fprintln(p.log, "sparcpull:", err)
+	report(p.log, err)
 }
 
 // kind lists one kind and writes each export, recording every failure and

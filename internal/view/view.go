@@ -31,7 +31,7 @@ type View struct {
 	authz      *authz.Authorizer
 	nodes      map[string]*tree.Node
 	cdefReqs   map[string]string
-	assessed   map[string][]assessment // SSP uuid -> assessments
+	assessed   map[string][]assessment // boundary node id -> assessments
 	byDocument map[string]*Document    // export href -> document
 	docBound   map[string]*boundary    // export href -> its boundary
 }
@@ -152,11 +152,14 @@ func (v *View) visible(party, node string) bool { return v.authz.Visible(party, 
 func (v *View) boundariesUnder(n *tree.Node) []*boundary {
 	switch n.NodeType {
 	case tree.Boundary:
-		return []*boundary{v.links.bySSP[n.ID]}
+		if b := v.links.byNode[n.ID]; b != nil {
+			return []*boundary{b}
+		}
+		return nil
 	case tree.Organization:
 		var out []*boundary
 		for _, c := range n.Children {
-			if b := v.links.bySSP[c.ID]; b != nil {
+			if b := v.links.byNode[c.ID]; b != nil {
 				out = append(out, b)
 			}
 		}
@@ -238,7 +241,7 @@ func (v *View) Export(party, ref string) (Export, bool) {
 
 func (v *View) boundaryByRef(ref string) *boundary {
 	for _, b := range v.links.boundaries {
-		if b.slug == ref || strings.EqualFold(b.id(), ref) {
+		if b.slug == ref || strings.EqualFold(b.id(), ref) || strings.EqualFold(b.plan.UUID, ref) {
 			return b
 		}
 	}

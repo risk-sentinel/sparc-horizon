@@ -268,7 +268,7 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
    <div class="box b-hz">Ledger<small>Append-only, hash-chained</small></div>
    <div class="box b-hz">Projection engine<small>State at any date, rollups</small></div>
    <div class="box b-hz">Attest and decide<small>Evidence, signing, POA&amp;M</small></div></div></div>
-  <div class="flow">mTLS: pull SSP, AR, POA&amp;M, mappings; push attestations and decisions</div>
+  <div class="flow">HTTPS + Bearer token: pull SSP, AR, POA&amp;M, mappings; push attestations and decisions</div>
   <div class="lane"><b>SPARC</b><div class="boxes">
    <div class="box b-sparc">Authoritative<small>Catalogs, baselines, profiles</small></div>
    <div class="box b-sparc">Validation<small>sparc-validate, namespace rules</small></div>
@@ -286,7 +286,8 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
   internal/canonical/   field normalisation for derived identifiers
   internal/keys/        the UUIDv5 key grammar, Go reference implementation
   internal/fixtures/    the fixture generator
-  internal/sparc/       mTLS client, ETag cache, doc fetch
+  cmd/sparcpull/        pulls SPARC's OSCAL into a folder the mock reads (#124)
+  internal/sparc/       HTTPS + Bearer client, ETag cache, doc fetch (#124)
   internal/oscal/       version dispatch, round-trip probe, go-oscal adapters
   internal/tree/        federation, org, boundary, system builder
   internal/authz/       responsible-parties to node-scoped roles, OIDC
@@ -327,8 +328,8 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
  <p>Published as a JSON Schema in the SPARC repo and enforced by <code>sparc-validate</code>. Changes are additive only within <code>v1</code>.</p>
  <div class="tbl"><table>
   <tr><th>Prop</th><th>On</th><th>Example</th><th>Drives</th></tr>
-  <tr><td><code>node-type</code></td><td>Party, SSP metadata</td><td><code>boundary</code></td><td>Tree builder</td></tr>
-  <tr><td><code>parent-uuid</code></td><td>SSP metadata</td><td>Org party UUID</td><td>Tree builder, rollups</td></tr>
+  <tr><td><code>node-type</code></td><td>Party, SSP metadata</td><td><code>system</code> on SSP metadata (SPARC); <code>organization</code> on a party</td><td>Tree builder</td></tr>
+  <tr><td><code>parent-uuid</code></td><td>SSP metadata</td><td>The boundary's uuid (SPARC)</td><td>Tree builder: the boundary node's id (#124); rollups</td></tr>
   <tr><td><code>next-decision-date</code></td><td>SSP metadata</td><td><code>2026-10-11</code></td><td>Snap-to-decision, AO horizon</td></tr>
   <tr><td><code>fips-199</code></td><td>SSP metadata</td><td><code>high</code></td><td>Rollup weight</td></tr>
   <tr><td><code>blocks-ato</code></td><td>Risk</td><td><code>true</code></td><td>Red cells, ranking</td></tr>
@@ -339,8 +340,8 @@ footer{padding:28px 0 60px;color:var(--ink-3);font-size:13px}
  <details><summary>Boundary SSP metadata example</summary><div>
 <pre><code>"metadata": {
   "props": [
-    {"name": "node-type", "ns": "https://sparc.risk-sentinel.org/ns", "value": "boundary"},
-    {"name": "parent-uuid", "ns": "https://sparc.risk-sentinel.org/ns", "value": "&lt;org-party-uuid&gt;"},
+    {"name": "node-type", "ns": "https://sparc.risk-sentinel.org/ns", "value": "system"},
+    {"name": "parent-uuid", "ns": "https://sparc.risk-sentinel.org/ns", "value": "&lt;boundary-uuid&gt;"},
     {"name": "next-decision-date", "ns": "https://sparc.risk-sentinel.org/ns", "value": "2026-10-11"},
     {"name": "fips-199", "ns": "https://sparc.risk-sentinel.org/ns", "value": "moderate"}
   ],
@@ -534,8 +535,8 @@ ENTRYPOINT ["/usr/local/bin/horizon", "serve"]</code></pre>
  <details><summary>Configuration</summary><div>
   <table>
    <tr><th>Variable</th><th>Default</th><th>Purpose</th></tr>
-   <tr><td><code>HORIZON_SPARC_URL</code></td><td>none</td><td>SPARC Delivery API</td></tr>
-   <tr><td><code>HORIZON_SPARC_CA</code></td><td>none</td><td>CA bundle for mTLS</td></tr>
+   <tr><td><code>HORIZON_SPARC_URL</code></td><td>none</td><td>SPARC's base URL, <code>https://</code> only</td></tr>
+   <tr><td><code>HORIZON_SPARC_TOKEN_FILE</code></td><td>none</td><td>File holding the SPARC API token, owner-only</td></tr>
    <tr><td><code>HORIZON_OIDC_ISSUER</code></td><td>none</td><td>Agency IdP issuer URL</td></tr>
    <tr><td><code>HORIZON_DB_DSN</code></td><td><code>sqlite:///data/horizon.db</code></td><td>Ledger and projections</td></tr>
    <tr><td><code>HORIZON_EVIDENCE_URI</code></td><td>none</td><td>Object store for evidence</td></tr>
@@ -618,7 +619,7 @@ const PH=[
  risks:['Namespace churn after interface work starts: version it and allow additive changes only']},
 {id:'P1',name:'SPARC client and tree builder',track:'data',effort:4,par:2,deps:['P0'],
  goal:'Turn SPARC documents into the federation, organization, boundary, and system tree, with roles attached.',
- tasks:['Go SPARC client over mTLS with ETag caching for SSP, AR, POA&M, and mapping documents','Parse OSCAL and normalize control IDs (ac-2.1 and AC-2(1)) using SPARC mappings','Join party UUIDs and member-of-organizations into the tree; components and inventory-items become systems','Map responsible-parties to node-scoped roles and OIDC subjects','Report orphaned or inconsistent parties instead of dropping them'],
+ tasks:['Go SPARC client over HTTPS with a Bearer token and ETag caching for SSP, AR, POA&M, and mapping documents','Parse OSCAL; control IDs are the catalog's own tokens (ac-2.1), so OSCAL-only input needs no normalization','Join party UUIDs and member-of-organizations into the tree; components and inventory-items become systems','Map responsible-parties to node-scoped roles and OIDC subjects','Report orphaned or inconsistent parties instead of dropping them'],
  deliver:['internal/sparc','internal/oscal','internal/tree','internal/authz'],
  exit:['Fixture tree matches the golden JSON','Role tests pass for AO at organization and SO and ISO at boundary'],
  risks:['Party UUID drift between documents: caught by validate rules and orphan reports']},

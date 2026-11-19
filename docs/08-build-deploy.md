@@ -63,6 +63,20 @@ docker run --rm -p 8080:8080 sparc-horizon:dev
 Arguments after the image name replace the whole default command, so a `docker run` that adds `-dir` repeats
 `-static` and `-demo` (the tester guide's commands do).
 
+**Pulling the documents from SPARC (#124).** `cmd/sparcpull` writes a SPARC instance's SSPs, assessment plans,
+assessment results and POA&Ms into a folder that `-dir` reads. It is not in the image, which serves; it runs where
+the token is (tester guide, section 8). How it reaches SPARC follows from what SPARC's `/api/v1` is and from owner
+decisions on 2026-11-19, not from the original sketch here, which said "mTLS":
+
+| Property | Rule | Why |
+|---|---|---|
+| Authentication | `Authorization: Bearer`: a `sparc_` service token or an OIDC JWT, read from `HORIZON_SPARC_TOKEN_FILE` | It is what SPARC's API accepts. No client certificate: mTLS is added only if a FedRAMP requirement calls for it |
+| Transport | `https` only, TLS 1.2 or later, on every host including loopback | Plain http is not FedRAMP-compliant for a High system, so nothing relaxes it, for testing either |
+| Trust | The system trust roots. No CA-file setting (`HORIZON_SPARC_CA` is withdrawn) | A per-deployment CA file is not the model. Trust follows SPARC's trust-store relationship model ([`sparc#1354`](https://github.com/risk-sentinel/sparc/issues/1354)) when it lands |
+| What is fetched | `GET /api/v1/{ssp,sap,sar,poam}_documents/:id/export?format=oscal&validate=true` | Schema-validated OSCAL only. A document SPARC refuses (422) is reported, never re-requested unvalidated |
+| Caching | `If-None-Match` with each document's ETag; a 304 is answered from the cache after its digest is checked | SPARC's ETag digests the exported bytes, so a 304 means the bytes are unchanged |
+| Redirects | Followed on the same scheme and host only | A response from elsewhere is never read as SPARC's |
+
 **Content-Security-Policy, per surface (#122).** Every response carries one, with `nosniff` and
 `Referrer-Policy: no-referrer`:
 
@@ -134,8 +148,8 @@ findings"), and an entry past its review date fails the release until it's re-re
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `HORIZON_SPARC_URL` | none | SPARC Delivery API |
-| `HORIZON_SPARC_CA` | none | CA bundle for mTLS |
+| `HORIZON_SPARC_URL` | none | SPARC's base URL, `https://` only |
+| `HORIZON_SPARC_TOKEN_FILE` | none | File holding the SPARC API token, owner-only |
 | `HORIZON_OIDC_ISSUER` | none | Agency IdP issuer URL |
 | `HORIZON_DB_DSN` | `sqlite:///data/horizon.db` | Ledger and projections |
 | `HORIZON_EVIDENCE_URI` | none | Object store for evidence |

@@ -6,7 +6,8 @@ you find. It takes about fifteen minutes and needs nothing beyond Docker, or Go 
 Every output quoted below was measured against an image built from this repository (#117, #120,
 #122), not written from the contract. If what you see differs, that is worth reporting. To look at
 **your own** OSCAL instead of the synthetic federation, go to [section 7](#7-bring-your-own-oscal);
-to click through it rather than `curl` it, [section 6](#6-the-hud).
+to click through it rather than `curl` it, [section 6](#6-the-hud); to pull it from a SPARC instance,
+[section 8](#8-pull-from-a-sparc-instance), whose output was not measured against a live SPARC.
 
 ## What you are testing
 
@@ -310,6 +311,53 @@ Resolve ac-6.1 on IFA GoodRead
 A control your assessment results never mention is a **gap, not a pass**: it has no cell. If your
 documents join and nothing shows, check the log for `could not be placed`, and that your findings
 carry `target.target-id` (for example `ac-2_obj`) and `related-observations` with `subjects`.
+
+## 8. Pull from a SPARC instance
+
+`sparcpull` copies one SPARC instance's SSPs, assessment plans, assessment results and POA&Ms into a
+folder, as the validated OSCAL that SPARC's `/api/v1` exports (#124). That folder is section 7's
+`-dir`.
+
+You need a SPARC API token, which a SPARC administrator issues to a service account (`sparc_…`), or
+an OIDC token if your SPARC runs in `oidc` or `hybrid` mode. The documents you get are the ones
+that token can read.
+
+```bash
+umask 077
+printf '%s' 'sparc_…' > ~/.config/sparc-token     # owner-only, or sparcpull refuses it
+go run ./cmd/sparcpull -url https://sparc.example.gov -token-file ~/.config/sparc-token -out my-oscal
+```
+
+The output has this shape; the counts are your instance's. **This section was not measured against
+a live SPARC.** #124 measured it against a TLS server that implements SPARC's API as read from
+SPARC's source (`internal/sparc/e2e_test.go`), so a difference here is worth reporting.
+
+```text
+ssp  3 listed, 3 transferred, 0 unchanged (304)
+sap  3 listed, 3 transferred, 0 unchanged (304)
+sar  3 listed, 3 transferred, 0 unchanged (304)
+poam 4 listed, 4 transferred, 0 unchanged (304)
+```
+
+Then serve `my-oscal` exactly as in section 7. On Linux, add `--user "$(id -u):$(id -g)"` to
+`docker run`: `sparcpull` writes the folder readable by you alone, and the image's own user is not
+you. Docker Desktop on macOS maps ownership and needs nothing extra.
+
+What to expect:
+
+| Behaviour | Why |
+|---|---|
+| Only `https://` URLs are accepted, on every host, including `localhost` | Plain http is not FedRAMP-compliant for a High system. There is no switch to allow it |
+| SPARC's certificate must chain to your system's trust roots. There is no option to supply a CA file | Trust will follow SPARC's trust-store model ([`sparc#1354`](https://github.com/risk-sentinel/sparc/issues/1354)) when it lands, not a per-deployment file |
+| The token comes only from a file, readable by you alone, and is never printed | A flag would put it in the process list and your shell history |
+| A second run with nothing changed in SPARC prints `0 transferred` for every kind | Each document's ETag is cached (`-cache`, by default under your user cache directory). SPARC answers 304, and the cached copy is used after its digest is checked |
+| A document SPARC refuses to export (`does not conform to the OSCAL schema`) is reported by name and the run exits 1 | `sparcpull` asks only for schema-validated OSCAL. Fix the document in SPARC; it never asks for the unvalidated copy |
+| The first run marks the folder (`.sparcpull`). A later run refuses a folder that holds anything without the mark | A clean run removes documents SPARC no longer lists, so it must never prune a folder you made |
+| A run with any failure writes what succeeded and removes nothing | A partial pull should not delete the last good copy |
+| The boundary node's id is SPARC's boundary uuid, not the SSP document's | SPARC exports one SSP per boundary with `node-type: system` and `parent-uuid` naming the boundary. That uuid is stable when the SSP is revised, so links and persona node ids stay put |
+
+`sparcpull` fetches; it does not ingest. It verifies no signature, so what it writes is input for
+the local mock, the same standing as a folder you assembled by hand.
 
 ## Reporting what you find
 

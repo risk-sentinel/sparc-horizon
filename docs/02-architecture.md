@@ -25,7 +25,7 @@ flowchart TB
     RT[Runtime scans<br/>AWS Config, InSpec]
   end
   Lenses <-->|HTTPS, OIDC, node-scoped roles| Horizon
-  Horizon <-->|mTLS: SSP, AR, POA&M, mappings / attestations, decisions| SPARC
+  Horizon <-->|HTTPS + Bearer token: SSP, AR, POA&M, mappings / attestations, decisions| SPARC
   Pipelines -->|HDF v3 via HDF CLI| SPARC
 ```
 
@@ -53,7 +53,8 @@ from the original sketch.
   internal/canonical/   field normalisation for derived identifiers
   internal/keys/        the UUIDv5 key grammar, Go reference implementation
   internal/fixtures/    the fixture generator
-  internal/sparc/       mTLS client, ETag cache, doc fetch
+  cmd/sparcpull/        pulls SPARC's OSCAL into a folder the mock reads (#124)
+  internal/sparc/       HTTPS + Bearer client, ETag cache, doc fetch (#124)
   internal/oscal/       version dispatch, round-trip probe, go-oscal adapters
   internal/tree/        federation, org, boundary, system builder; the role
                         BINDINGS each node declares

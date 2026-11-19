@@ -3,8 +3,8 @@
     "uuid": "460aafaf-df97-441c-8f26-fbe0d73eeb22",
     "metadata": {
       "title": "SPARC Horizon",
-      "last-modified": "2026-11-18T00:00:00Z",
-      "version": "0.3.3",
+      "last-modified": "2026-11-19T00:00:00Z",
+      "version": "0.3.4",
       "oscal-version": "1.2.3",
       "roles": [
         {
@@ -386,7 +386,7 @@
           {
             "uuid": "b82c7fe3-7726-500a-94a0-c2bd699ff5b3",
             "source": "#632cc513-289a-5a22-91e6-f4faea7283a8",
-            "description": "The HUD the service serves (web/, #122). Operating in the prototype mock; cmd/horizon carries the same headers when it exists.",
+            "description": "The HUD the service serves (web/, #122), and the client that pulls OSCAL from SPARC (internal/sparc, #124). Operating in the prototype: the mock serves the HUD and sparcpull runs the client; cmd/horizon carries both when it exists.",
             "implemented-requirements": [
               {
                 "uuid": "c15b5309-62fc-58a6-b3c5-8d30842301bc",
@@ -443,6 +443,54 @@
                   }
                 ],
                 "remarks": "Partial: the HUD side only. Server-side output of document content is JSON with nosniff; schema validation on ingestion stays planned under SI-10."
+              },
+              {
+                "uuid": "fd133f49-68f0-5c66-846c-7e43eef2cbde",
+                "control-id": "sc-8",
+                "description": "Every request to SPARC is HTTPS at TLS 1.2 or later, verified against the system trust roots. Plain http is refused on every host, loopback included, and nothing in the shipped code relaxes that or loads a CA of its own: there is no flag, variable or option for it. A redirect to another scheme or host is refused, so a response from elsewhere is never read as SPARC's. Each was shown failing on a planted defect.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "partial"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/internal/sparc/sparc.go",
+                    "rel": "implementation"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/internal/sparc/sparc_test.go",
+                    "rel": "evidence"
+                  }
+                ],
+                "remarks": "Owner decisions (2026-11-19): no mTLS unless a FedRAMP requirement calls for it; no per-deployment CA file, with trust following SPARC's trust-store relationship model (sparc#1354) when it lands; no plain http, even for local testing. Partial because the transport to federation peers (P6) is not built, and FIPS 140 mode for the TLS stack is not yet configured."
+              },
+              {
+                "uuid": "6954b3c1-8bc2-5c2d-be37-d84b631a10b4",
+                "control-id": "ia-5",
+                "description": "The service authenticates to SPARC with a Bearer token read from a file. The token is never a command-line flag. A token file that group or others can read is refused, and so is a symlink or other non-regular file, before it is opened. A token carrying whitespace or a control character is refused before it can reach a header. The token is never logged and never part of an error, which a test asserts against a refused token.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "partial"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/cmd/sparcpull/main.go",
+                    "rel": "implementation"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/cmd/sparcpull/main_test.go",
+                    "rel": "evidence"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/internal/sparc/sparc_test.go",
+                    "rel": "evidence"
+                  }
+                ],
+                "remarks": "Partial because token issuance, rotation and storage in the platform secret store belong to the deployment (S2); the prototype reads a local file."
               }
             ]
           }

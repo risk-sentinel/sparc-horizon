@@ -31,7 +31,7 @@ flowchart LR
 Everything in the box on the left is in this repository and runs with nothing else installed. The
 mock computes every response from the OSCAL documents it is given, at the horizon a request asks
 for, and answers the write endpoints with 501; the persona header stands in for a login. Point it at
-your own SSP, assessment results and POA&M with `-dir` ([tester guide, section 7](docs/testing.md#7-bring-your-own-oscal)) and the HUD draws them. **To try it, follow [the tester guide](docs/testing.md).**
+your own SSP, assessment results and POA&M with `-dir` ([tester guide, section 7](docs/testing.md#7-bring-your-own-oscal)) and the HUD draws them, or pull them from a SPARC instance with `cmd/sparcpull` ([section 8](docs/testing.md#8-pull-from-a-sparc-instance)). **To try it, follow [the tester guide](docs/testing.md).**
 
 ## Three ways to run it
 

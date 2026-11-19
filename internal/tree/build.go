@@ -16,6 +16,7 @@ type builder struct {
 	bindings   []Binding
 	findings   []Finding
 	seenSystem map[string]string // system-id -> the SSP that claimed it first
+	boundaryID map[string]string // SSP uuid -> boundary node id (BoundaryIDs)
 	aliases    map[string]Role
 	// implicit is true when no SSP in the set names a federation, so a lone
 	// organization goes under LocalFederation. In a set where any document
@@ -51,6 +52,14 @@ func BuildWith(ssps []*oscal.SystemSecurityPlan, opts Options) (Result, error) {
 		if ssp == nil {
 			return Result{}, fmt.Errorf("tree: nil SSP in the set")
 		}
+	}
+	ids, contested := BoundaryIDs(ssps)
+	b.boundaryID = ids
+	for _, boundary := range sortedKeys(contested) {
+		b.note(FindingDuplicateBoundary, boundary,
+			"boundary %s is claimed by SSPs %v; each is keyed by its own document uuid", boundary, contested[boundary])
+	}
+	for _, ssp := range ssps {
 		b.addBoundary(ssp)
 	}
 
@@ -86,7 +95,7 @@ func (b *builder) addBoundary(ssp *oscal.SystemSecurityPlan) {
 	}
 
 	node := &Node{
-		ID:       ssp.UUID,
+		ID:       b.boundaryID[ssp.UUID],
 		Name:     ssp.SystemCharacteristics.SystemName,
 		NodeType: Boundary,
 		Roles:    []Role{},

@@ -7,12 +7,14 @@ import (
 	oscal "github.com/defenseunicorns/go-oscal/src/types/oscal-1-2-3"
 
 	"github.com/risk-sentinel/sparc-horizon/internal/project"
+	"github.com/risk-sentinel/sparc-horizon/internal/tree"
 )
 
 // boundary is one SSP and the documents that resolved to it.
 type boundary struct {
 	ssp   *Document
 	plan  *oscal.SystemSecurityPlan
+	node  string // the boundary's node id, as internal/tree assigns it
 	slug  string
 	name  string
 	fips  string
@@ -20,7 +22,10 @@ type boundary struct {
 	poams []*Document
 }
 
-func (b *boundary) id() string { return b.plan.UUID }
+// id is the boundary's node id. It is the tree's, not the SSP document's
+// uuid: SPARC's SSPs name a stable boundary uuid (#124), and a row keyed by
+// anything else would not match the node a caller is authorized on.
+func (b *boundary) id() string { return b.node }
 
 // weight is the boundary's FIPS 199 rollup weight.
 func (b *boundary) weight() float64 { return project.FIPSWeight(b.fips) }
@@ -30,20 +35,27 @@ type linker struct {
 	set        *Set
 	byUUID     map[string]*Document
 	boundaries []*boundary
-	bySSP      map[string]*boundary
+	bySSP      map[string]*boundary // by the SSP's document uuid: what imports name
+	byNode     map[string]*boundary // by the boundary's node id: what the tree names
 }
 
 func link(set *Set) *linker {
-	l := &linker{set: set, byUUID: map[string]*Document{}, bySSP: map[string]*boundary{}}
+	l := &linker{set: set, byUUID: map[string]*Document{}, bySSP: map[string]*boundary{}, byNode: map[string]*boundary{}}
 	for _, d := range set.Docs {
 		if id := d.UUID(); id != "" {
 			l.byUUID[id] = d
 		}
 	}
 
+	var plans []*oscal.SystemSecurityPlan
+	for _, d := range set.ofModel(modelSSP) {
+		plans = append(plans, d.Doc.SystemSecurityPlan)
+	}
+	nodeIDs, _ := tree.BoundaryIDs(plans) // the tree reports a contested id
+
 	slugs := map[string]bool{}
 	for _, d := range set.ofModel(modelSSP) {
-		b := &boundary{ssp: d, plan: d.Doc.SystemSecurityPlan}
+		b := &boundary{ssp: d, plan: d.Doc.SystemSecurityPlan, node: nodeIDs[d.Doc.SystemSecurityPlan.UUID]}
 		b.name = b.plan.SystemCharacteristics.SystemName
 		b.slug = strings.TrimPrefix(d.stem(), "ssp-")
 		if slugs[b.slug] {
@@ -58,7 +70,8 @@ func link(set *Set) *linker {
 			b.fips = "low"
 		}
 		l.boundaries = append(l.boundaries, b)
-		l.bySSP[b.id()] = b
+		l.bySSP[b.plan.UUID] = b
+		l.byNode[b.node] = b
 	}
 
 	for _, d := range set.ofModel(modelAR) {

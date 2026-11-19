@@ -82,6 +82,11 @@ const (
 	FindingDuplicateSystemID = "duplicate-system-id"
 	FindingFederationSplit   = "federation-split"
 	FindingNoFederation      = "no-federation-party"
+	// FindingDuplicateBoundary: two SSPs name the same SPARC boundary uuid
+	// (`parent-uuid` under `node-type: system`). SPARC holds one SSP per
+	// boundary, so this is two exports of one boundary, or a copy. Each keeps
+	// its own document uuid as its node id rather than sharing one node.
+	FindingDuplicateBoundary = "duplicate-boundary"
 	// FindingImplicitFederation is informational: an SSP named one organization
 	// and no federation above it, so the tree placed it under LocalFederation.
 	FindingImplicitFederation = "implicit-federation"

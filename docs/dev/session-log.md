@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-11-18 (#122). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-19 (#124). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,44 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-19 — #124 — `feature/124_sparc_client`
+
+**In flight:** nothing unpushed once this PR is open. Owner: review and merge.
+
+**Owner decisions (2026-11-19), made while reviewing the plan:**
+- No mTLS unless a FedRAMP requirement calls for it.
+- No per-deployment CA file. A CA is acceptable only as shared roots, the way a trust store holds them, and SPARC is building a trust-store relationship model. Until then, the system roots.
+- No plain http, not even on loopback or for tests: it is not FedRAMP-compliant for a High system.
+- SPARC has one SSP per boundary (`has_one :ssp_document`), which is the shape `internal/tree` already builds. I had first read SPARC's `node-type: system` as a structural difference needing its own issue; it is not, and the only real gap was the boundary's id.
+
+**What SPARC actually serves**, read from `sparc` `origin/main` `44585a6d`: Bearer auth (`ApiAuthentication`), the `{data, meta}` list envelope, `/export?format=oscal` with `validate=true` by default and a 422 on a non-conforming document, and a strong ETag over the exported bytes (`OscalApiExport`).
+
+**Alternatives rejected:**
+- An unexported-but-settable "allow loopback http" for tests. The owner ruled out http entirely, so the tests run an `httptest` TLS server, trusted through the unexported `Config.roots`.
+- Calling the tool `ingest`. That word is TM-1's signed path, and this verifies nothing.
+- Putting `sparcpull` in the image. The image serves; the token lives where the operator is.
+- A merged node for two SSPs claiming one boundary uuid. It would mix two documents' role bindings, so each keeps its document uuid and a `duplicate-boundary` finding names them.
+
+**Found by the measurement, not by reading:**
+- `internal/view` looked boundaries up by tree node id in a map keyed by SSP uuid. That is invisible while the two are equal, which they are for every fixture. The SPARC-form mock test panicked on it, so `byNode` and `bySSP` are now separate.
+- Opening a FIFO token file blocks before any mode check, so `readToken` now `Lstat`s first; `fifo_test.go` hung until the fix.
+- Three plants passed at first, so the tests changed:
+  - Go's client already refuses TLS below 1.2, so the floor is asserted from the configuration instead of a handshake.
+  - The final count check masked the mid-walk check, so a page-count skew test was added.
+  - Reading a directory fails anyway, so the FIFO case replaced it.
+
+**Not measured:** a run against a live SPARC instance. The tester guide's section 8 says so. The fixture federation still writes the earlier `node-type: boundary` form, and moving it to SPARC's would change every golden boundary id; that is its own change.
+
+**Upstream checked 2026-11-19:** SPARC's trust-store work is in its backlog per the owner; a search of `sparc`'s open issues for "trust store" found only #1354 (FedRAMP intake), so it is not linked yet.
+
+**Next:**
+1. Run `sparcpull` against a real SPARC instance and record what differs.
+2. Mapping documents and control-id normalisation through them (P1).
+3. Move the fixtures to SPARC's SSP form.
+4. P3's slider, then P2.
 
 ---
 

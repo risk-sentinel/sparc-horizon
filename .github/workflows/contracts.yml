@@ -86,7 +86,7 @@ jobs:
           mkdir -p /tmp/props
           cat > /tmp/props/valid.json <<'JSON'
           [
-            {"name":"node-type","ns":"https://sparc.risk-sentinel.org/ns","value":"boundary"},
+            {"name":"node-type","ns":"https://sparc.risk-sentinel.org/ns","value":"system"},
             {"name":"parent-uuid","ns":"https://sparc.risk-sentinel.org/ns","value":"3fa85f64-5717-4562-b3fc-2c963f66afa6"},
             {"name":"next-decision-date","ns":"https://sparc.risk-sentinel.org/ns","value":"2026-10-11"},
             {"name":"fips-199","ns":"https://sparc.risk-sentinel.org/ns","value":"high"},

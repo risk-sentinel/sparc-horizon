@@ -70,8 +70,8 @@ outside the namespace.
 
 | Prop | On | Example | Drives |
 |---|---|---|---|
-| `node-type` | Party, SSP metadata | `boundary` | Tree builder |
-| `parent-uuid` | SSP metadata | Org party UUID | Tree builder, rollups |
+| `node-type` | Party, SSP metadata | `system` on SSP metadata (SPARC); `organization` on a party | Tree builder |
+| `parent-uuid` | SSP metadata | The boundary's uuid (SPARC) | Tree builder: the boundary node's id (#124); rollups |
 | `next-decision-date` | SSP metadata | `2026-10-11` | Snap to decision, AO horizon |
 | `fips-199` | SSP metadata | `high` | Rollup weight |
 | `blocks-ato` | Risk | `true` | Red cells, ranking |
@@ -117,8 +117,8 @@ Roles come from the documents, not an admin screen. When an AO changes, the SSP 
 ```json
 "metadata": {
   "props": [
-    {"name": "node-type", "ns": "https://sparc.risk-sentinel.org/ns", "value": "boundary"},
-    {"name": "parent-uuid", "ns": "https://sparc.risk-sentinel.org/ns", "value": "<org-party-uuid>"},
+    {"name": "node-type", "ns": "https://sparc.risk-sentinel.org/ns", "value": "system"},
+    {"name": "parent-uuid", "ns": "https://sparc.risk-sentinel.org/ns", "value": "<boundary-uuid>"},
     {"name": "next-decision-date", "ns": "https://sparc.risk-sentinel.org/ns", "value": "2026-10-11"},
     {"name": "fips-199", "ns": "https://sparc.risk-sentinel.org/ns", "value": "moderate"}
   ],
@@ -129,6 +129,28 @@ Roles come from the documents, not an admin screen. When an AO changes, the SSP 
   ]
 }
 ```
+
+**SPARC's form is the one producers write (#124).** SPARC holds one SSP per authorization boundary
+and exports it with `node-type: system` and `parent-uuid` set to the boundary's own uuid, as in the
+example above. Until #124 the example read `node-type: boundary` and `parent-uuid` naming the
+organization party. That is the owner's decision on `sparc` PR #1197 (2026-09-29):
+organization → boundary → system(s), and this document changes to match.
+
+The tree's shape does not change with it. One SSP is still one boundary node, its components and
+inventory items are still the systems under it, and its `responsible-parties` still bind at the
+boundary. The organization is still found through `member-of-organizations`, not through
+`parent-uuid`. What changes is the boundary node's **id**:
+
+| SSP metadata carries | Boundary node id | Why |
+|---|---|---|
+| `node-type: system` and a `parent-uuid`, both in this namespace | The `parent-uuid` | SPARC's boundary uuid is stable. A document uuid may change on any revision, which would move the node and break every link to it |
+| Anything else: no props, another namespace, or the earlier `node-type: boundary` with `parent-uuid` naming the organization | The SSP's own uuid | Nothing stable is declared, so the document is the only identity there is |
+| The same `parent-uuid` on two SSPs in one set | Each SSP's own uuid, and a `duplicate-boundary` finding | SPARC holds one SSP per boundary, so two claims are two exports of one boundary or a copy. Merging them would mix two documents' roles; dropping one would hide it |
+
+`internal/tree` and `internal/view` both take the id from `tree.BoundaryIDs`, so the heat rows and
+the node a caller is authorized on cannot disagree. Documents that import an SSP still name it by
+its document uuid, which is what OSCAL's `import-ssp` carries. The fixture federation still uses the
+earlier form; moving it to SPARC's changes every golden boundary id, and is its own change.
 
 ## Evidence chain
 

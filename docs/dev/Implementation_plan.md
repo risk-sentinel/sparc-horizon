@@ -5,7 +5,7 @@ Delivery-layer HUD for authorization risk: it owns attestations, AO decisions,
 forward projections, and the role lenses, while SPARC stays authoritative for
 catalogs, crosswalks, pipeline translation, and the federation trust fabric.
 
-**Last updated:** 2026-11-18 (#122: the HUD over API v0 — `web/`, TypeScript with no runtime dependencies, served at `/` by the image with a per-surface Content-Security-Policy; S1-7 `web.yml`, S1-11 Playwright against the built image over the fixtures and NIST's set, an `npm audit` gate because the ported SCA chain skips npm dev dependencies; P0's `sparc-validate` exit criterion measured as met. **Previously:** 2026-11-17 (#120: the mock computes every response live from any folder of OSCAL through `internal/view`, joining on standard OSCAL relationships; the fixtures gain an assessment plan per boundary and satisfied findings; NIST's example set serves end to end; the `horizon` parameter is honoured. **Previously:** 2026-11-16 (#117: the tester guide `docs/testing.md` and a README overview; the mock's OSCAL export brought under the 404 rule, by slug or UUID, with its documents served and hashed; heat columns roll every row, not the last; the image's served tree read-only for every user). **Previously:** 2026-11-16 (S1-5, S1-8, S1-9 and S1-10 landed in #105–#113: Go 1.27, the first image, `govulncheck`, and the release pipeline). **Previously:** 2026-09-19 (**repository joins the estate.** Horizon arrived as
+**Last updated:** 2026-11-19 (#124: P1's SPARC client — `internal/sparc` and `cmd/sparcpull` pull schema-validated OSCAL from SPARC's `/api/v1` over HTTPS with a Bearer token and an ETag cache, into a folder the mock reads; a SPARC SSP's boundary node takes SPARC's stable boundary uuid (`parent-uuid`); `docs/03` realigned to SPARC's SSP form (sparc PR #1197); SC-8 and IA-5 partial. **Previously:** 2026-11-18 (#122: the HUD over API v0 — `web/`, TypeScript with no runtime dependencies, served at `/` by the image with a per-surface Content-Security-Policy; S1-7 `web.yml`, S1-11 Playwright against the built image over the fixtures and NIST's set, an `npm audit` gate because the ported SCA chain skips npm dev dependencies; P0's `sparc-validate` exit criterion measured as met. **Previously:** 2026-11-17 (#120: the mock computes every response live from any folder of OSCAL through `internal/view`, joining on standard OSCAL relationships; the fixtures gain an assessment plan per boundary and satisfied findings; NIST's example set serves end to end; the `horizon` parameter is honoured. **Previously:** 2026-11-16 (#117: the tester guide `docs/testing.md` and a README overview; the mock's OSCAL export brought under the 404 rule, by slug or UUID, with its documents served and hashed; heat columns roll every row, not the last; the image's served tree read-only for every user). **Previously:** 2026-11-16 (S1-5, S1-8, S1-9 and S1-10 landed in #105–#113: Go 1.27, the first image, `govulncheck`, and the release pipeline). **Previously:** 2026-09-19 (**repository joins the estate.** Horizon arrived as
 a wire-frame: ten design docs, an OpenAPI v0 skeleton, a namespace JSON Schema,
 and three static HTML demos with synthetic data — no application code, no
 pipeline, no protection, and no declaration in the org inventory. This plan
@@ -62,7 +62,8 @@ carry. Step 8 updates it in the same PR as the work.
 
 ## Status snapshot
 
-> **Updated 2026-11-18** (#122): the first TypeScript, the HUD at `/`, and two web CI gates.
+> **Updated 2026-11-19** (#124): P1's SPARC client, and the boundary id SPARC's SSPs declare.
+> Before that, 2026-11-18 (#122): the first TypeScript, the HUD at `/`, and two web CI gates.
 > Before that, 2026-11-16: the pipeline rows moved with #105–#113: Go 1.27, the first
 > image (#108), `govulncheck` (#111) and the release pipeline with its CVE baseline (#113).
 > Earlier: P0's Go module, key-grammar reference and fixture federation, and P1's
@@ -70,7 +71,7 @@ carry. Step 8 updates it in the same PR as the work.
 
 | Bucket | Current state |
 |---|---|
-| Application code | **10 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `internal/project`, `internal/tree`, `internal/authz`, `cmd/genfixtures`, `cmd/oscalprobe`, `cmd/mockserver` (#38, #36, #49, #61, #74, #76, #79). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
+| Application code | **15 packages** — `internal/canonical`, `internal/keys`, `internal/fixtures`, `internal/oscal`, `internal/project`, `internal/tree`, `internal/authz`, `internal/view`, `internal/baseline`, `internal/sparc`, `cmd/genfixtures`, `cmd/oscalprobe`, `cmd/mockserver`, `cmd/baseline`, `cmd/sparcpull` (#38, #36, #49, #61, #74, #76, #79, #113, #120, #124). No service yet; `horizon/` remains an empty placeholder and the module is rooted at the repository |
 | Design docs | **11** (`docs/01`–`docs/10` + `roadmap.md`) — the design of record — plus the tester guide, `docs/testing.md` (#117), which quotes measured responses rather than the contract |
 | Machine-readable contracts | **2 owned**, one of them now frozen (`api/openapi.yaml`, #61) — `api/openapi.yaml` (v0 skeleton) and `schemas/sparc-namespace-props.v1.schema.json` (v1, 9 props, namespace `https://sparc.risk-sentinel.org/ns`) — plus **1 consumed**, `sparc:lib/federation/key-grammar.v1.json`, vendored with provenance into `internal/keys/testdata/` |
 | Demos | **The HUD** (`web/`, #122): TypeScript and Vite, zero runtime dependencies, served at `/` and drawn entirely from API v0, so it shows whatever OSCAL the server reads. The **4** static design demos (synthetic data, seeded PRNG, no build step) move to `/demo/`; P3 retires them |
@@ -85,7 +86,7 @@ carry. Step 8 updates it in the same PR as the work.
 | `container-build-sign` consumer list | **Not applicable to the image** (this repository publishes it, S1-9). Becomes a ci-runner consumer when its scan jobs move onto the image (#102, container-build-sign#380) |
 | AWS deployment | **None.** No `sparc-iac` module, no emit role, no task definition |
 | NIST control coverage (application layer) | **0 documented.** No `docs/compliance/` tree yet |
-| Highest-priority next work | **P1, and it is not blocked.** P0 is task-complete. Of its exit criteria, the `sparc-validate` one is **met by measurement** (#122): `sparc#1154` closed 2026-09-30 with `SparcNamespacePropsRule`, and that rule run read-only over the fixtures passes 21 documents and 150 props (`tests/sparc-namespace-rule/`); the OpenAPI review by both owners remains. P1's tree builder landed as #74 and node-scoped authorization as #76, both against the OSCAL fixtures. **P1's SPARC client is unblocked:** `sparc#1181` (X-13) closed 2026-09-30 with sparc PR #1197, which exports SSP, SAP, SAR and POA&M as OSCAL under `/api/v1` with ETags (this row read "blocked" until #120). TM-1's remaining two requirements need a signed bundle and the ledger (P2), so the next unblocked P1 work is the control-id normalisation task |
+| Highest-priority next work | **P1, and it is not blocked.** P0 is task-complete. Of its exit criteria, the `sparc-validate` one is **met by measurement** (#122): `sparc#1154` closed 2026-09-30 with `SparcNamespacePropsRule`, and that rule run read-only over the fixtures passes 21 documents and 150 props (`tests/sparc-namespace-rule/`); the OpenAPI review by both owners remains. P1's tree builder landed as #74 and node-scoped authorization as #76, both against the OSCAL fixtures. **P1's SPARC client landed as #124**: `internal/sparc` and `cmd/sparcpull` pull SSP, SAP, SAR and POA&M OSCAL from `/api/v1` (`sparc#1181`, X-13) over HTTPS with a Bearer token and ETags, into a folder the mock serves. It has not been run against a live SPARC; that is the next measurement. Mapping documents are not pulled yet. TM-1's remaining two requirements need a signed bundle and the ledger (P2), so the next unblocked P1 work is the control-id normalisation task |
 
 ---
 
@@ -378,7 +379,7 @@ baseline and the deployment target.
 | Phase | Name | Effort | Depends on | Notes |
 |---|---|---|---|---|
 | P0 | Contracts and fixtures | 3 ew | **S0** | Namespace schema v1 already exists. **Landed:** the UUIDv5 key grammar (#30, #37), the `go-oscal` decision (#26) and its re-test (#49), the Go toolchain and CI (#38), and the Go reference implementation, test vectors and fixture federation (#36). Frozen API v0 and the mock over the fixture federation (#61). **All P0 tasks are complete**; the exit criteria are what remain, and one of them is upstream. The `sparc-validate` rules are filed as `sparc#1154` |
-| P1 | SPARC client and tree builder | 4 ew | P0 | First Go code — carries **S1** with it |
+| P1 | SPARC client and tree builder | 4 ew | P0 | First Go code — carries **S1** with it. **Landed:** the tree builder (#74), node-scoped authorization (#76), and the SPARC client (#124: HTTPS and a Bearer token, no mTLS and no CA file by owner decision; schema-validated exports only; ETag cache; boundary ids from SPARC's `parent-uuid`). Left: mapping documents, control-id normalisation through them, the orphan report as its own output |
 | P3 | HUD heatmap interface | 6 ew | P0 | Built against the mock; first TypeScript — also carries S1. **Started 2026-11-18** (#122): the API-backed HUD served by the image — tree, heat, cell drill, next action, evidence chain, horizon, export; S1-7 and S1-11 with it. Left: the look-ahead slider snapping to decision dates, the moderated session, `go:embed` in `cmd/horizon` |
 | P2 | Ledger, rollup, projection engine | 4 ew | P1, **S1** | The recompute-from-OSCAL audit test is a gate from here on |
 | P4 | M&O attestation workflow | 4 ew | P2 | Signing lands here; S2-5 must precede the real-PKI leg |
@@ -447,6 +448,7 @@ ones this plan surfaces. All are owner decisions.
 | Whether decision dates live only in SSP metadata or also come from the GRC calendar | Projection buckets | P0 |
 | ~~Attestation cadence while contracts are still being written~~ — **decided 2026-09-20: checkpoint at phase exit** (#31, r3). Triggers unchanged; interim firings logged in the threat model's staleness ledger; a firing that contradicts a finding re-issues at once; the expiry does not reset on a revision | How often the threat model is re-reviewed, and whether SA-11(2) may be read as continuously current | Resolved for P0; #31 stays open until the P0-exit checkpoint |
 | ~~Public image, or ECR-only~~ — **decided 2026-11-16: both**, Docker Hub and ECR, like `sparc-auditor` and `sparc-ci-runner`. The ECR repository and a tag-scoped publisher role are [sparc-iac#856](https://github.com/risk-sentinel/sparc-iac/issues/856); the Docker Hub repository `risksentinel/sparc-horizon` is the owner's to create | `publish_to_dockerhub: true` on the S1-9 caller | S1-9 |
+| How Horizon trusts SPARC's TLS identity beyond the system roots. **Partly decided 2026-11-19** (#124): no mTLS unless a FedRAMP requirement calls for it, no per-deployment CA file, no plain http even for tests. What replaces the system roots follows SPARC's trust-store relationship model, which is in SPARC's backlog | `internal/sparc` reads `Config.roots` from nothing today; the trust store becomes its source | S2 |
 | Whether a GitLab mirror of the pipeline is required | Two hand-maintained copies drift; if both exist, one is declared canonical in both files | S1 |
 
 ---
@@ -462,10 +464,10 @@ its CDEF exist.
 | AC | AC-2, AC-3, AC-6 — node-scoped authorization from `responsible-parties`, roles inheriting downward | Not started |
 | AU | AU-2, AU-3, AU-9, AU-12 — the append-only hash-chained ledger | Not started |
 | CM | CM-3, CM-6 — signed image, pinned digests, required checks | Not started (S1/S2) |
-| IA | IA-2, IA-2(1), IA-8 — OIDC to the agency IdP, MFA delegated | Not started |
+| IA | IA-2, IA-2(1), IA-8 — OIDC to the agency IdP, MFA delegated; IA-5 for the service's own token to SPARC | IA-5 partial (#124); the rest not started |
 | RA | RA-5 — the scanner classes in `issue_rules.md`'s requirements table | Not started (S0/S1) |
 | SA | SA-11, SA-11(1), SA-15 — SAST, SCA, the verification gate | Not started (S0/S1) |
-| SC | SC-8, SC-13, SC-28 — mTLS to SPARC peers, evidence hashing, signing | Not started |
+| SC | SC-8, SC-13, SC-28 — TLS to SPARC and its peers, evidence hashing, signing | SC-8 partial (#124: the SPARC client) |
 | SI | SI-7 — hash-chained ledger, signed evidence, exports carrying the chain head | Not started |
 | SR | SR-3, SR-4 — SBOM, signed provenance, pinned bases | Not started (S1) |
 

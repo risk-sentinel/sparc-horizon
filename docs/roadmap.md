@@ -73,7 +73,7 @@ Turn SPARC documents into the federation, organization, boundary, and system tre
 
 ### Tasks
 
-- Go SPARC client over mTLS with ETag caching for SSP, AR, POA&M, and mapping documents
+- Go SPARC client over HTTPS with a Bearer token and ETag caching for SSP, AR, POA&M, and mapping documents
 - Parse OSCAL and normalize control IDs (ac-2.1 and AC-2(1)) using SPARC mappings
 - Join party UUIDs and member-of-organizations into the tree; components and inventory-items become systems
 - Map responsible-parties to node-scoped roles and OIDC subjects

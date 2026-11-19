@@ -4,17 +4,19 @@ A heads-up display for authorization risk. Horizon shows authorizing officials (
 
 Horizon sits on SPARC's Delivery layer. SPARC stays authoritative for pipeline translation, framework crosswalks, and the federation trust fabric. Horizon owns the human side: attestations, AO decisions, forward projections, and the HUD.
 
-> **Status:** working prototype. "SPARC Horizon" is a working name. What runs today is the HUD demos
-> and API v0's read endpoints, served over a synthetic fixture federation in OSCAL 1.2.3 from one
-> container. The ledger, the projection engine, attestation signing and the SPARC connection are
+> **Status:** working prototype. "SPARC Horizon" is a working name. What runs today is the HUD and
+> API v0's read endpoints, served from one container over a synthetic fixture federation in OSCAL
+> 1.2.3 or over a folder of your own OSCAL. The ledger, the projection engine, attestation signing and the SPARC connection are
 > designed and not built yet: see the [roadmap](docs/roadmap.md).
 
 ## What runs today
 
 ```mermaid
 flowchart LR
-  T["Tester<br/>browser or curl"] -->|"/"| D["HUD demos<br/>demo/*.html"]
-  T -->|"/v1/* + X-Horizon-Persona"| M["Mock server<br/>cmd/mockserver"]
+  T["Tester<br/>browser or curl"] -->|"/"| H["HUD<br/>web/ (TypeScript)"]
+  H -->|"/v1/* + X-Horizon-Persona"| M["Mock server<br/>cmd/mockserver"]
+  T -->|"/v1/*"| M
+  T -->|"/demo/"| D["Static design demos<br/>demo/*.html"]
   M --> A["internal/authz<br/>node-scoped 404 rule"]
   M --> F["fixtures/ or your folder<br/>OSCAL SSP, AP, AR, POA&M<br/>(fixtures: 32, OSCAL 1.2.3)"]
   G["cmd/genfixtures"] -->|"regenerates"| F
@@ -29,7 +31,7 @@ flowchart LR
 Everything in the box on the left is in this repository and runs with nothing else installed. The
 mock computes every response from the OSCAL documents it is given, at the horizon a request asks
 for, and answers the write endpoints with 501; the persona header stands in for a login. Point it at
-your own SSP, assessment results and POA&M with `-dir` ([tester guide, section 7](docs/testing.md#7-bring-your-own-oscal)). **To try it, follow [the tester guide](docs/testing.md).**
+your own SSP, assessment results and POA&M with `-dir` ([tester guide, section 7](docs/testing.md#7-bring-your-own-oscal)) and the HUD draws them. **To try it, follow [the tester guide](docs/testing.md).**
 
 ## Three ways to run it
 
@@ -41,19 +43,22 @@ xdg-open demo/index.html        # Linux
 # or: python3 -m http.server 8080 --directory demo, then browse to http://localhost:8080
 ```
 
-**2. The container** (Docker). The demos plus API v0 over the fixture federation, in one process:
+**2. The container** (Docker). The HUD, the demos and API v0 over the fixture federation, in one process:
 
 ```bash
 docker build -t sparc-horizon:dev .
 docker run --rm -p 8080:8080 sparc-horizon:dev
-# demos at http://localhost:8080/, API at http://localhost:8080/v1/
+# HUD at http://localhost:8080/, demos at /demo/, API at /v1/
+# your own OSCAL: add -v "$PWD/my-oscal:/data:ro" and see docs/testing.md section 7
 curl -s -H 'X-Horizon-Persona: so-ods-portal' http://localhost:8080/v1/tree
 ```
 
-**3. From source** (Go 1.27). The same server without the image, for changing it:
+**3. From source** (Go 1.27, Node 22.18+). The same server without the image, for changing it:
 
 ```bash
-go run ./cmd/mockserver -static demo   # same as the container, on 127.0.0.1:8080
+(cd web && npm ci --ignore-scripts && npm run build)
+go run ./cmd/mockserver -static web/dist -demo demo   # same as the container, on 127.0.0.1:8080
+(cd web && npm run dev)                # or the HUD with live reload on :5173, proxied to :8080
 go run ./cmd/genfixtures               # rewrites fixtures/ wholesale; never edit it by hand
 go test ./...                          # includes the regeneration-stability check
 ```
@@ -61,8 +66,9 @@ go test ./...                          # includes the regeneration-stability che
 Personas are in [`fixtures/api/personas.json`](fixtures/api/personas.json); with no header the first one is
 used. See [`docs/08-build-deploy.md`](docs/08-build-deploy.md) for how the image is built and released.
 
-| Demo | What it shows |
+| Page | What it shows |
 |---|---|
+| `web/` → `/` | **The HUD over the API.** Persona picker, breadcrumb tree, heatmap with nominal families collapsed, cell drill, next best action, the OSCAL evidence chain, a horizon date and look-ahead, and hash-verified export. WCAG 2.2 AA in both themes, checked in CI |
 | [`demo/hud.html`](demo/hud.html) | Tiered heatmap (federation, organization, boundary, system), look-ahead slider, drill-in to the OSCAL evidence chain, what-if attestations, and an 800-53 or KSI column axis |
 | [`demo/planner.html`](demo/planner.html) | Adjustable phase schedule: team size, start date, buffer, scope, and per-phase effort |
 | [`demo/full-plan.html`](demo/full-plan.html) | Both demos plus the full design on a single page |

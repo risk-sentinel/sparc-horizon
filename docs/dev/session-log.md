@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-11-17 (#120). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-18 (#122). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,54 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-18 — #122 — `feature/122_hud_api`
+
+**In flight:** nothing unpushed once this PR is open. Owner: review and merge.
+
+**Owner direction (2026-11-18):** "launch" for this push means **demoing locally with OSCAL
+artifacts in the container**, on the way to the MVP (P1–P4). The image already computed API v0 from
+any mounted folder (#120); nothing visual read it. This PR is P3's first slice.
+
+**Alternatives rejected:** Vitest (npm 10.9.8 crashes in `#loadPeerSet` resolving its peer set —
+reproduced in an empty directory, so not our tree; `node --test` with native type stripping and
+coverage thresholds replaces it, one dependency fewer). A UI framework (`docs/02` says none is
+needed; zero runtime dependencies keeps the browser's code ours). Embedding with `go:embed` now
+(that is `cmd/horizon`'s; the mock serves a directory). A `/mock/session` carrying the startup
+problems (not node-scoped, so it would leak other boundaries' file names past the 404 rule; the log
+keeps them). The newest `ubi10/nodejs-22-minimal` digest (built the same day; a 13-day-old one is
+pinned, build stage only).
+
+**Found by measuring, not reading:**
+
+- **The ported SCA chain does not assess `web/`.** Grype and Trivy both skip npm **dev**
+  dependencies by default, and every HUD dependency is dev. A planted lodash 4.17.15: 0 from either
+  as dev, 5 / 6 as production. `web.yml` gates `npm audit --include=dev` meanwhile. The fix to the
+  ported files belongs in container-build-sign first; **not filed** (owner: no CBS work for now).
+  Draft for when it is: *sca-scan.yml's Trivy fs and Grype dir scans omit npm devDependencies, so a
+  consumer whose lockfile is all dev dependencies is assessed on nothing — pass
+  `--include-dev-deps` to Trivy and set Syft/Grype's `javascript.include-dev-dependencies`*. Check
+  the Grype key against the pinned version before filing.
+- `npm audit`'s first run found 8 moderate (GHSA-g3hv-75wg-m249, `minimatch` < 11.0.1, via
+  `eslint` 10.14.0 and `typescript-eslint` 8.72.1). Fixed by taking eslint 10.15.0 and
+  typescript-eslint 8.73.0, newer than the two-week age rule the other pins follow.
+- `@axe-core/playwright` pulled a second `playwright-core` (1.65.1, five days old) through its
+  open peer range; `playwright-core` is now an explicit dev dependency so one copy resolves.
+- Local `govulncheck` reports 11 standard-library findings on Go 1.27.0 and none on 1.27.4, which
+  CI and the image use. Local toolchains drift; measure on the pinned one.
+- `pins.txt` and `err.txt` were committed by accident in #86 (local pin-check output); removed and
+  root-ignored.
+
+**Upstream checked 2026-11-18:** `sparc#1154` closed 2026-09-30 (P0's `sparc-validate` criterion
+measured as met, `tests/sparc-namespace-rule/`); `sparc-iac#856` (ECR for the first release) and
+`sparc-iac#719` still open; `container-build-sign#342` and `#380` open.
+
+**Next:** P1's SPARC client (mTLS + ETag against sparc's `/api/v1` OSCAL export), with the
+`sparc` PR #1197 data-model alignment (SSP `node-type: system`, `parent-uuid` = boundary) that
+`docs/03` does not reflect yet. A SPARC export dropped into `-dir` is the demo corpus until then.
+Then P3's slider that snaps to decision dates, and P2.
 
 ---
 

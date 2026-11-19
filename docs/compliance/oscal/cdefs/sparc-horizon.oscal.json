@@ -3,8 +3,8 @@
     "uuid": "460aafaf-df97-441c-8f26-fbe0d73eeb22",
     "metadata": {
       "title": "SPARC Horizon",
-      "last-modified": "2026-11-17T00:00:00Z",
-      "version": "0.3.2",
+      "last-modified": "2026-11-18T00:00:00Z",
+      "version": "0.3.3",
       "oscal-version": "1.2.3",
       "roles": [
         {
@@ -381,7 +381,72 @@
             "rel": "reference"
           }
         ],
-        "remarks": "Configuration contract in docs/08-build-deploy.md. Deployment target is ECS Fargate in AWS commercial; the service definition is owned by sparc-iac."
+        "remarks": "Configuration contract in docs/08-build-deploy.md. Deployment target is ECS Fargate in AWS commercial; the service definition is owned by sparc-iac.",
+        "control-implementations": [
+          {
+            "uuid": "b82c7fe3-7726-500a-94a0-c2bd699ff5b3",
+            "source": "#632cc513-289a-5a22-91e6-f4faea7283a8",
+            "description": "The HUD the service serves (web/, #122). Operating in the prototype mock; cmd/horizon carries the same headers when it exists.",
+            "implemented-requirements": [
+              {
+                "uuid": "c15b5309-62fc-58a6-b3c5-8d30842301bc",
+                "control-id": "sc-18",
+                "description": "The browser runs only the HUD's own script. Every HUD response carries a Content-Security-Policy allowing script and style from its own origin only, nothing inline, connections to its own origin only, and no framing; API responses carry default-src 'none'. The looser policy the throwaway demos need is confined to /demo/. CI fails on any violation the browser raises across every persona over two corpora, and a planted inline style was shown to fail it.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "partial"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/cmd/mockserver/main.go",
+                    "rel": "implementation"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/web/e2e/hud.spec.ts",
+                    "rel": "evidence"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/container.yml",
+                    "rel": "evidence"
+                  }
+                ],
+                "remarks": "Configuration dependency: the policy is set by the server, not by a meta tag, so it holds for every response including errors; web/vite.config.ts keeps the build to one external script and stylesheet so no inline code is emitted, and web.yml fails a build whose index.html carries any. Partial because the mock serves it; the production service and its deployment (S2) must carry the same policy."
+              },
+              {
+                "uuid": "15bdae16-a933-5e8b-99aa-b4f921aa40d2",
+                "control-id": "si-15",
+                "description": "Strings from OSCAL documents, which other parties author, reach the page only as text. The HUD builds every element through one helper that appends text nodes; ESLint forbids innerHTML, outerHTML and insertAdjacentHTML, and a planted innerHTML was shown to fail the lint gate. Route values from the URL are validated against fixed patterns and dropped when malformed, and identifiers are percent-encoded into API paths.",
+                "props": [
+                  {
+                    "name": "implementation-status",
+                    "value": "partial"
+                  }
+                ],
+                "links": [
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/web/src/dom.ts",
+                    "rel": "implementation"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/web/eslint.config.js",
+                    "rel": "implementation"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/web/src/model.test.ts",
+                    "rel": "evidence"
+                  },
+                  {
+                    "href": "https://github.com/risk-sentinel/sparc-horizon/blob/main/.github/workflows/web.yml",
+                    "rel": "evidence"
+                  }
+                ],
+                "remarks": "Partial: the HUD side only. Server-side output of document content is JSON with nosniff; schema validation on ingestion stays planned under SI-10."
+              }
+            ]
+          }
+        ]
       },
       {
         "uuid": "e3aaad44-3dee-5671-a982-5950fda60f54",

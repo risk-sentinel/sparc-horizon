@@ -3,15 +3,17 @@
 How to run SPARC Horizon's working prototype, what to try, what to expect, and how to report what
 you find. It takes about fifteen minutes and needs nothing beyond Docker, or Go to run from source.
 
-Every output quoted below was measured against an image built from this repository (#117, #120),
-not written from the contract. If what you see differs, that is worth reporting. To look at **your
-own** OSCAL instead of the synthetic federation, go to [section 7](#7-bring-your-own-oscal).
+Every output quoted below was measured against an image built from this repository (#117, #120,
+#122), not written from the contract. If what you see differs, that is worth reporting. To look at
+**your own** OSCAL instead of the synthetic federation, go to [section 7](#7-bring-your-own-oscal);
+to click through it rather than `curl` it, [section 6](#6-the-hud).
 
 ## What you are testing
 
 A **mock** of Horizon's API v0 over a **synthetic** federation: four organizations, seven
 authorization boundaries and twenty systems, published as 32 OSCAL 1.2.3 documents in
-[`fixtures/`](../fixtures/README.md). The same process serves the HUD demos.
+[`fixtures/`](../fixtures/README.md). The same process serves the HUD at `/`, drawn from those
+responses, and the older static design demos at `/demo/`.
 
 | Real today | Not real yet |
 |---|---|
@@ -19,6 +21,7 @@ authorization boundaries and twenty systems, published as 32 OSCAL 1.2.3 documen
 | The refusal rule: a node you cannot see is **404**, the same as one that does not exist | Login: a header picks the persona. It is **not** authentication |
 | Each persona's tree, computed from the OSCAL documents' role bindings | The write endpoints (attestations, decisions, what-if) and blast radius answer **501** |
 | The OSCAL export, with a `sha256` per document that verifies what you fetched | Ranking: next action is a placeholder, not the ranking model |
+| The HUD at `/`: every persona's tree, heat, cell, evidence chain and export, drawn from the API | The HUD's look-ahead is a date control, not yet the slider that snaps to decision dates; what-if is not in it |
 | The image: no shell, uid 1001, a read-only served tree | A hosted environment: you run it yourself |
 
 The design behind each row is in [`docs/04-api.md`](04-api.md) and
@@ -34,22 +37,29 @@ docker build -t sparc-horizon:dev .
 docker run --rm -p 8080:8080 sparc-horizon:dev
 ```
 
-**Or from source** (Go 1.27): `go run ./cmd/mockserver -static demo`.
+**Or from source** (Go 1.27 and Node 22.18 or later):
+
+```bash
+(cd web && npm ci --ignore-scripts && npm run build)
+go run ./cmd/mockserver -static web/dist -demo demo
+```
 
 Either way it logs the three personas and listens on port 8080:
 
 ```text
-mockserver: serving /srv/horizon/demo at /
-mockserver: 3 personas, serving /srv/horizon/fixtures on http://0.0.0.0:8080
+mockserver: serving /srv/horizon/web at /
+mockserver: serving /srv/horizon/demo at /demo/
+mockserver: 3 personas, default horizon 2026-10-15, serving /srv/horizon/fixtures on http://0.0.0.0:8080
   X-Horizon-Persona: ao-ods                             Office of Digital Services Authorizing Official
   X-Horizon-Persona: so-ods-portal                      Public Portal System Owner
   X-Horizon-Persona: iso-bgm-grants                     Grants Platform Information System Security Officer
 ```
 
-(From source, the paths are `demo` and `fixtures` and it listens on `127.0.0.1:8080`.)
+(From source, the paths are `web/dist`, `demo` and `fixtures`, the horizon is today, and it
+listens on `127.0.0.1:8080`.)
 
 Check it: `curl -s http://localhost:8080/healthz` returns `{"status":"ok"}`, and
-<http://localhost:8080/> opens the demos. A published, signed image will be available after the
+<http://localhost:8080/> opens the HUD. A published, signed image will be available after the
 first release; [`docs/08-build-deploy.md`](08-build-deploy.md#release) shows how to verify its
 signature with `cosign verify` before you run it.
 
@@ -204,12 +214,29 @@ The same goes for `POST /v1/attestations/{id}/sign`, `POST /v1/decisions`, `POST
 `GET /v1/nodes/{id}/blast-radius`. A mock that accepted a write and then forgot it would be worse
 than one that refuses. The [roadmap](roadmap.md) says which phase builds each of them.
 
-## 6. The demos
+## 6. The HUD
 
-<http://localhost:8080/> lists them. [`hud.html`](../demo/hud.html) is the heatmap with the
-look-ahead slider, drill-in and what-if. [`planner.html`](../demo/planner.html) is the phase
-schedule. The demos carry their own synthetic data and **do not call the API yet**: P3 rebuilds the
-HUD against it. Judge them as interaction design, and the API as the data they will show.
+<http://localhost:8080/> is the same walk as sections 2 to 4, drawn. Everything on it comes from
+the responses above; it holds no data of its own.
+
+| Where | What to try | What you should see |
+|---|---|---|
+| **Viewing as** | Switch between the three personas | Each starts at its own root: the AO at Office of Digital Services, the SO at Public Portal, the ISO at Grants Platform. Nothing outside a persona's tree is offered |
+| **Next best action** | Read it first; it is the one focal point | As the AO: *Resolve ia-5 on Identity Services*, with the consequence. **Show the evidence chain** opens it |
+| **Heatmap** | Click a cell, or Tab to one and press Enter | The family's controls for that row, worst first, each with its reason and an evidence countdown. Nominal families are collapsed into one quiet line |
+| **Evidence chain** | **Evidence chain** on a control | Resource → observation (with its expiry) → finding → risk → POA&M item, by UUID. A link the documents do not carry says *none in the documents* |
+| **Row names** | Click a boundary as the AO | Its own heatmap, rows per system. The breadcrumb walks back. Systems are leaves, so they are not links |
+| **Horizon** | Type a date, or drag the look-ahead up to a year | The projection moves and the date is in the URL. **Reset** returns to the server's default |
+| **OSCAL documents** | On a boundary, **Download and verify** | The file downloads only if its `sha256` matches the export's, and the page says which |
+| **Theme** | Cycle auto, light, dark | Both themes are held to WCAG 2.2 AA in CI. Every state carries a glyph as well as a colour: ✖ blocks, ▼ degraded, ◆ watch, ● nominal |
+
+Every view is a URL (`#p=<persona>&n=<node>&h=<date>&r=<row>&c=<family>&x=<chain>`), so a finding
+can be reported as a link. The page runs under a policy that allows only its own script, its own
+stylesheet and requests to its own origin; a violation shows in the browser console and fails CI.
+
+**The static design demos** are at <http://localhost:8080/demo/>: [`hud.html`](../demo/hud.html)
+with what-if and the KSI axis, and [`planner.html`](../demo/planner.html), the phase schedule. They
+carry their own synthetic data and do not call the API. Judge them as interaction design.
 
 ## 7. Bring your own OSCAL
 
@@ -220,11 +247,14 @@ point the server at it:
 
 ```bash
 docker run --rm -p 8080:8080 -v "$PWD/my-oscal:/data:ro" sparc-horizon:dev \
-  -addr 0.0.0.0:8080 -dir /data -static /srv/horizon/demo
-# or from source: go run ./cmd/mockserver -dir my-oscal -static demo
+  -addr 0.0.0.0:8080 -dir /data -static /srv/horizon/web -demo /srv/horizon/demo
+# or from source: go run ./cmd/mockserver -dir my-oscal -static web/dist -demo demo
 ```
 
-Everything is computed from the documents when the server starts: the tree from the SSPs' parties
+Then open <http://localhost:8080/>: the HUD draws your documents exactly as section 6 describes,
+with your parties in **Viewing as**. Arguments after the image name replace its defaults, so keep
+`-static` and `-demo` when you add others. Everything is computed from the documents when the
+server starts: the tree from the SSPs' parties
 and `responsible-parties`, and each control's state from the standard relationships (finding →
 observation → component, finding → risk → POA&M item). File names don't matter. The horizon
 defaults to today; add `-horizon YYYY-MM-DD` to change it.
@@ -243,7 +273,8 @@ NIST's published example set is in the repository, so you can try this now:
 
 ```bash
 docker run --rm -p 8080:8080 -v "$PWD/internal/oscal/testdata/nist:/data:ro" sparc-horizon:dev \
-  -addr 0.0.0.0:8080 -dir /data -static /srv/horizon/demo -role-alias owner=system-owner -horizon 2023-06-15
+  -addr 0.0.0.0:8080 -dir /data -static /srv/horizon/web -demo /srv/horizon/demo \
+  -role-alias owner=system-owner -horizon 2023-06-15
 ```
 
 ```text
@@ -257,7 +288,11 @@ mockserver: 1 personas, default horizon 2023-06-15, serving /data on http://0.0.
   X-Horizon-Persona: so-owen-stilskin                   Owen Stilskin
 ```
 
-NIST's files link to each other by XML path, so each placement falls back and says how. Then:
+NIST's files link to each other by XML path, so each placement falls back and says how. In the
+HUD, Owen Stilskin sees IFA GoodRead with one degraded AC cell and the next action *Resolve ac-6.1
+on IFA GoodRead*. Its chain runs from the observation to the POA&M item; the first step reads *none
+in the documents*, because NIST's example carries no back-matter resource. CI walks this same set through the HUD on every
+pull request. The same, by `curl`:
 
 ```bash
 SO='X-Horizon-Persona: so-owen-stilskin'; SSP=5e139edd-86aa-4b65-8431-1192bd276658
@@ -285,7 +320,8 @@ Open an issue at <https://github.com/risk-sentinel/sparc-horizon/issues> and inc
 - **As whom:** the persona header you sent;
 - **The request and the response:** the exact `curl` command, the status code, and the body;
 - **What you expected**, and where that expectation came from: this guide, the contract, or the
-  demos.
+  demos;
+- **For the HUD:** the page's URL, which names the persona, node, horizon and selection.
 
 Useful findings include a response that disagrees with another (a cell whose controls the chain
 does not back up, say), any way to see a node outside your tree, a response that does not match

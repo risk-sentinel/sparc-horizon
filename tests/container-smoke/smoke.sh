@@ -10,7 +10,8 @@
 # It asserts what the container serves, not that it started: the image runs
 # as 1001:1001 with no /bin/sh, /healthz answers, the API answers as a persona,
 # the refusal rule holds (404 for an absent node, 401 for an unknown persona),
-# every response a persona can reach is readable, and the demos are served.
+# every response a persona can reach is readable, the HUD is served under its
+# policy, and the demos are served.
 set -euo pipefail
 
 image="${1:?usage: smoke.sh <image> [host port]}"
@@ -118,12 +119,29 @@ for who in $(jq -r '.[].id' "${personas}"); do
 done
 check "every persona's reachable responses walked" yes "$([[ "${walked}" -gt 0 && "${fail}" -eq 0 ]] && echo yes || echo "no (${walked} walked)")"
 
-check "/ (demo index)" 200 "$(status "${work}/index.html" /)"
-if ! grep -qi '<html' "${work}/index.html" 2> /dev/null; then
-  echo "::error::/ did not return HTML."
+# The HUD at / (#122): its page, its one script, and the policy that holds it
+# to its own origin with nothing inline.
+check "/ (HUD)" 200 "$(status "${work}/index.html" /)"
+if ! grep -q 'id="app"' "${work}/index.html" 2> /dev/null; then
+  echo "::error::/ is not the HUD."
   fail=1
 fi
-check "/hud.html" 200 "$(status /dev/null /hud.html)"
+script="$(grep -oE 'src="\./assets/[^"]+\.js"' "${work}/index.html" | head -1 | sed -E 's/src="\.(.*)"/\1/')"
+check "the HUD's script ${script:-<none>}" 200 "$(status /dev/null "${script:-/assets/missing.js}")"
+csp="$(curl -s -o /dev/null -D - "${base}/" | tr -d '\r' | sed -n 's/^[Cc]ontent-[Ss]ecurity-[Pp]olicy: //p')"
+case "${csp}" in
+  *"script-src 'self'"*"frame-ancestors 'none'"*) echo "PASS — the HUD's policy: ${csp}" ;;
+  *) echo "::error::the HUD's policy is ${csp:-absent}"; fail=1 ;;
+esac
+if [[ "${csp}" = *unsafe-* ]]; then
+  echo "::error::the HUD's policy allows unsafe code: ${csp}"
+  fail=1
+fi
+check "/mock/personas lists the fixtures' personas" "$(jq length "${personas}")" \
+  "$(curl -s "${base}/mock/personas" | jq length 2> /dev/null || echo none)"
+
+check "/demo/ (demo index)" 200 "$(status /dev/null /demo/)"
+check "/demo/hud.html" 200 "$(status /dev/null /demo/hud.html)"
 
 check "process uid" 1001 "$(docker top "${name}" -eo pid,uid | awk 'NR==2 {print $2}')"
 

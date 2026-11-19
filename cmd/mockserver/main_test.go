@@ -396,3 +396,100 @@ func TestStaticIsOptionalAndNeverShadowsTheAPI(t *testing.T) {
 		t.Errorf("POST /hud.html: %d, want 405", pw.Code)
 	}
 }
+
+// Each surface carries its own policy (#122). The HUD's is the one that
+// matters: it draws untrusted document strings, so it allows no inline code
+// and talks to its own origin only. The API's forbids everything, and the
+// demos', which need inline code, never reaches `/`.
+func TestEachSurfaceCarriesItsOwnPolicy(t *testing.T) {
+	s, _ := testServer(t)
+	s.static = os.DirFS("../../demo")
+	s.demo = os.DirFS("../../demo")
+	h := s.routes()
+
+	for _, c := range []struct{ path, want string }{
+		{"/", cspHUD},
+		{"/hud.html", cspHUD},
+		{"/demo/", cspDemo},
+		{"/demo/hud.html", cspDemo},
+		{"/v1/tree", cspAPI},
+		{"/v1/nodes/00000000-0000-0000-0000-000000000000/heat", cspAPI},
+		{"/mock/personas", cspAPI},
+		{"/healthz", cspAPI},
+	} {
+		w := get(t, h, "", c.path)
+		if w.Code != http.StatusOK && w.Code != http.StatusNotFound {
+			t.Errorf("%s: %d", c.path, w.Code)
+		}
+		if got := w.Header().Get("Content-Security-Policy"); got != c.want {
+			t.Errorf("%s: Content-Security-Policy %q, want %q", c.path, got, c.want)
+		}
+		if got := w.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+			t.Errorf("%s: X-Content-Type-Options %q, want nosniff", c.path, got)
+		}
+	}
+	if w := get(t, h, "", "/demo/hud.html"); w.Code != http.StatusOK || !strings.Contains(w.Body.String(), "<html") {
+		t.Errorf("/demo/hud.html: %d, want the demo", w.Code)
+	}
+	r := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/demo/hud.html", nil)
+	pw := httptest.NewRecorder()
+	h.ServeHTTP(pw, r)
+	if pw.Code != http.StatusMethodNotAllowed {
+		t.Errorf("POST /demo/hud.html: %d, want 405", pw.Code)
+	}
+}
+
+// The two policies that are not the demos' allow no unsafe code and no
+// framing, whatever else changes in them.
+func TestStrictPoliciesAllowNoUnsafeCodeOrFraming(t *testing.T) {
+	for _, p := range []string{cspHUD, cspAPI} {
+		if strings.Contains(p, "unsafe-") {
+			t.Errorf("policy %q allows unsafe code", p)
+		}
+		if !strings.Contains(p, "frame-ancestors 'none'") {
+			t.Errorf("policy %q allows framing", p)
+		}
+	}
+}
+
+// The demos are not served at `/demo/` unless asked for.
+func TestDemoIsOptional(t *testing.T) {
+	_, h := testServer(t)
+	if w := get(t, h, "", "/demo/hud.html"); w.Code != http.StatusNotFound {
+		t.Errorf("/demo/hud.html without -demo: %d, want 404", w.Code)
+	}
+}
+
+// The persona picker lists exactly the callers the server authorizes, and
+// every one of them can read its own tree.
+func TestPersonaListMatchesTheAuthorizedCallers(t *testing.T) {
+	s, h := testServer(t)
+	w := get(t, h, "", "/mock/personas")
+	if w.Code != http.StatusOK {
+		t.Fatalf("/mock/personas: %d", w.Code)
+	}
+	if got := w.Header().Get(contentType); got != mediaJSON {
+		t.Errorf("Content-Type %q, want %s", got, mediaJSON)
+	}
+	var got []struct {
+		ID       string `json:"id"`
+		Name     string `json:"name"`
+		NodeUUID string `json:"node-uuid"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &got); err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != len(s.personas) {
+		t.Fatalf("%d personas listed, want %d", len(got), len(s.personas))
+	}
+	for i, p := range got {
+		if p.ID != s.personas[i].ID || p.Name == "" {
+			t.Errorf("persona %d: %+v, want %s", i, p, s.personas[i].ID)
+		}
+		tw := get(t, h, p.ID, "/v1/tree")
+		var root struct{ ID string }
+		if tw.Code != http.StatusOK || json.Unmarshal(tw.Body.Bytes(), &root) != nil || root.ID != p.NodeUUID {
+			t.Errorf("%s: tree %d rooted at %q, want %s", p.ID, tw.Code, root.ID, p.NodeUUID)
+		}
+	}
+}

@@ -6,5 +6,11 @@
 !internal/
 !fixtures/
 !demo/
+!web/
+web/node_modules/
+web/dist/
+web/e2e/
+web/test-results/
+web/playwright-report/
 **/*_test.go
 **/testdata/

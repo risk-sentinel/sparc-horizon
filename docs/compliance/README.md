@@ -155,6 +155,9 @@ in someone's memory is not reproducible, which is the one property it is for.
 | `implemented-requirement:horizon-pipeline:cm-7` | Pipeline component, CM-7 (#108) |
 | `implemented-requirement:horizon-pipeline:si-7` | Pipeline component, SI-7 (#113) |
 | `implemented-requirement:horizon-pipeline:cm-8` | Pipeline component, CM-8 (#113) |
+| `control-implementation:horizon-service` | Service component's control implementation: the HUD (#122) |
+| `implemented-requirement:horizon-service:sc-18` | Service component, SC-18 (#122) |
+| `implemented-requirement:horizon-service:si-15` | Service component, SI-15 (#122) |
 
 Implemented-requirement UUIDs added from #113 on use `implemented-requirement:<component key without the component: prefix>:<control-id>`. The ones that predate it carry identifiers whose keys were not recorded, and keep them: regenerating them would churn every existing identifier.
 

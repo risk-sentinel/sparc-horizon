@@ -3,15 +3,15 @@
 ## Container
 
 ```dockerfile
-FROM node:22 AS web
-WORKDIR /web
+FROM registry.access.redhat.com/ubi10/nodejs-22-minimal AS web
+WORKDIR /opt/app-root/src
 COPY web/ .
-RUN npm ci && npm run build
+RUN npm ci --ignore-scripts && npm run build
 
 FROM golang:1.27 AS build
 WORKDIR /src
 COPY . .
-COPY --from=web /web/dist ./web/dist
+COPY --from=web /opt/app-root/src/dist ./web/dist
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /horizon ./cmd/horizon
 
 FROM registry.access.redhat.com/ubi10/ubi AS rootfs
@@ -38,16 +38,39 @@ in rather than installed:
   architecture, which scanners use to map the packages to Red Hat advisories. Without it Trivy fails with "unable to find CPE indices".
 
 The repository's `Dockerfile` builds this shape today (#108), with the builders and package versions pinned. Until
-`cmd/horizon` exists it builds `cmd/mockserver` instead, and copies in the fixture federation and the HUD
-demos, read-only for every user (`chmod -R u=rwX,go=rX` in the build stage) whatever modes the build context carries:
-`cmd/genfixtures` writes new files `0600`, which uid 1001 could not read (#117):
+`cmd/horizon` exists it builds `cmd/mockserver` instead, and copies in the fixture federation, the HUD built from
+`web/` (#122) and the static design demos, read-only for every user (`chmod -R u=rwX,go=rX` in the build stage)
+whatever modes the build context carries: `cmd/genfixtures` writes new files `0600`, which uid 1001 could not read
+(#117). The HUD's build stage is UBI 10's Node.js 22 minimal image, pinned by digest, installing from the lockfile with
+install scripts off; it is never shipped, only its `dist/` is. `cmd/horizon` will embed `dist/` with `go:embed`; the
+mock serves it from a directory instead.
 
 ```bash
 docker build -t sparc-horizon:dev .
 docker run --rm -p 8080:8080 sparc-horizon:dev
-# HUD demos at http://localhost:8080/ and API v0 at http://localhost:8080/v1/
+# HUD at http://localhost:8080/, demos at /demo/, API v0 at /v1/
 # (persona header: X-Horizon-Persona, see fixtures/api/personas.json)
 ```
+
+| Flag | Default in the image | What it serves |
+|---|---|---|
+| `-dir` | `/srv/horizon/fixtures` | The OSCAL documents every response is computed from. Mount your own read-only and point this at it |
+| `-static` | `/srv/horizon/web` | The HUD, at `/` |
+| `-demo` | `/srv/horizon/demo` | The static design demos, at `/demo/` |
+| `-horizon` | `2026-10-15` | The default projection date; today when empty |
+| `-role-alias` | none | Maps a document's role-id onto a contract role, repeatable |
+
+Arguments after the image name replace the whole default command, so a `docker run` that adds `-dir` repeats
+`-static` and `-demo` (the tester guide's commands do).
+
+**Content-Security-Policy, per surface (#122).** Every response carries one, with `nosniff` and
+`Referrer-Policy: no-referrer`:
+
+| Surface | Policy | Why |
+|---|---|---|
+| `/` the HUD | `default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'` | It draws strings from other parties' documents, so nothing inline runs and it talks only to its own origin. CI fails on any violation |
+| `/v1/`, `/oscal/`, `/mock/`, `/healthz` | `default-src 'none'; frame-ancestors 'none'` | JSON no browser should execute or frame |
+| `/demo/` | Allows inline script and style, and Google Fonts | The throwaway single-file demos need them; the looser policy never reaches `/` |
 
 ## Release
 

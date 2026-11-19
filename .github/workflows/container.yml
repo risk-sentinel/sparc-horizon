@@ -7,7 +7,14 @@ name: Container
 # container serves anything. A build that succeeds proves only that the layers
 # assembled. So the smoke job runs the image, waits for /healthz, and asserts
 # on what came back: the API answers as a persona, the refusal rule holds, the
-# demos are served, and the process is not root.
+# HUD and the demos are served, and the process is not root.
+#
+# Then the HUD in a browser (S1-11, #122): Playwright drives Chrome against two
+# containers of the same image — one over its fixtures, one over NIST's example
+# set mounted read-only, the way a tester brings their own OSCAL — and fails on
+# any CSP violation or any axe WCAG 2.2 AA finding in either theme. The
+# containers run detached and are polled, never started by Playwright, so the
+# suite tests the image rather than a dev server.
 #
 # Reporting, not required, until it has been observed on main (S1-13).
 
@@ -43,6 +50,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Build
         run: docker build -t "${IMAGE}" .
@@ -51,3 +60,66 @@ jobs:
       # can be approved, so a PR and a release are held to one set of checks.
       - name: Smoke the image
         run: tests/container-smoke/smoke.sh "${IMAGE}"
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: web/.node-version
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install Playwright and Chrome
+        working-directory: web
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts --no-audit --no-fund
+          # Called by path from the lockfile install, never through npx (#48).
+          ./node_modules/.bin/playwright install --with-deps chromium
+
+      - name: Start the image over the fixtures and over NIST's examples
+        run: |
+          set -euo pipefail
+          opts=(--read-only --cap-drop ALL --security-opt no-new-privileges)
+          docker run -d --name hud-fixtures -p 127.0.0.1:8080:8080 "${opts[@]}" "${IMAGE}"
+          docker run -d --name hud-nist -p 127.0.0.1:8081:8080 "${opts[@]}" \
+            -v "${GITHUB_WORKSPACE}/internal/oscal/testdata/nist:/data:ro" "${IMAGE}" \
+            -addr 0.0.0.0:8080 -dir /data -static /srv/horizon/web -demo /srv/horizon/demo \
+            -role-alias owner=system-owner -horizon 2023-06-15
+          for port in 8080 8081; do
+            up=""
+            for _ in $(seq 1 30); do
+              if curl -sf "http://127.0.0.1:${port}/healthz" > /dev/null; then up=yes; break; fi
+              sleep 1
+            done
+            if [ -z "${up}" ]; then
+              echo "::error::the container on :${port} never answered /healthz."
+              docker logs hud-fixtures 2>&1 | tail -20
+              docker logs hud-nist 2>&1 | tail -20
+              exit 1
+            fi
+          done
+          echo "PASS — both containers up."
+
+      - name: HUD in a browser — CSP, axe, keyboard, export
+        working-directory: web
+        env:
+          HUD_FIXTURES_URL: http://127.0.0.1:8080
+          HUD_NIST_URL: http://127.0.0.1:8081
+        run: |
+          set -euo pipefail
+          ./node_modules/.bin/playwright test --reporter=list,html | tee "${RUNNER_TEMP}/e2e.txt"
+          # A suite whose tests all skipped would pass. Each of the two corpora
+          # must have run, and passed, most of it.
+          passed="$(grep -oE '^ *[0-9]+ passed' "${RUNNER_TEMP}/e2e.txt" | grep -oE '[0-9]+')"
+          echo "browser tests passed: ${passed:-0}"
+          if [ "${passed:-0}" -lt 16 ]; then
+            echo "::error::only ${passed:-0} browser tests passed; want at least 16 of 18."
+            exit 1
+          fi
+
+      - name: Keep the Playwright report
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report
+          path: web/playwright-report/
+          retention-days: 14

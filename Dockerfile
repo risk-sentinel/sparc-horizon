@@ -1,13 +1,25 @@
 # syntax=docker/dockerfile:1
-# SPARC Horizon: API v0 over the fixture federation, plus the HUD demos.
+# SPARC Horizon: API v0 over the fixture federation, the HUD at /, and the
+# static design demos at /demo/.
 # Runs cmd/mockserver until cmd/horizon exists (docs/08-build-deploy.md).
 #
 # Base images are pinned by digest only (Sonar docker:S6596). Bump deliberately
 # and re-measure with the scanners.
 #   golang 1.27.4    (matches ci.yml's go-version line)
 #   ubi10/ubi 10.3   (builder for the runtime root filesystem, never shipped)
+#   ubi10/nodejs-22-minimal 10.3-1793848662, Node 22.23.2 (builds web/, never shipped)
+ARG NODE_IMAGE=registry.access.redhat.com/ubi10/nodejs-22-minimal@sha256:ea24e8ec875b6353d2d3942214a01dad62528a37823e92094a9019a5c058ee5f
 ARG GO_IMAGE=golang@sha256:fe517acaa580cc7915457080f850c37e618b3c1e750f98b58fc6429b605147a1
 ARG UBI_BUILDER=registry.access.redhat.com/ubi10/ubi@sha256:73ea54bfbfb586075bd3d45df6483a7f68875233c8cc7cebcf9b2bb42306c308
+
+# The HUD (#122): static files, so built once on the build platform. The lockfile
+# is the whole dependency set and install scripts never run (web/.npmrc).
+FROM --platform=$BUILDPLATFORM ${NODE_IMAGE} AS web
+WORKDIR /opt/app-root/src
+COPY --chown=1001:0 web/package.json web/package-lock.json web/.npmrc ./
+RUN npm ci --ignore-scripts --no-audit --no-fund
+COPY --chown=1001:0 web/ ./
+RUN npm run build
 
 FROM --platform=$BUILDPLATFORM ${GO_IMAGE} AS build
 ARG TARGETOS
@@ -23,6 +35,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
 # The served tree, read-only for every user whatever modes the context carries.
 COPY fixtures/ /out/srv/fixtures/
 COPY demo/ /out/srv/demo/
+COPY --from=web /opt/app-root/src/dist/ /out/srv/web/
 RUN chmod -R u=rwX,go=rX /out/srv
 
 # The runtime root filesystem, built from Red Hat's signed UBI 10 packages and
@@ -62,4 +75,4 @@ EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/horizon"]
 # The fixtures' horizon, so docs/testing.md's outputs reproduce. Point -dir at
 # your own OSCAL to see your own boundary.
-CMD ["-addr", "0.0.0.0:8080", "-dir", "/srv/horizon/fixtures", "-static", "/srv/horizon/demo", "-horizon", "2026-10-15"]
+CMD ["-addr", "0.0.0.0:8080", "-dir", "/srv/horizon/fixtures", "-static", "/srv/horizon/web", "-demo", "/srv/horizon/demo", "-horizon", "2026-10-15"]

@@ -15,6 +15,10 @@
 /mockserver
 /genfixtures
 /oscalprobe
+# Scratch output of running action-pin-verification.yml's script locally; both
+# were committed by accident in #86 (#122).
+/pins.txt
+/err.txt
 
 # Test binary, built with `go test -c`
 *.test
@@ -43,3 +47,9 @@ go.work.sum
 horizon.zip
 *.zip
 .trivyignore
+
+# web/ (#122)
+web/node_modules/
+web/dist/
+web/test-results/
+web/playwright-report/

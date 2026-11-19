@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-11-19 (#124). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-19 (#126). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,23 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-19 — #126 — `feature/126_vscode_sonar_binding`
+
+**In flight:** nothing unpushed once this PR is open. Owner: open a fresh clone in VS Code and check the binding (the PR's test plan), then review and merge.
+
+**Why now:** S1192 on #125 (a literal repeated three times) reached the PR before anyone saw it, and cost a commit and a CI round. The rule set is the same in the editor; only the binding was missing.
+
+**Alternatives rejected:**
+- Committing the connection as well. SonarQube for IDE reads connections from user settings only, so a workspace copy would be ignored; `CONTRIBUTING.md` gives the snippet instead.
+- `sonar-scanner` locally. Automatic Analysis is on for the project, so a scanner cannot submit an analysis until S1-4 is decided on #42, and the editor needs no submission.
+- Committing the SonarQube MCP server config. It runs a container with the user's token from their environment, which is per-user setup, not repository content.
+
+**Not measured by me:** the extension binding a fresh clone and flagging a planted duplicate. That needs a SonarCloud token in VS Code's secret storage, which is the owner's, so it is the owner's test-plan item.
+
+**Next:** unchanged from #124's entry: a run against a live SPARC, then mapping documents.
 
 ---
 

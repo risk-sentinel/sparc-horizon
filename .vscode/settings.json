@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "risk-sentinel",
+        "projectKey": "risk-sentinel_sparc-horizon"
+    }
+}

@@ -39,6 +39,31 @@ nothing. Testing a build rather than changing one is [`docs/testing.md`](docs/te
 - **No AI-assistant attribution** in commits, PR titles or bodies, comments, code,
   or docs. A tool default that appends one must be overridden.
 
+## Sonar in the editor
+
+SonarCloud analyses every PR, and its quality gate is a required check. The same
+rules can run in VS Code before you push, with
+[SonarQube for IDE](https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode)
+in connected mode. VS Code offers the extension when you open the repository
+(`.vscode/extensions.json`), and `.vscode/settings.json` binds the folder to the
+project `risk-sentinel_sparc-horizon`. The one-time setup is yours:
+
+1. Add the connection to your **user** settings; the extension reads connections
+   from nowhere else:
+
+   ```json
+   "sonarlint.connectedMode.connections.sonarcloud": [
+       { "connectionId": "risk-sentinel", "organizationKey": "risk-sentinel" }
+   ]
+   ```
+
+2. Create a user token at sonarcloud.io → My Account → Security, and enter it
+   when the extension asks. It keeps the token in VS Code's secret storage. **A
+   token never goes in a settings file**, user or workspace.
+
+The editor check is advisory. It does not replace the quality gate on the PR, and
+a finding it misses still fails there.
+
 ## Pull request convention
 
 `.github/workflows/pr-checklist.yml` runs on every PR and fails if **any unchecked

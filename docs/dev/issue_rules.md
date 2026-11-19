@@ -335,6 +335,10 @@ fails rather than reporting clean.
 The **evidence** emit (`sonarqube-hdf-emit.yml`) is a different thing and stays `main`-only. PR
 findings are a development signal; evidence is what landed on the default branch.
 
+To see the same rules **before a push**, use SonarQube for IDE in connected mode; the binding is
+committed and the one-time setup is in `CONTRIBUTING.md` (#126). It is advisory and never
+replaces this report or the quality gate.
+
 ### Targeted runs during development are fine; the full suite gates the push
 
 A single test while iterating:

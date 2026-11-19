@@ -72,7 +72,7 @@ decisions on 2026-11-19, not from the original sketch here, which said "mTLS":
 |---|---|---|
 | Authentication | `Authorization: Bearer`: a `sparc_` service token or an OIDC JWT, read from `HORIZON_SPARC_TOKEN_FILE` | It is what SPARC's API accepts. No client certificate: mTLS is added only if a FedRAMP requirement calls for it |
 | Transport | `https` only, TLS 1.2 or later, on every host including loopback | Plain http is not FedRAMP-compliant for a High system, so nothing relaxes it, for testing either |
-| Trust | The system trust roots. No CA-file setting (`HORIZON_SPARC_CA` is withdrawn) | A per-deployment CA file is not the model. Trust follows SPARC's trust-store relationship model when it lands |
+| Trust | The system trust roots. No CA-file setting (`HORIZON_SPARC_CA` is withdrawn) | A per-deployment CA file is not the model. Trust follows SPARC's trust-store relationship model ([`sparc#1354`](https://github.com/risk-sentinel/sparc/issues/1354)) when it lands |
 | What is fetched | `GET /api/v1/{ssp,sap,sar,poam}_documents/:id/export?format=oscal&validate=true` | Schema-validated OSCAL only. A document SPARC refuses (422) is reported, never re-requested unvalidated |
 | Caching | `If-None-Match` with each document's ETag; a 304 is answered from the cache after its digest is checked | SPARC's ETag digests the exported bytes, so a 304 means the bytes are unchanged |
 | Redirects | Followed on the same scheme and host only | A response from elsewhere is never read as SPARC's |

@@ -464,7 +464,7 @@
                     "rel": "evidence"
                   }
                 ],
-                "remarks": "Owner decisions (2026-11-19): no mTLS unless a FedRAMP requirement calls for it; no per-deployment CA file, with trust following SPARC's trust-store relationship model when it lands; no plain http, even for local testing. Partial because the transport to federation peers (P6) is not built, and FIPS 140 mode for the TLS stack is not yet configured."
+                "remarks": "Owner decisions (2026-11-19): no mTLS unless a FedRAMP requirement calls for it; no per-deployment CA file, with trust following SPARC's trust-store relationship model (sparc#1354) when it lands; no plain http, even for local testing. Partial because the transport to federation peers (P6) is not built, and FIPS 140 mode for the TLS stack is not yet configured."
               },
               {
                 "uuid": "6954b3c1-8bc2-5c2d-be37-d84b631a10b4",

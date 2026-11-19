@@ -348,7 +348,7 @@ What to expect:
 | Behaviour | Why |
 |---|---|
 | Only `https://` URLs are accepted, on every host, including `localhost` | Plain http is not FedRAMP-compliant for a High system. There is no switch to allow it |
-| SPARC's certificate must chain to your system's trust roots. There is no option to supply a CA file | Trust will follow SPARC's trust-store model when it lands, not a per-deployment file |
+| SPARC's certificate must chain to your system's trust roots. There is no option to supply a CA file | Trust will follow SPARC's trust-store model ([`sparc#1354`](https://github.com/risk-sentinel/sparc/issues/1354)) when it lands, not a per-deployment file |
 | The token comes only from a file, readable by you alone, and is never printed | A flag would put it in the process list and your shell history |
 | A second run with nothing changed in SPARC prints `0 transferred` for every kind | Each document's ETag is cached (`-cache`, by default under your user cache directory). SPARC answers 304, and the cached copy is used after its digest is checked |
 | A document SPARC refuses to export (`does not conform to the OSCAL schema`) is reported by name and the run exits 1 | `sparcpull` asks only for schema-validated OSCAL. Fix the document in SPARC; it never asks for the unvalidated copy |

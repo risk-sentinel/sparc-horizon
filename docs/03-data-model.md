@@ -149,8 +149,9 @@ boundary. The organization is still found through `member-of-organizations`, not
 
 `internal/tree` and `internal/view` both take the id from `tree.BoundaryIDs`, so the heat rows and
 the node a caller is authorized on cannot disagree. Documents that import an SSP still name it by
-its document uuid, which is what OSCAL's `import-ssp` carries. The fixture federation still uses the
-earlier form; moving it to SPARC's changes every golden boundary id, and is its own change.
+its document uuid, which is what OSCAL's `import-ssp` carries. Both forms are NIST OSCAL; they differ
+only in two prop values in this namespace, and the tree reads both. The fixture federation carries
+the earlier values.
 
 ## Evidence chain
 

@@ -70,15 +70,16 @@ that updates out of band goes stale unnoticed, which is the failure this file ex
   - The final count check masked the mid-walk check, so a page-count skew test was added.
   - Reading a directory fails anyway, so the FIFO case replaced it.
 
-**Not measured:** a run against a live SPARC instance. The tester guide's section 8 says so. The fixture federation still writes the earlier `node-type: boundary` form, and moving it to SPARC's would change every golden boundary id; that is its own change.
+**Not measured:** a run against a live SPARC instance. The tester guide's section 8 says so.
 
-**Upstream checked 2026-11-19:** SPARC's trust-store work is in its backlog per the owner; a search of `sparc`'s open issues for "trust store" found only #1354 (FedRAMP intake), so it is not linked yet.
+**Upstream checked 2026-11-19:** SPARC's trust-store work is `sparc#1354` (owner-confirmed; its title reads as FedRAMP intake and trust-center ingest, which is why a search did not surface it).
+
+**Owner rulings after the first push (2026-11-19):** control-id normalisation is not a task, because an OSCAL `control-id` is the catalog's token and Horizon reads OSCAL only; and there is no "SPARC SSP format" to move the fixtures to, because SPARC's SSP is NIST OSCAL. The fixtures differ only in two prop values the tree reads either way. `Web types, lint, test, build`, `Build and smoke the image` and `Dockerfile lint` were made required (S1-13), 16 contexts in all.
 
 **Next:**
 1. Run `sparcpull` against a real SPARC instance and record what differs.
-2. Mapping documents and control-id normalisation through them (P1).
-3. Move the fixtures to SPARC's SSP form.
-4. P3's slider, then P2.
+2. Pull mapping documents, which the KSI column axis reads (P1).
+3. P3's slider, then P2.
 
 ---
 

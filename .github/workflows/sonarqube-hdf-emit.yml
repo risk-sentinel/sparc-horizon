@@ -53,9 +53,10 @@ on:
         type: boolean
         default: false
 
+# Read-only by default. The OIDC token is granted to the one job that assumes
+# the emit role, so preflight never holds it (#128).
 permissions:
   contents: read
-  id-token: write           # AWS OIDC for the S3 emit; harmless when not emitting
 
 env:
   # ---- CONFIGURATION -------------------------------------------------------
@@ -90,6 +91,10 @@ jobs:
     name: SonarQube -> HDF
     needs: preflight
     runs-on: ubuntu-latest
+    # A job-level block replaces the workflow's, so contents: read is restated.
+    permissions:
+      contents: read
+      id-token: write       # AWS OIDC for the S3 emit; harmless when not emitting
     env:
       # Self-identifying artifact name, so a downloaded artifact traces back to
       # the repo it came from. The S3 object drops it: the repo is in the path.

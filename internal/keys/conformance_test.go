@@ -198,7 +198,7 @@ func TestRegisteredNamespaceAgrees(t *testing.T) {
 	if c.Namespace.UUID != Namespace().String() {
 		t.Errorf("contract namespace %s, ours %s", c.Namespace.UUID, Namespace())
 	}
-	if want := uuid.NewSHA1(uuid.NameSpaceURL, []byte(NamespaceURI)); want != Namespace() {
+	if uuid.NewSHA1(uuid.NameSpaceURL, []byte(NamespaceURI)) != Namespace() {
 		t.Errorf("Namespace() is not uuidv5(url, %q)", NamespaceURI)
 	}
 	if c.Namespace.Provisional {
@@ -272,24 +272,31 @@ func TestFieldListsMatchTheContract(t *testing.T) {
 			t.Errorf("%s: the contract defines a field list with no vector to check it against", kind)
 			continue
 		}
-		k, err := deriveFromContract(d, kind, v.Args)
-		if err != nil {
-			t.Errorf("%s: %v", kind, err)
-			continue
+		checkFieldList(t, d, kind, spec, v)
+	}
+}
+
+// checkFieldList derives one kind's key from its vector and holds the fields
+// we hash to the contract's list for that kind.
+func checkFieldList(t *testing.T, d Deriver, kind string, spec []fieldSpec, v contractVector) {
+	t.Helper()
+	k, err := deriveFromContract(d, kind, v.Args)
+	if err != nil {
+		t.Errorf("%s: %v", kind, err)
+		return
+	}
+	// Field 0 is the grammar version; the contract's list starts after it.
+	if len(k.Fields)-1 != len(spec) {
+		t.Errorf("%s: we hash %d fields after the grammar version, the contract lists %d", kind, len(k.Fields)-1, len(spec))
+		return
+	}
+	for i, f := range spec {
+		got := k.Fields[i+1]
+		if f.Literal != "" && got != f.Literal {
+			t.Errorf("%s: field %d is %q, the contract's literal is %q", kind, i, got, f.Literal)
 		}
-		// Field 0 is the grammar version; the contract's list starts after it.
-		if len(k.Fields)-1 != len(spec) {
-			t.Errorf("%s: we hash %d fields after the grammar version, the contract lists %d", kind, len(k.Fields)-1, len(spec))
-			continue
-		}
-		for i, f := range spec {
-			got := k.Fields[i+1]
-			if f.Literal != "" && got != f.Literal {
-				t.Errorf("%s: field %d is %q, the contract's literal is %q", kind, i, got, f.Literal)
-			}
-			if f.Arg == "" && f.Literal == "" && len(f.OneOf) == 0 {
-				t.Errorf("%s: field %d in the contract is neither an arg, a literal nor a one-of", kind, i)
-			}
+		if f.Arg == "" && f.Literal == "" && len(f.OneOf) == 0 {
+			t.Errorf("%s: field %d in the contract is neither an arg, a literal nor a one-of", kind, i)
 		}
 	}
 }
@@ -299,100 +306,120 @@ func TestFieldListsMatchTheContract(t *testing.T) {
 // vector.
 func TestTypeRulesAgree(t *testing.T) {
 	c := loadContract(t)
-
-	// The contract states most types as a regex followed by prose explaining
-	// it — "^[a-z]{2,3}$ after lowercasing." — so the pattern is extracted
-	// rather than compiled whole. Extracting beats copying: a rule that moves
-	// upstream fails here instead of being silently stale.
-	mustRe := func(name string) *regexp.Regexp {
+	pattern := func(name string) *regexp.Regexp {
 		t.Helper()
-		rule, ok := c.Types[name]
-		if !ok {
-			t.Fatalf("the contract has no type %q", name)
-		}
-		pattern := rulePattern.FindString(rule)
-		if pattern == "" {
-			t.Fatalf("type %q states no ^...$ pattern this test can drive: %q", name, rule)
-		}
-		re, err := regexp.Compile(pattern)
-		if err != nil {
-			t.Fatalf("type %q pattern %q does not compile: %v", name, pattern, err)
-		}
-		return re
+		return typePattern(t, c, name)
 	}
 
 	t.Run("period", func(t *testing.T) {
-		re := mustRe("period")
-		for _, v := range []string{"2026-Q1", "2026-Q4", "2026-01", "2026-12", "2026", "2026-09-21", "2026-Q5", "2026-1", "2026Q3", "", "Q3-2026"} {
+		agreeOnAcceptance(t, "period", pattern("period"), func(v string) error {
 			_, err := canonical.Period(v)
-			if got, want := err == nil, re.MatchString(v); got != want {
-				t.Errorf("period %q: we accept=%v, the contract accepts=%v", v, got, want)
-			}
-		}
+			return err
+		}, "2026-Q1", "2026-Q4", "2026-01", "2026-12", "2026", "2026-09-21", "2026-Q5", "2026-1", "2026Q3", "", "Q3-2026")
 	})
-
 	t.Run("decision-date", func(t *testing.T) {
-		re := mustRe("decision-date")
-		for _, v := range []string{"2026-10-11", "2026-01-01", "2026-Q4", "2026-10", "2026", "11-10-2026", ""} {
+		agreeOnAcceptance(t, "decision date", pattern("decision-date"), func(v string) error {
 			_, err := canonical.DecisionDate(v)
-			if got, want := err == nil, re.MatchString(v); got != want {
-				t.Errorf("decision date %q: we accept=%v, the contract accepts=%v", v, got, want)
-			}
-		}
+			return err
+		}, "2026-10-11", "2026-01-01", "2026-Q4", "2026-10", "2026", "11-10-2026", "")
 	})
-
 	t.Run("family-id under the NIST vocabulary", func(t *testing.T) {
-		re := mustRe("family-id")
-		for _, v := range []string{"ac", "AC", "sar", "SAR", "a", "abcd", "", "a1"} {
-			got, err := canonical.FamilyID(canonical.VocabNIST80053, v)
-			// The contract's rule applies to the value after lowercasing.
-			want := re.MatchString(lower(v))
-			if (err == nil) != want {
-				t.Errorf("family %q: we accept=%v, the contract accepts=%v", v, err == nil, want)
-			}
-			if err == nil && !re.MatchString(got) {
-				t.Errorf("family %q canonicalised to %q, which the contract's own rule rejects", v, got)
-			}
-		}
+		checkFamilyIDs(t, pattern("family-id"))
 	})
-
 	t.Run("control-id canonical form", func(t *testing.T) {
-		// The contract states the canonicalised value must match this. It is
-		// prose around a regex, so the regex is spelled here and the contract's
-		// text asserted to still contain it.
-		const canonicalForm = `^[a-z]{2,3}-\d+(\.\d+)*$`
-		if rule := c.Types["control-id"]; !contains(rule, canonicalForm) {
-			t.Fatalf("the contract's control-id rule no longer states %s: %q", canonicalForm, rule)
-		}
-		re := regexp.MustCompile(canonicalForm)
-		for _, v := range []string{"AC-2", "ac-02", "AC-2(1)", "AC-2 (1)", "ac-2.1.3", "AC-2(1)(3)", "sar-5"} {
-			got, err := canonical.ControlID(canonical.VocabNIST80053, v)
-			if err != nil {
-				t.Errorf("control %q: %v", v, err)
-				continue
-			}
-			if !re.MatchString(got) {
-				t.Errorf("control %q canonicalised to %q, which the contract's own rule rejects", v, got)
-			}
-		}
+		checkControlIDForm(t, c.Types["control-id"])
 	})
-
 	t.Run("sha256 and uuid", func(t *testing.T) {
-		shaRe, uuidRe := mustRe("sha256"), mustRe("uuid")
-		const digest = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-		if !shaRe.MatchString(digest) {
-			t.Error("the contract rejects a SHA-256 digest this package accepts")
-		}
-		// The contract's rule applies after lowercasing, which the deriver
-		// does before hashing.
-		if shaRe.MatchString("E3B0C442") {
-			t.Error("the contract's sha256 rule matched an uppercase stub; the pattern was extracted wrongly")
-		}
-		got, err := canonical.UUID("3FA85F64-5717-4562-B3FC-2C963F66AFA6")
-		if err != nil || !uuidRe.MatchString(got) {
-			t.Errorf("UUID canonicalised to %q (%v), which the contract's rule rejects", got, err)
-		}
+		checkSHA256AndUUID(t, pattern("sha256"), pattern("uuid"))
 	})
+}
+
+// typePattern extracts a type's ^...$ pattern from the contract.
+//
+// The contract states most types as a regex followed by prose explaining it —
+// "^[a-z]{2,3}$ after lowercasing." — so the pattern is extracted rather than
+// compiled whole. Extracting beats copying: a rule that moves upstream fails
+// here instead of being silently stale.
+func typePattern(t *testing.T, c contract, name string) *regexp.Regexp {
+	t.Helper()
+	rule, ok := c.Types[name]
+	if !ok {
+		t.Fatalf("the contract has no type %q", name)
+	}
+	pattern := rulePattern.FindString(rule)
+	if pattern == "" {
+		t.Fatalf("type %q states no ^...$ pattern this test can drive: %q", name, rule)
+	}
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		t.Fatalf("type %q pattern %q does not compile: %v", name, pattern, err)
+	}
+	return re
+}
+
+// agreeOnAcceptance requires that we accept exactly the values the contract's
+// pattern accepts.
+func agreeOnAcceptance(t *testing.T, label string, re *regexp.Regexp, parse func(string) error, values ...string) {
+	t.Helper()
+	for _, v := range values {
+		if got, want := parse(v) == nil, re.MatchString(v); got != want {
+			t.Errorf("%s %q: we accept=%v, the contract accepts=%v", label, v, got, want)
+		}
+	}
+}
+
+func checkFamilyIDs(t *testing.T, re *regexp.Regexp) {
+	t.Helper()
+	for _, v := range []string{"ac", "AC", "sar", "SAR", "a", "abcd", "", "a1"} {
+		got, err := canonical.FamilyID(canonical.VocabNIST80053, v)
+		// The contract's rule applies to the value after lowercasing.
+		want := re.MatchString(lower(v))
+		if (err == nil) != want {
+			t.Errorf("family %q: we accept=%v, the contract accepts=%v", v, err == nil, want)
+		}
+		if err == nil && !re.MatchString(got) {
+			t.Errorf("family %q canonicalised to %q, which the contract's own rule rejects", v, got)
+		}
+	}
+}
+
+// checkControlIDForm: the contract states the canonicalised value must match
+// a pattern. It is prose around a regex, so the regex is spelled here and the
+// contract's text asserted to still contain it.
+func checkControlIDForm(t *testing.T, rule string) {
+	t.Helper()
+	const canonicalForm = `^[a-z]{2,3}-\d+(\.\d+)*$`
+	if !contains(rule, canonicalForm) {
+		t.Fatalf("the contract's control-id rule no longer states %s: %q", canonicalForm, rule)
+	}
+	re := regexp.MustCompile(canonicalForm)
+	for _, v := range []string{"AC-2", "ac-02", "AC-2(1)", "AC-2 (1)", "ac-2.1.3", "AC-2(1)(3)", "sar-5"} {
+		got, err := canonical.ControlID(canonical.VocabNIST80053, v)
+		if err != nil {
+			t.Errorf("control %q: %v", v, err)
+			continue
+		}
+		if !re.MatchString(got) {
+			t.Errorf("control %q canonicalised to %q, which the contract's own rule rejects", v, got)
+		}
+	}
+}
+
+func checkSHA256AndUUID(t *testing.T, shaRe, uuidRe *regexp.Regexp) {
+	t.Helper()
+	const digest = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	if !shaRe.MatchString(digest) {
+		t.Error("the contract rejects a SHA-256 digest this package accepts")
+	}
+	// The contract's rule applies after lowercasing, which the deriver does
+	// before hashing.
+	if shaRe.MatchString("E3B0C442") {
+		t.Error("the contract's sha256 rule matched an uppercase stub; the pattern was extracted wrongly")
+	}
+	got, err := canonical.UUID("3FA85F64-5717-4562-B3FC-2C963F66AFA6")
+	if err != nil || !uuidRe.MatchString(got) {
+		t.Errorf("UUID canonicalised to %q (%v), which the contract's rule rejects", got, err)
+	}
 }
 
 // Once the one rule Horizon did NOT adopt; now the rule it shares.

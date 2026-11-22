@@ -63,6 +63,18 @@ updates:
         patterns: ["*"]
         update-types: [minor, patch]
 
+  # golangci-lint, in a module of its own so no other tool moves its graph
+  # (#128). A bump changes what the lint gate measures: review it against
+  # .golangci.yml before merging.
+  - package-ecosystem: gomod
+    directory: "/tools/golangci-lint"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 2
+
   - package-ecosystem: npm
     directory: "/web"
     schedule:

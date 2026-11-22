@@ -33,14 +33,16 @@ type provenance struct {
 		Retrieved  string `json:"retrieved"`
 		Licence    string `json:"licence"`
 	} `json:"upstream"`
-	Documents []struct {
-		File         string `json:"file"`
-		Model        string `json:"model"`
-		OSCALVersion string `json:"oscal-version"`
-		SHA256       string `json:"sha256"`
-		Bytes        int    `json:"bytes"`
-		UpstreamPath string `json:"upstream-path"`
-	} `json:"documents"`
+	Documents []vendoredDocument `json:"documents"`
+}
+
+type vendoredDocument struct {
+	File         string `json:"file"`
+	Model        string `json:"model"`
+	OSCALVersion string `json:"oscal-version"`
+	SHA256       string `json:"sha256"`
+	Bytes        int    `json:"bytes"`
+	UpstreamPath string `json:"upstream-path"`
 }
 
 func loadProvenance(t *testing.T) provenance {
@@ -79,32 +81,7 @@ func TestVendoredDocumentsMatchTheirProvenance(t *testing.T) {
 	listed := map[string]bool{}
 	for _, d := range p.Documents {
 		listed[d.File] = true
-
-		b := readCorpusFile(t, d.File)
-		sum := sha256.Sum256(b)
-		if got := hex.EncodeToString(sum[:]); got != d.SHA256 {
-			t.Errorf("%s: digest %s, manifest says %s", d.File, got, d.SHA256)
-		}
-		if len(b) != d.Bytes {
-			t.Errorf("%s: %d bytes, manifest says %d", d.File, len(b), d.Bytes)
-		}
-
-		version, err := Version(b)
-		if err != nil {
-			t.Errorf("%s: %v", d.File, err)
-			continue
-		}
-		if version != d.OSCALVersion {
-			t.Errorf("%s: declares %s, manifest says %s", d.File, version, d.OSCALVersion)
-		}
-		model, err := Model(b)
-		if err != nil {
-			t.Errorf("%s: %v", d.File, err)
-			continue
-		}
-		if model != d.Model {
-			t.Errorf("%s: is a %s, manifest says %s", d.File, model, d.Model)
-		}
+		checkAgainstManifest(t, d)
 	}
 
 	// A file in the directory that the manifest does not list has no
@@ -125,6 +102,36 @@ func TestVendoredDocumentsMatchTheirProvenance(t *testing.T) {
 	}
 	if onDisk != len(p.Documents) {
 		t.Errorf("%d documents on disk, %d in the manifest", onDisk, len(p.Documents))
+	}
+}
+
+// checkAgainstManifest holds one vendored document to its manifest entry: the
+// bytes by digest and length, then the version and model it declares.
+func checkAgainstManifest(t *testing.T, d vendoredDocument) {
+	t.Helper()
+	b := readCorpusFile(t, d.File)
+	sum := sha256.Sum256(b)
+	if got := hex.EncodeToString(sum[:]); got != d.SHA256 {
+		t.Errorf("%s: digest %s, manifest says %s", d.File, got, d.SHA256)
+	}
+	if len(b) != d.Bytes {
+		t.Errorf("%s: %d bytes, manifest says %d", d.File, len(b), d.Bytes)
+	}
+	version, err := Version(b)
+	if err != nil {
+		t.Errorf("%s: %v", d.File, err)
+		return
+	}
+	if version != d.OSCALVersion {
+		t.Errorf("%s: declares %s, manifest says %s", d.File, version, d.OSCALVersion)
+	}
+	model, err := Model(b)
+	if err != nil {
+		t.Errorf("%s: %v", d.File, err)
+		return
+	}
+	if model != d.Model {
+		t.Errorf("%s: is a %s, manifest says %s", d.File, model, d.Model)
 	}
 }
 

@@ -59,17 +59,21 @@ jobs:
             exit 1
           fi
 
+          # HTTPS on the request and on every redirect, TLS 1.2 or later: one
+          # definition, so the three fetches cannot drift apart (#128).
+          curl_tls=(-sSfL --proto '=https' --proto-redir '=https' --tlsv1.2)
+
           # Resolve upstream's default branch rather than assuming it is 'main'.
-          branch="$(curl -sSfL --proto '=https' --proto-redir '=https' --tlsv1.2 \
+          branch="$(curl "${curl_tls[@]}" \
             -H 'Accept: application/vnd.github+json' \
             -H "Authorization: Bearer ${GITHUB_TOKEN}" \
             "https://api.github.com/repos/${UPSTREAM_REPO}" | jq -r '.default_branch')"
-          sha="$(curl -sSfL --proto '=https' --proto-redir '=https' --tlsv1.2 \
+          sha="$(curl "${curl_tls[@]}" \
             -H 'Accept: application/vnd.github+json' \
             -H "Authorization: Bearer ${GITHUB_TOKEN}" \
             "https://api.github.com/repos/${UPSTREAM_REPO}/commits/${branch}" | jq -r '.sha')"
 
-          curl -sSfL --proto '=https' --proto-redir '=https' --tlsv1.2 \
+          curl "${curl_tls[@]}" \
             "https://raw.githubusercontent.com/${UPSTREAM_REPO}/${sha}/${UPSTREAM_PATH}" \
             -o upstream.json
           # An empty or error body would hash to something stable and wrong, so

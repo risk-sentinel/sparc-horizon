@@ -1,7 +1,7 @@
 # golangci-lint configuration.
 #
-# The version is pinned in .github/workflows/ci.yml and must be bumped there and
-# here together: an unpinned linter silently changes what the gate measures, and
+# The version is pinned in tools/golangci-lint/go.mod (#128) and must be bumped
+# there and here together: an unpinned linter silently changes what the gate measures, and
 # a gate whose meaning drifts is worse than one that is absent, because it still
 # reports green.
 #

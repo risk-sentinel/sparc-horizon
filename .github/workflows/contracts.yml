@@ -238,15 +238,29 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Install actionlint
+      # tools/go.mod declares go 1.27, so the runner's preinstalled Go would
+      # fetch a toolchain anyway. The pin and its reasoning are ci.yml's.
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.27.x"
+          check-latest: true
+          cache: false
+
+      - name: Install actionlint from tools/go.mod
         run: |
           set -euo pipefail
-          # Installed via the Go module proxy at a pinned version, so the download
-          # is checksum-verified against sum.golang.org rather than trusting a
-          # release tarball. A workflow schema error otherwise yields a 0-second
+          # The version is the one tools/go.sum locks, with its whole build
+          # graph (#128). A workflow schema error otherwise yields a 0-second
           # run with no jobs and no logs, which is why this is a gate.
-          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          go -C tools install github.com/rhysd/actionlint/cmd/actionlint
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+          want="$(go -C tools list -m -f '{{.Version}}' github.com/rhysd/actionlint)"
+          have="$("$(go env GOPATH)/bin/actionlint" -version | head -1)"
+          if [ "v${have#v}" != "${want}" ]; then
+            echo "::error::actionlint reports ${have}, but tools/go.mod pins ${want}."
+            exit 1
+          fi
+          echo "PASS — actionlint ${want}, as pinned."
 
       # ---- Prove the shellcheck integration is live (#8) --------------------
       # actionlint exits 0 when the shellcheck binary is absent: it SKIPS the

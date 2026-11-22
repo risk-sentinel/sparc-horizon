@@ -5,7 +5,7 @@ Delivery-layer HUD for authorization risk: it owns attestations, AO decisions,
 forward projections, and the role lenses, while SPARC stays authoritative for
 catalogs, crosswalks, pipeline translation, and the federation trust fabric.
 
-**Last updated:** 2026-11-19 (#124: P1's SPARC client — `internal/sparc` and `cmd/sparcpull` pull schema-validated OSCAL from SPARC's `/api/v1` over HTTPS with a Bearer token and an ETag cache, into a folder the mock reads; a SPARC SSP's boundary node takes SPARC's stable boundary uuid (`parent-uuid`); `docs/03` realigned to SPARC's SSP form (sparc PR #1197); SC-8 and IA-5 partial. **Previously:** 2026-11-18 (#122: the HUD over API v0 — `web/`, TypeScript with no runtime dependencies, served at `/` by the image with a per-surface Content-Security-Policy; S1-7 `web.yml`, S1-11 Playwright against the built image over the fixtures and NIST's set, an `npm audit` gate because the ported SCA chain skips npm dev dependencies; P0's `sparc-validate` exit criterion measured as met. **Previously:** 2026-11-17 (#120: the mock computes every response live from any folder of OSCAL through `internal/view`, joining on standard OSCAL relationships; the fixtures gain an assessment plan per boundary and satisfied findings; NIST's example set serves end to end; the `horizon` parameter is honoured. **Previously:** 2026-11-16 (#117: the tester guide `docs/testing.md` and a README overview; the mock's OSCAL export brought under the 404 rule, by slug or UUID, with its documents served and hashed; heat columns roll every row, not the last; the image's served tree read-only for every user). **Previously:** 2026-11-16 (S1-5, S1-8, S1-9 and S1-10 landed in #105–#113: Go 1.27, the first image, `govulncheck`, and the release pipeline). **Previously:** 2026-09-19 (**repository joins the estate.** Horizon arrived as
+**Last updated:** 2026-11-22 (#128: SonarCloud's open Go and workflow findings on `main` cleared: `id-token: write` scoped to the one job that assumes the emit role, golangci-lint and actionlint pinned through `go.sum` rather than `go install @version`, and five functions brought under the complexity limit with no behaviour change. The 43 demo findings stay for P3. **Previously:** 2026-11-19 (#124: P1's SPARC client — `internal/sparc` and `cmd/sparcpull` pull schema-validated OSCAL from SPARC's `/api/v1` over HTTPS with a Bearer token and an ETag cache, into a folder the mock reads; a SPARC SSP's boundary node takes SPARC's stable boundary uuid (`parent-uuid`); `docs/03` realigned to SPARC's SSP form (sparc PR #1197); SC-8 and IA-5 partial. **Previously:** 2026-11-18 (#122: the HUD over API v0 — `web/`, TypeScript with no runtime dependencies, served at `/` by the image with a per-surface Content-Security-Policy; S1-7 `web.yml`, S1-11 Playwright against the built image over the fixtures and NIST's set, an `npm audit` gate because the ported SCA chain skips npm dev dependencies; P0's `sparc-validate` exit criterion measured as met. **Previously:** 2026-11-17 (#120: the mock computes every response live from any folder of OSCAL through `internal/view`, joining on standard OSCAL relationships; the fixtures gain an assessment plan per boundary and satisfied findings; NIST's example set serves end to end; the `horizon` parameter is honoured. **Previously:** 2026-11-16 (#117: the tester guide `docs/testing.md` and a README overview; the mock's OSCAL export brought under the 404 rule, by slug or UUID, with its documents served and hashed; heat columns roll every row, not the last; the image's served tree read-only for every user). **Previously:** 2026-11-16 (S1-5, S1-8, S1-9 and S1-10 landed in #105–#113: Go 1.27, the first image, `govulncheck`, and the release pipeline). **Previously:** 2026-09-19 (**repository joins the estate.** Horizon arrived as
 a wire-frame: ten design docs, an OpenAPI v0 skeleton, a namespace JSON Schema,
 and three static HTML demos with synthetic data — no application code, no
 pipeline, no protection, and no declaration in the org inventory. This plan
@@ -14,7 +14,7 @@ product work**, supersedes the in-repo Terraform sketch in
 [`docs/08-build-deploy.md`](../08-build-deploy.md) in favour of `sparc-iac`, and
 fixes the deployment target as **ECS Fargate in AWS commercial**. The product
 phases P0–P8 carry over from [`docs/roadmap.md`](../roadmap.md) unchanged in
-content, re-sequenced behind S0.)
+content, re-sequenced behind S0.))
 
 ---
 
@@ -62,7 +62,9 @@ carry. Step 8 updates it in the same PR as the work.
 
 ## Status snapshot
 
-> **Updated 2026-11-19** (#124): P1's SPARC client, and the boundary id SPARC's SSPs declare.
+> **Updated 2026-11-22** (#128): SonarCloud's open Go and workflow findings cleared; CI tools pinned
+> through `go.sum`. Before that, 2026-11-19 (#124): P1's SPARC client, and the boundary id SPARC's
+> SSPs declare.
 > Before that, 2026-11-18 (#122): the first TypeScript, the HUD at `/`, and two web CI gates.
 > Before that, 2026-11-16: the pipeline rows moved with #105–#113: Go 1.27, the first
 > image (#108), `govulncheck` (#111) and the release pipeline with its CVE baseline (#113).

@@ -34,33 +34,40 @@ func main() {
 		if filepath.Base(p) == "PROVENANCE.json" || filepath.Base(p) == "measurements.json" {
 			continue
 		}
-		b, err := os.ReadFile(filepath.Clean(p))
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			failures++
-			continue
-		}
-		declared, err := oscal.Version(b)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, p, err)
-			failures++
-			continue
-		}
-		for _, m := range oscal.Probe(b) {
-			mark := " "
-			if m.TypeVersion == declared {
-				mark = "*"
-			}
-			strict := "clean"
-			if m.StrictDecodeError != "" {
-				strict = m.StrictDecodeError
-			}
-			fmt.Printf("%-42s %-7s %s%-7s other=%d timestamp=%-8d %s\n",
-				filepath.Base(p), declared, mark, m.TypeVersion, m.Differences, m.TimestampDifferences, strict)
-			if m.Differences > 0 {
-				failures++
-			}
-		}
+		failures += probe(p)
 	}
 	fmt.Printf("\n* = the version the document declares. %d lossy combinations.\n", failures)
+}
+
+// probe prints one document's row per type version and returns how many
+// failed: an unreadable document counts once, a lossy round trip once per
+// version.
+func probe(p string) int {
+	b, err := os.ReadFile(filepath.Clean(p))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
+	}
+	declared, err := oscal.Version(b)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, p, err)
+		return 1
+	}
+	failures := 0
+	for _, m := range oscal.Probe(b) {
+		mark := " "
+		if m.TypeVersion == declared {
+			mark = "*"
+		}
+		strict := "clean"
+		if m.StrictDecodeError != "" {
+			strict = m.StrictDecodeError
+		}
+		fmt.Printf("%-42s %-7s %s%-7s other=%d timestamp=%-8d %s\n",
+			filepath.Base(p), declared, mark, m.TypeVersion, m.Differences, m.TimestampDifferences, strict)
+		if m.Differences > 0 {
+			failures++
+		}
+	}
+	return failures
 }

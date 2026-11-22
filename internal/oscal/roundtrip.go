@@ -108,18 +108,7 @@ func compare(path string, source, after any, out *[]Difference) {
 			record(path, source, after, out)
 			return
 		}
-		for _, k := range union(src, aft) {
-			s, inSource := src[k]
-			a, inAfter := aft[k]
-			switch {
-			case inSource && !inAfter:
-				record(path+"/"+k, s, nil, out)
-			case !inSource && inAfter:
-				record(path+"/"+k, nil, a, out)
-			default:
-				compare(path+"/"+k, s, a, out)
-			}
-		}
+		compareObjects(path, src, aft, out)
 	case []any:
 		aft, ok := after.([]any)
 		if !ok || len(src) != len(aft) {
@@ -132,6 +121,23 @@ func compare(path string, source, after any, out *[]Difference) {
 	default:
 		if !scalarEqual(source, after) {
 			record(path, source, after, out)
+		}
+	}
+}
+
+// compareObjects walks the union of two objects' keys, so a key either side
+// lacks is a difference rather than a skip.
+func compareObjects(path string, src, aft map[string]any, out *[]Difference) {
+	for _, k := range union(src, aft) {
+		s, inSource := src[k]
+		a, inAfter := aft[k]
+		switch {
+		case inSource && !inAfter:
+			record(path+"/"+k, s, nil, out)
+		case !inSource && inAfter:
+			record(path+"/"+k, nil, a, out)
+		default:
+			compare(path+"/"+k, s, a, out)
 		}
 	}
 }

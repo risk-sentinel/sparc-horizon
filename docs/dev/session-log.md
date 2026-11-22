@@ -4,7 +4,7 @@ Continuity record for work in progress. Companion to
 [`Implementation_plan.md`](Implementation_plan.md), which holds the roadmap and the
 cross-repo table, and to [`issue_rules.md`](issue_rules.md), which holds the workflow.
 
-**Last updated:** 2026-11-19 (#124). (**File created** 2026-09-20 under #33. Restores were costing a
+**Last updated:** 2026-11-22 (#128). (**File created** 2026-09-20 under #33. Restores were costing a
 reconstruction — six queries to re-derive branch state, merge status, phase position, and
 upstream blockers — and the part that no query answers is work that stopped half-done before
 it reached a commit.)
@@ -41,6 +41,23 @@ enough to read in full is the only property that makes it useful.
 
 Updated in the same PR as the work it describes — `issue_rules.md` step 8. A continuity record
 that updates out of band goes stale unnoticed, which is the failure this file exists to prevent.
+
+---
+
+## 2026-11-22 — #128 — `feature/128_sonar_findings`
+
+**In flight:** nothing unpushed once this PR is open. Owner: review and merge. After the merge, check that `sonarqube-hdf-emit.yml` still assumes its role on `main`, now that `id-token` is job-scoped.
+
+**Found by the measurement, not by reading:**
+- **The SonarQube MCP's `analyze_code_snippet` misses Go complexity.** On the pre-change `internal/keys/conformance_test.go` it reported 0 issues, while SonarCloud holds two S3776 findings on that file. It does report on HTML (it reproduced `Web:S6819` in `demo/planner.html`), so it is not simply off. A clean Go result from it proves nothing, so complexity was measured with `gocognit` instead. gocognit scores 1 to 5 points above Sonar on every flagged function; every touched function now scores 11 or less.
+- **The local coverage total depends on the patch release.** The same tree measures 81.4% on Go 1.27.0 and 80.3% on 1.27.4, identical per package. CI's own figure on `main` is 85.5%, so the 80% floor is not at risk. Compare totals only on the same toolchain.
+- **One planted defect was not a defect.** Deleting the "key only in source" case in `compareObjects` changed nothing, because the default branch records the same difference. The plant that counts skips the key outright, and `TestResultLocalDefinitionsLosesTasksAndAssessmentAssets` catches it.
+
+**Alternatives rejected:**
+- golangci-lint in `tools/go.mod` beside govulncheck. Upstream advises against sharing its graph: minimal version selection would let govulncheck's requirements move the linter's dependencies.
+- Editing the ported `hdf-evidence` action for S131. It is fixed upstream first. The issue text for `container-build-sign` is drafted, and filing it is the owner's call.
+
+**Next:** unchanged: #126's PR after the owner's VS Code test, #127 on approval, a run against a live SPARC.
 
 ---
 
